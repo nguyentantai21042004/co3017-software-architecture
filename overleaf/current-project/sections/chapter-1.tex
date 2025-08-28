@@ -1,0 +1,1094 @@
+\section{Introduction - Software Architecture}
+
+\subsection{Thông tin môn học}
+
+\textbf{Môn học:} CO3017 - Software Architecture\\
+\textbf{Trường:} HCMC University of Technology, VNU\\
+\textbf{Giảng viên:}
+\begin{itemize}
+    \item Dr. Thai-Minh Truong (thaiminh@hcmut.edu.vn)
+    \item Meng. Phat T. Tran-Truong (phatttt@hcmut.edu.vn)
+\end{itemize}
+
+\textbf{Website khóa học:} \url{https://lms.hcmut.edu.vn}
+
+\hrule
+
+\subsection{Mục tiêu môn học (Aims)}
+
+Môn học nhằm cung cấp cho sinh viên:
+
+\begin{enumerate}
+    \item \textbf{Khái niệm và kỹ thuật cốt lõi} trong các nguyên tắc thiết kế, mẫu thiết kế, phong cách kiến trúc và mẫu kiến trúc
+    \item \textbf{Khả năng đưa ra quyết định kiến trúc} có thông tin đầy đủ, đánh giá trade-offs và tài liệu hóa thiết kế  
+    \item \textbf{Năng lực phân tích, thiết kế và triển khai} các kiến trúc phần mềm mạnh mẽ
+\end{enumerate}
+
+\hrule
+
+\subsection{Cấu trúc môn học (Outline)}
+
+Môn học giới thiệu các nguyên tắc và thực hành cơ bản của kiến trúc và thiết kế phần mềm:
+
+\begin{itemize}
+    \item \checkmark \textbf{Nguyên tắc thiết kế SOLID}
+    \item \checkmark \textbf{Các khái niệm kiến trúc chính}  
+    \item \checkmark \textbf{Các phong cách kiến trúc}
+    \item \checkmark \textbf{Tài liệu hóa kiến trúc sử dụng các góc nhìn khác nhau}
+\end{itemize}
+
+\hrule
+
+\subsection{Kết quả học tập (Learning Outcomes)}
+
+\subsection*{L.O.1: Hiểu các nguyên tắc cần thiết cho thiết kế phần mềm}
+\begin{itemize}
+    \item \textbf{L.O.1.1:} Thể hiện sự hiểu biết về các nguyên tắc thiết kế SOLID
+    \item \textbf{L.O.1.2:} Có thể giải thích khái niệm high cohesion \& low coupling
+\end{itemize}
+
+\subsection*{L.O.2: Có thể áp dụng các phong cách kiến trúc phần mềm khác nhau}
+\begin{itemize}
+    \item \textbf{L.O.2.1:} Có thể áp dụng phong cách kiến trúc monolithic
+    \item \textbf{L.O.2.2:} Có thể áp dụng phong cách kiến trúc distributed
+\end{itemize}
+
+\subsection*{L.O.3: Áp dụng hiệu quả các chiến thuật thiết kế kiến trúc}
+\begin{itemize}
+    \item \textbf{L.O.3.1:} Phân tích tác động của đặc điểm kiến trúc lên việc đưa ra quyết định thiết kế
+    \item \textbf{L.O.3.2:} Phân tích trade-offs của kiến trúc phần mềm
+\end{itemize}
+
+\subsection*{L.O.4: Phát triển tài liệu kiến trúc phần mềm}
+\begin{itemize}
+    \item \textbf{L.O.4.1:} Trình bày các góc nhìn thiết kế khác nhau trong tài liệu
+    \item \textbf{L.O.4.2:} Sử dụng các loại sơ đồ khác nhau để tài liệu hóa kiến trúc phần mềm
+\end{itemize}
+
+\hrule
+
+\subsection{Phương thức đánh giá (Evaluation)}
+
+\begin{itemize}
+    \item \textbf{Group project:} 40\%
+    \item \textbf{Final exam:} 60\% 
+    \item \textbf{Group seminar/In-class exercises/homework:} bonus
+\end{itemize}
+
+\hrule
+
+\subsection{Tài liệu tham khảo}
+
+\begin{enumerate}
+    \item \textbf{[1]} Robert C. Martin, \textit{Clean Architecture: A Craftsman's Guide to Software Structure and Design}, Pearson; 1st edition (September 10, 2017), ISBN 978-0134494166
+
+    \item \textbf{[2]} Mark Richards, Neal Ford, \textit{Fundamentals of Software Architecture: An Engineering Approach}, O'Reilly Media; 1st edition (January 28, 2020), ISBN: 978-1492043454
+
+    \item \textbf{[3]} Paul Clements, Felix Bachmann, Len Bass, David Garlan, James Ivers, Reed Little, Paulo Merson, Robert Nord, Judith Stafford, \textit{Documenting Software Architectures: Views and Beyond}, 2nd edition, 2011, Addison-Wesley Professional, ISBN 978-0321552686
+
+    \item \textbf{[4]} Ian Sommerville, \textit{Software Engineering}, 10th edition, Pearson Education, 2011
+\end{enumerate}
+
+\hrule
+
+\subsection{CHƯƠNG 1: GIỚI THIỆU}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{architecture_blocks_3d}
+    \caption{Hình minh họa các khối 3D xếp chồng - biểu tượng của kiến trúc phần mềm}
+\end{figure}
+\subsection{Tổng quan về Thiết kế (Overview of Design)}
+
+\subsection{Mục tiêu của Kiến trúc Phần mềm}
+
+\begin{quote}
+\textbf{"Mục tiêu của kiến trúc phần mềm là tối thiểu hóa nguồn lực con người cần thiết để xây dựng và duy trì hệ thống yêu cầu"}
+\end{quote}
+
+\begin{quote}
+\textbf{"Thước đo chất lượng thiết kế chỉ đơn giản là thước đo của nỗ lực cần thiết để đáp ứng nhu cầu của khách hàng."}
+\end{quote}
+
+\begin{quote}
+\textbf{"Nếu nỗ lực đó thấp và duy trì thấp trong suốt vòng đời của hệ thống, thì thiết kế là tốt."}
+\end{quote}
+
+\subsection{Định nghĩa Kiến trúc từ các chuyên gia}
+
+\textbf{Martin Fowler:}
+\begin{quote}
+\textit{"Trong hầu hết các dự án phần mềm thành công, các nhà phát triển chuyên gia làm việc trên dự án đó có một sự hiểu biết chung về thiết kế hệ thống. Sự hiểu biết chung này được gọi là kiến trúc."}
+\end{quote}
+
+\textbf{ANSI/IEEE Std 1471-2000:}
+\begin{quote}
+\textit{"Kiến trúc là tổ chức cơ bản của một hệ thống, được thể hiện trong các thành phần của nó, mối quan hệ giữa chúng với nhau và với môi trường, và các nguyên tắc điều chỉnh thiết kế và tiến hóa của nó."}
+\end{quote}
+
+\textbf{SEI - Software Engineering Institute:}
+\begin{quote}
+\textit{"Kiến trúc phần mềm của một chương trình hoặc hệ thống máy tính là cấu trúc hoặc các cấu trúc của hệ thống, bao gồm các phần tử phần mềm, các thuộc tính có thể nhìn thấy bên ngoài của các phần tử đó, và mối quan hệ giữa chúng."}
+\end{quote}
+
+\textbf{Garlan and Shaw:}
+\begin{quote}
+\textit{"[Kiến trúc phần mềm] vượt ra ngoài các thuật toán và cấu trúc dữ liệu của tính toán; thiết kế và đặc tả cấu trúc hệ thống tổng thể xuất hiện như một loại vấn đề mới. Các vấn đề cấu trúc bao gồm tổ chức tổng thể và cấu trúc điều khiển toàn cục; các giao thức cho giao tiếp, đồng bộ hóa và truy cập dữ liệu; phân công chức năng cho các phần tử thiết kế; phân phối vật lý; thành phần của các phần tử thiết kế; mở rộng và hiệu suất; và lựa chọn giữa các phương án thiết kế."}
+\end{quote}
+
+\subsection{Định nghĩa Kiến trúc Phần mềm (Defining Software Architecture)}
+
+\subsection{Bốn chiều định nghĩa kiến trúc phần mềm}
+
+Theo Richards et al. (2020), kiến trúc phần mềm được định nghĩa bởi 4 chiều chính:
+
+\begin{enumerate}
+    \item \textbf{Cấu trúc của hệ thống (Structure)} - Cách tổ chức code và components
+    \item \textbf{Đặc điểm kiến trúc (Architecture Characteristics)} - Các yêu cầu phi chức năng ("-ilities") 
+    \item \textbf{Quyết định kiến trúc (Architecture Decisions)} - Các quy tắc và ràng buộc cứng
+    \item \textbf{Nguyên tắc thiết kế (Design Principles)} - Các hướng dẫn linh hoạt
+\end{enumerate}
+
+\textbf{Ví dụ minh họa:}
+\begin{itemize}
+    \item \textbf{Structure:} Sử dụng microservices thay vì monolithic
+    \item \textbf{Characteristics:} Hệ thống phải có availability 99.9\%
+    \item \textbf{Decisions:} Chỉ business layer được phép truy cập database
+    \item \textbf{Principles:} Ưu tiên async messaging giữa các services
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{four_dimensions_architecture}
+    \caption{Sơ đồ 4 chiều của kiến trúc phần mềm với các trục Architecture characteristics, Architecture decisions, Design principles, và Structure}
+\end{figure}
+
+\subsection{1. Cấu trúc của hệ thống (Structure of the system)}
+
+\textbf{Cấu trúc} đề cập đến loại phong cách kiến trúc được sử dụng trong hệ thống như:
+\begin{itemize}
+    \item Microservices
+    \item Layered (phân lớp)  
+    \item Microkernel
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{architecture_styles_comparison}
+    \caption{Các sơ đồ minh họa các phong cách kiến trúc khác nhau - Layered, Microservices, Microkernel}
+\end{figure}
+
+\subsection{2. Đặc điểm Kiến trúc (Architecture Characteristics)}
+
+\textbf{Đặc điểm kiến trúc} định nghĩa các tiêu chí thành công của một hệ thống, thường không liên quan trực tiếp đến chức năng business của hệ thống. Đây là các yêu cầu phi chức năng (non-functional requirements).
+
+\textbf{Các nhóm đặc điểm quan trọng:}
+
+\textbf{Nhóm Operational (Vận hành):}
+\begin{itemize}
+    \item \textbf{Availability} (Tính khả dụng): Hệ thống hoạt động 24/7, uptime 99.9\%
+    \item \textbf{Reliability} (Độ tin cậy): Hệ thống hoạt động đúng như mong đợi
+    \item \textbf{Scalability} (Khả năng mở rộng): Có thể tăng số lượng user từ 1000 lên 100,000
+    \item \textbf{Performance} (Hiệu suất): Response time < 200ms
+\end{itemize}
+
+\textbf{Nhóm Structural (Cấu trúc):}
+\begin{itemize}
+    \item \textbf{Security} (Bảo mật): Mã hóa dữ liệu, authentication, authorization
+    \item \textbf{Testability} (Tính kiểm thử được): Có thể viết unit test, integration test
+    \item \textbf{Deployability} (Khả năng triển khai): Deploy trong vòng 5 phút
+\end{itemize}
+
+\textbf{Nhóm Cross-cutting (Cắt ngang):}
+\begin{itemize}
+    \item \textbf{Agility} (Tính linh hoạt): Thay đổi requirements nhanh chóng
+    \item \textbf{Fault Tolerance} (Khả năng chịu lỗi): Hệ thống vẫn hoạt động khi một service bị lỗi
+    \item \textbf{Recoverability} (Khả năng phục hồi): Tự động backup và restore
+\end{itemize}
+
+\textbf{Ví dụ thực tế:} 
+Ứng dụng e-commerce cần:
+\begin{itemize}
+    \item Availability: 99.9\% uptime (chỉ được down 8.76 giờ/năm)
+    \item Scalability: Chịu được traffic gấp 10 lần trong Black Friday
+    \item Security: Bảo vệ thông tin thẻ tín dụng khách hàng
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{architecture_characteristics_matrix}
+    \caption{Ma trận các đặc điểm kiến trúc được sắp xếp trong sơ đồ 4 chiều}
+\end{figure}
+
+\subsection{3. Quyết định Kiến trúc (Architecture Decisions)}
+
+\textbf{Quyết định kiến trúc} định nghĩa các quy tắc về cách một hệ thống nên được xây dựng. Chúng tạo thành các ràng buộc của hệ thống và hướng dẫn nhóm phát triển về những gì được phép và không được phép.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{layered_architecture_rules}
+    \caption{Sơ đồ layered architecture với các quy tắc truy cập giữa các lớp, ví dụ "Only the business and services layer can access the persistence layer"}
+\end{figure}
+
+\subsection{4. Nguyên tắc Thiết kế (Design Principles)}
+
+\textbf{Nguyên tắc thiết kế} là các hướng dẫn để xây dựng hệ thống.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{microservices_design_principles}
+    \caption{Sơ đồ microservices với nguyên tắc "Whenever possible, leverage async messaging between services to increase performance"}
+\end{figure}
+
+\subsection{Sự khác biệt giữa Quyết định Kiến trúc và Nguyên tắc Thiết kế}
+
+\textbf{Điểm khác biệt cơ bản:}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{6cm}|p{6cm}|}
+\hline
+\textbf{Quyết định Kiến trúc} & \textbf{Nguyên tắc Thiết kế} \\
+\hline
+\textbf{Quy tắc cứng} (Hard rules) & \textbf{Hướng dẫn linh hoạt} (Guidelines) \\
+Bắt buộc tuân thủ & Có thể linh hoạt theo tình huống \\
+Có thể dùng "variance" để ngoại lệ & Tự nhiên cho phép ngoại lệ \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Ví dụ minh họa:}
+
+\textbf{Architecture Decision (Quy tắc cứng):}
+\begin{itemize}
+    \item "Database chỉ được truy cập thông qua Data Access Layer"
+    \item "Tất cả API phải sử dụng HTTPS"
+    \item "Mỗi microservice chỉ được có 1 database riêng"
+\end{itemize}
+
+\textbf{Design Principle (Hướng dẫn):}
+\begin{itemize}
+    \item "Ưu tiên sử dụng async messaging để cải thiện performance" 
+    \item "Code nên simple và readable trước khi optimize"
+    \item "Favor composition over inheritance"
+\end{itemize}
+
+\textbf{Tình huống thực tế:}
+Nếu có một service cần truy cập trực tiếp database để tối ưu performance trong trường hợp đặc biệt, architect có thể cho phép "variance" (ngoại lệ) cho quy tắc, nhưng vẫn giữ nguyên tắc hướng dẫn chung.
+
+\subsection{Kỳ vọng của một Kiến trúc sư (Expectations of an Architect)}
+
+\subsection{8 kỳ vọng cốt lõi của một kiến trúc sư phần mềm:}
+
+\begin{enumerate}
+    \item \textbf{Đưa ra quyết định kiến trúc}
+    \item \textbf{Liên tục phân tích kiến trúc} 
+    \item \textbf{Cập nhật với các xu hướng mới nhất}
+    \item \textbf{Đảm bảo tuân thủ các quyết định}
+    \item \textbf{Có kinh nghiệm đa dạng và phơi bày}
+    \item \textbf{Có kiến thức về lĩnh vực kinh doanh}
+    \item \textbf{Sở hữu kỹ năng giao tiếp cá nhân}
+    \item \textbf{Hiểu và điều hướng chính trị}
+\end{enumerate}
+
+\section*{Định luật của Kiến trúc Phần mềm (Laws of Software Architecture)}
+
+\subsection{Định luật Thứ nhất: "Everything is a Trade-off"}
+\begin{quote}
+\textbf{"Mọi thứ trong kiến trúc phần mềm đều là một trade-off."}
+\end{quote}
+
+\textbf{Giải thích:} Không có giải pháp hoàn hảo nào. Mọi quyết định kiến trúc đều có ưu và nhược điểm.
+
+\textbf{Ví dụ thực tế:}
+\begin{itemize}
+    \item \textbf{Microservices vs Monolithic:}
+    \begin{itemize}
+        \item Microservices: \checkmark Scalable, \texttimes Phức tạp về network, debugging
+        \item Monolithic: \checkmark Đơn giản deploy, debug, \texttimes Khó scale từng phần
+    \end{itemize}
+    
+    \item \textbf{SQL vs NoSQL:}
+    \begin{itemize}
+        \item SQL: \checkmark ACID, complex queries, \texttimes Khó scale horizontal
+        \item NoSQL: \checkmark Scale tốt, flexible schema, \texttimes Thiếu consistency guarantees
+    \end{itemize}
+\end{itemize}
+
+\textbf{Hệ quả 1:} Nếu một kiến trúc sư nghĩ rằng họ đã tìm ra giải pháp không có trade-off, rất có thể họ chưa nhận ra trade-off đó.
+
+\subsection{Định luật Thứ hai: "Why is more important than How"}
+\begin{quote}
+\textbf{"WHY (TẠI SAO) quan trọng hơn HOW (NHƯ THẾ NÀO)."}
+\end{quote}
+
+\textbf{Giải thích:} Hiểu lý do đằng sau quyết định quan trọng hơn việc biết cách triển khai.
+
+\textbf{Ví dụ thực tế:}
+\begin{itemize}
+    \item \textbf{Tại sao} chọn Redis cache? → Để giảm response time từ 500ms xuống 50ms
+    \item \textbf{Tại sao} dùng microservices? → Để nhiều team có thể develop độc lập
+    \item \textbf{Tại sao} chọn PostgreSQL? → Vì cần ACID compliance cho financial transactions
+\end{itemize}
+
+\textbf{Lợi ích của việc hiểu "Why":}
+\begin{itemize}
+    \item Giúp đưa ra quyết định tốt hơn trong tương lai
+    \item Team hiểu được context và rationale
+    \item Dễ dàng thay đổi khi requirements đổi
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{software_architecture_laws}
+    \caption{Sơ đồ minh họa hai định luật với boxes và arrows}
+\end{figure}
+
+\subsection{Tách biệt Mối quan tâm (Separation of Concerns)}
+
+\subsection{Nguyên tắc cơ bản}
+
+\textbf{Separation of Concerns} là nguyên tắc thiết kế cốt lõi: mỗi phần của hệ thống nên chịu trách nhiệm cho một mối quan tâm (concern) cụ thể và không nên quan tâm đến các vấn đề khác.
+
+\textbf{Cách triển khai:}
+\begin{itemize}
+    \item Tất cả các kiến trúc đều đạt được sự tách biệt này bằng cách \textbf{chia phần mềm thành các lớp}
+    \item Mỗi lớp có trách nhiệm riêng biệt và không can thiệp vào nhiệm vụ của lớp khác
+\end{itemize}
+
+\textbf{Ví dụ phân lớp cơ bản:}
+\begin{enumerate}
+    \item \textbf{Presentation Layer} - Chịu trách nhiệm về UI, user interactions
+    \item \textbf{Business Layer} - Chứa business logic, business rules  
+    \item \textbf{Data Access Layer} - Quản lý việc truy cập database
+    \item \textbf{Database Layer} - Lưu trữ dữ liệu
+\end{enumerate}
+
+\textbf{Ví dụ thực tế - Ứng dụng E-commerce:}
+
+\begin{verbatim}
+┌─────────────────────────────────┐
+│ PRESENTATION LAYER              │  
+│ - Web pages, Mobile app         │  ← Chỉ quan tâm đến UI/UX
+│ - Controllers, Views            │
+├─────────────────────────────────┤
+│ BUSINESS LAYER                  │
+│ - Order processing logic        │  ← Chỉ quan tâm đến business rules  
+│ - Inventory management          │
+│ - Payment validation            │
+├─────────────────────────────────┤
+│ DATA ACCESS LAYER               │
+│ - Repository patterns           │  ← Chỉ quan tâm đến data operations
+│ - ORM mappings                  │
+├─────────────────────────────────┤
+│ DATABASE LAYER                  │
+│ - Tables, Indexes, Constraints  │  ← Chỉ quan tâm đến data storage
+└─────────────────────────────────┘
+\end{verbatim}
+
+\subsection{Lợi ích của Separation of Concerns}
+
+\textbf{1. Maintainability (Dễ bảo trì):}
+\begin{itemize}
+    \item Thay đổi UI không ảnh hưởng đến business logic
+    \item Đổi database không cần sửa presentation layer
+\end{itemize}
+
+\textbf{2. Testability (Dễ test):}
+\begin{itemize}
+    \item Có thể test từng layer độc lập
+    \item Mock dependencies dễ dàng
+\end{itemize}
+
+\textbf{3. Team Collaboration:}
+\begin{itemize}
+    \item Frontend team làm presentation layer
+    \item Backend team làm business logic  
+    \item DBA team làm database layer
+\end{itemize}
+
+\subsection{Đặc điểm của kiến trúc tốt (Clean Architecture)}
+
+Kiến trúc tuân thủ Separation of Concerns sẽ có các đặc điểm:
+
+\begin{itemize}
+    \item \textbf{Độc lập với frameworks:} Không bị ràng buộc với Spring, .NET, etc.
+    \item \textbf{Có thể kiểm thử được:} Có thể test business logic mà không cần database
+    \item \textbf{Độc lập với UI:} Có thể thay web bằng mobile app mà không sửa business logic  
+    \item \textbf{Độc lập với database:} Có thể đổi MySQL thành PostgreSQL
+    \item \textbf{Độc lập với external agencies:} Không phụ thuộc vào third-party services
+\end{itemize}
+
+\textbf{Ví dụ vi phạm Separation of Concerns:}
+\begin{lstlisting}[language=Java]
+// BAD: Business logic trộn lẫn với data access
+public class OrderService {
+    public void processOrder(Order order) {
+        // Business logic
+        if (order.getTotal() > 1000) {
+            order.setDiscount(0.1);
+        }
+        
+        // Database access (vi phạm SoC)
+        Connection conn = DriverManager.getConnection("jdbc:mysql://...");
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO orders...");
+        // ...
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java]
+// GOOD: Tách biệt concerns
+public class OrderService {
+    private OrderRepository orderRepository;
+    
+    public void processOrder(Order order) {
+        // Chỉ quan tâm business logic
+        if (order.getTotal() > 1000) {
+            order.setDiscount(0.1);
+        }
+        
+        // Ủy thác data access cho repository
+        orderRepository.save(order);
+    }
+}
+\end{lstlisting}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{clean_architecture_diagram}
+    \caption{The Clean Architecture diagram - sơ đồ hình tròn với các lớp từ trong ra ngoài: Entities, Use Cases, Controllers/Gateways/Presenters, External Interfaces}
+\end{figure}
+
+\subsection{Giao điểm của Kiến trúc Phần mềm với DevOps, Processes và Data}
+
+\subsection{Operations/DevOps}
+
+\begin{itemize}
+    \item Giao điểm rõ ràng gần đây nhất giữa kiến trúc và các lĩnh vực liên quan xảy ra với sự ra đời của \textbf{DevOps}
+    \item Nhiều kiến trúc được thiết kế trong những năm 1990 và 2000 giả định rằng các kiến trúc sư không thể kiểm soát operations
+    \item Các hình thức kiến trúc mới kết hợp nhiều mối quan tâm vận hành với kiến trúc:
+    \begin{itemize}
+        \item \textbf{ESB-driven SOA}
+        \item \textbf{Microservices}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Process (Quy trình)}
+
+\begin{itemize}
+    \item Kiến trúc phần mềm phần lớn \textbf{trực giao} với quy trình phát triển phần mềm
+    \item Cách bạn xây dựng phần mềm (quy trình) có \textbf{ít tác động} đến kiến trúc phần mềm (cấu trúc)
+    \item Tuy nhiên, quy trình mà các nhóm phát triển phần mềm \textbf{có tác động} đến nhiều khía cạnh của kiến trúc phần mềm
+    \item Ví dụ: \textbf{Kiến trúc sư trong các dự án Agile}
+\end{itemize}
+
+\subsection{Data (Dữ liệu)}
+
+\begin{itemize}
+    \item Một tỷ lệ lớn việc phát triển ứng dụng nghiêm túc bao gồm \textbf{lưu trữ dữ liệu bên ngoài}, thường dưới dạng cơ sở dữ liệu quan hệ (hoặc ngày càng nhiều, NoSQL)
+    \item \textbf{Database administrators} thường làm việc cùng với kiến trúc sư để xây dựng kiến trúc dữ liệu cho các hệ thống phức tạp, phân tích cách các mối quan hệ và việc tái sử dụng sẽ ảnh hưởng đến một portfolio của các ứng dụng
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{architecture_styles_grid}
+    \caption{Grid của 8 sơ đồ kiến trúc khác nhau bao gồm Event Driven, Layered, Monolithic, Microservice, Pipe Filter, Peer-to-Peer, MVC, Primary Replica}
+\end{figure}
+
+\subsection{TÓM TẮT BÀI GIẢNG CHƯƠNG 1}
+
+\section*{Những điểm chính cần nhớ}
+
+\subsection*{1. Mục tiêu cốt lõi của Software Architecture}
+\begin{itemize}
+    \item \textbf{Mục tiêu chính:} Tối thiểu hóa nguồn lực con người cần thiết để xây dựng và duy trì hệ thống
+    \item \textbf{Thước đo chất lượng:} Nỗ lực cần thiết để đáp ứng nhu cầu khách hàng
+    \item \textbf{Thiết kế tốt:} Nỗ lực thấp và duy trì thấp trong suốt vòng đời hệ thống
+\end{itemize}
+
+\subsection*{2. Bốn chiều định nghĩa Software Architecture}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{3cm}|p{5cm}|p{4cm}|}
+\hline
+\textbf{Chiều} & \textbf{Định nghĩa} & \textbf{Ví dụ} \\
+\hline
+\textbf{Structure} & Cách tổ chức code & Microservices, Layered, Monolithic \\
+\textbf{Architecture Characteristics} & Yêu cầu phi chức năng & Performance, Security, Scalability \\
+\textbf{Architecture Decisions} & Quy tắc cứng & "Chỉ business layer truy cập database" \\
+\textbf{Design Principles} & Hướng dẫn linh hoạt & "Ưu tiên async messaging" \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection*{3. Hai định luật cơ bản}
+
+\textbf{Định luật 1:} Mọi thứ đều là trade-off
+\begin{itemize}
+    \item Không có giải pháp hoàn hảo
+    \item Mọi quyết định có ưu và nhược điểm
+    \item Ví dụ: Microservices (scalable nhưng phức tạp) vs Monolithic (đơn giản nhưng khó scale)
+\end{itemize}
+
+\textbf{Định luật 2:} WHY quan trọng hơn HOW
+\begin{itemize}
+    \item Hiểu lý do đằng sau quyết định
+    \item Giúp đưa ra quyết định tốt hơn trong tương lai
+    \item Ví dụ: Tại sao chọn Redis? → Để giảm response time
+\end{itemize}
+
+\subsection*{4. Tám kỳ vọng của Software Architect}
+
+\begin{enumerate}
+    \item \textbf{Đưa ra quyết định kiến trúc} - Chọn technology stack, architecture patterns
+    \item \textbf{Liên tục phân tích kiến trúc} - Monitor performance, identify bottlenecks  
+    \item \textbf{Cập nhật xu hướng mới} - Theo dõi new technologies, best practices
+    \item \textbf{Đảm bảo tuân thủ} - Code review, architecture compliance
+    \item \textbf{Kinh nghiệm đa dạng} - Nhiều domains, technologies, platforms
+    \item \textbf{Kiến thức business} - Hiểu requirements, constraints, goals
+    \item \textbf{Kỹ năng giao tiếp} - Present ideas, collaborate với teams
+    \item \textbf{Navigate politics} - Stakeholder management, consensus building
+\end{enumerate}
+
+\subsection*{5. Separation of Concerns - Nguyên tắc cốt lõi}
+
+\textbf{Định nghĩa:} Mỗi phần của hệ thống chịu trách nhiệm cho một mối quan tâm cụ thể
+
+\textbf{Cách triển khai:} Chia thành các layers
+\begin{itemize}
+    \item Presentation Layer (UI/UX)
+    \item Business Layer (Logic)  
+    \item Data Access Layer (Database operations)
+    \item Database Layer (Storage)
+\end{itemize}
+
+\textbf{Lợi ích:}
+\begin{itemize}
+    \item Dễ maintain và test
+    \item Teams có thể làm việc độc lập
+    \item Thay đổi một layer không ảnh hưởng layer khác
+\end{itemize}
+
+\subsection*{6. Đặc điểm của kiến trúc tốt}
+\begin{itemize}
+    \item Độc lập với frameworks
+    \item Có thể kiểm thử được
+    \item Độc lập với UI  
+    \item Độc lập với database
+    \item Độc lập với external services
+\end{itemize}
+
+\subsection*{7. Giao điểm với các lĩnh vực khác}
+
+\textbf{DevOps:} Kiến trúc hiện đại (Microservices) kết hợp operational concerns\\
+\textbf{Process:} Architecture orthogonal với development process nhưng ảnh hưởng đến cách làm việc\\
+\textbf{Data:} Cần phối hợp với DBA để thiết kế data architecture
+
+\section*{Khái niệm quan trọng cần hiểu}
+
+\textbf{Trade-off:} Luôn có sự đánh đổi trong mọi quyết định kiến trúc\\
+\textbf{Architecture Characteristics:} Các yêu cầu phi chức năng như performance, security\\
+\textbf{Variance:} Ngoại lệ cho architecture decisions trong trường hợp đặc biệt\\
+\textbf{Clean Architecture:} Kiến trúc tuân thủ separation of concerns
+
+\section*{Ứng dụng thực tế}
+
+Khi thiết kế một hệ thống mới, architect cần:
+\begin{enumerate}
+    \item Xác định architecture characteristics cần thiết
+    \item Chọn architecture style phù hợp
+    \item Đưa ra architecture decisions và design principles
+    \item Đảm bảo separation of concerns
+    \item Cân nhắc trade-offs của mỗi quyết định
+    \item Ghi document lý do (WHY) đằng sau mỗi quyết định
+\end{enumerate}
+
+\textbf{Chapter 1 đặt nền móng cho toàn bộ môn học bằng cách giới thiệu vocabulary và concepts cơ bản mà chúng ta sẽ sử dụng trong các chương tiếp theo.}
+
+\subsection{CÂU HỎI VÀ ĐÁP ÁN THỰC TIỄN}
+
+\subsubsection{Architecture Design vs Software Design}
+
+\textbf{Câu hỏi:} Sự khác biệt giữa Architecture Design và Software Design?
+
+\textbf{Architecture Design} = \textbf{"Thiết kế tổng thể thành phố"}\\
+\textbf{Software Design} = \textbf{"Thiết kế chi tiết từng ngôi nhà"}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{2.5cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Khía cạnh} & \textbf{Architecture Design} & \textbf{Software Design} \\
+\hline
+\textbf{Scope} & Toàn hệ thống & Module/Component cụ thể \\
+\textbf{Timeline} & Long-term (năm) & Short-term (tuần, tháng) \\
+\textbf{Cost to change} & Rất cao & Thấp đến trung bình \\
+\textbf{Focus} & Structure, patterns, platforms & Classes, methods, algorithms \\
+\textbf{Stakeholders} & Business, architects, senior devs & Developers, tech leads \\
+\textbf{Documentation} & Architecture diagrams, ADRs & UML, code comments \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection*{Ví dụ thực tiễn: E-commerce System}
+
+\textbf{Architecture Design Level:}
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────┐
+│                E-COMMERCE SYSTEM                        │
+│                                                         │
+│  Web App     Mobile App     Admin Portal               │
+│     │            │              │                      │
+│     └────────────┼──────────────┘                      │
+│                  │                                     │
+│            API Gateway                                  │
+│                  │                                     │
+│    ┌─────────────┼─────────────────────────────────┐    │
+│    │             │                                 │    │
+│    v             v                                 v    │
+│                                                         │
+│ Product Service  User Service  Order Service  Payment  │
+│     │               │              │         Service   │
+│     │               │              │              │    │
+│     v               v              v              v    │
+│                                                         │
+│ Product DB      User DB       Order DB       Payment DB│
+│                                                         │
+│           Message Queue (Kafka)                        │
+└─────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\textbf{Quyết định Architecture:}
+\begin{itemize}
+    \item Microservices architecture
+    \item Database per service  
+    \item REST API + Message Queue
+    \item Docker + Kubernetes deployment
+\end{itemize}
+
+\textbf{Software Design Level (Product Service):}
+\begin{lstlisting}[language=Java, caption=Package Structure và Entity Design]
+// Package Structure
+com.ecommerce.product
+├── controller/
+│   └── ProductController.java
+├── service/
+│   └── ProductService.java  
+├── repository/
+│   └── ProductRepository.java
+├── entity/
+│   └── Product.java
+└── dto/
+    └── ProductDTO.java
+
+// Entity Design
+@Entity
+public class Product {
+    @Id
+    private Long id;
+    private String name;
+    private BigDecimal price;
+    private Integer stock;
+    private LocalDateTime createdAt;
+}
+
+// Service Design
+@Service
+public class ProductService {
+    public ProductDTO findById(Long id) {
+        // Implementation details
+    }
+    
+    public ProductDTO createProduct(ProductCreateRequest request) {
+        // Validation, business logic, save
+    }
+}
+\end{lstlisting}
+
+\textbf{Mối quan hệ:} Architecture Design đặt \textbf{constraints} cho Software Design:
+\begin{itemize}
+    \item Architecture: "Database per service" → Software: ProductService chỉ truy cập Product DB
+    \item Architecture: "REST API" → Software: ProductController expose REST endpoints
+\end{itemize}
+
+\subsubsection{Design Principles vs Design Patterns}
+
+\textbf{Câu hỏi:} Sự khác biệt giữa Design Principles và Design Patterns?
+
+\textbf{Design Principles} = \textbf{"Quy tắc viết code tốt"}\\
+\textbf{Design Patterns} = \textbf{"Template code có sẵn"}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{3cm}|p{5cm}|p{5cm}|}
+\hline
+& \textbf{Design Principles} & \textbf{Design Patterns} \\
+\hline
+\textbf{Là gì?} & Quy tắc, nguyên tắc & Code template có sẵn \\
+\textbf{Mục đích} & Đánh giá code tốt/xấu & Copy paste để giải quyết vấn đề \\
+\textbf{Câu hỏi} & "Code này có tốt không?" & "Làm sao implement cái này?" \\
+\textbf{Kết quả} & Biết đúng/sai & Có code để dùng ngay \\
+\textbf{Ví dụ} & "1 class chỉ làm 1 việc" & "Dùng Strategy cho nhiều algorithms" \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection*{Ví dụ thực tiễn: Payment System}
+
+\textbf{Design Principle - Single Responsibility:}
+\begin{lstlisting}[language=Java, caption=Vi phạm và tuân thủ Single Responsibility]
+// ❌ VI PHẠM - PaymentProcessor làm quá nhiều việc
+class PaymentProcessor {
+    public void processPayment(Payment payment) {
+        // Validate payment
+        if (payment.getAmount() <= 0) throw new InvalidAmountException();
+        
+        // Process payment  
+        chargeCard(payment);
+        
+        // Log transaction
+        System.out.println("Payment processed: " + payment.getId());
+        
+        // Send notification
+        emailService.sendConfirmation(payment.getCustomerEmail());
+    }
+}
+
+// ✅ TUÂN THỦ - Mỗi class làm 1 việc
+class PaymentProcessor {
+    public void processPayment(Payment payment) {
+        chargeCard(payment); // Chỉ xử lý payment
+    }
+}
+
+class PaymentValidator {
+    public void validate(Payment payment) {
+        if (payment.getAmount() <= 0) throw new InvalidAmountException();
+    }
+}
+
+class PaymentLogger {
+    public void log(Payment payment) {
+        System.out.println("Payment processed: " + payment.getId());
+    }
+}
+\end{lstlisting}
+
+\textbf{Design Pattern - Strategy Pattern:}
+\begin{lstlisting}[language=Java, caption=Strategy Pattern Implementation]
+// Template có sẵn để handle nhiều payment methods
+interface PaymentStrategy {
+    void pay(double amount);
+}
+
+class CreditCardPayment implements PaymentStrategy {
+    public void pay(double amount) {
+        System.out.println("Paid " + amount + " using Credit Card");
+    }
+}
+
+class PayPalPayment implements PaymentStrategy {
+    public void pay(double amount) {
+        System.out.println("Paid " + amount + " using PayPal");
+    }
+}
+
+class PaymentContext {
+    private PaymentStrategy strategy;
+    
+    public void setPaymentStrategy(PaymentStrategy strategy) {
+        this.strategy = strategy;
+    }
+    
+    public void processPayment(double amount) {
+        strategy.pay(amount);
+    }
+}
+\end{lstlisting}
+
+\textbf{Mối quan hệ:} \textbf{Principles → Patterns}: Design Patterns implement Design Principles
+\begin{itemize}
+    \item Open/Closed Principle → Strategy Pattern
+    \item Dependency Inversion → Factory Pattern
+\end{itemize}
+
+\subsubsection{Trade-offs trong Software Architecture}
+
+\textbf{Câu hỏi:} Tại sao "Everything is a trade-off" là định luật quan trọng?
+
+\textbf{Trả lời:} Không có giải pháp hoàn hảo. Mọi quyết định architecture đều có ưu và nhược điểm.
+
+\subsection*{Ví dụ thực tiễn:}
+
+\textbf{Microservices vs Monolithic:}
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{3cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+& \textbf{Microservices} & \textbf{Monolithic} \\
+\hline
+\textbf{Ưu điểm} & \checkmark Scalable từng service & \checkmark Đơn giản deploy \\
+& \checkmark Technology diversity & \checkmark Dễ debug \\
+& \checkmark Team independence & \checkmark Performance tốt \\
+\hline
+\textbf{Nhược điểm} & \texttimes Network complexity & \texttimes Khó scale từng phần \\
+& \texttimes Data consistency & \texttimes Technology lock-in \\
+& \texttimes Debugging khó & \texttimes Team coupling \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{SQL vs NoSQL:}
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{3cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+& \textbf{SQL (PostgreSQL)} & \textbf{NoSQL (MongoDB)} \\
+\hline
+\textbf{Ưu điểm} & \checkmark ACID compliance & \checkmark Horizontal scaling \\
+& \checkmark Complex queries & \checkmark Flexible schema \\
+& \checkmark Mature ecosystem & \checkmark High performance \\
+\hline
+\textbf{Nhược điểm} & \texttimes Vertical scaling limit & \texttimes Eventual consistency \\
+& \texttimes Schema rigidity & \texttimes Limited query capabilities \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Khi nào chọn gì:}
+\begin{itemize}
+    \item \textbf{Microservices}: Khi có nhiều teams, cần scale khác nhau, ok với complexity
+    \item \textbf{Monolithic}: Khi team nhỏ, requirements đơn giản, cần time-to-market nhanh
+    \item \textbf{SQL}: Khi cần ACID, complex relationships, financial data
+    \item \textbf{NoSQL}: Khi cần scale massive, flexible schema, simple queries
+\end{itemize}
+
+\subsubsection{Separation of Concerns - Thực hành}
+
+\textbf{Câu hỏi:} Làm thế nào áp dụng Separation of Concerns trong thực tế?
+
+\subsection*{Ví dụ: Library Management System}
+
+\textbf{Phân lớp rõ ràng:}
+\begin{verbatim}
+┌─────────────────────────────────┐
+│ PRESENTATION LAYER              │  
+│ - Controllers, DTOs             │  ← Chỉ quan tâm HTTP, JSON
+│ - Input validation              │
+├─────────────────────────────────┤
+│ BUSINESS LAYER                  │
+│ - Book lending logic            │  ← Chỉ quan tâm business rules
+│ - Fine calculation              │
+│ - Member management             │
+├─────────────────────────────────┤
+│ DATA ACCESS LAYER               │
+│ - Repositories                  │  ← Chỉ quan tâm database operations
+│ - Query building                │
+├─────────────────────────────────┤
+│ DATABASE LAYER                  │
+│ - Tables, Indexes               │  ← Chỉ quan tâm data storage
+└─────────────────────────────────┘
+\end{verbatim}
+
+\textbf{Code Implementation:}
+\begin{lstlisting}[language=Java, caption=Separation of Concerns Implementation]
+// PRESENTATION LAYER
+@RestController
+public class BookController {
+    private BookService bookService;
+    
+    @PostMapping("/books/{id}/borrow")
+    public ResponseEntity<String> borrowBook(@PathVariable Long id, @RequestParam Long memberId) {
+        bookService.borrowBook(id, memberId);
+        return ResponseEntity.ok("Book borrowed successfully");
+    }
+}
+
+// BUSINESS LAYER  
+@Service
+public class BookService {
+    private BookRepository bookRepository;
+    private MemberRepository memberRepository;
+    
+    public void borrowBook(Long bookId, Long memberId) {
+        Book book = bookRepository.findById(bookId);
+        Member member = memberRepository.findById(memberId);
+        
+        // BUSINESS LOGIC - chỉ ở đây
+        if (book.isAvailable() && member.canBorrowMore()) {
+            book.setStatus(BookStatus.BORROWED);
+            book.setBorrower(member);
+            book.setBorrowDate(LocalDate.now());
+            
+            bookRepository.save(book);
+        }
+    }
+}
+
+// DATA ACCESS LAYER
+@Repository
+public class BookRepository {
+    public Book findById(Long id) {
+        // Database query logic
+    }
+    
+    public void save(Book book) {
+        // Database save logic  
+    }
+}
+\end{lstlisting}
+
+\textbf{Lợi ích thực tế:}
+\begin{itemize}
+    \item \textbf{Thay đổi UI} (Web → Mobile): Chỉ sửa Presentation Layer
+    \item \textbf{Đổi Database} (MySQL → PostgreSQL): Chỉ sửa Data Access Layer  
+    \item \textbf{Thay đổi Business Rule}: Chỉ sửa Business Layer
+    \item \textbf{Testing}: Mock từng layer độc lập
+\end{itemize}
+
+\subsubsection{Architecture Characteristics trong thực tế}
+
+\textbf{Câu hỏi:} Làm thế nào định nghĩa và đo lường Architecture Characteristics?
+
+\subsection*{Ví dụ: E-commerce Platform}
+
+\textbf{Requirements Analysis:}
+\begin{verbatim}
+Business Requirements:
+- Black Friday có thể có traffic gấp 50 lần bình thường
+- Hệ thống thanh toán không được down > 1 phút/tháng  
+- User phải thấy product trong < 2 giây
+- Comply với PCI DSS cho payment data
+- Có thể deploy new features mỗi tuần
+\end{verbatim}
+
+\textbf{Chuyển thành Architecture Characteristics:}
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{4cm}|}
+\hline
+\textbf{Characteristic} & \textbf{Definition} & \textbf{Measurement} & \textbf{Implementation} \\
+\hline
+\textbf{Scalability} & Handle 50x traffic spike & RPS: 1000 → 50000 & Auto-scaling, Load balancers \\
+\textbf{Availability} & 99.99\% uptime & Downtime < 4.32 min/month & Multi-AZ deployment, Circuit breakers \\
+\textbf{Performance} & Fast response time & Page load < 2 seconds & CDN, Caching, DB optimization \\
+\textbf{Security} & Protect payment data & PCI DSS compliance & Encryption, Tokenization, WAF \\
+\textbf{Deployability} & Frequent releases & Weekly deployments & CI/CD, Blue-Green deployment \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Architecture Decisions dựa trên Characteristics:}
+\begin{itemize}
+    \item \textbf{Scalability} → Microservices + Auto Scaling Groups
+    \item \textbf{Availability} → Multi-region deployment + Health checks  
+    \item \textbf{Performance} → Redis cache + CDN + Database indexing
+    \item \textbf{Security} → API Gateway + OAuth2 + Encrypted storage
+    \item \textbf{Deployability} → Container deployment + Feature flags
+\end{itemize}
+
+\subsubsection{WHY vs HOW - Practical Application}
+
+\textbf{Câu hỏi:} Tại sao "WHY is more important than HOW"?
+
+\subsection*{Ví dụ thực tiễn:}
+
+\textbf{Scenario: Team muốn migrate từ MySQL sang MongoDB}
+
+\textbf{HOW-focused approach:}
+\begin{itemize}
+    \item "MongoDB có flexible schema"
+    \item "NoSQL performance tốt hơn"  
+    \item "Trendy technology"
+\end{itemize}
+
+\textbf{WHY-focused approach:}
+\begin{itemize}
+    \item \textbf{WHY migrate?} "Current MySQL setup không handle được 10M+ records query trong acceptable time"
+    \item \textbf{WHY MongoDB?} "Cần horizontal sharding cho specific use case của recommendation engine"
+    \item \textbf{WHY now?} "Customer complaints về slow product search tăng 300\% last month"
+\end{itemize}
+
+\textbf{Kết quả:}
+\begin{itemize}
+    \item \textbf{HOW approach:} Có thể choose wrong solution (MongoDB không phù hợp cho transactional data)
+    \item \textbf{WHY approach:} Đưa ra informed decision (có thể MongoDB đúng cho recommendation, nhưng giữ MySQL cho transactions)
+\end{itemize}
+
+\subsection*{Documentation Template:}
+
+\begin{verbatim}
+# Architecture Decision Record (ADR)
+
+## Decision: Implement Redis Caching Layer
+
+### WHY (Context & Problem):
+- Current database response time: 500-800ms for product queries
+- Peak traffic (Black Friday) causes 2-3 second delays  
+- Customer satisfaction dropping due to slow page loads
+- Database CPU hitting 90% during normal operations
+
+### WHAT (Decision):
+Implement Redis as caching layer for product catalog data
+
+### HOW (Implementation):
+- Redis Cluster with 3 nodes
+- Cache-aside pattern
+- 1-hour TTL for product data
+- Cache warming for popular products
+
+### TRADE-OFFS:
+- Pro: 90% reduction in response time, better scalability
+- Con: Added complexity, potential cache inconsistency, extra infrastructure cost
+
+### ALTERNATIVES CONSIDERED:
+- Database optimization: Limited impact, expensive
+- CDN only: Doesn't help with dynamic content
+- Application-level caching: Doesn't scale across services
+\end{verbatim}
+
+\section*{Tóm tắt các khái niệm quan trọng}
+
+\subsection*{Architecture vs Design}
+\begin{itemize}
+    \item \textbf{Architecture}: Structure, patterns, high-level decisions
+    \item \textbf{Design}: Implementation details, classes, methods
+\end{itemize}
+
+\subsection*{Principles vs Patterns}
+\begin{itemize}
+    \item \textbf{Principles}: Rules to judge good/bad code
+    \item \textbf{Patterns}: Templates to solve common problems
+\end{itemize}
+
+\subsection*{Trade-offs}
+\begin{itemize}
+    \item \textbf{Luôn có}: Không có silver bullet solution
+    \item \textbf{Cần evaluate}: Pros/cons của mỗi choice
+    \item \textbf{Context matter}: Quyết định phụ thuộc vào tình huống cụ thể
+\end{itemize}
+
+\subsection*{Separation of Concerns}
+\begin{itemize}
+    \item \textbf{Mỗi component}: Chỉ quan tâm 1 responsibility
+    \item \textbf{Loose coupling}: Components ít phụ thuộc lẫn nhau
+    \item \textbf{High cohesion}: Elements trong component work together
+\end{itemize}
+
+\subsection*{Architecture Characteristics}
+\begin{itemize}
+    \item \textbf{Non-functional requirements}: Performance, security, scalability
+    \item \textbf{Measurable}: Cần có metrics cụ thể
+    \item \textbf{Drive decisions}: Architecture được design để meet những characteristics này
+\end{itemize}
+
+\subsection*{Decision Making}
+\begin{itemize}
+    \item \textbf{WHY important}: Understand context và rationale
+    \item \textbf{Document decisions}: ADRs cho future reference
+    \item \textbf{Clear authority}: Ai decide gì ở level nào
+\end{itemize}
+
+\textbf{Kết luận:} Chapter 1 đặt foundation cho toàn bộ môn học bằng cách định nghĩa vocabulary, concepts và principles cơ bản. Hiểu rõ những concepts này là prerequisite để học các chương tiếp theo về SOLID principles, architectural patterns và design practices.
