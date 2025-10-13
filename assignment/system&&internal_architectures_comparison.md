@@ -64,7 +64,34 @@ Hai loại "kiến trúc" này hoạt động ở **hai cấp độ khác nhau**
 
 ---
 
-## 3. Bảng So Sánh Chi Tiết Các Mẫu Kiến Trúc Hệ Thống (System Architecture)
+## 3. Bảng So Sánh Chi Tiết Các Phong Cách Kiến Trúc Hệ Thống
+
+### 3.1. Ma Trận Đặc Điểm Kiến Trúc (Architecture Characteristics Matrix)
+
+Bảng dưới đây so sánh 8 phong cách kiến trúc phổ biến dựa trên 13 đặc điểm quan trọng:
+
+| **Đặc Điểm / Tiêu Chí** | **Layered** | **Modular Monolith** | **Microkernel** | **Microservices** | **Service-based** | **Service-oriented (SOA)** | **Event-driven** | **Space-based** |
+|-------------------------|-------------|----------------------|-----------------|-------------------|-------------------|----------------------------|------------------|-----------------|
+| **Partitioning** | Technical | Domain | Technical | Domain | Domain | Technical | Technical | Technical |
+| **Cost** | $ | $ | $ | $$$$$ | $$ | $$$$$ | $$ | $$$$$ |
+| **Maintainability** | ⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **Testability** | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐ | ⭐⭐ | ⭐ |
+| **Deployability** | ⭐ | ⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **Simplicity** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ | ⭐⭐ | ⭐ | ⭐⭐ | ⭐ |
+| **Scalability** | ⭐ | ⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **Elasticity** | ⭐ | ⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **Responsiveness** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **Fault-tolerance** | ⭐ | ⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **Evolvability** | ⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **Abstraction** | ⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ |
+| **Interoperability** | ⭐ | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ |
+
+**Chú thích:**
+- **Partitioning:** Technical (phân chia theo kỹ thuật) vs Domain (phân chia theo nghiệp vụ)
+- **Cost:** $ (thấp) → $$$$$ (rất cao)
+- **Đặc điểm khác:** ⭐ (kém) → ⭐⭐⭐⭐⭐ (xuất sắc)
+
+### 3.2. Bảng So Sánh Mở Rộng (Theo Use Case)
 
 | **Tiêu chí**                | **Monolithic**                                     | **Microservices**                                           | **SOA (Service-Oriented Architecture)**                       | **Event-Driven Architecture (EDA)**                         | **Serverless**                                             |
 |-----------------------------|----------------------------------------------------|-------------------------------------------------------------|---------------------------------------------------------------|-------------------------------------------------------------|------------------------------------------------------------|
