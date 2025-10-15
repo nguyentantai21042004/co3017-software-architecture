@@ -516,3 +516,113 @@
 - Postman (API testing)
 - Docker (containerization)
 - Git/GitHub (version control)
+
+## Kế Hoạch Chi Tiết 14 Ngày & Giao Phẩm (Phase 1 Finalization)
+
+---
+
+### Giai đoạn I: Đảm bảo Nền tảng và Quyết định Cấu trúc (Ngày 1–5)
+
+Giai đoạn này tập trung vào sự đồng thuận về yêu cầu, mô hình hóa domain, và quyết định kiến trúc cấp cao.
+
+| **Ngày** | **Nhiệm vụ chi tiết** | **Giao phẩm Cần đạt (Output)** | **Phân công** |
+|----------|----------------------|-------------------------------|---------------|
+| **1** | **Chốt Yêu cầu (1.1 Finalization):**<br>Kiểm tra chéo toàn bộ FRs, NFRs/ACs và User Stories. Đảm bảo mỗi FR đều có ACs hỗ trợ. | **Tài liệu Specification Final:**<br>Bảng FRs, ACs/Trade-offs đã được ký xác nhận. | Dev 1 |
+| **2-3** | **Kiểm tra Domain Model:**<br>Review lại các Aggregates (LearnerModel, Content), Domain Services (ScoringEngine). Xác nhận ranh giới này tuân thủ SRP. | **Domain Model Verification Report:**<br>Xác nhận các Boundary của 5 Services là hợp lý và tuân thủ SRP. | Dev 2 |
+| **4-5** | **Chốt Quyết định Cấu trúc (1.3 & 1.5):**<br>Xác nhận ADR-1 (Microservices) và ADR-5 (Polyglot Programming). Phân bổ Service và Stack cuối cùng. | **ADR-1 & ADR-5 Final:**<br>Chốt 5 Microservice và Stack (Golang/Java/Postgres) cho từng Service. | Dev 1 & Lead |
+
+**Mục tiêu Giai đoạn I:**
+- ✅ Specification hoàn chỉnh và được phê duyệt
+- ✅ Domain boundaries rõ ràng (5 services)
+- ✅ Architecture decisions đã được documented (ADR)
+
+---
+
+### Giai đoạn II: Trực quan hóa và Triển khai (Ngày 6–10)
+
+Giai đoạn này tập trung vào việc tạo ra các sơ đồ kiến trúc (Views) và quyết định quy tắc kỹ thuật.
+
+| **Ngày** | **Nhiệm vụ chi tiết** | **Giao phẩm Cần đạt (Output)** | **Phân công** |
+|----------|----------------------|-------------------------------|---------------|
+| **6-7** | **Module Views (1.4.1):**<br>Vẽ Internal Clean Architecture Diagram cho Service Golang (Scoring Engine). Thể hiện rõ các Interfaces (Abstraction) và Implementations (Concretion). | **Clean Architecture Diagram:**<br>Sơ đồ 4 lớp (Domain → Infrastructure) với các Interfaces cốt lõi. | Dev 2 |
+| **8-9** | **Component-and-Connector & Allocation Views (1.4.2 & 1.4.3):**<br>Vẽ Container Diagram (dựa trên ADR-1, ADR-2) và Deployment Diagram (Kubernetes, Polyglot DBs). | **Diagrams Set:**<br>1. Container Diagram<br>2. Deployment Diagram (K8s/DBs)<br>3. Sequence Diagram (UC-L-02) | Dev 3 |
+| **10** | **Chốt Quyết định Kỹ thuật (1.5):**<br>Lead review ADR-2 (Kafka), ADR-3 (Clean Arch), và ADR-4 (Polyglot Persistence). Đảm bảo chúng phù hợp với các Diagrams (I-II). | **ADR Finalization Report:**<br>Ký xác nhận các quyết định về Công nghệ Giao tiếp (Kafka) và Chiến lược DB (Postgres/NoSQL/Redis). | Lead |
+
+**Mục tiêu Giai đoạn II:**
+- ✅ Architecture views hoàn chỉnh (Module, C&C, Allocation)
+- ✅ Technical ADRs được finalized
+- ✅ Diagrams ready cho presentation
+
+---
+
+### Giai đoạn III: Chứng minh SOLID và Tổng kết (Ngày 11–14)
+
+Giai đoạn này tập trung vào việc chứng minh sự tuân thủ SOLID (1.6) và báo cáo cuối cùng (1.7).
+
+| **Ngày** | **Nhiệm vụ chi tiết** | **Giao phẩm Cần đạt (Output)** | **Phân công** |
+|----------|----------------------|-------------------------------|---------------|
+| **11-12** | **Chứng minh SOLID (1.6) - Part 1:**<br>Lấy ví dụ SRP & DIP (Golang/Java) cho Adaptive Engine và OCP (Strategy Pattern) cho Scoring Engine. | **SOLID Code Examples:**<br>Tài liệu hóa các ví dụ thiết kế Class/Interface để chứng minh tuân thủ SRP, OCP, DIP. | Dev 1 |
+| **13** | **Chứng minh SOLID (1.6) - Part 2:**<br>Lấy ví dụ ISP (Interface Segregation) cho LearnerModel Repository và LSP (Inheritance Design) cho các loại Assessment. | **SOLID Design Documentation:**<br>Tài liệu hóa các ví dụ thiết kế Class/Interface để chứng minh tuân thủ ISP, LSP. | Dev 2 |
+| **14** | **Kiểm tra cuối cùng & Báo cáo (1.7):**<br>Lead thực hiện kiểm tra chéo cuối cùng của toàn bộ tài liệu Phase 1. Dev 3 tổng hợp Reflection Report. | **Tài liệu Phase 1 Hoàn chỉnh (Final Delivery):**<br>Bao gồm Reflection Report. Sẵn sàng chuyển sang Phase 2: Code. | Lead & Dev 3 |
+
+**Mục tiêu Giai đoạn III:**
+- ✅ SOLID principles được chứng minh với code examples
+- ✅ Reflection report hoàn chỉnh
+- ✅ Phase 1 deliverables sẵn sàng submit
+
+---
+
+### Checklist Giao Phẩm Phase 1 (14-Day Sprint)
+
+#### 📋 **Documentation Deliverables**
+- [ ] 1.1 Specification Final (FRs, NFRs, ACs, Trade-offs)
+- [ ] 1.2 Domain Model Verification Report
+- [ ] 1.3 Architecture Style Decision (ADR-1)
+- [ ] 1.4 Architecture Views:
+  - [ ] Module View (Clean Architecture)
+  - [ ] Component & Connector View (Container Diagram)
+  - [ ] Allocation View (Deployment Diagram)
+  - [ ] Sequence Diagram (UC-L-02)
+- [ ] 1.5 ADR Finalization:
+  - [ ] ADR-2: Event-Driven (Kafka)
+  - [ ] ADR-3: Clean Architecture
+  - [ ] ADR-4: Polyglot Persistence
+  - [ ] ADR-5: Polyglot Programming
+- [ ] 1.6 SOLID Principles Documentation:
+  - [ ] SRP examples (Golang/Java)
+  - [ ] OCP examples (Strategy Pattern)
+  - [ ] LSP examples (Assessment types)
+  - [ ] ISP examples (Repository interfaces)
+  - [ ] DIP examples (Adaptive Engine)
+- [ ] 1.7 Reflection Report
+
+#### 🎯 **Quality Gates**
+- [ ] All FRs mapped to ACs
+- [ ] All 5 service boundaries verified (SRP)
+- [ ] All ADRs reviewed and signed off
+- [ ] All diagrams peer-reviewed
+- [ ] SOLID examples validated with code
+
+---
+
+### Timeline Visualization
+
+```
+Week 1: Foundation & Structure
+├── Day 1    │ Specification Finalization
+├── Day 2-3  │ Domain Model Verification  
+├── Day 4-5  │ ADR-1 & ADR-5 Finalization
+└─────────────────────────────────────────
+
+Week 2: Visualization & SOLID
+├── Day 6-7  │ Module Views (Clean Arch)
+├── Day 8-9  │ C&C + Allocation Views
+├── Day 10   │ ADR-2,3,4 Finalization
+├── Day 11-12│ SOLID Examples (SRP,OCP,DIP)
+├── Day 13   │ SOLID Examples (ISP,LSP)
+└── Day 14   │ Final Review & Reflection Report
+```
+
+**Critical Path:** Ngày 1 → Ngày 2-3 → Ngày 4-5 → Ngày 10 → Ngày 14
+
+---
