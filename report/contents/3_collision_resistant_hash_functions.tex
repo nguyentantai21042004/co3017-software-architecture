@@ -1,0 +1,171 @@
+
+\section{Hàm Băm Chống Va Chạm (Collision-Resistant Hash Functions)}
+
+\subsection{Câu 1. (15 điểm) Thuộc tính Hàm băm}
+
+\subsubsection{(a) (5 điểm) Khả năng chống va chạm (Collision Resistance)}
+
+\textbf{Yêu cầu:}
+\begin{enumerate}
+    \item Giải thích tại sao va chạm phải tồn tại trong bất kỳ hàm băm nào ánh xạ đầu vào có độ dài tùy ý sang đầu ra có độ dài cố định.
+    \item Sử dụng nghịch lý sinh nhật (birthday paradox), tính toán xấp xỉ số lượng băm phải được tính để tìm va chạm với xác suất 50\% trong một hàm băm an toàn 256-bit.
+    \item Mô tả một kịch bản tấn công thực tế trong đó việc tìm va chạm băm sẽ làm tổn hại đến một hệ thống bảo mật.
+\end{enumerate}
+
+\begin{center}
+\textbf{Trả lời:}
+\end{center}
+
+\textbf{1) Sự tồn tại của va chạm.} Va chạm chắc chắn tồn tại do nguyên lý lỗ bồ câu: ánh xạ từ tập vô hạn (đầu vào có độ dài tùy ý) sang tập hữu hạn (đầu ra có độ dài cố định). An ninh hàm băm là \textit{va chạm không thể tìm thấy trong thực tế tính toán}, chứ không phải va chạm không tồn tại.
+
+\textbf{2) Tính toán birthday paradox.} Với hàm băm 256-bit, số lượng băm cần thiết để tìm va chạm với xác suất 50\%:
+\[
+Q \approx \sqrt{2^{256}} = 2^{128}
+\]
+Cần khoảng $2^{128}$ phép toán để tìm một va chạm.
+
+\textbf{3) Kịch bản tấn công thực tế (giả mạo tài liệu).} Kẻ tấn công tạo hai tài liệu khác nhau $M_{\text{hợp pháp}}$ và $M_{\text{gian lận}}$ sao cho $H(M_{\text{hợp pháp}}) = H(M_{\text{gian lận}})$. Yêu cầu nạn nhân ký điện tử lên $H(M_{\text{hợp pháp}})$, sau đó gắn chữ ký vào $M_{\text{gian lận}}$, khiến nạn nhân bị ràng buộc với tài liệu gian lận.
+
+\subsubsection{(b) (5 điểm) Cấu trúc hàm băm}
+
+\textbf{Yêu cầu:}
+\begin{enumerate}
+    \item So sánh và đối chiếu cấu trúc Merkle-Damgård (SHA-2) và cấu trúc Sponge (SHA-3).
+    \item Giải thích cách tấn công mở rộng độ dài hoạt động chống Merkle-Damgård và tại sao Sponge kháng được.
+    \item Mô tả cấu trúc HMAC và cách nó bảo vệ chống tấn công mở rộng độ dài.
+\end{enumerate}
+
+\begin{center}
+\textbf{Trả lời:}
+\end{center}
+
+\textbf{1) So sánh Merkle-Damgård và Sponge.}
+\begin{itemize}
+    \item \textbf{Merkle-Damgård (SHA-2):} Thông điệp được đệm và chia khối, xử lý tuần tự qua hàm nén. Dễ bị tấn công mở rộng độ dài.
+    \item \textbf{Sponge (SHA-3):} Hoạt động qua hai pha: hấp thụ và vắt. Phần \textit{capacity} của trạng thái nội bộ bị ẩn, chỉ phần \textit{rate} được tiết lộ.
+\end{itemize}
+
+\textbf{2) Tấn công mở rộng độ dài.}
+\begin{itemize}
+    \item \textbf{Merkle-Damgård:} Nếu biết $H(M)$ và độ dài $M$, có thể tính $H(M \| \text{padding} \| P)$ mà không cần biết nội dung $M$.
+    \item \textbf{Sponge:} Kháng được vì phần \textit{capacity} không được tiết lộ, không thể tiếp tục quá trình băm từ giá trị đã biết.
+\end{itemize}
+
+\textbf{3) Cấu trúc HMAC.}
+\[
+\text{HMAC}(K, m) = H((K \oplus \text{opad}) \| H((K \oplus \text{ipad}) \| m))
+\]
+HMAC chống được tấn công mở rộng độ dài vì khóa $K$ được dùng ở cả hai lớp băm, ngăn kẻ tấn công mở rộng thông điệp mà không biết khóa.
+
+\subsubsection{(c) (5 điểm) Sự phát triển của hàm băm}
+
+\textbf{Yêu cầu:}
+\begin{enumerate}
+    \item Mô tả các tấn công thành công chống MD5 và SHA-1 dẫn đến việc chúng bị loại bỏ.
+    \item Giải thích khái niệm va chạm tiền tố đã chọn và tại sao chúng đặc biệt nguy hiểm với cơ quan cấp chứng chỉ.
+    \item So sánh bảo mật của SHA-2 và SHA-3 chống các kỹ thuật phân tích mật mã đã biết.
+\end{enumerate}
+
+\begin{center}
+\textbf{Trả lời:}
+\end{center}
+
+\textbf{1) Tấn công chống MD5 và SHA-1.}
+\begin{itemize}
+    \item \textbf{MD5 (128-bit):} Bị phá vỡ hoàn toàn từ năm 2004 (Xiaoyun Wang).
+    \item \textbf{SHA-1 (160-bit):} Bị phá vỡ năm 2017 trong tấn công \textbf{SHAttered} của Google và CWI Amsterdam, yêu cầu sức mạnh tính toán tương đương 6,500 CPU-năm và 110 GPU-năm.
+\end{itemize}
+
+\textbf{2) Va chạm tiền tố đã chọn.} Cho hai tiền tố bất kỳ $P_1, P_2$, tồn tại các hậu tố $S_1, S_2$ sao cho $H(P_1 \| S_1) = H(P_2 \| S_2)$. Đặc biệt nguy hiểm với cơ quan cấp chứng chỉ vì có thể giả mạo chứng chỉ hợp pháp.
+
+\textbf{3) So sánh SHA-2 và SHA-3.}
+\begin{itemize}
+    \item \textbf{SHA-2:} Sử dụng Merkle-Damgård, vẫn an toàn (256/512-bit), chưa có tấn công thực tế thành công.
+    \item \textbf{SHA-3 (Keccak):} Sử dụng cấu trúc Sponge hoàn toàn mới, kháng các kỹ thuật đã phá MD5/SHA-1, cung cấp \textbf{Protocol Agility}.
+\end{itemize}
+
+\subsection{Câu 2. (15 điểm) Băm mật khẩu (Password Hashing)}
+
+\subsubsection{(a) (5 điểm) Phân tích lưu trữ mật khẩu}
+
+\textbf{Yêu cầu:} Phân tích tác động bảo mật nếu DB bị xâm phạm cho các cách lưu trữ: (1) plaintext, (2) mã hóa cùng khóa trên server, (3) SHA-256 không muối, (4) SHA-256 có muối, (5) Scrypt.
+
+\begin{center}
+\textbf{Trả lời:}
+\end{center}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|l|l|p{7cm}|}
+\hline
+\textbf{\#} & \textbf{Phương pháp lưu trữ} & \textbf{Tác động bảo mật} & \textbf{Phân tích} \\
+\hline
+1 & Plaintext & Thảm họa & Kẻ tấn công lấy ngay lập tức tất cả mật khẩu. \\
+\hline
+2 & Mã hóa (khóa trên cùng server) & Thất bại & Kẻ tấn công lấy được cả khóa giải mã, làm thất bại mã hóa. \\
+\hline
+3 & SHA-256 không muối & Kém & Dễ bị bảng rainbow/\,từ điển vì cùng mật khẩu $\Rightarrow$ cùng hash. \\
+\hline
+4 & SHA-256 có muối & Tốt & Kháng rainbow, nhưng yếu nếu băm quá nhanh (brute-force dễ). \\
+\hline
+5 & Scrypt/Argon2 & Xuất sắc & Muối + memory-hard giảm lợi thế GPU/\,ASIC. \\
+\hline
+\end{tabular}
+\caption{So sánh các phương pháp lưu trữ mật khẩu}
+\end{table}
+
+\subsubsection{(b) (5 điểm) Muối (Salting)}
+
+\textbf{Yêu cầu:}
+\begin{enumerate}
+    \item Muối chống bảng rainbow như thế nào.
+    \item Tính dung lượng lưu trữ với 10{,}000 người dùng, muối 16B, hash 32B.
+    \item Thực hành tốt nhất tạo/\,lưu trữ muối.
+\end{enumerate}
+
+\begin{center}
+\textbf{Trả lời:}
+\end{center}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|l|l|p{7cm}|}
+\hline
+\textbf{\#} & \textbf{Phương pháp lưu trữ} & \textbf{Tác động bảo mật} & \textbf{Phân tích} \\
+\hline
+1 & Plaintext & Thảm họa & Kẻ tấn công lấy ngay lập tức tất cả mật khẩu. \\
+\hline
+2 & Mã hóa (khóa trên cùng server) & Thất bại & Kẻ tấn công lấy được cả khóa giải mã, làm thất bại mã hóa. \\
+\hline
+3 & SHA-256 không muối & Kém & Dễ bị bảng rainbow/\,từ điển vì cùng mật khẩu $\Rightarrow$ cùng hash. \\
+\hline
+4 & SHA-256 có muối & Tốt & Kháng rainbow, nhưng yếu nếu băm quá nhanh (brute-force dễ). \\
+\hline
+5 & Scrypt/Argon2 & Xuất sắc & Muối + memory-hard giảm lợi thế GPU/\,ASIC. \\
+\hline
+\end{tabular}
+\caption{So sánh các phương pháp lưu trữ mật khẩu}
+\end{table}
+
+\subsubsection{(c) (5 điểm) Hàm băm mật khẩu chuyên dụng}
+
+\textbf{Yêu cầu:} So sánh memory-hard (Scrypt/Argon2) với PBKDF2; giải thích tham số Scrypt $(N,r,p)$; so sánh tốc độ SHA-256, PBKDF2, Scrypt và ý nghĩa bảo mật.
+
+\begin{center}
+\textbf{Trả lời:}
+\end{center}
+
+\textbf{Memory-hard vs PBKDF2.} PBKDF2 tăng CPU qua lặp PRF; Scrypt/Argon2 buộc dùng bộ nhớ lớn $\Rightarrow$ giảm lợi thế GPU/\,ASIC.
+
+\textbf{Tham số Scrypt.}
+\begin{itemize}
+    \item $N$ (CPU cost): Tăng số vòng lặp, tăng thời gian tính toán.
+    \item $r$ (block size): Tăng băng thông/\,bộ nhớ.
+    \item $p$ (parallelization): Tăng song song hóa và chi phí tổng.
+\end{itemize}
+
+\textbf{Tốc độ và tác động.}
+\[
+\text{SHA-256} \gg \text{PBKDF2} \gg \text{Scrypt/Argon2}
+\]
+GPU hiện đại $>2\times10^9$ SHA-256/s, nhưng chỉ \textit{vài nghìn} Scrypt/Argon2/s $\Rightarrow$ chi phí vét cạn tăng mạnh, làm tấn công ngoại tuyến kém khả thi.

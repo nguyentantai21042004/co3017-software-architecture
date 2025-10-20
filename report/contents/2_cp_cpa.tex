@@ -1,0 +1,136 @@
+\section{Tấn Công Văn Bản Rõ Đã Chọn và Văn Bản Mã Hóa Đã Chọn}
+
+\subsection{Câu 1. (10 điểm) Bảo mật CPA (Chosen-Plaintext Attack)}
+
+\subsubsection{(a) (5 điểm) Định nghĩa và vì sao mã hóa xác định thất bại CPA}
+
+\textbf{Yêu cầu:}
+\begin{center}
+\begin{minipage}{0.92\linewidth}
+\begin{verbatim}
+L_Sigma^{cpa-real}                 L_Sigma^{cpa-rand}
+K <- Sigma.K                        cpa.enc(M):
+cpa.enc(M):                           C <- Sigma.C(|M|)
+    C := Sigma.Enc(K, M)              return C
+    return C
+\end{verbatim}
+\end{minipage}
+\end{center}
+1) Giải thích vì sao lược đồ mã hóa \textit{xác định} luôn thất bại với CPA.\\
+2) Xây dựng một bộ phân biệt đơn giản phá vỡ CPA cho bất kỳ lược đồ xác định nào.\\
+3) Nêu các lỗ hổng thực tế khi dùng mã hóa không an toàn CPA.
+
+\begin{center}
+    \textbf{Trả lời:}
+\end{center}
+
+\textbf{Mã hóa xác định thất bại CPA.} Với cùng thông điệp $M$, lược đồ xác định luôn cho cùng ciphertext $C$. Kẻ tấn công có thể nhận biết lặp lại và xây dựng “từ điển”.
+
+\textbf{Bộ phân biệt $D$.}
+\begin{enumerate}
+    \item Truy vấn \textit{oracle} mã hóa: $C_1 \leftarrow \text{cpa.enc}(M_0)$.
+    \item Truy vấn lần hai: $C_2 \leftarrow \text{cpa.enc}(M_0)$.
+    \item Nếu $C_1 = C_2$ đoán REAL; ngược lại RAND.
+\end{enumerate}
+Lợi thế $\mathrm{Adv}(D)=1$ trong lược đồ xác định, vì $C_1=C_2$ luôn đúng.
+
+\textbf{Lỗ hổng thực tế.}
+\begin{itemize}
+    \item Rò rỉ lặp lại: nhận biết mẫu và xây “từ điển” plaintext đã biết.
+    \item Rò rỉ độ dài: độ dài vẫn rò rỉ ngay cả với CPA-secure; các mẫu độ dài có thể tiết lộ thông tin phụ.
+\end{itemize}
+
+\subsubsection{(b) (5 điểm) Đánh giá CPA cho các lược đồ cụ thể}
+
+\textbf{Yêu cầu:} Với mỗi lược đồ sau, cho biết có CPA-secure không; nếu không, chỉ ra tấn công.
+\begin{enumerate}
+    \item $\mathrm{Enc}(K, M) = (R,\, F(K, R) \oplus M)$, $R \leftarrow \{0,1\}^{\lambda}$, $F$ là PRF an toàn.
+    \item $\mathrm{Enc}(K, M) = (R,\, F(K, M) \oplus R)$, $R \leftarrow \{0,1\}^{\lambda}$, $F$ là PRF an toàn.
+    \item AES chế độ ECB.
+    \item AES chế độ CTR với IV ngẫu nhiên.
+\end{enumerate}
+
+\begin{center}
+\textbf{Trả lời:}
+\end{center}
+1) \textbf{CPA-secure: CÓ.} Hoạt động như mật mã dòng với nonce/IV $R$ ngẫu nhiên; keystream $F(K,R)$ khác nhau mỗi lần.\\
+2) \textbf{CPA-secure: KHÔNG.} Lược đồ xác định theo $M$ vì $F(K,M)$ cố định. Truy vấn hai lần cùng $M_0$ được $(R_1,C_1)$, $(R_2,C_2)$ và
+\[
+C_1 \oplus C_2 = (F(K,M_0)\oplus R_1) \oplus (F(K,M_0)\oplus R_2) = R_1 \oplus R_2\,.
+\]
+Quan hệ tuyến tính dễ kiểm chứng.\\
+3) \textbf{CPA-secure: KHÔNG.} ECB là xác định: khối $M_i=M_j$ $\Rightarrow$ $C_i=C_j$.\\
+4) \textbf{CPA-secure: CÓ.} CTR biến PRP thành PRF với IV ngẫu nhiên và bộ đếm; đầu vào mỗi khối là duy nhất, đảm bảo CPA.
+
+\subsection{Câu 2. (10 điểm) Bảo mật CCA và Mã hóa Xác thực}
+
+\subsubsection{(a) (3 điểm) Tấn công format-oracle (null-oracle) trên CTR}
+
+\textbf{Yêu cầu:}
+\begin{enumerate}
+    \item Giải thích cách tấn công null-oracle hoạt động chống CTR và vì sao vẫn phá hoại dù CTR an toàn CPA.
+    \item Nêu một kịch bản thực tế nơi format-oracle có thể bị lộ.
+    \item Tính số truy vấn gần đúng để khôi phục tệp 1 KB bằng null-oracle và giải thích tính khả thi.
+\end{enumerate}
+
+\begin{center}
+\textbf{Trả lời:}
+\end{center}
+
+\textbf{Cách hoạt động (khai thác tính dẻo).} Chọn một byte thử $g\in\{\texttt{01},\ldots,\texttt{FF}\}$, lật bit tương ứng trong ciphertext để tạo $C'$, gửi $C'$ đến \textit{oracle} giải mã. Nếu byte giải mã $M'_i \oplus g = \texttt{00}$ thì oracle rò rỉ tín hiệu (ví dụ lỗi/\,crash/\,boolean), suy ra $M_i=g$.
+
+\textbf{Vì sao tàn phá.} CTR an toàn CPA nhưng dẻo (malleable) do XOR trên keystream; format-oracle biến rò rỉ nhỏ thành kênh thông tin từng byte.
+
+\textbf{Kịch bản thực tế (padding oracle).} Trong CBC, việc báo lỗi padding hoặc thời gian xử lý khác nhau tạo thành oracle; lặp lại truy vấn trên ciphertext sửa đổi cho phép suy ra plaintext.
+
+\textbf{Số truy vấn cho 1 KB.} Với $N=1024$ byte, tối đa 255 thử/\,byte:
+\[
+Q\approx 255\times N = 255\times 1024 \approx 261{,}120\,\text{truy vấn}\,.
+\]
+Con số này nhỏ với tấn công mạng hiện đại; trái lại brute-force là $255^{1024}$ (bất khả thi).
+
+\subsubsection{(b) (4 điểm) Đánh giá CCA và AE cho các cấu trúc}
+
+\textbf{Yêu cầu:} Đánh giá CCA/AE cho các cấu trúc và giải thích ngắn gọn; nêu thêm kịch bản replay và vai trò AD.
+
+\begin{center}
+\textbf{Trả lời:}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|c|c|p{7.2cm}|}
+\hline
+\textbf{Cấu trúc} & \textbf{CCA} & \textbf{AE} & \textbf{Giải thích} \\
+\hline
+Encrypt-then-MAC & CÓ & CÓ & MAC trên ciphertext chặn chỉnh sửa trước khi giải mã; đạt AEAD tiêu chuẩn. \\
+\hline
+Encrypt-and-MAC & KHÔNG & KHÔNG & MAC trên plaintext rò rỉ lặp lại (tag trùng khi $M$ trùng); không gắn kết với ciphertext. \\
+\hline
+MAC-then-encrypt & CÓ THỂ & CÓ THỂ & Phụ thuộc Enc; dễ lỗi do padding/timing; không khuyến nghị bằng EtM. \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Replay và AD.} Replay vẫn thành công nếu ngữ cảnh không được ràng buộc. Dữ liệu liên kết (AD) như ID phiên/\,timestamp/\,loại lệnh được đưa vào tính MAC; phát lại với AD cũ sẽ bị từ chối.
+
+\subsubsection{(c) (3 điểm) AES-GCM (Galois/Counter Mode)}
+
+\textbf{Yêu cầu:}
+\begin{enumerate}
+    \item Mô tả kết hợp CTR với nhân trong $\mathrm{GF}(2^{128})$ để xác thực (GHASH/GMAC) và lợi ích so với mã hóa+MAC rời.
+    \item Nêu tác động nghiêm trọng của tái sử dụng nonce.
+    \item Phân tích đánh đổi độ dài thẻ (128/64/32-bit).
+    \item Nêu một lỗ hổng triển khai đáng chú ý khác.
+\end{enumerate}
+
+\begin{center}
+\textbf{Trả lời:}
+\end{center}
+
+\textbf{CTR + GHASH.} GCM dùng AES-CTR cho bí mật và GHASH/GMAC trên (IV, AD, C) cho xác thực $\Rightarrow$ AEAD gọn, hiệu năng cao.
+
+\textbf{Nonce tái sử dụng: thảm họa.} Mất bí mật: nếu cùng nonce, keystream lặp lại, $C_1\oplus C_2 = M_1\oplus M_2$. Mất xác thực: có thể rèn tag qua GHASH.
+
+\textbf{Độ dài thẻ.} 128-bit: $2^{-128}$ (khuyến nghị). 64-bit: rủi ro tăng (birthday tầm $2^{32}$). 32-bit: không an toàn.
+
+\textbf{Lỗ hổng khác.} Kênh bên thời gian/\,cache; cần AES-NI hoặc code constant-time.
