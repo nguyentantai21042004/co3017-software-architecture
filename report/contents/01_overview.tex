@@ -1,0 +1,256 @@
+\section{Overview}
+
+    \subsection{System details}
+
+    \textbf{Hợp Lý Hóa Quy Trình}
+
+    Intelligent Tutoring System – ITS được thiết kế nhằm hỗ
+    trợ và nâng cao hiệu quả quá trình giảng dạy, thông qua tối ưu hóa các quy trình giáo dục
+    và hành chính cốt lõi. Bằng cách tích hợp công nghệ đánh giá tự động, phản hồi theo thời gian
+    thực và phân phối nội dung thích ứng, ITS giúp mở rộng phạm vi hỗ trợ của các mô hình giáo dục
+    hiện hành, đồng thời mang lại trải nghiệm học tập phù hợp hơn với nhu cầu và năng lực cá nhân
+    của từng người học.
+
+    Ngay từ giai đoạn khởi đầu, hệ thống tiến hành đánh giá chẩn đoán để xác định chính xác trình độ
+    hiện tại và những khoảng trống kiến thức của người học (US0). Việc này cho phép hệ thống điều
+    chỉnh lộ trình học tập linh hoạt, tránh lặp lại các nội dung đã nắm vững, từ đó tối ưu hóa thời
+    lượng học và tăng hiệu quả tiếp thu.
+
+    Trong quá trình học, ITS cung cấp cơ chế phản hồi đồng bộ, cho phép người học nhận được các
+    gợi ý và sửa lỗi mang tính ngữ cảnh ngay khi xảy ra sai sót (US1). Điều này không chỉ rút ngắn
+    thời gian phản hồi mà còn thúc đẩy quá trình tự điều chỉnh nhận thức, giúp người học nâng cao năng
+    lực tư duy và làm chủ kiến thức một cách chủ động.
+
+    Ngoài ra, hệ thống điều chỉnh nội dung học dựa trên tiến độ và mức độ hiểu bài của từng học viên.
+    Thông qua cơ chế sắp xếp nội dung thích ứng và lặp lại ngắt quãng (spaced repetition), ITS đảm bảo
+    các chủ đề chưa thành thạo sẽ được củng cố đúng thời điểm, qua đó tăng khả năng ghi nhớ dài hạn và
+    tạo nên quá trình học tập liên tục, sát với nhu cầu thực tế của từng cá nhân (US3).
+
+    \textbf{Lợi Thế Từ Thiết Kế Kiến Trúc}
+
+    Kiến trúc hệ thống ITS mang lại nhiều lợi ích thiết thực về mặt vận hành và kỹ thuật, dựa trên các
+    nguyên tắc thiết kế hiện đại để đảm bảo tính linh hoạt, bảo mật và độ tin cậy cao.
+
+    Trước hết, hệ thống áp dụng kiến trúc mô-đun, trong đó các thành phần chức năng như công cụ dạy kèm
+    sử dụng trí tuệ nhân tạo, hệ thống quản lý nội dung và mô-đun theo dõi tiến độ học tập được phân tách
+    rõ ràng. Cách tiếp cận này cho phép quản trị viên triển khai, cập nhật hoặc thay thế từng thành phần
+    riêng biệt—chẳng hạn như tích hợp một phiên bản mới của thuật toán đề xuất—mà không làm gián đoạn toàn
+    bộ hệ thống (US8). Tính mô-đun giúp hệ thống dễ dàng thích ứng với các cải tiến công nghệ trong tương
+    lai và hỗ trợ quá trình cải tiến liên tục hiệu quả.
+
+    Bên cạnh đó, hệ thống chú trọng bảo mật dữ liệu và đảm bảo tính toàn vẹn của các giao dịch. Cơ chế kiểm
+    soát truy cập theo vai trò (Role-Based Access Control – RBAC) được tích hợp chặt chẽ nhằm đảm bảo các
+    thông tin học tập quan trọng và chức năng quản trị chỉ được truy cập bởi người dùng có thẩm quyền. Cụ thể,
+    chỉ giảng viên và quản trị viên mới có quyền truy cập báo cáo tổng hợp kết quả lớp học (US5) và thực
+    hiện các thao tác quản lý tài khoản hoặc phân quyền nội dung (US7). Đồng thời, hệ thống đảm bảo dữ liệu
+    liên quan tới tiến độ học, điểm số và mức độ làm chủ kiến thức của người học được ghi nhận, lưu trữ chính
+    xác xuyên suốt quá trình vận hành, đáp ứng yêu cầu phi chức năng về tính toàn vẹn dữ liệu (NFR:
+    Transactional Integrity).
+
+    \subsection{Project Objectives}
+
+    \textbf{Yêu cầu thiết kế và triển khai}
+
+    Kiến trúc phần mềm và việc triển khai hệ thống ITS phải tuân thủ nghiêm ngặt các nguyên tắc SOLID 
+    (Nguyên tắc Trách nhiệm Đơn nhất, Mở/Rộng, Thay thế Liskov, Phân tách Giao diện, và Đảo ngược Phụ thuộc). 
+    Việc tuân thủ này không chỉ là một thực hành phát triển phần mềm tốt, mà còn là một yêu cầu cốt lõi của dự án 
+    nhằm đảm bảo hệ thống đạt được độ bền vững và chất lượng kỹ thuật cao.
+
+    \textbf{Các thuộc tính kiến trúc cốt lõi cần đạt được}
+
+    Việc tuân thủ các nguyên tắc SOLID, kết hợp với tính thích ứng của dự án, đặt ra yêu cầu đạt được các thuộc tính chất lượng quan trọng sau:
+
+    \begin{table}[h!]
+        \renewcommand{\arraystretch}{1.3}
+        \setlength{\tabcolsep}{7pt}
+        \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.5cm}|X|}
+            \hline
+            \textbf{Tính Mô-đun (Modularity)} & 
+            Hệ thống phải thể hiện được mức độ mô-đun cao. Mỗi thành phần cốt lõi (ví dụ: Mô hình Học viên, Mô hình Sư phạm, Bộ Quản lý Nội dung) cần được thiết kế độc lập và liên kết lỏng lẻo. Yêu cầu này đặc biệt quan trọng để đáp ứng nhu cầu quản trị trong việc triển khai hoặc thay thế độc lập các thuật toán AI mới mà không ảnh hưởng đến hệ thống lõi (US8). \\
+            \hline
+            \textbf{Tính Linh Hoạt (Flexibility)} & 
+            Kiến trúc phải có khả năng linh hoạt để hỗ trợ nhiều loại nội dung khác nhau (văn bản, video, bài tập tương tác) và đa dạng các môn học. Tính linh hoạt này đảm bảo rằng giảng viên có thể dễ dàng gắn thẻ các bài tập mới với siêu dữ liệu phù hợp (độ khó, kỹ năng, chủ đề) (US4), cho phép thuật toán cá nhân hóa thích ứng với nhiều bối cảnh học tập khác nhau. \\
+            \hline
+            \textbf{Tính Mở Rộng (Scalability)} & 
+            Hệ thống phải có khả năng mở rộng một cách tự nhiên để xử lý số lượng người dùng (học viên) ngày càng tăng và kho nội dung học tập mở rộng. Kiến trúc cần hỗ trợ khả năng mở rộng theo chiều ngang nhằm duy trì hiệu suất và độ phản hồi khi số lượng người dùng đồng thời tăng lên (NFR: Khả năng mở rộng, Đồng thời). \\
+            \hline
+            \textbf{Khả Năng Bảo Trì (Maintainability)} &
+            Thông qua việc áp dụng phân tách kiến trúc rõ ràng, hệ thống cần đảm bảo dễ bảo trì. Điều này cho phép việc sửa lỗi, cập nhật, và phát triển liên tục các tính năng mới—đặc biệt là các tính năng liên quan đến báo cáo phức tạp và cập nhật mô hình AI (US6, US8)—trở nên đơn giản và hiệu quả hơn. \\
+            \hline
+        \end{tabularx}
+        \renewcommand{\arraystretch}{1.0}
+    \end{table}
+
+    \subsection{Project Scopes}
+
+    \textbf{Các Miền Chức Năng Cốt Lõi Được Triển Khai}
+
+    Dự án được cấu trúc xoay quanh bốn mô-đun chức năng 
+    có mối liên hệ chặt chẽ, là nền tảng để cung cấp trải 
+    nghiệm học tập cá nhân hóa và thích ứng.
+
+    \begin{enumerate}
+        \item \textbf{Học Tập Cá Nhân Hóa và Dạy Kèm Thích Ứng}
+
+        \textit{Phạm vi:} Bao gồm các chức năng cốt lõi sử dụng 
+        trí tuệ nhân tạo, đặc biệt là khâu đánh giá kiến thức 
+        ban đầu và thuật toán thích ứng nhằm tạo ra lộ trình 
+        học tập tối ưu, được điều chỉnh riêng cho từng người học.
+
+        \textit{Chức năng chính:} Hệ thống phải có khả năng xác định 
+        mức độ nắm vững kiến thức của học viên và đề xuất chủ đề hoặc bài 
+        tập tiếp theo phù hợp, đảm bảo quá trình học diễn ra theo hướng 
+        cá nhân hóa hiệu quả (US0, US3).
+
+        \item \textbf{Quản Lý Đánh Giá và Phản Hồi}
+
+        \textit{Phạm vi:} Tập trung vào các cơ chế đánh giá kết quả học tập 
+        và cung cấp hỗ trợ học tập theo thời gian thực.
+
+        \textit{Chức năng chính:} Triển khai các bài kiểm tra, bài tập và dự án 
+        nhằm đánh giá tiến độ học tập, đồng thời cung cấp các gợi ý, chỉ dẫn 
+        và giải thích ngay lập tức khi học viên gặp lỗi trong quá trình 
+        làm bài (US1, US2).
+
+        \item \textbf{Quản Lý Nội Dung Học Tập (Learning Content Management -- LCM)}
+
+        \textit{Phạm vi:} Xử lý các tác vụ hành chính liên quan đến việc 
+        quản lý và cập nhật tài nguyên giảng dạy.
+
+        \textit{Chức năng chính:} Cung cấp cho giảng viên các công cụ để 
+        quản lý, chỉnh sửa và tổ chức nội dung học tập dưới nhiều định dạng 
+        khác nhau (ví dụ: văn bản, video). Một chức năng thiết yếu là khả 
+        năng gắn thẻ nội dung với các siêu dữ liệu như mức độ khó, kỹ năng 
+        liên quan và chủ đề, nhằm phục vụ cho thuật toán cá nhân hóa (US4).
+
+        \item \textbf{Bảng Điều Khiển Giảng Viên và Hệ Thống Báo Cáo}
+
+        \textit{Phạm vi:} Phục vụ công tác giám sát và phân tích dữ liệu 
+        học tập dành cho giảng viên và quản trị viên.
+
+        \textit{Chức năng chính:} Cho phép giảng viên theo dõi tiến độ học tập 
+        của học viên ở cả cấp độ lớp học (US5) và cá nhân. Mô-đun này hỗ trợ 
+        việc tạo ra các báo cáo chi tiết, đóng vai trò quan trọng trong quá 
+        trình tư vấn học tập cá nhân hóa và bảo đảm trách nhiệm giảng dạy 
+        ở cấp tổ chức (US6).
+    \end{enumerate}
+
+    \vspace{2mm}
+    \textbf{Các Thành Phần Ngoài Phạm Vi Triển Khai}
+
+    Dự án không bao gồm việc tích hợp với các Hệ thống Thông tin Học viên 
+    (Student Information Systems -- SIS) bên ngoài cho mục đích quản lý tuyển sinh, 
+    cũng như không triển khai các mô-đun tài chính hoặc thanh toán riêng biệt. 
+    Việc xác thực và phân quyền người dùng được xử lý nội bộ thông qua mô-đun 
+    Quản trị viên, nhằm đảm bảo khả năng triển khai nhanh chóng và duy trì 
+    toàn quyền kiểm soát đối với các giao thức bảo mật (US7).
+
+    \subsection{System requirements}
+
+    \subsubsection*{1.4.1 Yêu cầu Chức năng (Functional Requirements - FRs)}
+
+    Yêu cầu chức năng xác định các hành vi và chức năng cụ thể mà hệ thống phải thực hiện để hỗ trợ mục tiêu của các bên liên quan. Các yêu cầu này được phân tích từ các User Stories quan điểm người dùng.
+
+    \textbf{A. User Stories Cốt lõi (Core User Stories)}
+    
+    \begin{table}[H]
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{|c|c|c|>{\raggedright\arraybackslash}X|}
+    \hline
+    \textbf{STT} & \textbf{Actor} & \textbf{Phạm vi} & \textbf{User Story} \\
+    \hline
+    US0 & Learner & Cá nhân hóa & Là một Học sinh, tôi muốn hệ thống đánh giá kiến thức hiện tại của tôi để nó có thể đề xuất lộ trình học tập tối ưu, không lãng phí thời gian vào những gì tôi đã biết. \\
+    \hline
+    US1 & Learner & Phản hồi & Là một Học sinh, tôi muốn nhận được gợi ý (hints) và giải thích ngay lập tức sau khi tôi mắc lỗi trong bài tập, để tôi có thể tự sửa chữa và hiểu được khái niệm đó ngay lập tức. \\
+    \hline
+    US2 & Learner & Đánh giá & Là một Học sinh, tôi muốn xem tiến trình học tập của mình (điểm, thời gian hoàn thành, các kỹ năng đã thành thạo) để tôi có thể theo dõi sự cải thiện của bản thân. \\
+    \hline
+    US3 & Learner & Vòng lặp học tập & Là một Học sinh, tôi muốn hệ thống tự động đưa lại bài tập về các kỹ năng tôi chưa thành thạo sau một khoảng thời gian, để củng cố kiến thức đã học. \\
+    \hline
+    US4 & Instructor & Nội dung & Là một Giảng viên, tôi muốn gắn metadata (độ khó, kỹ năng, chủ đề) cho mỗi bài tập mới để thuật toán cá nhân hóa có thể sử dụng chúng một cách chính xác. \\
+    \hline
+    US5 & Instructor & Giám sát & Là một Giảng viên, tôi muốn xem báo cáo tổng hợp về hiệu suất của cả lớp để tôi có thể xác định những chủ đề mà đa số học sinh đang gặp khó khăn. \\
+    \hline
+    US6 & Instructor & Báo cáo chi tiết & Là một Giảng viên, tôi muốn tạo báo cáo chi tiết về hiệu suất và lộ trình học tập của một học sinh cụ thể, để tôi có thể tư vấn cá nhân hóa (one-on-one). \\
+    \hline
+    US7 & Admin & Quản trị & Là một Quản trị viên, tôi muốn quản lý các tài khoản Giảng viên và phân quyền truy cập nội dung để đảm bảo tính bảo mật và kiểm soát hệ thống. \\
+    \hline
+    US8 & Admin & Quản lý vận hành & Là một Quản trị viên, tôi muốn có khả năng deploy/swap các phiên bản mới của Mô hình AI (ví dụ: thuật toán gợi ý mới) mà không cần downtime hệ thống chính, để đảm bảo Modularity và Deployability. \\
+    \hline
+    \end{tabularx}
+    \end{table}
+    \vspace{-0.5cm}  % Reduce vertical space after table
+
+    \vspace{3mm}
+    \textbf{B. Tổng hợp Yêu cầu Chức năng (Functional Requirement Summary)}
+    
+    \begin{table}[H]
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{|c|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|c|}
+    \hline
+    \textbf{Mã} & \textbf{Tên chức năng} & \textbf{Mô tả chi tiết} & \textbf{Tiêu chí chấp nhận} & \textbf{Đối tượng} \\
+    \hline
+    FR1 & Đăng ký \& Xác thực & Người dùng có thể tạo tài khoản mới bằng email/password hoặc đăng nhập với tài khoản đã có. & Email xác nhận khi đăng ký; truy cập tính năng theo role & H, GV, A \\
+    \hline
+    FR2 & Hồ sơ \& Cài đặt Học tập & Hồ sơ gồm tên, tuổi, trình độ, sở thích, mục tiêu, ngôn ngữ, lịch học; hỗ trợ kiểm tra đầu vào. & Cập nhật thông tin, cài đặt lịch học, nhắc nhở qua email/push, lưu kết quả đầu vào & H \\
+    \hline
+    FR3 & Quản lý Nội dung Học tập & Giảng viên tạo, biên tập khóa học, chương, bài học; hỗ trợ nhiều định dạng nội dung (text, video, quiz, coding, ...). & Gắn thẻ, versioning, phân quyền truy cập nội dung & GV \\
+    \hline
+    FR4 & Cấu trúc Khóa học \& Lộ trình & Khóa học có mục tiêu, kỹ năng, pre/post-tests; hỗ trợ lộ trình tuyến tính và adaptive. & Cấu hình milestones, checkpoint, điều kiện mở khoá bài tiếp theo (ví dụ đạt $\geq$70\% quiz) & GV, H \\
+    \hline
+    FR5 & Đánh giá \& Thẩm định & Hỗ trợ nhiều loại bài (MCQ, essay, coding, ...), auto-grading và review thủ công. & Làm bài giới hạn thời gian, lưu điểm số, lịch sử & H, GV \\
+    \hline
+    FR6 & Hệ thống Phản hồi \& Remediation & Phản hồi tức thì khi làm bài, gợi ý bài học bù khi kỹ năng yếu. & Hiển thị giải thích đáp án, gợi ý học lại bài liên quan, hướng dẫn step-by-step & H \\
+    \hline
+    FR7 & Adaptive Learning Engine & Engine thu thập dữ liệu học tập để cá nhân hóa lộ trình. & Gợi ý bài học tiếp theo, hỗ trợ spaced repetition \& mastery-based learning & H, GV \\
+    \hline
+    FR8 & Dashboard \& Báo cáo & Hiển thị tiến độ, điểm số, milestones; báo cáo tổng quan lớp, xuất dữ liệu CSV/PDF. & Admin xem báo cáo hệ thống, active users, usage, logs & H, GV, A \\
+    \hline
+    FR9 & Tương tác \& Giao tiếp & Bình luận, thảo luận, chat 1-1, diễn đàn, thông báo in-app/email/push. & Giao tiếp realtime, comment dưới bài học, gửi thông báo cá nhân/nhóm & H, GV \\
+    \hline
+    FR10 & Quản lý lớp \& Phân nhóm & Giảng viên tạo lớp, mời học sinh, chia nhóm cho dự án. & Hỗ trợ vai trò (TA, student, observer), giao bài nhóm, đánh giá nhóm & GV \\
+    \hline
+    FR11 & Bảo mật \& Quản lý quyền (RBAC) & Hệ thống phân quyền vai trò, audit logs cho thao tác nhạy cảm. & Truy cập đúng chức năng, ghi lại thay đổi (theo FR1) & Tất cả \\
+    \hline
+    FR12 & Admin \& Vận hành hệ thống & Admin quản lý users, roles, cấu hình, backup/restore, moderation. & Health checks, báo cáo vi phạm, logs hệ thống, bổ sung Live Model Swapping & A \\
+    \hline
+    FR13 & Gamification \& Động lực & Cung cấp XP, badges, leaderboard, streak learning, challenge mode. & Thưởng khi hoàn thành bài học, bảng xếp hạng, phần thưởng động lực & H \\
+    \hline
+    \end{tabularx}
+    \end{table}
+    \vspace{-0.5cm}  % Reduce vertical space after table
+
+    \vspace{2mm}
+
+    \subsubsection*{1.4.2 Yêu cầu Phi Chức năng (Non-Functional Requirements - NFRs)}
+
+    Yêu cầu Phi chức năng không mô tả chức năng của hệ thống, mà đưa ra tiêu chí chất lượng, hiệu suất, ràng buộc kiến trúc/kỹ thuật đảm bảo hệ thống bền vững, linh hoạt, an toàn.
+
+    \begin{table}[H]
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.5cm}|c|c|>{\raggedright\arraybackslash}X|c|}
+    \hline
+    \textbf{Nhóm} & \textbf{AC ID} & \textbf{Đặc tính kiến trúc} & \textbf{Mục tiêu/Chiến lược} & \textbf{User Story} \\
+    \hline
+    Mở rộng chức năng & AC1 & Modularity \& Extensibility & Kiến trúc Microservices, API versioning, plugin-friendly (tuân thủ OCP) & US8, US0, US4 \\
+    \hline
+    Khả năng mở rộng & AC2 & Scalability & $\geq$ 5.000 user concurrent, horizontal scaling, Kubernetes, Kafka/RabbitMQ asynchronicity & US2, US5, US6 \\
+    \hline
+    Hiệu năng & AC3 & Performance & API phổ biến $<$300ms; grading/report $<$1s, Redis caching, indexing, async worker & US0, US1, US2 \\
+    \hline
+    Kiểm thử & AC4 & Testability \& Maintainability & Unit test $\geq$80\%, sử dụng SOLID, Clean/Hexagonal Architecture, CI/CD tự động & US8 \\
+    \hline
+    Bảo mật & AC6 & Security \& Privacy & Hash mật khẩu bằng bcrypt/argon2, RBAC (FR11), audit logs, HTTPS, tuân thủ OWASP Top 10 & US7 \\
+    \hline
+    Độ tin cậy & AC7 & Reliability \& Availability & SLA $\geq$99.5\% uptime, retry logic, queue async, backup hàng ngày & US3, US7, US8 \\
+    \hline
+    Giám sát & AC8 & Observability & Thu thập metrics, distributed tracing (Jaeger), structured logging (ELK/EFK), cảnh báo sự cố & US5, US6, US7 \\
+    \hline
+    Chi phí & AC9 & Cost Efficiency & Tối ưu tài nguyên với auto-scaling, serverless cho tác vụ không thường xuyên (báo cáo định kỳ) & US7 \\
+    \hline
+    \end{tabularx}
+    \end{table}
+    \vspace{-0.5cm}  % Reduce vertical space after table
+
+    \subsection{Usecase diagram}
+
