@@ -1,0 +1,11 @@
+# Ignore build files generated in the report folder by LaTeX
+report/*.aux
+report/*.log
+report/*.toc
+report/*.out
+report/*.pdf
+report/*.bbl
+report/*.blg
+report/*.synctex.gz
+report/*.fdb_latexmk
+report/*.fls
