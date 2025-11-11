@@ -1,0 +1,50 @@
+\section{Tổng Quan Dự Án}
+
+\noindent\textbf{Tầm Nhìn:} Xây dựng hệ thống học tập thông minh cá nhân hóa trải nghiệm cho từng người dùng, giúp học viên tiếp cận giáo dục chất lượng theo cách phù hợp năng lực và tiến độ riêng; đồng thời mở rộng để phục vụ hàng nghìn người dùng song song.
+
+\noindent\textbf{Những Thách Thức Chính:}
+\begin{itemize}
+    \item Đảm bảo phục vụ trên $5{,}000$ người dùng đồng thời với thời gian phản hồi dưới $500\,$ms
+    \item Duy trì cân bằng giữa hiệu năng kỹ thuật và tốc độ triển khai
+    \item Mở rộng theo chiều ngang, vẫn giữ hiệu quả học tập và chất lượng AI
+    \item Hỗ trợ thử nghiệm, cập nhật mô hình AI không ảnh hưởng hệ thống vận hành
+\end{itemize}
+
+\noindent\textbf{Phương Pháp Kiến Trúc Được Chọn:} Áp dụng kiến trúc microservices lai (Hybrid Microservices) kết hợp mô hình hướng sự kiện (Event-Driven Architecture) nhằm tăng tính mô-đun, khả năng mở rộng, hiệu suất cao và kiểm thử toàn diện.
+
+\noindent\textbf{Các Quyết Định Kiến Trúc Chính:}
+
+\begin{itemize}
+    \item \textbf{Microservices lai ghép + Event-Driven Architecture}: 
+    Phân tách thành 5 services (Quản lý người dùng \textit{(User Management)}, Nội dung \textit{(Content)}, Mô hình học viên \textit{(Learner Model)}, Công cụ thích ứng \textit{(Adaptive Engine)}, Đánh giá \textit{(Assessment)}) kết hợp xử lý sự kiện không đồng bộ cho phân tích thời gian thực.
+    
+    \item \textbf{Đa ngôn ngữ lập trình (Polyglot Programming):}
+    \begin{itemize}
+        \item \textbf{Java/Spring Boot} xử lý logic nghiệp vụ cốt lõi
+        \item \textbf{Golang} phục vụ tác vụ tính toán hiệu năng cao, đặc biệt cho AI/ML
+        \item \textbf{PostgreSQL} lưu trữ dữ liệu
+        \item \textbf{RabbitMQ} truyền phát và xử lý sự kiện
+    \end{itemize}
+    
+    \item \textbf{Kiến trúc sạch (Clean Architecture):} 
+    Tách biệt tầng nghiệp vụ và hạ tầng, giúp dễ bảo trì, kiểm thử, mở rộng. Đảm bảo độ bao phủ kiểm thử trên $85\%$.
+    
+    \item \textbf{Điều phối bằng Kubernetes} 
+    Hỗ trợ tự động mở rộng, triển khai blue-green tránh downtime, cơ chế tự phục hồi pod tối ưu hiệu suất hệ thống.
+    
+    \item \textbf{Khả năng quan sát}
+    Hệ thống tích hợp giám sát:
+    \begin{itemize}
+        \item \textbf{Prometheus/Grafana} cho số liệu hệ thống
+        \item \textbf{Loki} ghi nhật ký tập trung
+    \end{itemize}
+\end{itemize}
+
+\noindent\textbf{Kết Quả Dự Kiến:}
+
+\begin{itemize}
+    \item Hỗ trợ từ $5{,}000$ người dùng đồng thời, mở rộng đến $9{,}000$ người dùng\footnote{$9{,}000$ là số lượng trung bình sinh viên một trường đại học tại Việt Nam tính đến 04/2025, theo \url{https://giaoduc.net.vn/nhung-con-so-biet-noi-ve-giao-duc-dai-hoc-viet-nam-post250367.gd}}, đáp ứng quy mô tương đương một trường đại học lớn.
+    \item Thời gian phản ứng nhỏ hơn $500\,$ms dưới tải cao
+    \item Tính mô-đun: phát triển, triển khai dịch vụ độc lập
+    \item Tính linh hoạt: hỗ trợ kiểm tra A/B mô hình AI không thay đổi hệ thống
+\end{itemize}
