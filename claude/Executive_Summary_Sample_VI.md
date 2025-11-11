@@ -36,10 +36,6 @@
    Hỗ trợ tự động mở rộng, triển khai xanh–xanh (blue-green) để tránh downtime, cùng cơ chế tự phục hồi pod nhằm tối ưu hóa hiệu suất hệ thống.
 
 5. **Khả Quan Sát (Observability-first):**  
-   Hệ thống được thiết kế với giám sát làm trọng tâm, tích hợp:
-   - **Prometheus/Grafana** cho số liệu hệ thống,
-   - **Loki** cho ghi nhật ký tập trung,
-   - Và các chỉ số tùy chỉnh phản ánh hiệu quả học tập của người dùng.
 
 ---
 

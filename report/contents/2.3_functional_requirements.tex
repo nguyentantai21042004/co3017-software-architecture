@@ -1,0 +1,373 @@
+\subsection{Yêu Cầu Chứng Năng}
+
+\indentpar \indentpar Phần này mô tả chi tiết các yêu cầu chức năng của hệ thống ITS (Intelligent Tutoring System), được hình thành từ User Stories, Use Cases và Domain Model đã phân tích ở các phần trước.
+Mục tiêu là đảm bảo mỗi chức năng đều phản ánh nhu cầu của stakeholder, liên kết trực tiếp với Vision Statement.
+
+\subsubsection{User Stories}
+
+\indentpar \indentpar Các User Stories mô tả hành vi mong đợi của người dùng theo dạng ``As a [role], I want [goal] so that [benefit]''.
+Mỗi story được gắn kèm tiêu chí chấp nhận (Acceptance Criteria) để đảm bảo có thể kiểm chứng được trong kiểm thử và đánh giá. 
+
+Các User Stories này được ánh xạ trực tiếp sang các Use Case và được hiện thực hóa trong Domain Model.
+
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|>{\centering\arraybackslash}m{0.8cm}|>{\centering\arraybackslash}m{1.2cm}|>{\centering\arraybackslash}m{1.6cm}|>{\noindent\justifying\arraybackslash}p{5.8cm}|>{\noindent\justifying\arraybackslash}p{5.8cm}|}
+\caption{User Stories}
+\label{tab:user_stories}
+\\
+\hline
+\textbf{STT} & \textbf{Actor} & \textbf{Phạm vi} & \textbf{User Story} & \textbf{Tiêu chí Chấp nhận} \\
+\hline
+\endfirsthead
+\caption[]{User Stories (tiếp theo)}
+\\
+\hline
+\textbf{STT} & \textbf{Actor} & \textbf{Phạm vi} & \textbf{User Story} & \textbf{Tiêu chí Chấp nhận} \\
+\hline
+\endhead
+\hline
+\endfoot
+\hline
+\endlastfoot
+\textbf{US0} & \textbf{Learner} & \textbf{Cá nhân hóa} & 
+Là một \textbf{Học sinh}, tôi muốn \textbf{hệ thống đánh giá kiến thức hiện tại của tôi} để nó có thể \textbf{đề xuất lộ trình học tập tối ưu}, không lãng phí thời gian vào những gì tôi đã biết. & 
+$1.$ Hệ thống phải cung cấp một bài kiểm tra đầu vào (diagnostic test).\newline
+$2.$ Lộ trình học tập được tạo ra phải bỏ qua các chủ đề mà học sinh đã đạt $> 90\%$ trong bài kiểm tra.\newline
+$3.$ Lộ trình phải ưu tiên các chủ đề mà học sinh yếu nhất (ví dụ: $< 30\%$ điểm). \\
+\hline
+\textbf{US1} & \textbf{Learner} & \textbf{Phản hồi} & 
+Là một \textbf{Học sinh}, tôi muốn \textbf{nhận được gợi ý (hints) và giải thích ngay lập tức} sau khi tôi mắc lỗi trong bài tập, để tôi có thể \textbf{tự sửa chữa và hiểu được khái niệm đó ngay lập tức}. & 
+$1.$ Khi trả lời sai một câu hỏi, một nút ``Gợi ý'' (Hint) xuất hiện.\newline
+$2.$ Gợi ý phải liên quan trực tiếp đến lỗi sai.\newline
+$3.$ Sau khi nộp bài, hệ thống hiển thị giải thích chi tiết cho từng câu trả lời sai. \\
+\hline
+\textbf{US2} & \textbf{Learner} & \textbf{Đánh giá} & 
+Là một \textbf{Học sinh}, tôi muốn \textbf{xem tiến trình học tập của mình} (\textbf{điểm}, \textbf{thời gian hoàn thành}, \textbf{các kỹ năng đã thành thạo}) để tôi có thể \textbf{theo dõi sự cải thiện của bản thân}. & 
+$1.$ Dashboard cá nhân hiển thị điểm trung bình chung.\newline
+$2.$ Có một biểu đồ trực quan hóa mức độ thành thạo của từng kỹ năng (ví dụ: ``Đại số: $80\%$'').\newline
+$3.$ Lịch sử làm bài (thời gian, điểm số) được ghi lại và có thể xem lại. \\
+\hline
+\textbf{US3} & \textbf{Learner} & \textbf{Vòng lặp học tập} & 
+Là một \textbf{Học sinh}, tôi muốn \textbf{hệ thống tự động đưa lại bài tập về các kỹ năng tôi chưa thành thạo sau một khoảng thời gian}, để \textbf{củng cố kiến thức đã học}. & 
+$1.$ Hệ thống phải theo dõi ngày cuối cùng học sinh luyện tập một kỹ năng.\newline
+$2.$ Nếu một kỹ năng $< 70\%$ và đã $> 7$ ngày chưa luyện tập, hệ thống tự động thêm bài ôn tập vào lộ trình.\newline
+$3.$ Các bài tập ôn tập được đánh dấu là ``Ôn tập'' (Review). \\
+\hline
+\textbf{US4} & \textbf{Instructor} & \textbf{Nội dung} & 
+Là một \textbf{Giảng viên}, tôi muốn \textbf{gắn metadata} (\textbf{độ khó}, \textbf{kỹ năng}, \textbf{chủ đề}) cho mỗi bài tập mới để \textbf{thuật toán cá nhân hóa có thể sử dụng chúng một cách chính xác}. & 
+$1.$ Form tạo bài tập mới phải có các trường bắt buộc: ``Độ khó'' (Dropdown: Dễ, TB, Khó), ``Kỹ năng liên quan'' (Tag input).\newline
+$2.$ Không thể lưu bài tập nếu thiếu metadata bắt buộc.\newline
+$3.$ Giảng viên có thể tạo/thêm các ``Kỹ năng'' mới vào hệ thống. \\
+\hline
+\textbf{US5} & \textbf{Instructor} & \textbf{Giám sát} & 
+Là một \textbf{Giảng viên}, tôi muốn \textbf{xem báo cáo tổng hợp về hiệu suất của cả lớp} để tôi có thể \textbf{xác định những chủ đề mà đa số học sinh đang gặp khó khăn}. & 
+$1.$ Báo cáo hiển thị điểm trung bình của cả lớp cho từng chủ đề.\newline
+$2.$ Báo cáo làm nổi bật $3$ kỹ năng/chủ đề có tỷ lệ làm sai cao nhất.\newline
+$3.$ Dữ liệu báo cáo có thể được xuất ra file CSV. \\
+\hline
+\textbf{US6} & \textbf{Instructor} & \textbf{Báo cáo chi tiết} & 
+Là một \textbf{Giảng viên}, tôi muốn \textbf{tạo báo cáo chi tiết về hiệu suất và lộ trình học tập của một học sinh cụ thể}, để tôi có thể \textbf{tư vấn cá nhân hóa (one-on-one)}. & 
+$1.$ Giảng viên có thể chọn một học sinh từ danh sách lớp.\newline
+$2.$ Báo cáo hiển thị lộ trình học tập đầy đủ của học sinh đó.\newline
+$3.$ Báo cáo so sánh thời gian học sinh dành cho một chủ đề so với trung bình của lớp. \\
+\hline
+\textbf{US7} & \textbf{Admin} & \textbf{Quản trị} & 
+Là một \textbf{Quản trị viên}, tôi muốn \textbf{quản lý các tài khoản Giảng viên} và \textbf{phân quyền truy cập nội dung} để đảm bảo \textbf{tính bảo mật} và \textbf{kiểm soát hệ thống}. & 
+$1.$ Admin có thể tạo, vô hiệu hóa, hoặc xóa tài khoản Giảng viên.\newline
+$2.$ Admin có thể gán vai trò (ví dụ: Giảng viên, TA) cho tài khoản.\newline
+$3.$ Admin có thể thiết lập quyền truy cập của một Giảng viên vào một khóa học cụ thể. \\
+\hline
+\textbf{US8} & \textbf{Admin} & \textbf{Quản lý Vận hành} & 
+Là một \textbf{Quản trị viên}, tôi muốn \textbf{có khả năng deploy/swap (thay đổi) các phiên bản mới của Mô hình AI (ví dụ: thuật toán gợi ý mới) mà không cần downtime hệ thống chính}, để \textbf{đảm bảo Modularity và Deployability (ACs quan trọng cho ITS)}. & 
+$1.$ Hệ thống hỗ trợ triển khai Blue/Green hoặc Canary cho service AI.\newline
+$2.$ Hệ thống chính (Học sinh) không bị gián đoạn (lỗi $503$) trong quá trình deploy.\newline
+$3.$ Admin có thể rollback về phiên bản AI trước đó trong vòng $5$ phút nếu có lỗi. \\
+\hline
+\end{longtable}
+\normalsize
+
+\subsubsection{Use Cases}
+
+\indentpar \indentpar Các Use Case cụ thể hóa cách người dùng tương tác với hệ thống để đạt được mục tiêu nghiệp vụ.
+Chúng đóng vai trò là cầu nối giữa yêu cầu người dùng và kiến trúc kỹ thuật, giúp xác định rõ:
+\begin{itemize}
+    \item Actor nào tham gia,
+    \item Điều kiện trước/sau khi thực hiện,
+    \item Luồng chính và các luồng thay thế.
+\end{itemize}
+
+\small
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\begin{longtable}{|>{\centering\arraybackslash}m{1cm}|>{\centering\arraybackslash}m{2.5cm}|>{\centering\arraybackslash}m{2.5cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{1.5cm}|>{\centering\arraybackslash}m{5.5cm}|}
+\caption{Use Cases}
+\label{tab:use_cases}
+\\
+\hline
+\textbf{Usecase ID} & \textbf{Tên Usecase} & \textbf{Mục đích} & \textbf{Tác nhân} & \textbf{FR liên quan} & \textbf{Luồng Cơ bản (Basic Flow)} \\
+\hline
+\endfirsthead
+\caption[]{Use Cases (tiếp theo)}
+\\
+\hline
+\textbf{Usecase ID} & \textbf{Tên Usecase} & \textbf{Mục đích} & \textbf{Tác nhân} & \textbf{FR liên quan} & \textbf{Luồng Cơ bản (Basic Flow)} \\
+\hline
+\endhead
+\hline
+\endfoot
+\hline
+\endlastfoot
+\textbf{UC-01} & Đăng ký Tài khoản & Tạo tài khoản mới trong hệ thống. & Learner, Instructor, Admin & FR1 & $1.$ User truy cập trang đăng ký. $2.$ Nhập email, password, chọn role (Learner/Instructor). $3.$ Hệ thống validate và tạo tài khoản. $4.$ Gửi email xác nhận. $5.$ User xác nhận email và kích hoạt tài khoản. \\
+\hline
+\textbf{UC-02} & Đăng nhập \& Xác thực & Cho phép người dùng đăng nhập và truy cập hệ thống. & Learner, Instructor, Admin & FR1, FR11 & $1.$ User nhập email và password. $2.$ Hệ thống xác thực thông tin. $3.$ Kiểm tra role và phân quyền (RBAC). $4.$ Tạo session và chuyển đến dashboard tương ứng với role. \\
+\hline
+\textbf{UC-03} & Cập nhật Hồ sơ \& Cài đặt Học tập & Learner cập nhật thông tin cá nhân và tùy chọn học tập. & Learner & FR2 & $1.$ Learner truy cập trang hồ sơ. $2.$ Cập nhật tên, tuổi, trình độ, sở thích, mục tiêu, lịch học. $3.$ Thiết lập nhắc nhở (email/push). $4.$ Hệ thống lưu thông tin vào LearnerProfile. \\
+\hline
+\textbf{UC-04} & Thực hiện Bài kiểm tra Đầu vào & Đánh giá kiến thức ban đầu để xây dựng Learner Model. & Learner & FR2, FR5 & $1.$ Learner bắt đầu diagnostic test. $2.$ Hệ thống hiển thị câu hỏi đa dạng về kỹ năng. $3.$ Learner trả lời. $4.$ Hệ thống chấm điểm và tạo SkillMasteryScore. $5.$ Kết quả lưu vào LearnerModel. \\
+\hline
+\textbf{UC-05} & Tạo Khóa học \& Nội dung Học tập & Instructor tạo khóa học, chương, bài học với đa dạng định dạng. & Instructor & FR3 & $1.$ Instructor tạo khóa học mới. $2.$ Tạo chương và bài học (text, video, slide, quiz, coding task). $3.$ Cấu hình versioning và phân quyền (public/private/group). $4.$ Lưu vào ContentAggregate. \\
+\hline
+\textbf{UC-06} & Gắn Metadata \& Tagging cho Nội dung & Instructor gắn metadata để hỗ trợ thuật toán AI. & Instructor & FR3, FR4 & $1.$ Instructor chọn nội dung đã tạo. $2.$ Gắn tags: kỹ năng, độ khó, chủ đề. $3.$ Hệ thống lưu MetadataTag. $4.$ ContentMetadata có sẵn cho Adaptive Engine. \\
+\hline
+\textbf{UC-07} & Cấu hình Lộ trình Khóa học & Instructor thiết lập mục tiêu, milestones, điều kiện mở khóa bài học. & Instructor & FR4 & $1.$ Instructor định nghĩa mục tiêu khóa học và kỹ năng yêu cầu. $2.$ Thiết lập pre-test, post-test. $3.$ Cấu hình điều kiện mở khóa (ví dụ: $\geq 70\%$ điểm quiz). $4.$ Lưu cấu trúc lộ trình. \\
+\hline
+\textbf{UC-08} & Bắt đầu/Tiếp tục Học tập Thích ứng & Cung cấp bài học tiếp theo tối ưu dựa trên Learner Model. & Learner & FR7, FR4 & $1.$ Learner yêu cầu bài học tiếp theo. $2.$ Hệ thống gọi Adaptive Engine (FR7). $3.$ Engine đọc LearnerModel và ContentMetadata. $4.$ Đề xuất ContentID tối ưu (spaced repetition, mastery-based). $5.$ Hiển thị nội dung. \\
+\hline
+\textbf{UC-09} & Làm Bài tập \& Assessment & Learner thực hiện bài tập (MCQ, essay, coding, upload, project). & Learner & FR5 & $1.$ Learner mở bài tập. $2.$ Đọc đề và trả lời (trong thời gian giới hạn nếu có). $3.$ Submit câu trả lời. $4.$ Hệ thống lưu vào gradebook. \\
+\hline
+\textbf{UC-10} & Chấm điểm \& Phản hồi Tức thì & Hệ thống chấm điểm và cung cấp phản hồi/gợi ý ngay lập tức. & Learner & FR5, FR6 & $1.$ Learner gửi câu trả lời (FR5). $2.$ Scoring/Feedback Service chấm điểm (auto-grading hoặc manual review). $3.$ Tạo feedback, hints, giải thích đáp án. $4.$ Hiển thị Score và Hint ($< 500$ms). $5.$ Cập nhật LearnerModel. \\
+\hline
+\textbf{UC-11} & Gợi ý Bài học Bù (Remediation) & Đề xuất bài học bổ sung khi Learner yếu kỹ năng. & Learner & FR6, FR7 & $1.$ Hệ thống phát hiện kỹ năng yếu từ LearnerModel. $2.$ FeedbackGenerator tạo gợi ý bài học liên quan. $3.$ Hiển thị danh sách bài học bù với hướng dẫn step-by-step. $4.$ Learner chọn bài học để học lại. \\
+\hline
+\textbf{UC-12} & Xem Dashboard \& Tiến độ Học tập & Learner xem tiến độ, điểm số, milestones. & Learner & FR8 & $1.$ Learner truy cập dashboard. $2.$ Hệ thống hiển thị tiến độ, điểm số, lịch học, milestones, skill mastery. $3.$ Learner có thể xuất báo cáo (CSV/PDF). \\
+\hline
+\textbf{UC-13} & Xem Báo cáo Tổng hợp Lớp & Instructor xem tổng quan hiệu suất của cả lớp. & Instructor & FR8 & $1.$ Instructor chọn lớp. $2.$ Hệ thống tạo báo cáo tổng hợp: điểm trung bình, điểm yếu phổ biến, phân bố kỹ năng. $3.$ Instructor phân tích và điều chỉnh nội dung. \\
+\hline
+\textbf{UC-14} & Tạo Báo cáo Chi tiết Học sinh & Instructor tạo báo cáo cá nhân hóa cho một học sinh. & Instructor & FR8 & $1.$ Instructor chọn học sinh. $2.$ Hệ thống truy xuất LearnerModel, ProgressRecord. $3.$ Tạo báo cáo: lộ trình học, điểm mạnh/yếu, thời gian học. $4.$ Xuất PDF/CSV để tư vấn one-on-one. \\
+\hline
+\textbf{UC-15} & Tương tác \& Thảo luận & Learner/Instructor tham gia thảo luận, chat, bình luận. & Learner, Instructor & FR9 & $1.$ User truy cập diễn đàn hoặc bài học. $2.$ Gửi comment/câu hỏi. $3.$ Hệ thống gửi thông báo realtime (in-app/email/push) cho người liên quan. $4.$ User khác trả lời. \\
+\hline
+\textbf{UC-16} & Quản lý Lớp \& Phân nhóm & Instructor tạo lớp, mời học sinh, chia nhóm. & Instructor & FR10 & $1.$ Instructor tạo lớp mới. $2.$ Mời học sinh qua email/link. $3.$ Phân vai trò (TA, student, observer). $4.$ Chia nhóm cho project. $5.$ Giao bài nhóm và đánh giá theo nhóm. \\
+\hline
+\textbf{UC-17} & Quản lý Người dùng \& Phân quyền (RBAC) & Admin quản lý tài khoản và phân quyền chi tiết. & Admin & FR1, FR11 & $1.$ Admin truy cập trang quản lý users. $2.$ Tạo/sửa/xóa tài khoản. $3.$ Gán role và permissions. $4.$ Mọi thao tác ghi vào audit logs. $5.$ User chỉ truy cập tính năng được phép. \\
+\hline
+\textbf{UC-18} & Hoán đổi Mô hình AI (Live Swap) & Triển khai phiên bản AI mới không downtime. & Admin & FR12 & $1.$ Admin yêu cầu triển khai Model V2. $2.$ Deployment Service chạy V2 song song với V1. $3.$ Traffic chuyển dần sang V2 (Blue/Green/Canary). $4.$ Monitoring kiểm tra health. $5.$ Ngừng V1 khi V2 ổn định. \\
+\hline
+\textbf{UC-19} & Giám sát \& Vận hành Hệ thống & Admin quản lý cấu hình, backup, logs, moderation. & Admin & FR12 & $1.$ Admin truy cập admin panel. $2.$ Kiểm tra health checks, logs hệ thống. $3.$ Thực hiện backup/restore dữ liệu. $4.$ Xử lý báo cáo vi phạm (moderation). $5.$ Cấu hình hệ thống (feature flags, limits). \\
+\hline
+\textbf{UC-20} & Nhận Phần thưởng \& Gamification & Learner nhận XP, badges, tham gia leaderboard. & Learner & FR13 & $1.$ Learner hoàn thành bài học/milestone. $2.$ Hệ thống tính XP, trao badge. $3.$ Cập nhật leaderboard. $4.$ Hiển thị streak learning, challenge mode. $5.$ Learner được động viên tiếp tục học. \\
+\hline
+\end{longtable}
+\normalsize
+
+\FloatBarrier
+
+\noindent\textbf{Sơ đồ minh họa Use Case chính:}
+
+\begin{figure}[ht]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/usecase_9.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/usecase_10.png}
+    \end{minipage}
+    \caption{Use Case: Làm Bài tập \& Assessment (trái) và Chấm điểm \& Phản hồi Tức thì (phải)}
+    \label{fig:usecase-9-10}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/usecase_11.png}
+    \caption{Use Case: Gợi ý Bài học Bù}
+    \label{fig:usecase-11}
+\end{figure}
+
+\FloatBarrier
+
+\subsubsection{Domain Model}
+
+\indentpar \indentpar Phần Domain Model mô tả cấu trúc logic nghiệp vụ cốt lõi của Hệ thống Gia sư Thông minh (Intelligent Tutoring System -- ITS).
+Nó là cầu nối giữa phân tích yêu cầu (Use Cases) và thiết kế kiến trúc (Architecture Design), giúp xác định các thực thể (entities), ranh giới (aggregates) và dịch vụ miền (domain services).
+
+\noindent\textbf{Aggregates}
+
+Trong ITS, mỗi Aggregate đại diện cho một nhóm thực thể có quan hệ nghiệp vụ chặt chẽ, được quản lý bởi một Aggregate Root duy nhất.
+Các Aggregates được xác định dựa trên hành vi nghiệp vụ và tần suất thay đổi, nhằm đảm bảo tính mô-đun (modularity), tính mở rộng (scalability) và tính tách biệt (separation of concerns).
+
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.65}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{4cm}|>{\noindent\justifying\arraybackslash}X|}
+\hline
+\textbf{Aggregate} & \textbf{Trách nhiệm chính (Responsibility)} \\
+\hline
+LearnerAggregate & Quản lý thông tin hồ sơ cá nhân, tiến trình học tập, lịch sử hoạt động của người học. \\
+\hline
+LearnerModelAggregate & Đại diện cho mô hình tri thức (AI Model) của từng học viên -- lưu trữ điểm thành thạo kỹ năng, lịch sử đánh giá, trạng thái BKT. \\
+\hline
+ContentAggregate & Quản lý nội dung học tập, khóa học, chương, bài học và metadata phục vụ thuật toán cá nhân hóa. \\
+\hline
+AdaptivePathAggregate & Đại diện cho lộ trình học tập được tạo động bởi Adaptive Engine dựa trên LearnerModel. \\
+\hline
+UserManagementAggregate & Quản lý người dùng, xác thực (AuthN), phân quyền (AuthZ), và nhật ký hoạt động (audit logs). \\
+\hline
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0}
+\caption{Aggregates}
+\label{tab:aggregates}
+\end{table}
+
+\noindent\textbf{Nguyên tắc phân tách Aggregates:}
+\begin{itemize}
+    \item Mỗi Aggregate có transaction boundary riêng biệt.
+    \item Giao tiếp giữa các Aggregate thực hiện qua Domain Events hoặc Message Queue (Kafka/RabbitMQ) để đảm bảo eventual consistency.
+    \item Các Aggregate có tần suất cập nhật cao (như LearnerModelAggregate) được tách riêng để giảm độ coupling với phần dữ liệu ít thay đổi.
+\end{itemize}
+
+\noindent\textbf{Entities}
+
+Các Entity là các đối tượng nghiệp vụ có định danh duy nhất và được quản lý trong phạm vi của một Aggregate.
+
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.75} % <-- Tăng khoảng cách dòng trong bảng này
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\hline
+\textbf{Aggregate thuộc về} & \textbf{Entity chính} & \textbf{Mô tả ngắn gọn} \\
+\hline
+LearnerAggregate & Learner, LearnerProfile, ProgressRecord & Lưu thông tin người học, mục tiêu học tập và tiến trình hoàn thành nội dung. \\
+\hline
+LearnerModelAggregate & LearnerModel, SkillMasteryScore, DiagnosticResult & Mô tả trạng thái kiến thức hiện tại và mức độ thành thạo kỹ năng theo mô hình Bayesian Knowledge Tracing. \\
+\hline
+ContentAggregate & Course, Chapter, ContentUnit, MetadataTag, Assessment & Cấu trúc khóa học và các bài tập tương ứng với từng kỹ năng. \\
+\hline
+AdaptivePathAggregate & AdaptivePath, PathNode, RecommendationScore & Biểu diễn lộ trình học tập cá nhân hóa gồm nhiều nội dung được sắp xếp dựa trên điểm yếu của người học. \\
+\hline
+UserManagementAggregate & User, Role, Permission, AuditLog & Đảm bảo bảo mật và phân quyền truy cập trong toàn hệ thống. \\
+\hline
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0}
+\caption{Entities}
+\label{tab:entities}
+\end{table}
+
+\noindent\textbf{Lưu ý:} Tất cả các Entity đều tuân thủ nguyên tắc SRP (Single Responsibility Principle) -- mỗi lớp chỉ chịu trách nhiệm một phần của nghiệp vụ, tránh chồng chéo dữ liệu.
+
+\noindent\textbf{Value Objects}
+
+Value Objects là các đối tượng bất biến (immutable), được so sánh theo giá trị thay vì danh tính.
+Trong ITS, chúng được sử dụng để tăng tính an toàn dữ liệu và tính tái sử dụng trong nhiều Aggregates.
+
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.7} % <-- tăng độ cao cho mỗi hàng
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\hline
+\textbf{Value Object} & \textbf{Vai trò} \\
+\hline
+MetadataTag & Đại diện cho thẻ (tag) mô tả kỹ năng, chủ đề hoặc độ khó của nội dung học tập. \\
+\hline
+RecommendationScore & Điểm đánh giá đề xuất nội dung dựa trên sự phù hợp với LearnerModel. \\
+\hline
+ProgressRecord & Ghi lại tiến trình học tập, trạng thái hoàn thành, và thời gian học của người học. \\
+\hline
+DiagnosticResult & Kết quả của bài kiểm tra đầu vào (diagnostic test), dùng để khởi tạo LearnerModel. \\
+\hline
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0} % khôi phục arraystretch mặc định cho các bảng sau
+\caption{Value Objects}
+\label{tab:value_objects}
+\end{table}
+
+\noindent\textbf{Lưu ý:} Các Value Object được thiết kế theo nguyên tắc OCP (Open-Closed Principle): có thể mở rộng để thêm thuộc tính (ví dụ thêm loại thẻ metadata mới) mà không cần sửa đổi lớp gốc.
+
+\noindent\textbf{Domain Services}
+
+Domain Services là nơi chứa logic nghiệp vụ phức tạp không thuộc riêng một Entity hoặc Aggregate nào, được thiết kế theo DIP (Dependency Inversion Principle) để có thể hoán đổi dễ dàng các thuật toán hoặc cách triển khai.
+
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.7} % <-- tăng độ cao cho mỗi hàng
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\hline
+\textbf{Domain Service} & \textbf{Mô tả \& Vai trò nghiệp vụ} \\
+\hline
+AdaptivePathGenerator & Tạo lộ trình học tập cá nhân hóa dựa trên dữ liệu của LearnerModel và metadata của nội dung. Cho phép thay đổi thuật toán (rule-based / ML-based) mà không ảnh hưởng service khác. \\
+\hline
+ScoringEngine & Xử lý việc chấm điểm tự động cho nhiều loại bài tập (quiz, essay, coding). Có thể tích hợp AI model (như BERT) cho essay grading. \\
+\hline
+FeedbackGenerator & Tạo phản hồi (hints, giải thích, bài học bù) dựa trên mẫu lỗi học sinh thường gặp. Sử dụng NLP hoặc rule-based engine. \\
+\hline
+RemediationEngine & Phân tích kỹ năng yếu, đề xuất bài học bù hoặc bài ôn tập theo nguyên tắc spaced repetition. \\
+\hline
+AuthenticationService & Quản lý xác thực (login, JWT issuance) và phân quyền truy cập. \\
+\hline
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0} % khôi phục arraystretch mặc định cho các bảng sau
+\caption{Domain Services}
+\label{tab:domain_services}
+\end{table}
+
+\noindent\textbf{Lưu ý:} Mỗi Domain Service tương ứng với một Microservice độc lập trong kiến trúc ITS, đảm bảo khả năng triển khai độc lập (deployability) và test độc lập (testability).
+
+Ví dụ: AdaptivePathGenerator nằm trong Adaptive Engine Service, ScoringEngine và FeedbackGenerator nằm trong Evaluation \& Feedback Services.
+
+\noindent\textbf{Domain Events}
+
+Domain Events phản ánh các thay đổi quan trọng trong trạng thái hệ thống.
+Chúng là cơ chế giúp các microservices giao tiếp theo mô hình event-driven, giảm phụ thuộc trực tiếp giữa các module.
+
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.7} % <-- tăng độ cao cho mỗi hàng
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3cm}|>{\centering\arraybackslash}m{2.5cm}|>{\centering\arraybackslash}m{2.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\hline
+\textbf{Domain Event} & \textbf{Nguồn phát sinh (Publisher)} & \textbf{Người tiêu thụ (Consumer)} & \textbf{Mục đích} \\
+\hline
+SubmissionCompleted & ScoringEngine & LearnerModel Service & Cập nhật kỹ năng học viên sau khi nộp bài. \\
+\hline
+LearnerModelUpdated & LearnerModel Service & Adaptive Engine & Kích hoạt quá trình tạo lại lộ trình học mới. \\
+\hline
+FeedbackGenerated & Feedback Service & Dashboard Service & Hiển thị phản hồi tức thì trên giao diện học viên. \\
+\hline
+PathGenerated & Adaptive Engine & Cache/Redis + Dashboard & Lưu trữ và hiển thị lộ trình học mới. \\
+\hline
+UserCreated / RoleAssigned & Auth Service & Admin Service & Đồng bộ quyền truy cập và nhật ký hệ thống. \\
+\hline
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0} % khôi phục lại mặc định cho các bảng sau
+\caption{Domain Events}
+\label{tab:domain_events}
+\end{table}
+
+\noindent\textbf{Lưu ý:} Các sự kiện này được truyền qua Kafka hoặc RabbitMQ, đảm bảo tính asynchronous communication và eventual consistency giữa các dịch vụ.
+
+Ví dụ: khi SubmissionCompleted được phát đi, LearnerModel Service sẽ tự động cập nhật điểm thành thạo kỹ năng mà không cần gọi API đồng bộ.
+
+\noindent\textbf{Domain Model Class Diagram}
+
+Sơ đồ dưới đây minh họa mối quan hệ giữa các Aggregate và Entity chính, thể hiện cách Domain Model được tổ chức logic theo DDD và chuẩn bị cho việc phân rã thành Microservices trong kiến trúc tổng thể.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/domain_model_class_diagram.png}
+    \caption{Domain Model Class Diagram}
+    \label{fig:domain-model-class-diagram}
+\end{figure}
+
+\FloatBarrier

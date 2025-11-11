@@ -6,6 +6,8 @@ report/*.out
 report/*.pdf
 report/*.bbl
 report/*.blg
+report/*.lof
+report/*.lot
 report/*.synctex.gz
 report/*.fdb_latexmk
 report/*.fls

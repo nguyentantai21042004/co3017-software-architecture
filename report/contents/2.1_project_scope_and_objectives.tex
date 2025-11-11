@@ -1,0 +1,57 @@
+\section{Phân Tích Bối Cảnh Và Yêu Cầu}
+
+\subsection{Phạm vi và Mục tiêu Dự án}
+
+\subsubsection{Tầm nhìn dự án}
+
+\indentpar \indentpar Mục tiêu của dự án là xây dựng Hệ thống Gia sư Thông minh (Intelligent Tutoring System -- ITS) --- một nền tảng học tập được cá nhân hóa dựa trên trí tuệ nhân tạo (AI), có khả năng phân tích hành vi học tập, đánh giá năng lực và điều chỉnh lộ trình học cho từng người học một cách tự động.
+
+Tầm nhìn của ITS là tái hiện trải nghiệm học một--kèm--một giữa người học và gia sư, giúp người học được hướng dẫn theo đúng tốc độ, năng lực và sở thích cá nhân; đồng thời đảm bảo hệ thống có thể mở rộng phục vụ hàng nghìn người dùng đồng thời, duy trì hiệu năng và chất lượng học tập ổn định.
+
+\noindent\textit{``Tạo ra một hệ thống học tập thông minh có khả năng thích ứng, giúp mỗi người học đạt hiệu quả tối đa thông qua lộ trình học được cá nhân hóa bởi AI -- mang trải nghiệm gia sư riêng cho mọi người, ở bất kỳ đâu.''}
+
+\subsubsection{Bối cảnh kinh doanh}
+
+\noindent\textbf{Nhu cầu thị trường}
+
+Sự bùng nổ của công nghệ và xu hướng học tập trực tuyến đã mở ra cơ hội lớn cho các hệ thống e-learning cá nhân hóa. Tuy nhiên, phần lớn các nền tảng hiện nay vẫn mang tính đại trà, chưa thể tự động thích ứng với trình độ, tiến độ và phong cách học tập riêng của từng người học.
+
+\noindent\textbf{Đối tượng người dùng}
+\begin{itemize}
+    \item Học sinh, sinh viên (K--12 và đại học): Cần lộ trình học phù hợp năng lực, tránh học lại kiến thức đã biết.
+    \item Giảng viên / giáo viên: Cần công cụ giám sát tiến trình, tạo báo cáo, và gợi ý cải thiện cho từng học sinh.
+    \item Quản trị viên (Admin): Quản lý vận hành hệ thống, phân quyền và triển khai các phiên bản AI mới.
+\end{itemize}
+
+\noindent\textbf{Tiêu chí thành công}
+\begin{itemize}
+    \item Hỗ trợ tối thiểu 5.000 người dùng đồng thời, thời gian phản hồi nhỏ hơn 500ms cho truy vấn phổ biến.
+    \item Hệ thống đạt SLA tối thiểu 99.5\% uptime, triển khai tính năng mới trong vòng 1 ngày.
+    \item Mức độ cá nhân hóa và khả năng giữ chân người học được cải thiện ít nhất 40\% so với nền tảng học trực tuyến truyền thống.
+    \item Áp dụng nguyên tắc SOLID và Clean Architecture giúp độ bao phủ kiểm thử tối thiểu 80\%.
+\end{itemize}
+
+\subsubsection{Bối cảnh kỹ thuật}
+
+\noindent\textbf{Hệ thống hiện có và tích hợp:}
+\begin{itemize}
+    \item Hệ thống quản lý học tập (LMS) hiện có thông qua API hoặc LTI.
+    \item Dịch vụ xác thực người dùng (Auth Service) dùng JWT/OAuth2.
+    \item Hệ thống lưu trữ nội dung học tập (MinIO, CDN, PostgreSQL, Redis).
+    \item Môi trường triển khai Kubernetes cho phép auto-scaling và CI/CD.
+\end{itemize}
+
+\noindent\textbf{Ràng buộc công nghệ}
+\begin{itemize}
+    \item Ngôn ngữ chính: Java (Spring Boot) cho backend nghiệp vụ, Golang cho các dịch vụ hiệu năng cao (AI/Adaptive Engine), và Python cho thành phần chấm điểm (Scoring/Feedback).
+    \item Cơ sở dữ liệu: PostgreSQL (quan hệ) cho dữ liệu người học và nội dung; Redis cho cache hiệu năng; Kafka hoặc RabbitMQ cho giao tiếp sự kiện bất đồng bộ.
+    \item Kiến trúc: Microservices + Event-Driven, áp dụng Clean Architecture để tách biệt domain, application và infrastructure.
+    \item Áp dụng nguyên tắc SOLID, DDD (Domain-Driven Design) và Twelve-Factor App cho thiết kế module độc lập và testable.
+\end{itemize}
+
+\noindent\textbf{Kỳ vọng hiệu năng và khả năng mở rộng}
+\begin{itemize}
+    \item Hiệu năng (Performance): API phản hồi nhỏ hơn $300\,$ms; tác vụ chấm điểm hoặc tạo lộ trình nhỏ hơn $1\,$s.
+    \item Khả năng mở rộng (Scalability): triển khai dạng Kubernetes cluster với Horizontal Pod Autoscaling (HPA) lớn hơn hoặc bằng $5{,}000$ người dùng đồng thời.
+    \item Khả năng quan sát (Observability): theo dõi hệ thống bằng Prometheus, Grafana, Jaeger, ELK Stack, cho phép phát hiện sự cố và phân tích hành vi người học theo thời gian thực.
+\end{itemize}

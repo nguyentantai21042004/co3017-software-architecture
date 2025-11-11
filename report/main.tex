@@ -5,6 +5,7 @@
 \usepackage{a4wide,amssymb,epsfig,latexsym,array,hhline,fancyhdr}
 \usepackage[normalem]{ulem}
 \usepackage{placeins}
+\usepackage{ragged2e}
 \usepackage[makeroom]{cancel}
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -34,6 +35,7 @@
 \usepackage{setspace}
 \usepackage{epsfig}
 \usepackage{tikz}
+\usepackage{titlesec}
 \usetikzlibrary{arrows,snakes,backgrounds,calc}
 \usepackage[unicode]{hyperref}
 \hypersetup{urlcolor=blue,linkcolor=black,citecolor=black,colorlinks=true}
@@ -109,8 +111,8 @@
 		\put(0,-8){\includegraphics[width=10mm, height=10mm]{images/hcmut.png}}
 	\end{picture}&
 		\begin{tabular}{l}
-			\textbf{Vietnam National University, Ho Chi Minh City University Of Technology}\\
-			\textbf{Faculty Of Computer Science And Engineering}
+			\textbf{Đại Học Bách Khoa Thành Phố Hồ Chí Minh}\\
+			\textbf{Khoa Khoa Học Máy Tính}
 		\end{tabular} 	
 	\end{tabular}
 }
@@ -122,7 +124,7 @@
 	\end{tabular}  }
 
 \fancyfoot{} % xóa footer mặc định
-\fancyfoot[L]{\scriptsize  Mật mã học và Mã hóa Thông tin - HK251}
+\fancyfoot[L]{\scriptsize  [CO3017] Kiến Trúc Phần Mềm - HK251}
 \fancyfoot[R]{\scriptsize  Trang {\thepage}/\pageref{LastPage}}
 
 \renewcommand{\headrulewidth}{0.3pt}
@@ -145,8 +147,8 @@
 % ===== Thiết lập màu công thức, khoảng cách, caption, khoảng cách hình/bảng =====
 \everymath{\color{black}}
 \sloppy
-\captionsetup[figure]{labelfont={small,bf},textfont={small,it},belowskip=-1pt,aboveskip=-9pt}
-\captionsetup[table]{labelfont={small,bf},textfont={small,it},belowskip=-1pt,aboveskip=7pt}
+\captionsetup[figure]{labelfont={small,bf},textfont={small,it},position=bottom,belowskip=8pt,aboveskip=8pt}
+\captionsetup[table]{labelfont={small,bf},textfont={small,it},position=bottom,belowskip=8pt,aboveskip=8pt}
 \setlength{\floatsep}{5pt plus 2pt minus 2pt}
 \setlength{\textfloatsep}{5pt plus 2pt minus 2pt}
 \setlength{\intextsep}{10pt plus 2pt minus 2pt}
@@ -155,8 +157,17 @@
 \onehalfspacing
 
 % ===== Cấu hình khoảng cách đoạn văn đồng nhất =====
-\setlength{\parskip}{0.5em}
+\setlength{\parskip}{0.3em}
 \setlength{\parindent}{1.5em}
+
+% ===== Cấu hình khoảng cách section/subsection đồng nhất =====
+\titlespacing*{\section}{0pt}{0.2em}{0.2em}
+\titlespacing*{\subsection}{0pt}{0.2em}{0.2em}
+\titlespacing*{\subsubsection}{0pt}{0.2em}{0.2em}
+
+% ===== Keyword để thụt đầu dòng =====
+% Sử dụng \indentpar để thụt đầu dòng đoạn văn
+\newcommand{\indentpar}{\indent}
 
 % ===== Bắt đầu tài liệu =====
 \onehalfspacing
@@ -172,9 +183,11 @@
 		($ (current page.south east) + (-0.45in,0.55in) $);
 \end{tikzpicture}
 
+\vspace{-0.5cm}
+
 \begin{center}
-	\Large \textbf{VIETNAM NATIONAL UNIVERSITY, HO CHI MINH CITY UNIVERSITY OF TECHNOLOGY} \\
-	\Large \textbf{FACULTY OF COMPUTER SCIENCE AND ENGINEERING}
+	\Large \textbf{ĐẠI HỌC BÁCH KHOA THÀNH PHỐ HỒ CHÍ MINH} \\
+	\Large \textbf{KHOA KHOA HỌC MÁY TÍNH}
 \end{center}
 
 \vspace{0.2cm}
@@ -186,7 +199,7 @@
 \end{figure}
 
 \begin{center}
-	\textbf{{\LARGE SOFTWARE ARCHITECTURE (CO3017)}} \\
+	\textbf{{\LARGE KIẾN TRÚC PHẦN MỀM (CO3017)}} \\
 \end{center}
 
 \vspace{-6pt}
@@ -217,7 +230,7 @@
 \vspace{6cm}
 
 \begin{center}
-	{\large HO CHI MINH CITY, OCTOBER 2025 }
+	{\large 11/2025, Thành phố Hồ Chí Minh}
 \end{center}
 
 \end{titlepage}
@@ -228,17 +241,25 @@
 \newpage
 \tableofcontents
 \newpage
+\listoffigures
+\newpage
+\listoftables
+\newpage
 
 % ===== Thiết lập trang và chèn nội dung chính =====
 \setcounter{page}{1}
 
 % Các file con chứa nội dung các chương/mục của báo cáo
-\input{contents/00_executive_summary}
+\input{contents/1_executive_summary}
 \newpage
-% \input{contents/2_cp_cpa}
-% \newpage
-% \input{contents/3_collision_resistant_hash_functions}
-% \newpage
-% \input{contents/4_applied_cryptography_case_studies}
+\input{contents/2.1_project_scope_and_objectives}
+\newpage
+\input{contents/2.2_stakeholder_analysis}
+\newpage
+\input{contents/2.3_functional_requirements}
+\newpage
+\input{contents/2.4_non_functional_requirements}
+\newpage
+\input{contents/2.5_constraints_and_assumptions}
 
 \end{document}

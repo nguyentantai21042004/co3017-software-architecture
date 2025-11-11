@@ -1,88 +1,225 @@
+Chào bạn, tôi đã đọc kỹ đánh giá và cập nhật trực tiếp tài liệu của bạn để giải quyết 3 điểm yếu đã được chỉ ra:
+
+1.  **Thêm Phân tích các bên liên quan (Stakeholder Priorities):** Một mục mới đã được thêm vào đầu tài liệu để xác định các bên liên quan và mức độ ảnh hưởng/quan tâm của họ.
+2.  **Thêm Tiêu chí Chấp nhận (Acceptance Criteria):** Bảng User Story đã được cập nhật với một cột mới, "Tiêu chí Chấp nhận (Acceptance Criteria)", cung cấp các điều kiện cụ thể, có thể kiểm chứng cho mỗi story.
+3.  **Thêm Sơ đồ Domain (Domain Diagram):** Một sơ đồ Mermaid (dạng Class Diagram) đã được thêm vào phần "Mô hình hóa Domain chi tiết" để trực quan hóa các Aggregates và mối quan hệ giữa chúng, đúng như phần văn bản đã mô tả.
+
+Dưới đây là nội dung tệp `1-analyst.md` đã được cải thiện:
+
+-----
+
 # Phân tích yêu cầu người dùng & Use Cases
+
+## Phân tích các bên liên quan (Stakeholder Analysis)
+
+Trước khi đi vào User Stories, chúng ta cần xác định các bên liên quan chính và mức độ ưu tiên của họ thông qua ma trận Ảnh hưởng/Quan tâm.
+
+| **Bên liên quan (Stakeholder)** | **Mức độ Quan tâm (Interest)** | **Mức độ Ảnh hưởng (Influence)** | **Chiến lược Tương tác** |
+|-------------------------|---------------------------|-----------------------------|---------------------------|
+| **Learner (Học sinh)** | Cao | Cao | **Quản lý chặt chẽ (Manage Closely):** Yêu cầu của họ là trọng tâm của hệ thống (US0-3). Sự chấp nhận của họ quyết định thành công. |
+| **Instructor (Giảng viên)** | Cao | Cao | **Quản lý chặt chẽ (Manage Closely):** Họ tạo ra nội dung và sử dụng dữ liệu để giảng dạy (US4-6). Cần công cụ hiệu quả. |
+| **Admin (Quản trị viên)** | Trung bình | Trung bình | **Thông báo (Keep Informed):** Quan tâm đến vận hành và bảo mật (US7-8), nhưng không ảnh hưởng trực tiếp đến logic học tập. |
+
+## User Stories (Đã bổ sung Tiêu chí Chấp nhận)
 
 Mục tiêu của bước này: Từ đề tài, tổng hợp các yêu cầu thành các user stories, thể hiện ai làm gì – để đạt được điều gì.
 
-| **STT** | **Actor**      | **Phạm vi**            | **User Story (As a [role], I want [goal] so that [reason])**                                                                                                                                     |
-|-----------|----------------|------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **US0**   | **Learner**    | **Cá nhân hóa**        | Là một **Học sinh**, tôi muốn **hệ thống đánh giá kiến thức hiện tại của tôi** để nó có thể **đề xuất lộ trình học tập tối ưu**, không lãng phí thời gian vào những gì tôi đã biết.              |
-| **US1**   | **Learner**    | **Phản hồi**           | Là một **Học sinh**, tôi muốn **nhận được gợi ý (hints) và giải thích ngay lập tức** sau khi tôi mắc lỗi trong bài tập, để tôi có thể **tự sửa chữa và hiểu được khái niệm đó ngay lập tức**.    |
-| **US2**   | **Learner**    | **Đánh giá**           | Là một **Học sinh**, tôi muốn **xem tiến trình học tập của mình** (**điểm**, **thời gian hoàn thành**, **các kỹ năng đã thành thạo**) để tôi có thể **theo dõi sự cải thiện của bản thân**.      |
-| **US3**   | **Learner**    | **Vòng lặp học tập**   | Là một **Học sinh**, tôi muốn **hệ thống tự động đưa lại bài tập về các kỹ năng tôi chưa thành thạo sau một khoảng thời gian**, để **củng cố kiến thức đã học**.                                 |
-| **US4**   | **Instructor** | **Nội dung**           | Là một **Giảng viên**, tôi muốn **gắn metadata** (**độ khó**, **kỹ năng**, **chủ đề**) cho mỗi bài tập mới để **thuật toán cá nhân hóa có thể sử dụng chúng một cách chính xác**.               |
-| **US5**   | **Instructor** | **Giám sát**           | Là một **Giảng viên**, tôi muốn **xem báo cáo tổng hợp về hiệu suất của cả lớp** để tôi có thể **xác định những chủ đề mà đa số học sinh đang gặp khó khăn**.                                   |
-| **US6**   | **Instructor** | **Báo cáo chi tiết**   | Là một **Giảng viên**, tôi muốn **tạo báo cáo chi tiết về hiệu suất và lộ trình học tập của một học sinh cụ thể**, để tôi có thể **tư vấn cá nhân hóa (one-on-one)**.                            |
-| **US7**   | **Admin**      | **Quản trị**           | Là một **Quản trị viên**, tôi muốn **quản lý các tài khoản Giảng viên** và **phân quyền truy cập nội dung** để đảm bảo **tính bảo mật** và **kiểm soát hệ thống**.                              |
-| **US8**   | **Admin**      | **Quản lý Vận hành**   | Là một **Quản trị viên**, tôi muốn **có khả năng deploy/swap (thay đổi) các phiên bản mới của Mô hình AI (ví dụ: thuật toán gợi ý mới) mà không cần downtime hệ thống chính**, để **đảm bảo Modularity và Deployability (ACs quan trọng cho ITS)**. |
+| **STT** | **Actor** | **Phạm vi** | **User Story (As a [role], I want [goal] so that [reason])** | **Tiêu chí Chấp nhận (Acceptance Criteria)** |
+|---|---|---|---|---|
+| **US0** | **Learner** | **Cá nhân hóa** | Là một **Học sinh**, tôi muốn **hệ thống đánh giá kiến thức hiện tại của tôi** để nó có thể **đề xuất lộ trình học tập tối ưu**, không lãng phí thời gian vào những gì tôi đã biết. | 1. Hệ thống phải cung cấp một bài kiểm tra đầu vào (diagnostic test).<br>2. Lộ trình học tập được tạo ra phải bỏ qua các chủ đề mà học sinh đã đạt \>90% trong bài kiểm tra.<br>3. Lộ trình phải ưu tiên các chủ đề mà học sinh yếu nhất (ví dụ: \<30% điểm). |
+| **US1** | **Learner** | **Phản hồi** | Là một **Học sinh**, tôi muốn **nhận được gợi ý (hints) và giải thích ngay lập tức** sau khi tôi mắc lỗi trong bài tập, để tôi có thể **tự sửa chữa và hiểu được khái niệm đó ngay lập tức**. | 1. Khi trả lời sai một câu hỏi, một nút "Gợi ý" (Hint) xuất hiện.<br>2. Gợi ý phải liên quan trực tiếp đến lỗi sai.<br>3. Sau khi nộp bài, hệ thống hiển thị giải thích chi tiết cho từng câu trả lời sai. |
+| **US2** | **Learner** | **Đánh giá** | Là một **Học sinh**, tôi muốn **xem tiến trình học tập của mình** (**điểm**, **thời gian hoàn thành**, **các kỹ năng đã thành thạo**) để tôi có thể **theo dõi sự cải thiện của bản thân**. | 1. Dashboard cá nhân hiển thị điểm trung bình chung.<br>2. Có một biểu đồ trực quan hóa mức độ thành thạo của từng kỹ năng (ví dụ: "Đại số: 80%").<br>3. Lịch sử làm bài (thời gian, điểm số) được ghi lại và có thể xem lại. |
+| **US3** | **Learner** | **Vòng lặp học tập** | Là một **Học sinh**, tôi muốn **hệ thống tự động đưa lại bài tập về các kỹ năng tôi chưa thành thạo sau một khoảng thời gian**, để **củng cố kiến thức đã học**. | 1. Hệ thống phải theo dõi ngày cuối cùng học sinh luyện tập một kỹ năng.<br>2. Nếu một kỹ năng \< 70% và đã \> 7 ngày chưa luyện tập, hệ thống tự động thêm bài ôn tập vào lộ trình.<br>3. Các bài tập ôn tập được đánh dấu là "Ôn tập" (Review). |
+| **US4** | **Instructor** | **Nội dung** | Là một **Giảng viên**, tôi muốn **gắn metadata** (**độ khó**, **kỹ năng**, **chủ đề**) cho mỗi bài tập mới để **thuật toán cá nhân hóa có thể sử dụng chúng một cách chính xác**. | 1. Form tạo bài tập mới phải có các trường bắt buộc: "Độ khó" (Dropdown: Dễ, TB, Khó), "Kỹ năng liên quan" (Tag input).<br>2. Không thể lưu bài tập nếu thiếu metadata bắt buộc.<br>3. Giảng viên có thể tạo/thêm các "Kỹ năng" mới vào hệ thống. |
+| **US5** | **Instructor** | **Giám sát** | Là một **Giảng viên**, tôi muốn **xem báo cáo tổng hợp về hiệu suất của cả lớp** để tôi có thể **xác định những chủ đề mà đa số học sinh đang gặp khó khăn**. | 1. Báo cáo hiển thị điểm trung bình của cả lớp cho từng chủ đề.<br>2. Báo cáo làm nổi bật 3 kỹ năng/chủ đề có tỷ lệ làm sai cao nhất.<br>3. Dữ liệu báo cáo có thể được xuất ra file CSV. |
+| **US6** | **Instructor** | **Báo cáo chi tiết** | Là một **Giảng viên**, tôi muốn **tạo báo cáo chi tiết về hiệu suất và lộ trình học tập của một học sinh cụ thể**, để tôi có thể **tư vấn cá nhân hóa (one-on-one)**. | 1. Giảng viên có thể chọn một học sinh từ danh sách lớp.<br>2. Báo cáo hiển thị lộ trình học tập đầy đủ của học sinh đó.<br>3. Báo cáo so sánh thời gian học sinh dành cho một chủ đề so với trung bình của lớp. |
+| **US7** | **Admin** | **Quản trị** | Là một **Quản trị viên**, tôi muốn **quản lý các tài khoản Giảng viên** và **phân quyền truy cập nội dung** để đảm bảo **tính bảo mật** và **kiểm soát hệ thống**. | 1. Admin có thể tạo, vô hiệu hóa, hoặc xóa tài khoản Giảng viên.<br>2. Admin có thể gán vai trò (ví dụ: Giảng viên, TA) cho tài khoản.<br>3. Admin có thể thiết lập quyền truy cập của một Giảng viên vào một khóa học cụ thể. |
+| **US8** | **Admin** | **Quản lý Vận hành** | Là một **Quản trị viên**, tôi muốn **có khả năng deploy/swap (thay đổi) các phiên bản mới của Mô hình AI (ví dụ: thuật toán gợi ý mới) mà không cần downtime hệ thống chính**, để **đảm bảo Modularity và Deployability (ACs quan trọng cho ITS)**. | 1. Hệ thống hỗ trợ triển khai Blue/Green hoặc Canary cho service AI.<br>2. Hệ thống chính (Học sinh) không bị gián đoạn (lỗi 503) trong quá trình deploy.<br>3. Admin có thể rollback về phiên bản AI trước đó trong vòng 5 phút nếu có lỗi. |
 
 # Yêu cầu chức năng
 
 Yêu cầu chức năng là những mô tả chi tiết về các **chức năng**, **hành vi** và **nhiệm vụ** mà hệ thống cần thực hiện để thỏa mãn **nhu cầu của người dùng**.
 
 **Đặc điểm của yêu cầu chức năng:**
-- Trả lời câu hỏi: **“Hệ thống sẽ thực hiện những gì?”**
-- Diễn tả các **hành động**, **quy trình** và **kết quả đầu ra** mong đợi từ hệ thống.
-- Thường được trình bày qua các **use case**, **user story** hoặc **liệt kê chức năng cụ thể**.
 
-| **STT** | **Tên chức năng**                     | **Mô tả chi tiết**                                                                                                                                                                                       | **Tiêu chí chấp nhận / Kết quả mong đợi**                                                                                                         | **Đối tượng sử dụng** | **User Story (Liên quan)**                                         |
-|---------|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|--------------------------------------------------------------------|
-| **FR1** | **Đăng ký & Xác thực**               | **Người dùng** có thể tạo **tài khoản mới** bằng **email/password** hoặc **đăng nhập** với tài khoản đã có.                                                                                             | **Email xác nhận** được gửi khi đăng ký; người dùng chỉ có thể truy cập **tính năng tương ứng với role**.                                        | **H, GV, A**         | **US7**                                                         |
-| **FR2** | **Hồ sơ & Cài đặt Học tập**          | **Hồ sơ** gồm **tên, tuổi, trình độ, sở thích, mục tiêu học, ngôn ngữ, lịch học**; hỗ trợ **bài kiểm tra đầu vào** (*diagnostic test*).                                                                | Người dùng có thể **cập nhật thông tin, cài đặt lịch học, nhận nhắc nhở** bằng **email/push notification**. Kết quả diagnostic test được lưu vào **Learner Model**. | **H**                | **US0**                                                         |
-| **FR3** | **Quản lý Nội dung Học tập**         | **Giảng viên** có thể **tạo, biên tập khóa học, chương, bài học**. Hỗ trợ nhiều **định dạng nội dung** (**text, video, slide, quiz, coding task…**).                                                  | Giảng viên có thể **gắn thẻ (tagging)**, **nội dung có versioning**, và **phân quyền truy cập** (**public/private/group**).                    | **GV**               | **US4**                                                         |
-| **FR4** | **Cấu trúc Khóa học & Lộ trình**     | Mỗi **khóa** có **mục tiêu, kỹ năng**, **pre-tests, post-tests**. Hỗ trợ **lộ trình tuyến tính và adaptive**.                                                                                          | **Milestones, checkpoint**, điều kiện mở khóa bài tiếp theo được cấu hình (ví dụ **≥70% điểm quiz**).                                            | **GV, H**            | **US0, US3**                                                   |
-| **FR5** | **Đánh giá & Thẩm định**             | Hỗ trợ nhiều **kiểu bài**: **MCQ, essay, coding, upload, project**. Có **auto-grading** và **review thủ công**.                                                                                        | Học sinh có thể **làm bài giới hạn thời gian**; **điểm số, lịch sử** lưu trong **gradebook**.                                                    | **H, GV**            | **US2**                                                         |
-| **FR6** | **Hệ thống Phản hồi & Remediation**  | Cung cấp **phản hồi tức thì**, **gợi ý bài học bù (remediation)** khi **học sinh yếu kỹ năng** nào đó.                                                                                                | Hiển thị **giải thích đáp án, gợi ý học lại bài liên quan**, hỗ trợ **hướng dẫn step-by-step**.                                                  | **H**                | **US1, US3**                                                   |
-| **FR7** | **Adaptive Learning Engine**         | **Engine** thu thập **dữ liệu học tập** (kết quả, thời gian, tương tác) để **cá nhân hóa lộ trình học**.                                                                                               | **Gợi ý bài tiếp theo** dựa trên **điểm mạnh/yếu**, hỗ trợ **spaced repetition** và **mastery-based learning**.                                 | **H, GV**            | **US0, US3**                                                   |
-| **FR8** | **Dashboard & Báo cáo**              | Hiển thị **tiến độ, điểm số, lịch học, milestones**. **Giảng viên** xem **tổng quan lớp, điểm yếu phổ biến**.                                                                                          | Có thể **xuất dữ liệu ra CSV/PDF** (**Báo cáo tổng hợp**); **Admin** xem **báo cáo hệ thống** (**active users, usage, logs**).                  | **H, GV, A**         | **US2, US5, US6**                                              |
-| **FR9** | **Tương tác & Giao tiếp**           | **Bình luận, thảo luận, chat 1-1, diễn đàn** theo khóa học, hệ thống **thông báo in-app/email/push**.                                                                                                 | **Giao tiếp realtime**, hỗ trợ **comment** dưới bài học, **gửi thông báo** cá nhân hoặc theo nhóm.                                              | **H, GV**            | -                                                                  |
-| **FR10**| **Quản lý lớp & Phân nhóm**          | **Giảng viên** có thể **tạo lớp, mời học sinh, chia nhóm cho project**.                                                                                                                                | Hỗ trợ **vai trò trong lớp** (**TA, student, observer**), **giao bài nhóm, đánh giá theo nhóm**.                                                | **GV**               | -                                                                  |
-| **FR11**| **Bảo mật & Quản lý quyền (RBAC)**   | Hệ thống **phân quyền rõ theo vai trò**; có **audit logs** cho các thao tác nhạy cảm.                                                                                                                 | Người dùng chỉ truy cập tính năng được phép; **mọi thay đổi được ghi lại** (tuân thủ **FR1**).                                                  | **Tất cả**           | **US7**                                                         |
-| **FR12**| **Admin & Vận hành Hệ thống**        | **Admin** quản lý **users, roles, cấu hình hệ thống, backup/restore dữ liệu, moderation**.                                                                                                            | Có **health checks, báo cáo vi phạm, logs hệ thống**. Bao gồm yêu cầu từ US8 (Live Model Swapping) đã bổ sung.                                         | **A**                | **US7, US8**                                                    |
-| **FR13**| **Gamification & Động lực**          | Cung cấp **XP, badges, leaderboard, streak learning, challenge mode**.                                                                                                                                 | **Học sinh được thưởng** khi hoàn thành bài học, có **bảng xếp hạng và phần thưởng**.                                                           | **H**                | **US2**                                                         |
+  - Trả lời câu hỏi: **“Hệ thống sẽ thực hiện những gì?”**
+  - Diễn tả các **hành động**, **quy trình** và **kết quả đầu ra** mong đợi từ hệ thống.
+  - Thường được trình bày qua các **use case**, **user story** hoặc **liệt kê chức năng cụ thể**.
+
+| **STT** | **Tên chức năng** | **Mô tả chi tiết** | **Tiêu chí chấp nhận / Kết quả mong đợi** | **Đối tượng sử dụng** | **User Story (Liên quan)** |
+|---|---|---|---|---|---|
+| **FR1** | **Đăng ký & Xác thực** | **Người dùng** có thể tạo **tài khoản mới** bằng **email/password** hoặc **đăng nhập** với tài khoản đã có. | **Email xác nhận** được gửi khi đăng ký; người dùng chỉ có thể truy cập **tính năng tương ứng với role**. | **H, GV, A** | **US7** |
+| **FR2** | **Hồ sơ & Cài đặt Học tập** | **Hồ sơ** gồm **tên, tuổi, trình độ, sở thích, mục tiêu học, ngôn ngữ, lịch học**; hỗ trợ **bài kiểm tra đầu vào** (*diagnostic test*). | Người dùng có thể **cập nhật thông tin, cài đặt lịch học, nhận nhắc nhở** bằng **email/push notification**. Kết quả diagnostic test được lưu vào **Learner Model**. | **H** | **US0** |
+| **FR3** | **Quản lý Nội dung Học tập** | **Giảng viên** có thể **tạo, biên tập khóa học, chương, bài học**. Hỗ trợ nhiều **định dạng nội dung** (**text, video, slide, quiz, coding task…**). | Giảng viên có thể **gắn thẻ (tagging)**, **nội dung có versioning**, và **phân quyền truy cập** (**public/private/group**). | **GV** | **US4** |
+| **FR4** | **Cấu trúc Khóa học & Lộ trình** | Mỗi **khóa** có **mục tiêu, kỹ năng**, **pre-tests, post-tests**. Hỗ trợ **lộ trình tuyến tính và adaptive**. | **Milestones, checkpoint**, điều kiện mở khóa bài tiếp theo được cấu hình (ví dụ **≥70% điểm quiz**). | **GV, H** | **US0, US3** |
+| **FR5** | **Đánh giá & Thẩm định** | Hỗ trợ nhiều **kiểu bài**: **MCQ, essay, coding, upload, project**. Có **auto-grading** và **review thủ công**. | Học sinh có thể **làm bài giới hạn thời gian**; **điểm số, lịch sử** lưu trong **gradebook**. | **H, GV** | **US2** |
+| **FR6** | **Hệ thống Phản hồi & Remediation** | Cung cấp **phản hồi tức thì**, **gợi ý bài học bù (remediation)** khi **học sinh yếu kỹ năng** nào đó. | Hiển thị **giải thích đáp án, gợi ý học lại bài liên quan**, hỗ trợ **hướng dẫn step-by-step**. | **H** | **US1, US3** |
+| **FR7** | **Adaptive Learning Engine** | **Engine** thu thập **dữ liệu học tập** (kết quả, thời gian, tương tác) để **cá nhân hóa lộ trình học**. | **Gợi ý bài tiếp theo** dựa trên **điểm mạnh/yếu**, hỗ trợ **spaced repetition** và **mastery-based learning**. | **H, GV** | **US0, US3** |
+| **FR8** | **Dashboard & Báo cáo** | Hiển thị **tiến độ, điểm số, lịch học, milestones**. **Giảng viên** xem **tổng quan lớp, điểm yếu phổ biến**. | Có thể **xuất dữ liệu ra CSV/PDF** (**Báo cáo tổng hợp**); **Admin** xem **báo cáo hệ thống** (**active users, usage, logs**). | **H, GV, A** | **US2, US5, US6** |
+| **FR9** | **Tương tác & Giao tiếp** | **Bình luận, thảo luận, chat 1-1, diễn đàn** theo khóa học, hệ thống **thông báo in-app/email/push**. | **Giao tiếp realtime**, hỗ trợ **comment** dưới bài học, **gửi thông báo** cá nhân hoặc theo nhóm. | **H, GV** | - |
+| **FR10** | **Quản lý lớp & Phân nhóm** | **Giảng viên** có thể **tạo lớp, mời học sinh, chia nhóm cho project**. | Hỗ trợ **vai trò trong lớp** (**TA, student, observer**), **giao bài nhóm, đánh giá theo nhóm**. | **GV** | - |
+| **FR11** | **Bảo mật & Quản lý quyền (RBAC)** | Hệ thống **phân quyền rõ theo vai trò**; có **audit logs** cho các thao tác nhạy cảm. | Người dùng chỉ truy cập tính năng được phép; **mọi thay đổi được ghi lại** (tuân thủ **FR1**). | **Tất cả** | **US7** |
+| **FR12** | **Admin & Vận hành Hệ thống** | **Admin** quản lý **users, roles, cấu hình hệ thống, backup/restore dữ liệu, moderation**. | Có **health checks, báo cáo vi phạm, logs hệ thống**. Bao gồm yêu cầu từ US8 (Live Model Swapping) đã bổ sung. | **A** | **US7, US8** |
+| **FR13** | **Gamification & Động lực** | Cung cấp **XP, badges, leaderboard, streak learning, challenge mode**. | **Học sinh được thưởng** khi hoàn thành bài học, có **bảng xếp hạng và phần thưởng**. | **H** | **US2** |
 
 # Yêu cầu phi chức năng
 
-| **Nhóm Yêu cầu**      | **AC ID** | **Đặc tính Kiến trúc**         | **Mục tiêu Định lượng & Chiến lược Tuân thủ**                                                                                                                                                                                                                          | **User Story (Liên quan)** |
-|------------------------|-----------|--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|
-| Mở rộng chức năng      | AC1       | Modularity & Extensibility     | Chiến lược: Kiến trúc Service-based (Microservices), API versioning, thiết kế Plugin-friendly (tuân thủ OCP).                                                                                                                                                            | US8, US0, US4               |
-| Khả năng Mở rộng       | AC2       | Scalability                    | Mục tiêu: Hỗ trợ ≥ 5,000 user concurrent. Chiến lược: Horizontal scaling cho các service; dùng Kubernetes và Kafka/RabbitMQ cho giao tiếp bất đồng bộ.                                                                                                                   | US2, US5, US6               |
-| Hiệu năng              | AC3       | Performance                    | Mục tiêu: API phổ biến <300ms; tác vụ nặng (grading/report) <1s. Chiến lược: Redis caching, Indexing, Async workers cho tác vụ nền.                                                                                                                                     | US0, US1, US2               |
-| Kiểm thử               | AC4       | Testability & Maintainability  | Mục tiêu: Unit test ≥ 80%. Chiến lược: Áp dụng SOLID & Clean/Hexagonal Architecture để code dễ test; CI/CD tự động.                                                                                                                                                     | US8                         |
-| Bảo mật                | AC6       | Security & Privacy             | Mục tiêu: Hash mật khẩu bằng bcrypt/argon2. Chiến lược: RBAC (FR11), audit logs, HTTPS toàn hệ thống; tuân thủ OWASP Top 10.                                                                                                                                           | US7                         |
-| Độ tin cậy             | AC7       | Reliability & Availability     | Mục tiêu: SLA ≥ 99.5% uptime. Chiến lược: Retry logic, Queues cho tác vụ async; backup dữ liệu hàng ngày.                                                                                                                                                              | US3, US7, US8               |
-| Giám sát               | AC8       | Observability                  | Chiến lược: Thu thập Metrics, distributed tracing (Jaeger) và structured logging (ELK/EFK) để theo dõi và cảnh báo sự cố.                                                                                                                                              | US5, US6, US7               |
-| Chi phí                | AC9       | Cost Efficiency                | Chiến lược: Tối ưu tài nguyên bằng Auto-scaling theo tải thực tế; sử dụng Serverless cho tác vụ không thường xuyên (ví dụ: báo cáo định kỳ).                                                                                                                            | US7                         |
+| **Nhóm Yêu cầu** | **AC ID** | **Đặc tính Kiến trúc** | **Mục tiêu Định lượng & Chiến lược Tuân thủ** | **User Story (Liên quan)** |
+|---|---|---|---|---|
+| Mở rộng chức năng | AC1 | Modularity & Extensibility | Chiến lược: Kiến trúc Service-based (Microservices), API versioning, thiết kế Plugin-friendly (tuân thủ OCP). | US8, US0, US4 |
+| Khả năng Mở rộng | AC2 | Scalability | Mục tiêu: Hỗ trợ ≥ 5,000 user concurrent. Chiến lược: Horizontal scaling cho các service; dùng Kubernetes và Kafka/RabbitMQ cho giao tiếp bất đồng bộ. | US2, US5, US6 |
+| Hiệu năng | AC3 | Performance | Mục tiêu: API phổ biến \<300ms; tác vụ nặng (grading/report) \<1s. Chiến lược: Redis caching, Indexing, Async workers cho tác vụ nền. | US0, US1, US2 |
+| Kiểm thử | AC4 | Testability & Maintainability | Mục tiêu: Unit test ≥ 80%. Chiến lược: Áp dụng SOLID & Clean/Hexagonal Architecture để code dễ test; CI/CD tự động. | US8 |
+| Bảo mật | AC6 | Security & Privacy | Mục tiêu: Hash mật khẩu bằng bcrypt/argon2. Chiến lược: RBAC (FR11), audit logs, HTTPS toàn hệ thống; tuân thủ OWASP Top 10. | US7 |
+| Độ tin cậy | AC7 | Reliability & Availability | Mục tiêu: SLA ≥ 99.5% uptime. Chiến lược: Retry logic, Queues cho tác vụ async; backup dữ liệu hàng ngày. | US3, US7, US8 |
+| Giám sát | AC8 | Observability | Chiến lược: Thu thập Metrics, distributed tracing (Jaeger) và structured logging (ELK/EFK) để theo dõi và cảnh báo sự cố. | US5, US6, US7 |
+| Chi phí | AC9 | Cost Efficiency | Chiến lược: Tối ưu tài nguyên bằng Auto-scaling theo tải thực tế; sử dụng Serverless cho tác vụ không thường xuyên (ví dụ: báo cáo định kỳ). | US7 |
 
 ## Tổng quan Use Case & Domain Model
 
-### 1. Mô tả Use Case (Ánh xạ từ User Stories)
+### 1\. Mô tả Use Case (Ánh xạ từ User Stories)
+
 Use case làm rõ các bước tương tác giữa Actor và hệ thống; là cơ sở cho các Sequence Diagram ở bước 1.4.
 
-| Usecase ID | Tên Usecase                            | Mục đích                                                                         | Tác nhân   | FR liên quan | Luồng Cơ bản (Basic Flow) |
-|------------|----------------------------------------|----------------------------------------------------------------------------------|------------|--------------|---------------------------|
-| **UC-01**  | Đăng ký Tài khoản                      | Tạo tài khoản mới trong hệ thống.                                               | Learner, Instructor, Admin | FR1 | 1. User truy cập trang đăng ký. 2. Nhập email, password, chọn role (Learner/Instructor). 3. Hệ thống validate và tạo tài khoản. 4. Gửi email xác nhận. 5. User xác nhận email và kích hoạt tài khoản. |
-| **UC-02**  | Đăng nhập & Xác thực                   | Cho phép người dùng đăng nhập và truy cập hệ thống.                              | Learner, Instructor, Admin | FR1, FR11 | 1. User nhập email và password. 2. Hệ thống xác thực thông tin. 3. Kiểm tra role và phân quyền (RBAC). 4. Tạo session và chuyển đến dashboard tương ứng với role. |
-| **UC-03**  | Cập nhật Hồ sơ & Cài đặt Học tập       | Learner cập nhật thông tin cá nhân và tùy chọn học tập.                          | Learner    | FR2 | 1. Learner truy cập trang hồ sơ. 2. Cập nhật tên, tuổi, trình độ, sở thích, mục tiêu, lịch học. 3. Thiết lập nhắc nhở (email/push). 4. Hệ thống lưu thông tin vào LearnerProfile. |
-| **UC-04**  | Thực hiện Bài kiểm tra Đầu vào        | Đánh giá kiến thức ban đầu để xây dựng Learner Model.                            | Learner    | FR2, FR5 | 1. Learner bắt đầu diagnostic test. 2. Hệ thống hiển thị câu hỏi đa dạng về kỹ năng. 3. Learner trả lời. 4. Hệ thống chấm điểm và tạo SkillMasteryScore. 5. Kết quả lưu vào LearnerModel. |
-| **UC-05**  | Tạo Khóa học & Nội dung Học tập        | Instructor tạo khóa học, chương, bài học với đa dạng định dạng.                  | Instructor | FR3 | 1. Instructor tạo khóa học mới. 2. Tạo chương và bài học (text, video, slide, quiz, coding task). 3. Cấu hình versioning và phân quyền (public/private/group). 4. Lưu vào ContentAggregate. |
-| **UC-06**  | Gắn Metadata & Tagging cho Nội dung   | Instructor gắn metadata để hỗ trợ thuật toán AI.                                 | Instructor | FR3, FR4 | 1. Instructor chọn nội dung đã tạo. 2. Gắn tags: kỹ năng, độ khó, chủ đề. 3. Hệ thống lưu MetadataTag. 4. ContentMetadata có sẵn cho Adaptive Engine. |
-| **UC-07**  | Cấu hình Lộ trình Khóa học             | Instructor thiết lập mục tiêu, milestones, điều kiện mở khóa bài học.            | Instructor | FR4 | 1. Instructor định nghĩa mục tiêu khóa học và kỹ năng yêu cầu. 2. Thiết lập pre-test, post-test. 3. Cấu hình điều kiện mở khóa (ví dụ: ≥70% điểm quiz). 4. Lưu cấu trúc lộ trình. |
-| **UC-08**  | Bắt đầu/Tiếp tục Học tập Thích ứng     | Cung cấp bài học tiếp theo tối ưu dựa trên Learner Model.                        | Learner    | FR7, FR4 | 1. Learner yêu cầu bài học tiếp theo. 2. Hệ thống gọi Adaptive Engine (FR7). 3. Engine đọc LearnerModel và ContentMetadata. 4. Đề xuất ContentID tối ưu (spaced repetition, mastery-based). 5. Hiển thị nội dung. |
-| **UC-09**  | Làm Bài tập & Assessment               | Learner thực hiện bài tập (MCQ, essay, coding, upload, project).                 | Learner    | FR5 | 1. Learner mở bài tập. 2. Đọc đề và trả lời (trong thời gian giới hạn nếu có). 3. Submit câu trả lời. 4. Hệ thống lưu vào gradebook. |
-| **UC-10**  | Chấm điểm & Phản hồi Tức thì           | Hệ thống chấm điểm và cung cấp phản hồi/gợi ý ngay lập tức.                      | Learner    | FR5, FR6 | 1. Learner gửi câu trả lời (FR5). 2. Scoring/Feedback Service chấm điểm (auto-grading hoặc manual review). 3. Tạo feedback, hints, giải thích đáp án. 4. Hiển thị Score và Hint (< 500ms). 5. Cập nhật LearnerModel. |
-| **UC-11**  | Gợi ý Bài học Bù (Remediation)         | Đề xuất bài học bổ sung khi Learner yếu kỹ năng.                                 | Learner    | FR6, FR7 | 1. Hệ thống phát hiện kỹ năng yếu từ LearnerModel. 2. FeedbackGenerator tạo gợi ý bài học liên quan. 3. Hiển thị danh sách bài học bù với hướng dẫn step-by-step. 4. Learner chọn bài học để học lại. |
-| **UC-12**  | Xem Dashboard & Tiến độ Học tập        | Learner xem tiến độ, điểm số, milestones.                                        | Learner    | FR8 | 1. Learner truy cập dashboard. 2. Hệ thống hiển thị tiến độ, điểm số, lịch học, milestones, skill mastery. 3. Learner có thể xuất báo cáo (CSV/PDF). |
-| **UC-13**  | Xem Báo cáo Tổng hợp Lớp               | Instructor xem tổng quan hiệu suất của cả lớp.                                   | Instructor | FR8 | 1. Instructor chọn lớp. 2. Hệ thống tạo báo cáo tổng hợp: điểm trung bình, điểm yếu phổ biến, phân bố kỹ năng. 3. Instructor phân tích và điều chỉnh nội dung. |
-| **UC-14**  | Tạo Báo cáo Chi tiết Học sinh          | Instructor tạo báo cáo cá nhân hóa cho một học sinh.                              | Instructor | FR8 | 1. Instructor chọn học sinh. 2. Hệ thống truy xuất LearnerModel, ProgressRecord. 3. Tạo báo cáo: lộ trình học, điểm mạnh/yếu, thời gian học. 4. Xuất PDF/CSV để tư vấn one-on-one. |
-| **UC-15**  | Tương tác & Thảo luận                  | Learner/Instructor tham gia thảo luận, chat, bình luận.                          | Learner, Instructor | FR9 | 1. User truy cập diễn đàn hoặc bài học. 2. Gửi comment/câu hỏi. 3. Hệ thống gửi thông báo realtime (in-app/email/push) cho người liên quan. 4. User khác trả lời. |
-| **UC-16**  | Quản lý Lớp & Phân nhóm                | Instructor tạo lớp, mời học sinh, chia nhóm.                                     | Instructor | FR10 | 1. Instructor tạo lớp mới. 2. Mời học sinh qua email/link. 3. Phân vai trò (TA, student, observer). 4. Chia nhóm cho project. 5. Giao bài nhóm và đánh giá theo nhóm. |
-| **UC-17**  | Quản lý Người dùng & Phân quyền (RBAC) | Admin quản lý tài khoản và phân quyền chi tiết.                                  | Admin      | FR1, FR11 | 1. Admin truy cập trang quản lý users. 2. Tạo/sửa/xóa tài khoản. 3. Gán role và permissions. 4. Mọi thao tác ghi vào audit logs. 5. User chỉ truy cập tính năng được phép. |
-| **UC-18**  | Hoán đổi Mô hình AI (Live Swap)        | Triển khai phiên bản AI mới không downtime.                                      | Admin      | FR12 | 1. Admin yêu cầu triển khai Model V2. 2. Deployment Service chạy V2 song song với V1. 3. Traffic chuyển dần sang V2 (Blue/Green/Canary). 4. Monitoring kiểm tra health. 5. Ngừng V1 khi V2 ổn định. |
-| **UC-19**  | Giám sát & Vận hành Hệ thống           | Admin quản lý cấu hình, backup, logs, moderation.                                | Admin      | FR12 | 1. Admin truy cập admin panel. 2. Kiểm tra health checks, logs hệ thống. 3. Thực hiện backup/restore dữ liệu. 4. Xử lý báo cáo vi phạm (moderation). 5. Cấu hình hệ thống (feature flags, limits). |
-| **UC-20**  | Nhận Phần thưởng & Gamification        | Learner nhận XP, badges, tham gia leaderboard.                                   | Learner    | FR13 | 1. Learner hoàn thành bài học/milestone. 2. Hệ thống tính XP, trao badge. 3. Cập nhật leaderboard. 4. Hiển thị streak learning, challenge mode. 5. Learner được động viên tiếp tục học. |
+| Usecase ID | Tên Usecase | Mục đích | Tác nhân | FR liên quan | Luồng Cơ bản (Basic Flow) |
+|---|---|---|---|---|---|
+| **UC-01** | Đăng ký Tài khoản | Tạo tài khoản mới trong hệ thống. | Learner, Instructor, Admin | FR1 | 1. User truy cập trang đăng ký. 2. Nhập email, password, chọn role (Learner/Instructor). 3. Hệ thống validate và tạo tài khoản. 4. Gửi email xác nhận. 5. User xác nhận email và kích hoạt tài khoản. |
+| **UC-02** | Đăng nhập & Xác thực | Cho phép người dùng đăng nhập và truy cập hệ thống. | Learner, Instructor, Admin | FR1, FR11 | 1. User nhập email và password. 2. Hệ thống xác thực thông tin. 3. Kiểm tra role và phân quyền (RBAC). 4. Tạo session và chuyển đến dashboard tương ứng với role. |
+| **UC-03** | Cập nhật Hồ sơ & Cài đặt Học tập | Learner cập nhật thông tin cá nhân và tùy chọn học tập. | Learner | FR2 | 1. Learner truy cập trang hồ sơ. 2. Cập nhật tên, tuổi, trình độ, sở thích, mục tiêu, lịch học. 3. Thiết lập nhắc nhở (email/push). 4. Hệ thống lưu thông tin vào LearnerProfile. |
+| **UC-04** | Thực hiện Bài kiểm tra Đầu vào | Đánh giá kiến thức ban đầu để xây dựng Learner Model. | Learner | FR2, FR5 | 1. Learner bắt đầu diagnostic test. 2. Hệ thống hiển thị câu hỏi đa dạng về kỹ năng. 3. Learner trả lời. 4. Hệ thống chấm điểm và tạo SkillMasteryScore. 5. Kết quả lưu vào LearnerModel. |
+| **UC-05** | Tạo Khóa học & Nội dung Học tập | Instructor tạo khóa học, chương, bài học với đa dạng định dạng. | Instructor | FR3 | 1. Instructor tạo khóa học mới. 2. Tạo chương và bài học (text, video, slide, quiz, coding task). 3. Cấu hình versioning và phân quyền (public/private/group). 4. Lưu vào ContentAggregate. |
+| **UC-06** | Gắn Metadata & Tagging cho Nội dung | Instructor gắn metadata để hỗ trợ thuật toán AI. | Instructor | FR3, FR4 | 1. Instructor chọn nội dung đã tạo. 2. Gắn tags: kỹ năng, độ khó, chủ đề. 3. Hệ thống lưu MetadataTag. 4. ContentMetadata có sẵn cho Adaptive Engine. |
+| **UC-07** | Cấu hình Lộ trình Khóa học | Instructor thiết lập mục tiêu, milestones, điều kiện mở khóa bài học. | Instructor | FR4 | 1. Instructor định nghĩa mục tiêu khóa học và kỹ năng yêu cầu. 2. Thiết lập pre-test, post-test. 3. Cấu hình điều kiện mở khóa (ví dụ: ≥70% điểm quiz). 4. Lưu cấu trúc lộ trình. |
+| **UC-08** | Bắt đầu/Tiếp tục Học tập Thích ứng | Cung cấp bài học tiếp theo tối ưu dựa trên Learner Model. | Learner | FR7, FR4 | 1. Learner yêu cầu bài học tiếp theo. 2. Hệ thống gọi Adaptive Engine (FR7). 3. Engine đọc LearnerModel và ContentMetadata. 4. Đề xuất ContentID tối ưu (spaced repetition, mastery-based). 5. Hiển thị nội dung. |
+| **UC-09** | Làm Bài tập & Assessment | Learner thực hiện bài tập (MCQ, essay, coding, upload, project). | Learner | FR5 | 1. Learner mở bài tập. 2. Đọc đề và trả lời (trong thời gian giới hạn nếu có). 3. Submit câu trả lời. 4. Hệ thống lưu vào gradebook. |
+| **UC-10** | Chấm điểm & Phản hồi Tức thì | Hệ thống chấm điểm và cung cấp phản hồi/gợi ý ngay lập tức. | Learner | FR5, FR6 | 1. Learner gửi câu trả lời (FR5). 2. Scoring/Feedback Service chấm điểm (auto-grading hoặc manual review). 3. Tạo feedback, hints, giải thích đáp án. 4. Hiển thị Score và Hint (\< 500ms). 5. Cập nhật LearnerModel. |
+| **UC-11** | Gợi ý Bài học Bù (Remediation) | Đề xuất bài học bổ sung khi Learner yếu kỹ năng. | Learner | FR6, FR7 | 1. Hệ thống phát hiện kỹ năng yếu từ LearnerModel. 2. FeedbackGenerator tạo gợi ý bài học liên quan. 3. Hiển thị danh sách bài học bù với hướng dẫn step-by-step. 4. Learner chọn bài học để học lại. |
+| **UC-12** | Xem Dashboard & Tiến độ Học tập | Learner xem tiến độ, điểm số, milestones. | Learner | FR8 | 1. Learner truy cập dashboard. 2. Hệ thống hiển thị tiến độ, điểm số, lịch học, milestones, skill mastery. 3. Learner có thể xuất báo cáo (CSV/PDF). |
+| **UC-13** | Xem Báo cáo Tổng hợp Lớp | Instructor xem tổng quan hiệu suất của cả lớp. | Instructor | FR8 | 1. Instructor chọn lớp. 2. Hệ thống tạo báo cáo tổng hợp: điểm trung bình, điểm yếu phổ biến, phân bố kỹ năng. 3. Instructor phân tích và điều chỉnh nội dung. |
+| **UC-14** | Tạo Báo cáo Chi tiết Học sinh | Instructor tạo báo cáo cá nhân hóa cho một học sinh. | Instructor | FR8 | 1. Instructor chọn học sinh. 2. Hệ thống truy xuất LearnerModel, ProgressRecord. 3. Tạo báo cáo: lộ trình học, điểm mạnh/yếu, thời gian học. 4. Xuất PDF/CSV để tư vấn one-on-one. |
+| **UC-15** | Tương tác & Thảo luận | Learner/Instructor tham gia thảo luận, chat, bình luận. | Learner, Instructor | FR9 | 1. User truy cập diễn đàn hoặc bài học. 2. Gửi comment/câu hỏi. 3. Hệ thống gửi thông báo realtime (in-app/email/push) cho người liên quan. 4. User khác trả lời. |
+| **UC-16** | Quản lý Lớp & Phân nhóm | Instructor tạo lớp, mời học sinh, chia nhóm. | Instructor | FR10 | 1. Instructor tạo lớp mới. 2. Mời học sinh qua email/link. 3. Phân vai trò (TA, student, observer). 4. Chia nhóm cho project. 5. Giao bài nhóm và đánh giá theo nhóm. |
+| **UC-17** | Quản lý Người dùng & Phân quyền (RBAC) | Admin quản lý tài khoản và phân quyền chi tiết. | Admin | FR1, FR11 | 1. Admin truy cập trang quản lý users. 2. Tạo/sửa/xóa tài khoản. 3. Gán role và permissions. 4. Mọi thao tác ghi vào audit logs. 5. User chỉ truy cập tính năng được phép. |
+| **UC-18** | Hoán đổi Mô hình AI (Live Swap) | Triển khai phiên bản AI mới không downtime. | Admin | FR12 | 1. Admin yêu cầu triển khai Model V2. 2. Deployment Service chạy V2 song song với V1. 3. Traffic chuyển dần sang V2 (Blue/Green/Canary). 4. Monitoring kiểm tra health. 5. Ngừng V1 khi V2 ổn định. |
+| **UC-19** | Giám sát & Vận hành Hệ thống | Admin quản lý cấu hình, backup, logs, moderation. | Admin | FR12 | 1. Admin truy cập admin panel. 2. Kiểm tra health checks, logs hệ thống. 3. Thực hiện backup/restore dữ liệu. 4. Xử lý báo cáo vi phạm (moderation). 5. Cấu hình hệ thống (feature flags, limits). |
+| **UC-20** | Nhận Phần thưởng & Gamification | Learner nhận XP, badges, tham gia leaderboard. | Learner | FR13 | 1. Learner hoàn thành bài học/milestone. 2. Hệ thống tính XP, trao badge. 3. Cập nhật leaderboard. 4. Hiển thị streak learning, challenge mode. 5. Learner được động viên tiếp tục học. |
 
-### 2. Mô hình hóa Domain chi tiết (ERD/Domain Model)
+### 2\. Mô hình hóa Domain chi tiết (ERD/Domain Model)
 
-#### Vai trò chiến lược của Domain Model
+#### 2.1. Sơ đồ Domain Model (UML/ERD)
+
+Sơ đồ dưới đây trực quan hóa các **Aggregates** cốt lõi và mối quan hệ giữa chúng, được mô tả chi tiết trong các phần sau. Đây là cơ sở để phân rã thành các Microservices.
+
+```mermaid
+classDiagram
+    direction LR
+    
+    package UserManagementAggregate {
+        class User {
+            +String UserID
+            +String Email
+            +String HashedPassword
+        }
+        class Role {
+            +String RoleID
+            +String RoleName
+        }
+        class Permission {
+            +String PermissionID
+            +String PermissionName
+        }
+        User "1" -- "1..*" Role : Has
+        Role "1" -- "1..*" Permission : Has
+    }
+
+    package LearnerAggregate {
+        class Learner {
+            +String LearnerID
+            +String UserID
+            +String FullName
+        }
+        class LearnerProfile {
+            +String ProfileID
+            +String Goals
+            +String LearningStyle
+        }
+        class ProgressRecord {
+            +String ProgressID
+            +String ContentUnitID
+            +String Status
+            +Number Score
+        }
+        Learner "1" -- "1" LearnerProfile : Has
+        Learner "1" -- "0..*" ProgressRecord : Tracks
+    }
+
+    package LearnerModelAggregate {
+        class LearnerModel {
+            +String LearnerID
+            +String BKT_State
+        }
+        class SkillMasteryScore {
+            +String SkillID
+            +Number MasteryScore
+            +Date LastPracticed
+        }
+        LearnerModel "1" -- "1..*" SkillMasteryScore : Has
+    }
+
+    package ContentAggregate {
+        class Course {
+            +String CourseID
+            +String Title
+            +String InstructorID
+        }
+        class Chapter {
+            +String ChapterID
+            +String Title
+        }
+        class ContentUnit {
+            +String ContentUnitID
+            +String Type
+            +String ContentData
+        }
+        class MetadataTag {
+            +String TagID
+            +String TagName
+            +String TagType
+        }
+        class Assessment {
+            +String AssessmentID
+            +String Type
+        }
+        Course "1" -- "1..*" Chapter : Contains
+        Chapter "1" -- "1..*" ContentUnit : Contains
+        ContentUnit "1" -- "0..*" MetadataTag : TaggedWith
+        ContentUnit "1" -- "0..1" Assessment : IsAn
+    }
+
+    package AdaptivePathAggregate {
+        class AdaptivePath {
+            +String PathID
+            +String LearnerID
+            +Date GeneratedAt
+        }
+        class PathNode {
+            +String NodeID
+            +String ContentUnitID
+            +Number Order
+            +Number RecommendationScore
+        }
+        AdaptivePath "1" -- "1..*" PathNode : ConsistsOf
+    }
+
+    %% Mối quan hệ giữa các Aggregate Reference by ID
+    Learner --|> User : Extends
+    LearnerModel ..> Learner : References
+    ProgressRecord ..> ContentUnit : References
+    PathNode ..> ContentUnit : References
+    AdaptivePath ..> Learner : References
+```
+
+#### 2.2. Vai trò chiến lược của Domain Model
 
 Phần Mô hình hóa Domain chi tiết không chỉ là sơ đồ ERD tĩnh mà là **khung tư duy chiến lược** giúp ra quyết định kiến trúc ở cấp độ vĩ mô và vi mô. Nó đóng vai trò là **cầu nối giữa yêu cầu nghiệp vụ và cấu trúc kỹ thuật**, giải quyết 4 vấn đề cốt lõi:
 
@@ -90,209 +227,227 @@ Phần Mô hình hóa Domain chi tiết không chỉ là sơ đồ ERD tĩnh mà
 
 **Mục tiêu:** Xác định **ranh giới (boundaries)** dựa trên ngữ nghĩa nghiệp vụ để tạo cơ sở cho kiến trúc Microservices.
 
-**Vai trò phân tích:** 
-- Giúp hiểu rõ mối quan hệ và phụ thuộc giữa các thành phần hệ thống
-- Cung cấp cơ sở cho việc thiết kế kiến trúc phân tán linh hoạt
-- Hỗ trợ ra quyết định về khả năng mở rộng và bảo trì hệ thống
+**Vai trò phân tích:** - Giúp hiểu rõ mối quan hệ và phụ thuộc giữa các thành phần hệ thống
+
+  - Cung cấp cơ sở cho việc thiết kế kiến trúc phân tán linh hoạt
+  - Hỗ trợ ra quyết định về khả năng mở rộng và bảo trì hệ thống
 
 **Ví dụ cụ thể:**
 
 | **Khối Domain** | **Vấn đề Nghiệp vụ** | **Hành động Kiến trúc** | **Kết quả** |
-|----------------|---------------------|------------------------|-------------|
+|---|---|---|---|
 | **LearnerModelAggregate** | - Cần cập nhật liên tục (mỗi lần làm bài)<br>- Tính toán AI nặng (BKT algorithm)<br>- Thay đổi logic không ảnh hưởng profile | Tách thành **LearnerModel Service** riêng | Cho phép deploy AI độc lập<br>Khả năng scale riêng khi nhiều user |
 | **ContentAggregate** | - Dữ liệu ít thay đổi<br>- Nhiều service phụ thuộc (Engine, Dashboard, Feedback) | Tách thành **Content Management Service** với I≈0 | Reliability cao<br>Caching hiệu quả |
 | **AdaptivePathGenerator** | - Cần hoán đổi thuật toán AI dễ dàng | Đặt trong **Adaptive Engine Service** độc lập | Blue/Green deployment<br>A/B testing algorithms |
 
 **Quy tắc phân rã:**
-- Mỗi Aggregate Root → Ứng viên cho 1 Microservice
-- Aggregates có tần suất thay đổi khác nhau → Tách riêng
-- Aggregates cần scale độc lập → Tách riêng
 
----
+  - Mỗi Aggregate Root → Ứng viên cho 1 Microservice
+  - Aggregates có tần suất thay đổi khác nhau → Tách riêng
+  - Aggregates cần scale độc lập → Tách riêng
+
+-----
 
 ##### **2. Áp dụng nghiêm ngặt SOLID Principles**
 
 **Mục tiêu:** Đảm bảo code maintainable, extensible, testable.
 
 **Vai trò phân tích:**
-- Cung cấp nguyên tắc thiết kế để tạo mã nguồn chất lượng cao
-- Giúp dự đoán và quản lý sự phức tạp của hệ thống
-- Tạo nền tảng cho việc mở rộng và bảo trì dễ dàng
+
+  - Cung cấp nguyên tắc thiết kế để tạo mã nguồn chất lượng cao
+  - Giúp dự đoán và quản lý sự phức tạp của hệ thống
+  - Tạo nền tảng cho việc mở rộng và bảo trì dễ dàng
 
 **Ánh xạ SOLID vào Domain Model:**
 
 | **Nguyên tắc** | **Áp dụng trong Domain** | **Ví dụ ITS** |
-|---------------|-------------------------|---------------|
+|---|---|---|
 | **SRP** | Mỗi Aggregate chỉ có 1 lý do thay đổi | Tách LearnerAggregate (dữ liệu cá nhân) khỏi LearnerModelAggregate (AI state). Khi logic AI thay đổi, profile không ảnh hưởng. |
 | **DIP** | Policy modules phụ thuộc vào Interface | AdaptivePathGenerator (Policy) phụ thuộc LearnerModelRepository Interface, không phải PostgreSQL cụ thể. |
 | **OCP** | Mở rộng không sửa code cũ | MetadataTag mở rộng qua tagging (thêm tag mới), không sửa schema ContentUnit. |
 | **ISP** | Interface nhỏ, focused | LearnerRepository tách thành LearnerReadRepository và LearnerWriteRepository. Scoring Service chỉ dùng Read. |
 | **LSP** | Subtype thay thế được supertype | QuizAssessment và ProjectAssessment đều implement Assessment interface, đảm bảo polymorphism. |
 
----
+-----
 
 ##### **3. Đảm bảo Testability & Maintainability**
 
 **Mục tiêu:** Logic nghiệp vụ độc lập với I/O, dễ test.
 
 **Vai trò phân tích:**
-- Cung cấp phương pháp thiết kế giúp kiểm thử dễ dàng
-- Tách biệt logic nghiệp vụ khỏi các chi tiết kỹ thuật
-- Tạo nền tảng cho việc bảo trì và mở rộng hệ thống một cách linh hoạt
+
+  - Cung cấp phương pháp thiết kế giúp kiểm thử dễ dàng
+  - Tách biệt logic nghiệp vụ khỏi các chi tiết kỹ thuật
+  - Tạo nền tảng cho việc bảo trì và mở rộng hệ thống một cách linh hoạt
 
 **Chiến lược:**
 
 **A. Tách Domain Services khỏi Aggregates**
 
 | **Cách làm** | **Lợi ích** | **Ví dụ ITS** |
-|-------------|-------------|---------------|
+|---|---|---|
 | Logic nghiệp vụ → Domain Service (stateless) | Dễ Mock/Test | ScoringEngine (service) tách khỏi Assessment (aggregate). Test scoring logic với mock Assessment. |
 | Aggregates chỉ chứa data + validation | Lightweight, dễ serialize | LearnerModel chỉ chứa scores, không có logic tính toán. |
 | Domain Services phụ thuộc Interface | Unit test không cần DB | FeedbackGenerator → Mock ErrorType interface. |
 
----
+-----
 
 ##### **4. Hỗ trợ ra quyết định kiến trúc**
 
 **Mục tiêu:** Đánh giá Chỉ số Bất ổn (I) và phụ thuộc để chọn Architecture Pattern.
 
 **Vai trò phân tích:**
-- Cung cấp phương pháp định lượng để đánh giá độ ổn định của các thành phần hệ thống
-- Hỗ trợ ra quyết định về cấu trúc kiến trúc phần mềm
-- Giúp xác định các điểm cần tập trung tối ưu hóa
+
+  - Cung cấp phương pháp định lượng để đánh giá độ ổn định của các thành phần hệ thống
+  - Hỗ trợ ra quyết định về cấu trúc kiến trúc phần mềm
+  - Giúp xác định các điểm cần tập trung tối ưu hóa
 
 **Công thức Instability Index:**
 
 Công thức: I = Cₑ / (Cₑ + Cₐ)
 
 Trong đó:
-- **Cₑ (Efferent Coupling):** Số dependencies đi ra (module này phụ thuộc bao nhiêu module khác)
-- **Cₐ (Afferent Coupling):** Số dependencies đi vào (bao nhiêu module khác phụ thuộc module này)
-- **I = 0:** Rất ổn định (nhiều module phụ thuộc, ít thay đổi)
-- **I = 1:** Rất bất ổn (không ai phụ thuộc, tự do thay đổi)
+
+  - **Cₑ (Efferent Coupling):** Số dependencies đi ra (module này phụ thuộc bao nhiêu module khác)
+  - **Cₐ (Afferent Coupling):** Số dependencies đi vào (bao nhiêu module khác phụ thuộc module này)
+  - **I = 0:** Rất ổn định (nhiều module phụ thuộc, ít thay đổi)
+  - **I = 1:** Rất bất ổn (không ai phụ thuộc, tự do thay đổi)
 
 **Ví dụ tính I cho ITS:**
 
 | **Module** | **Cₐ (Incoming)** | **Cₑ (Outgoing)** | **I = Cₑ/(Cₑ+Cₐ)** | **Giải thích** |
-|-----------|------------------|------------------|-------------------|---------------|
+|---|---|---|---|---|
 | **ContentService** | 4 (Engine, Feedback, Dashboard, Learner) | 0 | 0/(0+4) = 0 | Rất ổn định - Source of Truth cho metadata. Nhiều service phụ thuộc. |
 | **AdaptiveEngine** | 2 (Learner Dashboard, UC-08 flow) | 2 (LearnerModel, Content) | 2/(2+2) = 0.5 | Vừa phải - Policy module, nhưng cần đọc data từ 2 services. |
 | **LearnerModel** | 3 (Engine, Feedback, Dashboard) | 1 (Content for tags) | 1/(1+3) = 0.25 | Tương đối ổn định - Core state nhiều service cần. |
 | **ScoringService** | 1 (Learner submit) | 3 (Assessment, LearnerModel, Feedback) | 3/(3+1) = 0.75 | Bất ổn - Orchestrator phụ thuộc nhiều service, logic thay đổi nhiều. |
 
 **Hành động:**
-- **I ≈ 0:** Cần High Availability, Caching, Read Replicas (Content, LearnerModel)
-- **I → 1:** Dễ deploy riêng, Blue/Green friendly (ScoringService, FeedbackGenerator)
-- **I ≈ 0.5:** Cần monitoring tight, critical path (AdaptiveEngine)
 
----
+  - **I ≈ 0:** Cần High Availability, Caching, Read Replicas (Content, LearnerModel)
+  - **I → 1:** Dễ deploy riêng, Blue/Green friendly (ScoringService, FeedbackGenerator)
+  - **I ≈ 0.5:** Cần monitoring tight, critical path (AdaptiveEngine)
 
-#### A. Core Aggregates và Entities
+-----
+
+#### 2.3. Core Aggregates và Entities
 
 ##### Khái niệm Aggregate
 
 **Định nghĩa:**
-- **Aggregate**: Cụm các thực thể liên kết logic với nhau, có **ranh giới nhất quán (consistency boundary)** và một **Aggregate Root** quản lý.
-- **Aggregate Root**: Entity chính làm **điểm truy cập duy nhất** cho toàn bộ Aggregate, đảm bảo tính toàn vẹn dữ liệu (business invariants).
-- **Vai trò kiến trúc**: Mỗi Aggregate là ứng viên tiềm năng để trở thành một **Microservice** hoặc **Bounded Context** riêng.
+
+  - **Aggregate**: Cụm các thực thể liên kết logic với nhau, có **ranh giới nhất quán (consistency boundary)** và một **Aggregate Root** quản lý.
+  - **Aggregate Root**: Entity chính làm **điểm truy cập duy nhất** cho toàn bộ Aggregate, đảm bảo tính toàn vẹn dữ liệu (business invariants).
+  - **Vai trò kiến trúc**: Mỗi Aggregate là ứng viên tiềm năng để trở thành một **Microservice** hoặc **Bounded Context** riêng.
 
 **Vai trò phân tích:**
-- Cung cấp phương pháp tổ chức dữ liệu theo logic nghiệp vụ
-- Giúp xác định ranh giới và mối quan hệ giữa các thành phần hệ thống
-- Hỗ trợ thiết kế kiến trúc phân tán với tính nhất quán cao
+
+  - Cung cấp phương pháp tổ chức dữ liệu theo logic nghiệp vụ
+  - Giúp xác định ranh giới và mối quan hệ giữa các thành phần hệ thống
+  - Hỗ trợ thiết kế kiến trúc phân tán với tính nhất quán cao
 
 **Quy tắc Aggregate (Theo DDD):**
-1. **Transaction Boundary**: Một transaction chỉ cập nhật 1 Aggregate (không span cross-aggregate).
-2. **Reference by ID**: Aggregates khác chỉ tham chiếu qua ID, không giữ object reference.
-3. **Eventual Consistency**: Cập nhật cross-aggregate dùng Events (async).
+
+1.  **Transaction Boundary**: Một transaction chỉ cập nhật 1 Aggregate (không span cross-aggregate).
+2.  **Reference by ID**: Aggregates khác chỉ tham chiếu qua ID, không giữ object reference.
+3.  **Eventual Consistency**: Cập nhật cross-aggregate dùng Events (async).
 
 **Minh họa Aggregate Boundary:**
 
 Ví dụ về LearnerAggregate và LearnerModelAggregate:
-- **LearnerAggregate**: Chứa thông tin cá nhân và tiến trình học tập của người học
-- **LearnerModelAggregate**: Lưu trữ trạng thái học tập và điểm số AI
+
+  - **LearnerAggregate**: Chứa thông tin cá nhân và tiến trình học tập của người học
+  - **LearnerModelAggregate**: Lưu trữ trạng thái học tập và điểm số AI
 
 **Tại sao tách riêng?**
-- **LearnerAggregate**: Thay đổi khi user update profile (thường - vài lần/ngày)
-- **LearnerModelAggregate**: Thay đổi MỖI LẦN làm bài (rất thường - hàng chục lần/ngày)
-- → Nếu chung Aggregate, mọi lần làm bài đều lock toàn bộ Learner data → Bottleneck!
 
----
+  - **LearnerAggregate**: Thay đổi khi user update profile (thường - vài lần/ngày)
+  - **LearnerModelAggregate**: Thay đổi MỖI LẦN làm bài (rất thường - hàng chục lần/ngày)
+  - → Nếu chung Aggregate, mọi lần làm bài đều lock toàn bộ Learner data → Bottleneck\!
+
+-----
 
 ##### Bảng Chi Tiết Core Aggregates
 
 | **Tên Domain Aggregate** | **Core Entities** | **Business Invariants** | **Vai trò & Quyết định Kiến trúc** |
-|------------------------|-------------------|------------------------|--------------------------------|
+|---|---|---|---|
 | **LearnerAggregate** | - Learner (Root)<br>- LearnerProfile<br>- ProgressRecord | - Email unique<br>- Profile belongs to 1 Learner<br>- Progress % ∈ [0, 100] | **Vai trò**: Quản lý thông tin cá nhân, tiến trình học tập (FR2, UC-03).<br><br>**Quyết định**: Tách thành **User Management Service** (Java/Spring Boot).<br><br>**SOLID Rationale**:<br>- **SRP**: Chỉ quản lý dữ liệu người dùng, KHÔNG chứa logic AI.<br>- **Lý do tách**: Khi AI algorithm thay đổi, không cần redeploy User Management.<br><br>**Architecture Metrics**:<br>- **I ≈ 0.3** (vừa phải): 3 services đọc (Engine, Dashboard, Scoring), 1 service ghi (Auth).<br>- **ACs ưu tiên**: AC7 (Availability) - cần sẵn sàng cao cho login/profile. |
 | **LearnerModelAggregate** | - LearnerModel (Root)<br>- SkillMasteryScore<br>- DiagnosticResult | - Score ∈ [0.0, 1.0]<br>- Each skill has 1 score/learner<br>- BKT state valid | **Vai trò**: **Trái tim AI** - lưu trạng thái thành thạo kỹ năng (ví dụ: Algebra: 0.85) (FR7, UC-04, UC-10).<br><br>**Quyết định**: Tách riêng thành **LearnerModel Service** (Golang).<br><br>**SOLID Rationale**:<br>- **SRP**: Cách ly logic AI - thay đổi BKT algorithm không ảnh hưởng profile.<br>- **DIP**: Adaptive Engine (Policy) phụ thuộc `LearnerModelRepository` Interface, không phải DB.<br><br>**Architecture Metrics**:<br>- **I ≈ 0.6** (bất ổn): Cập nhật liên tục, ít service phụ thuộc (chỉ Engine cần).<br>- **Deployability**: Cho phép deploy thuật toán AI mới độc lập (FR12, US8) - Blue/Green.<br>- **Performance**: Cache Redis cho read-heavy (Engine queries). |
 | **ContentAggregate** | - Course (Root)<br>- Chapter<br>- ContentUnit<br>- MetadataTag<br>- Assessment | - Tag name unique<br>- Content version immutable<br>- Unit belongs to 1 Chapter | **Vai trò**: **Source of Truth** cho metadata (kỹ năng, độ khó, chủ đề) phục vụ AI (FR3, FR4, UC-05, UC-06).<br><br>**Quyết định**: Tách thành **Content Management Service** (Java/Spring Boot).<br><br>**SOLID Rationale**:<br>- **OCP**: Metadata mở rộng qua tagging (thêm tag mới), không sửa schema `ContentUnit`.<br>- **SRP**: Chỉ quản lý nội dung, không chứa logic scoring/feedback.<br><br>**Architecture Metrics**:<br>- **I ≈ 0** (rất ổn định): 4 services phụ thuộc (Engine, Feedback, Dashboard, Learner).<br>- **Caching Strategy**: CDN cho video/static, Redis cho metadata queries.<br>- **ACs ưu tiên**: AC7 (Reliability), AC2 (Scalability) - dữ liệu ít đổi, đọc nhiều. |
-| **AdaptivePathAggregate** | - AdaptivePath (Root)<br>- PathNode<br>- RecommendationScore | - Path has ≥1 node<br>- Node references valid ContentUnit<br>- Score ∈ [0, 1] | **Vai trò**: Lưu kết quả lộ trình cá nhân hóa từ Adaptive Engine (FR7, UC-08).<br><br>**Quyết định**: **Ephemeral Aggregate** - tính toán on-the-fly, cache tạm 15 phút.<br><br>**SOLID Rationale**:<br>- **SRP**: Chỉ biểu diễn cấu trúc lộ trình (data), KHÔNG chứa logic tạo lộ trình (logic ở AdaptivePathGenerator Service).<br><br>**Architecture Metrics**:<br>- **I ≈ 1** (rất bất ổn): Không service nào phụ thuộc, chỉ Learner Dashboard đọc.<br>- **Storage Strategy**: Redis cache (TTL=15min), không persist DB (tính lại mỗi lần cần).<br>- **Performance**: AC3 - generate path < 200ms. |
+| **AdaptivePathAggregate** | - AdaptivePath (Root)<br>- PathNode<br>- RecommendationScore | - Path has ≥1 node<br>- Node references valid ContentUnit<br>- Score ∈ [0, 1] | **Vai trò**: Lưu kết quả lộ trình cá nhân hóa từ Adaptive Engine (FR7, UC-08).<br><br>**Quyết định**: **Ephemeral Aggregate** - tính toán on-the-fly, cache tạm 15 phút.<br><br>**SOLID Rationale**:<br>- **SRP**: Chỉ biểu diễn cấu trúc lộ trình (data), KHÔNG chứa logic tạo lộ trình (logic ở AdaptivePathGenerator Service).<br><br>**Architecture Metrics**:<br>- **I ≈ 1** (rất bất ổn): Không service nào phụ thuộc, chỉ Learner Dashboard đọc.<br>- **Storage Strategy**: Redis cache (TTL=15min), không persist DB (tính lại mỗi lần cần).<br>- **Performance**: AC3 - generate path \< 200ms. |
 | **UserManagementAggregate** | - User (Root)<br>- Role<br>- Permission<br>- AuditLog | - Email unique<br>- User has ≥1 Role<br>- Role has ≥1 Permission<br>- Audit immutable | **Vai trò**: Xác thực (AuthN) & phân quyền (RBAC - FR1, FR11, UC-01, UC-02, UC-17).<br><br>**Quyết định**: Tách thành **Auth Service** để tái sử dụng (có thể dùng cho nhiều hệ thống).<br><br>**SOLID Rationale**:<br>- **SRP**: Chỉ quản lý identity/security, không chứa business logic ITS.<br>- **ISP**: Tách interface `AuthenticationService` (login) và `AuthorizationService` (RBAC).<br><br>**Architecture Metrics**:<br>- **I ≈ 0.2** (ổn định): 5 services phụ thuộc (cần JWT validation), ít thay đổi.<br>- **Security**: AC6 - audit logs cho mọi thay đổi quyền, JWT with RS256.<br>- **ACs ưu tiên**: AC6 (Security), AC7 (Availability). |
 
----
+-----
 
 ##### Ví dụ Transaction Boundary
 
 **Vai trò phân tích:**
-- Minh họa cách quản lý giao dịch trong các Aggregate
-- Giải thích nguyên tắc tách biệt và nhất quán dữ liệu
-- Hướng dẫn thực hành tốt trong thiết kế hệ thống phân tán
+
+  - Minh họa cách quản lý giao dịch trong các Aggregate
+  - Giải thích nguyên tắc tách biệt và nhất quán dữ liệu
+  - Hướng dẫn thực hành tốt trong thiết kế hệ thống phân tán
 
 **Nguyên tắc chính:**
-1. Chỉ thực hiện giao dịch trong phạm vi một Aggregate
-2. Sử dụng các sự kiện để đồng bộ hóa giữa các Aggregate
-3. Đảm bảo tính nhất quán cuối cùng (Eventual Consistency)
+
+1.  Chỉ thực hiện giao dịch trong phạm vi một Aggregate
+2.  Sử dụng các sự kiện để đồng bộ hóa giữa các Aggregate
+3.  Đảm bảo tính nhất quán cuối cùng (Eventual Consistency)
 
 **Ví dụ về cập nhật thông tin người học:**
-- Cập nhật mục tiêu học tập chỉ diễn ra trong phạm vi LearnerAggregate
-- Sử dụng sự kiện để thông báo các service khác về thay đổi
+
+  - Cập nhật mục tiêu học tập chỉ diễn ra trong phạm vi LearnerAggregate
+  - Sử dụng sự kiện để thông báo các service khác về thay đổi
 
 **Hành động khi cập nhật:**
-- Thực hiện giao dịch trong phạm vi Aggregate Root
-- Phát sinh sự kiện để các service khác có thể phản ứng
-- Đảm bảo tính độc lập và linh hoạt của các service
 
----
+  - Thực hiện giao dịch trong phạm vi Aggregate Root
+  - Phát sinh sự kiện để các service khác có thể phản ứng
+  - Đảm bảo tính độc lập và linh hoạt của các service
 
-#### B. Domain Services (Logic nghiệp vụ cốt lõi)
+-----
+
+#### 2.4. Domain Services (Logic nghiệp vụ cốt lõi)
 
 ##### Khái niệm Domain Service
 
 **Định nghĩa:**
-- **Domain Service**: Nơi đặt logic nghiệp vụ **không thuộc về một Entity/Aggregate cụ thể**.
-- **Đặc điểm**: Stateless, phụ thuộc vào **Abstraction** (Interface), dễ test và hoán đổi.
-- **Vai trò kiến trúc**: Là **Policy Modules** trong Clean Architecture - chứa quy tắc nghiệp vụ cốt lõi, phải **ổn định** (I ≈ 0).
+
+  - **Domain Service**: Nơi đặt logic nghiệp vụ **không thuộc về một Entity/Aggregate cụ thể**.
+  - **Đặc điểm**: Stateless, phụ thuộc vào **Abstraction** (Interface), dễ test và hoán đổi.
+  - **Vai trò kiến trúc**: Là **Policy Modules** trong Clean Architecture - chứa quy tắc nghiệp vụ cốt lõi, phải **ổn định** (I ≈ 0).
 
 **Vai trò phân tích:**
-- Cung cấp cơ chế tách biệt logic nghiệp vụ khỏi cấu trúc dữ liệu
-- Hỗ trợ tính mở rộng và linh hoạt của hệ thống
-- Tạo điều kiện cho việc kiểm thử và phát triển độc lập
+
+  - Cung cấp cơ chế tách biệt logic nghiệp vụ khỏi cấu trúc dữ liệu
+  - Hỗ trợ tính mở rộng và linh hoạt của hệ thống
+  - Tạo điều kiện cho việc kiểm thử và phát triển độc lập
 
 **Khi nào cần Domain Service?**
 
 | **Tình huống** | **Giải pháp** | **Ví dụ ITS** |
-|---------------|--------------|---------------|
+|---|---|---|
 | Logic liên quan **≥2 Aggregates** | Tạo Domain Service | ScoringEngine cần Assessment + LearnerModel để tính score. |
 | Logic **không có state** (pure function) | Tạo Domain Service | AdaptivePathGenerator - input: LearnerModel, output: Path (không lưu state). |
 | Logic **cần hoán đổi** (swappable algorithms) | Tạo Domain Service + Interface | FeedbackGenerator - có thể thay Rule-based → NLP-based. |
 | Logic **complex business rules** | Tạo Domain Service | RemediationEngine - quy tắc gợi ý bài học bù (nhiều điều kiện). |
 
 **Khi không nên dùng Domain Service:**
-- Logic thuộc về 1 Entity → Đặt trong Entity method
-- Ví dụ: Cập nhật email nên ở trong lớp Learner, không cần service riêng
 
----
+  - Logic thuộc về 1 Entity → Đặt trong Entity method
+  - Ví dụ: Cập nhật email nên ở trong lớp Learner, không cần service riêng
+
+-----
 
 ##### Bảng Chi Tiết Domain Services
 
 | **Tên Domain Service** | **Input Aggregates** | **Output** | **Vai trò & Quyết định Kiến trúc** |
-|----------------------|---------------------|------------|--------------------------------|
-| **AdaptivePathGenerator** | - `LearnerModel` (Interface)<br>- `ContentMetadata` (Interface) | `AdaptivePath` | **Vai trò**: Tạo lộ trình học tập cá nhân hóa dựa trên điểm mạnh/yếu (FR7, US0, UC-08).<br><br>**Quyết định**: Đặt trong **Adaptive Engine Service** riêng (Golang) để dễ deploy thuật toán mới (FR12, AC1).<br><br>**SOLID Principles**:<br>- **SRP**: Chỉ tạo lộ trình, không quản lý data.<br>- **DIP**: Phụ thuộc `LearnerModelRepository` Interface, không phải PostgreSQL/MongoDB cụ thể.<br>- **OCP**: Thêm algorithm mới (ví dụ: Reinforcement Learning) bằng Strategy Pattern, không sửa code cũ.<br><br>**Testability**: Mock `LearnerModel` để test logic độc lập (no DB).<br><br>**Performance Target**: Generate path < 200ms (AC3).<br><br>**Deployability**: Blue/Green deployment - chạy V1 & V2 song song, A/B testing. |
-| **ScoringEngine** | - `Assessment` (Interface)<br>- `SubmittedAnswer` | `AssessmentResult`<br>(score, feedback) | **Vai trò**: Chấm điểm tự động (MCQ, coding, essay) và cập nhật `SkillMasteryScore` (FR5, FR6, UC-10).<br><br>**Quyết định**: Có thể tích hợp ML model (BERT cho essay grading, unit test runner cho coding).<br><br>**SOLID Principles**:<br>- **SRP**: Chỉ xử lý scoring logic.<br>- **DIP**: Phụ thuộc `AssessmentRepository` Interface.<br>- **OCP**: Hỗ trợ nhiều loại assessment (Quiz, Coding, Essay) qua polymorphism.<br><br>**Deployability**: Hoán đổi ML model dễ dàng (FR12, US8) - load model từ S3/Kafka.<br><br>**Performance Target**: < 1s cho grading (AC3).<br><br>**Architecture Note**: Event-driven - emit `SubmissionCompleted` event sau khi score → LearnerModel Service cập nhật async. |
-| **FeedbackGenerator** | - `Assessment` (Interface)<br>- `ErrorPattern` (Interface) | `Feedback`<br>(hints, explanation) | **Vai trò**: Tạo phản hồi tức thì, hints, remediation suggestions (FR6, US1, UC-10, UC-11).<br><br>**Quyết định**: Tích hợp NLP để tạo giải thích tự nhiên (OpenAI API hoặc local LLM).<br><br>**SOLID Principles**:<br>- **SRP**: Chỉ tạo feedback, không chấm điểm.<br>- **ISP**: Tách interfaces:<br>  - `HintGenerator` (gợi ý ngắn)<br>  - `ExplanationGenerator` (giải thích chi tiết)<br>  - `RemediationSuggester` (gợi ý bài học bù)<br>  → Client (UI) chỉ phụ thuộc cái cần dùng.<br><br>**Performance Target**: Hiển thị < 500ms (AC3).<br><br>**Caching**: Cache feedback patterns cho common errors (Redis). |
-| **RemediationEngine** | - `LearnerModel` (Interface)<br>- `ContentMetadata` (Interface) | List of `ContentUnit`<br>(bài học bù) | **Vai trò**: Phát hiện kỹ năng yếu và gợi ý bài học bổ sung (FR6, FR7, UC-11).<br><br>**Business Rules**:<br>- If skill mastery < 0.6 → recommend easier content<br>- If repeated errors → recommend tutorial videos<br>- If forgotten (last practice > 7 days) → spaced repetition<br><br>**SOLID Principles**:<br>- **SRP**: Chỉ tạo gợi ý, không cập nhật LearnerModel.<br>- **DIP**: Phụ thuộc interfaces, không phải DB.<br><br>**Integration**: Call AdaptiveEngine API để lấy recommended content. |
+|---|---|---|---|
+| **AdaptivePathGenerator** | - `LearnerModel` (Interface)<br>- `ContentMetadata` (Interface) | `AdaptivePath` | **Vai trò**: Tạo lộ trình học tập cá nhân hóa dựa trên điểm mạnh/yếu (FR7, US0, UC-08).<br><br>**Quyết định**: Đặt trong **Adaptive Engine Service** riêng (Golang) để dễ deploy thuật toán mới (FR12, AC1).<br><br>**SOLID Principles**:<br>- **SRP**: Chỉ tạo lộ trình, không quản lý data.<br>- **DIP**: Phụ thuộc `LearnerModelRepository` Interface, không phải PostgreSQL/MongoDB cụ thể.<br>- **OCP**: Thêm algorithm mới (ví dụ: Reinforcement Learning) bằng Strategy Pattern, không sửa code cũ.<br><br>**Testability**: Mock `LearnerModel` để test logic độc lập (no DB).<br><br>**Performance Target**: Generate path \< 200ms (AC3).<br><br>**Deployability**: Blue/Green deployment - chạy V1 & V2 song song, A/B testing. |
+| **ScoringEngine** | - `Assessment` (Interface)<br>- `SubmittedAnswer` | `AssessmentResult`<br>(score, feedback) | **Vai trò**: Chấm điểm tự động (MCQ, coding, essay) và cập nhật `SkillMasteryScore` (FR5, FR6, UC-10).<br><br>**Quyết định**: Có thể tích hợp ML model (BERT cho essay grading, unit test runner cho coding).<br><br>**SOLID Principles**:<br>- **SRP**: Chỉ xử lý scoring logic.<br>- **DIP**: Phụ thuộc `AssessmentRepository` Interface.<br>- **OCP**: Hỗ trợ nhiều loại assessment (Quiz, Coding, Essay) qua polymorphism.<br><br>**Deployability**: Hoán đổi ML model dễ dàng (FR12, US8) - load model từ S3/Kafka.<br><br>**Performance Target**: \< 1s cho grading (AC3).<br><br>**Architecture Note**: Event-driven - emit `SubmissionCompleted` event sau khi score → LearnerModel Service cập nhật async. |
+| **FeedbackGenerator** | - `Assessment` (Interface)<br>- `ErrorPattern` (Interface) | `Feedback`<br>(hints, explanation) | **Vai trò**: Tạo phản hồi tức thì, hints, remediation suggestions (FR6, US1, UC-10, UC-11).<br><br>**Quyết định**: Tích hợp NLP để tạo giải thích tự nhiên (OpenAI API hoặc local LLM).<br><br>**SOLID Principles**:<br>- **SRP**: Chỉ tạo feedback, không chấm điểm.<br>- **ISP**: Tách interfaces:<br> - `HintGenerator` (gợi ý ngắn)<br> - `ExplanationGenerator` (giải thích chi tiết)<br> - `RemediationSuggester` (gợi ý bài học bù)<br> → Client (UI) chỉ phụ thuộc cái cần dùng.<br><br>**Performance Target**: Hiển thị \< 500ms (AC3).<br><br>**Caching**: Cache feedback patterns cho common errors (Redis). |
+| **RemediationEngine** | - `LearnerModel` (Interface)<br>- `ContentMetadata` (Interface) | List of `ContentUnit`<br>(bài học bù) | **Vai trò**: Phát hiện kỹ năng yếu và gợi ý bài học bổ sung (FR6, FR7, UC-11).<br><br>**Business Rules**:<br>- If skill mastery \< 0.6 → recommend easier content<br>- If repeated errors → recommend tutorial videos<br>- If forgotten (last practice \> 7 days) → spaced repetition<br><br>**SOLID Principles**:<br>- **SRP**: Chỉ tạo gợi ý, không cập nhật LearnerModel.<br>- **DIP**: Phụ thuộc interfaces, không phải DB.<br><br>**Integration**: Call AdaptiveEngine API để lấy recommended content. |
 
----
+-----
 
 ##### Ví dụ Code: Domain Service (Golang)
 
@@ -407,19 +562,20 @@ func TestAdaptivePathGenerator_WeakSkills(t *testing.T) {
 ```
 
 **Lợi ích:**
-- ✅ Test tốc độ cao (ms thay vì giây với DB)
-- ✅ No flaky tests (không phụ thuộc DB state)
-- ✅ Easy to debug (pure logic, no side effects)
-- ✅ Easy to swap DB (Postgres → MongoDB) - chỉ sửa Infrastructure layer
 
----
+  - ✅ Test tốc độ cao (ms thay vì giây với DB)
+  - ✅ No flaky tests (không phụ thuộc DB state)
+  - ✅ Easy to debug (pure logic, no side effects)
+  - ✅ Easy to swap DB (Postgres → MongoDB) - chỉ sửa Infrastructure layer
 
-#### C. Ánh xạ Aggregate → Microservice/Component
+-----
+
+#### 2.5. Ánh xạ Aggregate → Microservice/Component
 
 Bảng dưới cho thấy cách Domain Model dẫn đến quyết định kiến trúc Microservices:
 
 | Aggregate/Service | Lý do Tách Service | Chỉ số Bất ổn (I) | ACs ưu tiên |
-|-----------------------|--------------------|-------------------|-------------|
+|---|---|---|---|
 | LearnerAggregate → Learner Service | CRUD profile, ít thay đổi nhưng cần sẵn sàng cao | I ≈ 0.3 | Availability |
 | LearnerModelAggregate → LearnerModel Service | Cập nhật liên tục, tính toán AI nặng, cần deploy riêng | I ≈ 0.6 | Modularity, Deployability |
 | ContentAggregate → Content Management Service | Dữ liệu ổn định, nhiều service phụ thuộc | I ≈ 0 | Reliability, Scalability |
@@ -427,135 +583,138 @@ Bảng dưới cho thấy cách Domain Model dẫn đến quyết định kiến
 | UserManagementAggregate → Auth Service | Tái sử dụng, bảo mật cao | I ≈ 0.2 | Security |
 
 **Giải thích Chỉ số I (Instability)**:
-- **I = 0**: Rất ổn định (nhiều service phụ thuộc, ít thay đổi) → Content, Policy Modules
-- **I → 1**: Bất ổn (ít phụ thuộc, thay đổi nhiều) → LearnerModel (cập nhật liên tục)
-- **Nguyên tắc**: Policy (I≈0) không nên phụ thuộc vào Detail (I→1) → Dependency Inversion Principle
 
+  - **I = 0**: Rất ổn định (nhiều service phụ thuộc, ít thay đổi) → Content, Policy Modules
+  - **I → 1**: Bất ổn (ít phụ thuộc, thay đổi nhiều) → LearnerModel (cập nhật liên tục)
+  - **Nguyên tắc**: Policy (I≈0) không nên phụ thuộc vào Detail (I→1) → Dependency Inversion Principle
 
 # Nhiệm vụ Chưa Hoàn Thành
 
 ## Sơ đồ 1: Sơ đồ Kiến trúc Tổng quan (C4 - Container Diagram)
 
 ### 1.1. Mục đích
+
 Trực quan hóa quyết định Microservices của bạn. Sơ đồ này cho người đọc thấy các "hộp" (services) chính mà bạn đã định nghĩa trong file 1.3 (ví dụ: Auth Service, LearnerModel Service, Content Service, Adaptive Engine Service...) và cách chúng giao tiếp với nhau (ví dụ: qua API Gateway, qua Kafka).
 
 ### 1.2. Chiến lược
+
 Bám sát vào bảng "Ánh xạ Aggregate → Microservice/Component" để vẽ sơ đồ.
 
 ```mermaid
-c4container
-    title Sơ đồ Kiến trúc Tổng quan (C4 Container - Microservices) [Dựa trên 1.3]
+flowchart TB
+    subgraph Actors["Actors"]
+        Learner["Learner<br/>Học sinh US0-3"]
+        Instructor["Instructor<br/>Giảng viên US4-6"]
+        Admin["Admin<br/>Quản trị viên US7-8"]
+    end
 
-    ' ---- Actors (Từ 1.0) ----
-    Person(learner, "Learner", "Học sinh (US0-3)")
-    Person(instructor, "Instructor", "Giảng viên (US4-6)")
-    Person(admin, "Admin", "Quản trị viên (US7-8)")
+    subgraph ITS["Hệ thống Gia sư Thông minh ITS"]
+        Gateway["API Gateway<br/>Spring Cloud / Nginx"]
+        
+        subgraph Services["Services"]
+            Auth["Auth Service<br/>Java/Spring<br/>User & RBAC"]
+            LearnerSvc["Learner Service<br/>Java/Spring<br/>Profile & Tiến độ"]
+            ContentSvc["Content Mgmt Service<br/>Java/Spring<br/>Nội dung & Metadata"]
+            LearnerModelSvc["LearnerModel Service<br/>Golang<br/>AI BKT State"]
+            AdaptiveEngine["Adaptive Engine<br/>Golang<br/>Lộ trình gợi ý"]
+            ScoringSvc["Scoring Service<br/>Python/Go<br/>Chấm điểm"]
+            FeedbackSvc["Feedback Service<br/>Golang<br/>Gợi ý remediation"]
+        end
+    end
 
-    ' ---- Databases & Message Queue (Từ 1.2 & 1.3) ----
-    SystemDb(postgres_db, "PostgreSQL DB", "Lưu trữ chính (Users, Content, Progress)")
-    SystemDb(redis_cache, "Redis Cache", "Cache LearnerModel, Paths (AC3)")
-    SystemQueue(kafka, "Kafka / RabbitMQ", "Message Bus (AC2, AC7)")
+    subgraph Data["Databases & Message Queue"]
+        Postgres["PostgreSQL DB<br/>Users Content Progress"]
+        Redis["Redis Cache<br/>LearnerModel Paths"]
+        Kafka["Kafka / RabbitMQ<br/>Message Bus"]
+    end
 
-    ' ---- System Boundary (ITS) ----
-    System_Boundary(its, "Hệ thống Gia sư Thông minh (ITS)") {
-        ' ---- Services (Ánh xạ từ 1.3) ----
-        Container(gateway, "API Gateway", "Spring Cloud / Nginx", "Cổng vào chính, điều phối, xác thực")
-        Container(auth, "Auth Service", "Java/Spring", "Quản lý User & RBAC (FR1, FR11) [từ UserManagementAggregate]")
-        Container(learner_svc, "Learner Service", "Java/Spring", "Quản lý Profile & Tiến độ (FR2) [từ LearnerAggregate]")
-        Container(content_svc, "Content Mgmt Service", "Java/Spring", "Quản lý Nội dung & Metadata (FR3, FR4) [từ ContentAggregate]")
-        Container(learner_model_svc, "LearnerModel Service", "Golang", "Lưu trạng thái AI, BKT (FR7, US8) [từ LearnerModelAggregate]")
-        Container(adaptive_engine, "Adaptive Engine", "Golang", "Tạo lộ trình, gợi ý (FR7, US0) [từ AdaptivePathGenerator]")
-        Container(scoring_svc, "Scoring Service", "Python/Go", "Chấm điểm & Phản hồi (FR5, FR6) [từ ScoringEngine]")
-        Container(feedback_svc, "Feedback Service", "Golang", "Tạo gợi ý, remediation (FR6) [từ FeedbackGenerator]")
+    %% User flows
+    Learner --> Gateway
+    Instructor --> Gateway
+    Admin --> Gateway
 
-        ' ---- Service Relationships (Sync) ----
-        Rel(gateway, auth, "Xác thực (AuthN/AuthZ)", "REST/gRPC")
-        Rel(gateway, learner_svc, "Profile, Progress (UC-03)")
-        Rel(gateway, content_svc, "Quản lý nội dung (UC-05)")
-        Rel(gateway, adaptive_engine, "Yêu cầu Lộ trình (UC-08)")
-        Rel(gateway, scoring_svc, "Nộp bài (UC-09)")
-        Rel(gateway, feedback_svc, "Yêu cầu gợi ý (UC-10)")
+    %% Gateway to services
+    Gateway --> Auth
+    Gateway --> LearnerSvc
+    Gateway --> ContentSvc
+    Gateway --> AdaptiveEngine
+    Gateway --> ScoringSvc
+    Gateway --> FeedbackSvc
 
-        ' ---- Internal Service-to-Service (Sync) ----
-        Rel(adaptive_engine, learner_model_svc, "Đọc trạng thái (I=0.6)", "gRPC")
-        Rel(adaptive_engine, content_svc, "Đọc metadata (I=0)", "gRPC")
-        Rel(feedback_svc, learner_model_svc, "Đọc trạng thái yếu", "gRPC")
-        Rel(feedback_svc, content_svc, "Đọc nội dung remediation", "gRPC")
-    }
+    %% Internal service relationships
+    AdaptiveEngine -->|gRPC| LearnerModelSvc
+    AdaptiveEngine -->|gRPC| ContentSvc
+    FeedbackSvc -->|gRPC| LearnerModelSvc
+    FeedbackSvc -->|gRPC| ContentSvc
 
-    ' ---- User Flows (HTTPS) ----
-    Rel_Back(learner, gateway, "Sử dụng hệ thống")
-    Rel_Back(instructor, gateway, "Sử dụng hệ thống")
-    Rel_Back(admin, gateway, "Sử dụng hệ thống")
+    %% Database connections
+    Auth --> Postgres
+    LearnerSvc --> Postgres
+    ContentSvc --> Postgres
+    LearnerModelSvc --> Postgres
+    LearnerModelSvc --> Redis
+    AdaptiveEngine --> Redis
 
-    ' ---- Database/Cache Flows ----
-    Rel(auth, postgres_db, "Đọc/Ghi Users, Roles")
-    Rel(learner_svc, postgres_db, "Đọc/Ghi Profiles")
-    Rel(content_svc, postgres_db, "Đọc/Ghi Content (I=0)")
-    Rel(learner_model_svc, postgres_db, "Đọc/Ghi BKT state")
-    Rel(learner_model_svc, redis_cache, "Đọc/Ghi cache (AC3)")
-    Rel(adaptive_engine, redis_cache, "Ghi cache lộ trình (TTL 15m) [1.3]")
-
-    ' ---- Async Flows (Event-driven) ----
-    Rel(scoring_svc, kafka, "Publish 'SubmissionCompleted'")
-    Rel(learner_model_svc, kafka, "Consume 'SubmissionCompleted'")
+    %% Event-driven flows
+    ScoringSvc -->|Publish| Kafka
+    Kafka -->|Consume| LearnerModelSvc
 ```
 
 ## Sơ đồ 2: Sơ đồ Module (Clean Architecture Diagram)
 
 ### 2.1. Mục đích
+
 Trực quan hóa bên trong một Microservice. Bạn đã đề cập đến Clean Architecture (hoặc Hexagonal) và cung cấp code Golang. Sơ đồ này sẽ cho thấy các lớp (Domain, Application, Infrastructure) và cách nguyên tắc DIP được áp dụng (các lớp bên ngoài phụ thuộc vào interface của lớp bên trong).
 
 ### 2.2. Chiến lược
+
 Chọn một service quan trọng để vẽ, ví dụ: Adaptive Engine Service và minh họa AdaptivePathGenerator (Domain Service) của bạn nằm ở đâu.
 
 ```mermaid
 graph TD
-    title Sơ đồ Module (Clean Architecture) - Service: Adaptive Engine [Dựa trên 1.3]
-
-    subgraph Lớp Infrastructure (Vành ngoài)
+    subgraph Infrastructure["Lớp Infrastructure Vành ngoài"]
         direction LR
-        A[gRPC/REST Controllers<br>(Endpoint: /generate-path)]
-        B[LearnerModelRepoImpl<br>(Client: Postgres/Redis)]
-        C[ContentRepoImpl<br>(Client: Postgres)]
+        A["gRPC/REST Controllers<br/>Endpoint: /generate-path"]
+        B["LearnerModelRepoImpl<br/>Client: Postgres/Redis"]
+        C["ContentRepoImpl<br/>Client: Postgres"]
     end
 
-    subgraph Lớp Application (Use Cases)
+    subgraph Application["Lớp Application Use Cases"]
         direction LR
-        D[AdaptivePathAppService<br>(Xử lý Use Case UC-08)]
+        D["AdaptivePathAppService<br/>Xử lý Use Case UC-08"]
     end
 
-    subgraph "Lớp Domain (Lõi nghiệp vụ - I=0)"
+    subgraph Domain["Lớp Domain Lõi nghiệp vụ I=0"]
         direction LR
-        E[Entity: AdaptivePath<br>Entity: PathNode]
-        F[<b>Domain Service:<br>AdaptivePathGenerator</b><br>(Chứa logic/thuật toán FR7)]
-        G[<b>Interface:<br>LearnerModelRepository</b>]
-        H[<b>Interface:<br>ContentRepository</b>]
+        E["Entity: AdaptivePath<br/>Entity: PathNode"]
+        F["Domain Service:<br/>AdaptivePathGenerator<br/>Chứa logic/thuật toán FR7"]
+        G["Interface:<br/>LearnerModelRepository"]
+        H["Interface:<br/>ContentRepository"]
     end
 
-    ' --- Mũi tên thể hiện Sự phụ thuộc (Dependency Rule) --- '
-    ' --- Luôn hướng vào trong (DIP) --- '
+    %% Mũi tên thể hiện Sự phụ thuộc Dependency Rule
+    %% Luôn hướng vào trong DIP
     
-    ' Lớp Infrastructure phụ thuộc vào Lớp Application
-    A -- "Gọi (invokes)" --> D
+    %% Lớp Infrastructure phụ thuộc vào Lớp Application
+    A -->|Gọi invokes| D
 
-    ' Lớp Infrastructure (Implementation) phụ thuộc vào Lớp Domain (Interface)
-    B -- "<b>Implement (hiện thực hóa)</b>" --> G
-    C -- "<b>Implement (hiện thực hóa)</b>" --> H
+    %% Lớp Infrastructure Implementation phụ thuộc vào Lớp Domain Interface
+    B -->|Implement| G
+    C -->|Implement| H
 
-    ' Lớp Application phụ thuộc vào Lớp Domain (Interfaces & Services)
-    D -- "Sử dụng (uses)" --> F
-    D -- "Phụ thuộc (depends on)" --> G
-    D -- "Phụ thuộc (depends on)" --> H
+    %% Lớp Application phụ thuộc vào Lớp Domain Interfaces & Services
+    D -->|Sử dụng| F
+    D -->|Phụ thuộc| G
+    D -->|Phụ thuộc| H
 
-    ' Lớp Domain (Domain Service) phụ thuộc vào Interface (cùng lớp)
-    F -- "<b>Phụ thuộc (depends on)</b>" --> G
-    F -- "<b>Phụ thuộc (depends on)</b>" --> H
+    %% Lớp Domain Domain Service phụ thuộc vào Interface cùng lớp
+    F -->|Phụ thuộc| G
+    F -->|Phụ thuộc| H
 
-    ' Lớp Domain (Domain Service) tạo ra Entities
-    F -- "Tạo (creates)" --> E
+    %% Lớp Domain Domain Service tạo ra Entities
+    F -->|Tạo| E
 
-    ' Styling: Tô đậm các thành phần cốt lõi
+    %% Styling: Tô đậm các thành phần cốt lõi
     style F fill:#fdf,stroke:#333,stroke-width:2px
     style G fill:#dfd,stroke:#333,stroke-width:2px
     style H fill:#dfd,stroke:#333,stroke-width:2px
@@ -564,49 +723,51 @@ graph TD
 ## Sơ đồ 3: Sơ đồ Tuần tự (Sequence Diagram)
 
 ### 3.1. Mục đích
+
 Minh họa một luồng nghiệp vụ quan trọng chạy qua nhiều service.
 
 ### 3.2. Chiến lược
+
 Chọn một Use Case quan trọng từ danh sách của bạn (file 1.3). Tôi đề xuất bạn chọn UC-08 (Bắt đầu/Tiếp tục Học tập Thích ứng).
 
 ```mermaid
 sequenceDiagram
-    title Sơ đồ Tuần tự (Sequence Diagram) - UC-08: Bắt đầu Học tập Thích ứng
+    title Sơ đồ Tuần tự Sequence Diagram UC-08 Bắt đầu Học tập Thích ứng
 
     actor Learner
     participant Gateway as API Gateway
-    participant Engine as Adaptive Engine (Golang)
-    participant LearnerModel as LearnerModel Svc (Golang)
-    participant Content as Content Mgmt Svc (Java)
-    participant Cache as Redis Cache (AC3)
+    participant Engine as Adaptive Engine Golang
+    participant LearnerModel as LearnerModel Svc Golang
+    participant Content as Content Mgmt Svc Java
+    participant Cache as Redis Cache AC3
 
     Learner->>Gateway: 1. Yêu cầu bài học tiếp theo
-    Gateway->>Engine: 2. GeneratePath(learnerId)
+    Gateway->>Engine: 2. GeneratePath learnerId
     
-    Engine->>Cache: 3. Đọc cache lộ trình (Key: path:learnerId)
+    Engine->>Cache: 3. Đọc cache lộ trình Key: path:learnerId
     
-    alt Cache Miss (Cache không có hoặc hết hạn 15p)
-        Cache-->>Engine: 4. (null)
+    alt Cache Miss Cache không có hoặc hết hạn 15p
+        Cache-->>Engine: 4. null
         
-        ' --- Bắt đầu logic của AdaptivePathGenerator --- '
-        Engine->>LearnerModel: 5. Đọc LearnerModel (GetSkillMastery)
-        LearnerModel-->>Engine: 6. Trả về SkillMasteryScore (ví dụ: Algebra: 0.3)
+        %% Bắt đầu logic của AdaptivePathGenerator
+        Engine->>LearnerModel: 5. Đọc LearnerModel GetSkillMastery
+        LearnerModel-->>Engine: 6. Trả về SkillMasteryScore ví dụ: Algebra: 0.3
         
-        Engine->>Content: 7. Đọc ContentMetadata (cho kỹ năng yếu)
-        Content-->>Engine: 8. Trả về Metadata (bài tập, độ khó)
+        Engine->>Content: 7. Đọc ContentMetadata cho kỹ năng yếu
+        Content-->>Engine: 8. Trả về Metadata bài tập độ khó
         
         activate Engine
-        note right of Engine: 9. Áp dụng thuật toán (AdaptivePathGenerator)<br/>Tạo lộ trình (AdaptivePath)
+        note right of Engine: 9. Áp dụng thuật toán AdaptivePathGenerator<br/>Tạo lộ trình AdaptivePath
         deactivate Engine
-        ' --- Kết thúc logic của AdaptivePathGenerator --- '
+        %% Kết thúc logic của AdaptivePathGenerator
         
-        Engine->>Cache: 10. Lưu kết quả vào cache (TTL=15min)
-        Cache-->>Engine: 11. (OK)
+        Engine->>Cache: 10. Lưu kết quả vào cache TTL=15min
+        Cache-->>Engine: 11. OK
         
-        Engine-->>Gateway: 12. Trả về AdaptivePath (mới)
+        Engine-->>Gateway: 12. Trả về AdaptivePath mới
     else Cache Hit
-        Cache-->>Engine: 4. Trả về AdaptivePath (từ cache)
-        Engine-->>Gateway: 12. Trả về AdaptivePath (từ cache)
+        Cache-->>Engine: 4. Trả về AdaptivePath từ cache
+        Engine-->>Gateway: 12. Trả về AdaptivePath từ cache
     end
     
     Gateway-->>Learner: 13. Hiển thị nội dung bài học
@@ -615,66 +776,66 @@ sequenceDiagram
 ## Sơ đồ 4: Sơ đồ Triển khai (Deployment Diagram)
 
 ### 4.1. Mục đích
+
 Trực quan hóa yêu cầu phi chức năng AC2 (Scalability) và AC1 (Modularity).
 
 ### 4.2. Chiến lược
+
 Vẽ một sơ đồ đơn giản thể hiện bạn dự định triển khai các service này như thế nào. (Ví dụ: Sử dụng Kubernetes Cluster, với các Pods cho từng service, kết nối với Kafka và cơ sở dữ liệu (Postgres/Redis) như bạn đã đề cập).
 
 ```mermaid
 graph TD
-    title Sơ đồ Triển khai (Deployment Diagram) [Tuân thủ AC1, AC2, AC8]
-
-    User[Learner/Instructor] --> LB[Cloud Load Balancer (HTTPS)]
+    User["Learner/Instructor"] --> LB["Cloud Load Balancer HTTPS"]
     
-    subgraph "VPC (Mạng riêng ảo)"
-        subgraph "Kubernetes Cluster (GKE/EKS/AKS)" [AC2: Scalability]
+    subgraph VPC["VPC Mạng riêng ảo"]
+        subgraph K8s_Cluster["Kubernetes Cluster GKE/EKS/AKS AC2 Scalability"]
             direction LR
-            LB --> Ingress[K8s Ingress Gateway]
+            LB --> Ingress["K8s Ingress Gateway"]
 
-            subgraph "Node 1"
-                P1[Pod: Adaptive Engine (Go)]
-                P2[Pod: LearnerModel Svc (Go)]
-                P3[Pod: Auth Service (Java)]
+            subgraph Node1["Node 1"]
+                P1["Pod: Adaptive Engine Go"]
+                P2["Pod: LearnerModel Svc Go"]
+                P3["Pod: Auth Service Java"]
             end
             
-            subgraph "Node 2"
-                P4[Pod: Adaptive Engine (Go) - Replica]
-                P5[Pod: Content Svc (Java)]
-                P6[Pod: Scoring Svc (Python)]
+            subgraph Node2["Node 2"]
+                P4["Pod: Adaptive Engine Go - Replica"]
+                P5["Pod: Content Svc Java"]
+                P6["Pod: Scoring Svc Python"]
             end
             
-            subgraph "Node N (Auto-scaled HPA)"
-                P7[Pod: Adaptive Engine (Go) - Replica N]
-                P8[Pod: LearnerModel Svc (Go) - Replica N]
+            subgraph NodeN["Node N Auto-scaled HPA"]
+                P7["Pod: Adaptive Engine Go - Replica N"]
+                P8["Pod: LearnerModel Svc Go - Replica N"]
             end
 
-            ' Service Discovery '
-            Ingress -- "service: adaptive-engine" --> P1
-            Ingress -- "service: adaptive-engine" --> P4
-            Ingress -- "service: adaptive-engine" --> P7
-            Ingress -- "service: content-svc" --> P5
-            P1 -- "service: learner-model" --> P2
-            P1 -- "service: learner-model" --> P8
+            %% Service Discovery
+            Ingress -->|service: adaptive-engine| P1
+            Ingress -->|service: adaptive-engine| P4
+            Ingress -->|service: adaptive-engine| P7
+            Ingress -->|service: content-svc| P5
+            P1 -->|service: learner-model| P2
+            P1 -->|service: learner-model| P8
             
-            ' Observability (AC8) '
-            P1 --> O1[Logs/Metrics (ELK/Prometheus/Jaeger)]
+            %% Observability AC8
+            P1 --> O1["Logs/Metrics ELK/Prometheus/Jaeger"]
             P2 --> O1
             P5 --> O1
         end
 
-        subgraph "Managed Services (Cloud Provider)"
-            M1[Managed PostgreSQL (Cloud SQL/RDS)]
-            M2[Managed Redis (MemoryStore/ElastiCache)]
-            M3[Managed Kafka (Confluent/MSK) [AC2]]
+        subgraph Managed_Services["Managed Services Cloud Provider"]
+            M1["Managed PostgreSQL Cloud SQL/RDS"]
+            M2["Managed Redis MemoryStore/ElastiCache"]
+            M3["Managed Kafka Confluent/MSK AC2"]
         end
     end
 
-    ' --- Kết nối từ Pods ra bên ngoài Cluster --- '
-    P2 -- "Đọc/Ghi state" --> M1
-    P8 -- "Đọc/Ghi state" --> M1
-    P2 -- "Đọc/Ghi cache" --> M2
-    P3 -- "Đọc/Ghi users" --> M1
-    P5 -- "Đọc/Ghi content" --> M1
-    P6 -- "Publish event" --> M3
-    P2 -- "Consume event" --> M3
+    %% Kết nối từ Pods ra bên ngoài Cluster
+    P2 -->|Đọc/Ghi state| M1
+    P8 -->|Đọc/Ghi state| M1
+    P2 -->|Đọc/Ghi cache| M2
+    P3 -->|Đọc/Ghi users| M1
+    P5 -->|Đọc/Ghi content| M1
+    P6 -->|Publish event| M3
+    M3 -->|Consume event| P2
 ```

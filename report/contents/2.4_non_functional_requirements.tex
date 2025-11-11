@@ -1,0 +1,202 @@
+\subsection{Yêu Cầu Phi Chức Năng}
+
+\indentpar \indentpar Phần này trình bày các yêu cầu phi chức năng (Non-Functional Requirements -- NFRs) của hệ thống ITS, tập trung vào các đặc tính kiến trúc (Architecture Characteristics) và chỉ tiêu chất lượng (Quality Attributes).
+Mục tiêu là đảm bảo hệ thống không chỉ hoạt động đúng chức năng mà còn đạt hiệu năng, tính mở rộng, bảo mật, khả năng kiểm thử và độ tin cậy cần thiết để hỗ trợ hàng nghìn người học cùng lúc.
+
+\subsubsection{Architecture Characteristics}
+
+Dưới đây là các Architecture Characteristics (AC) chủ đạo, kế thừa từ phần phân tích AC1--AC9 trong tài liệu gốc, được mở rộng thêm phương pháp đo lường (Metrics) và hàm kiểm thử tự động (Fitness Function) để đánh giá liên tục trong giai đoạn vận hành.
+
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|>{\centering\arraybackslash}m{1.5cm}|>{\noindent\justifying\arraybackslash}p{2.5cm}|>{\noindent\justifying\arraybackslash}p{3.5cm}|>{\noindent\justifying\arraybackslash}p{2.5cm}|>{\noindent\justifying\arraybackslash}p{2.5cm}|>{\noindent\justifying\arraybackslash}p{3.5cm}|}
+\caption{Architecture Characteristics}
+\label{tab:architecture_characteristics}
+\\
+\hline
+\textbf{AC} & \textbf{Definition} & \textbf{Importance} & \textbf{Metrics} & \textbf{Target} & \textbf{Fitness Function} \\
+\hline
+\endfirsthead
+\caption[]{Architecture Characteristics (tiếp theo)}
+\\
+\hline
+\textbf{AC} & \textbf{Definition} & \textbf{Importance} & \textbf{Metrics} & \textbf{Target} & \textbf{Fitness Function} \\
+\hline
+\endhead
+\hline
+\endfoot
+\hline
+\endlastfoot
+\textbf{AC-1:} Modularity \& Extensibility & Mức độ mà hệ thống có thể mở rộng hoặc thay đổi một thành phần mà không ảnh hưởng đến phần còn lại. Được hiện thực thông qua kiến trúc Microservices và nguyên tắc SOLID (đặc biệt là OCP, DIP). & ITS cần hỗ trợ hoán đổi hoặc nâng cấp các mô hình AI (ví dụ Adaptive Engine) mà không gây downtime. & Tỷ lệ module có thể triển khai độc lập (\%).\newline Số lượng service phụ thuộc lẫn nhau (dependency ratio). & $\geq 90\%$ service triển khai độc lập; $\leq 5\%$ thay đổi lan truyền giữa các module. & Chạy pipeline CI/CD kiểm tra build \& deploy độc lập cho từng service (docker build \&\& k8s rollout restart) $\rightarrow$ hệ thống vẫn hoạt động ổn định. \\
+\hline
+\textbf{AC-2:} Scalability & Khả năng mở rộng tài nguyên hệ thống theo tải thực tế (ngang hoặc dọc) mà không làm suy giảm hiệu suất. & ITS phải phục vụ $\geq 5.000$ người dùng đồng thời, đặc biệt trong các kỳ thi hoặc giai đoạn cao điểm. & Throughput (request/giây).\newline CPU và RAM sử dụng trung bình dưới tải $100\%$.\newline Scaling latency khi thêm pod mới (giây). & Throughput $\geq 1.000$ req/s\newline Scaling latency $\leq 30$ giây\newline $99\%$ request thành công trong 10 phút tải cao. & Kiểm tra tự động bằng JMeter/K6 trên Kubernetes HPA $\rightarrow$ đo throughput và auto-scale response. \\
+\hline
+\textbf{AC-3:} Performance & Khả năng phản hồi nhanh và ổn định của hệ thống trong mọi tình huống tải. & Trải nghiệm học tập của người dùng phụ thuộc vào phản hồi tức thì ($< 500$ms). & Response time (p95).\newline Average API latency (ms).\newline Background task completion (s). & p95 $< 500$ms.\newline Heavy task (chấm điểm, tạo báo cáo) $< 1$s. & Chạy performance test tự động mỗi build (K6) $\rightarrow$ nếu p95 $> 500$ms, pipeline fail. \\
+\hline
+\textbf{AC-4:} Testability \& Maintainability & Mức độ dễ dàng trong việc viết, chạy và bảo trì kiểm thử cho từng thành phần của hệ thống. & ITS bao gồm nhiều service AI, cần test độc lập để đảm bảo chất lượng mô hình và logic nghiệp vụ. & Code coverage (\%).\newline Time-to-fix defect (giờ).\newline Test execution time (phút). & Coverage $\geq 80\%$.\newline Time-to-fix $< 4$ giờ cho lỗi mức service. & Chạy pytest --cov hoặc go test -cover tự động; nếu coverage $< 80\%$, pipeline fail. \\
+\hline
+\textbf{AC-5:} Security \& Privacy & Khả năng bảo vệ hệ thống khỏi truy cập trái phép và rò rỉ dữ liệu cá nhân. & ITS xử lý dữ liệu học viên, điểm số và báo cáo -- cần tuân thủ chuẩn FERPA/GDPR. & Tỷ lệ truy cập bị từ chối thành công (\%).\newline Số lỗ hổng bảo mật được phát hiện qua OWASP scan.\newline Tỷ lệ mã hóa kết nối HTTPS (\%). & $100\%$ endpoint yêu cầu xác thực JWT.\newline $0$ lỗ hổng critical trong quét OWASP. & Quét bảo mật tự động (OWASP ZAP CI Plugin, Snyk) mỗi lần build $\rightarrow$ báo lỗi nếu có critical vulnerability. \\
+\hline
+\textbf{AC-6:} Reliability \& Availability & Mức độ sẵn sàng và ổn định của hệ thống trong suốt chu kỳ vận hành. & ITS phải duy trì uptime cao để người học không bị gián đoạn quá trình học. & Uptime (\%).\newline Mean Time Between Failures (MTBF).\newline Error rate (5xx). & SLA $\geq 99.5\%$.\newline MTBF $\geq 30$ ngày. & Prometheus alert kiểm tra uptime; nếu uptime $< 99.5\%$ trong 30 ngày, hệ thống gửi cảnh báo tự động qua Slack/Email. \\
+\hline
+\textbf{AC-7:} Observability & Khả năng quan sát, đo lường và theo dõi hoạt động nội bộ của hệ thống (logs, metrics, traces). & ITS cần giám sát chi tiết luồng học tập, hiệu suất AI, và sự kiện người dùng để phát hiện lỗi nhanh. & Log completeness (\% request có trace ID).\newline Average trace depth (span count).\newline Alert response time. & $100\%$ request có trace ID (Jaeger).\newline Alert $< 5$ phút. & Chạy kiểm tra tracing integration qua OpenTelemetry; nếu thiếu trace span $\rightarrow$ cảnh báo build fail. \\
+\hline
+\textbf{AC-8:} Cost Efficiency & Mức độ tối ưu chi phí hạ tầng khi hệ thống mở rộng. & ITS chạy trên Kubernetes cloud cluster, cần đảm bảo cân bằng giữa hiệu suất và chi phí. & Chi phí trung bình / 1.000 request (USD).\newline CPU utilization vs. cost ratio. & $< \$0.005$ / 1.000 request.\newline $\geq 70\%$ CPU utilization trung bình. & Theo dõi cost metrics từ Prometheus + Cloud Billing API $\rightarrow$ alert nếu vượt $110\%$ ngưỡng định mức. \\
+\hline
+\end{longtable}
+\normalsize
+
+\subsubsection{Quality Attributes}
+
+Các Quality Attributes được nhóm theo danh mục chuẩn ISO 25010, nhằm định hướng kiểm thử và tối ưu hệ thống trong giai đoạn vận hành.
+
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\hline
+\textbf{Thuộc tính} & \textbf{Mục tiêu định lượng} & \textbf{Phương pháp đo lường} \\
+\hline
+Response Time & $< 500$ms (p95) & Prometheus metrics + K6 test \\
+\hline
+Throughput & $\geq 1.000$ req/s & JMeter/K6 benchmark \\
+\hline
+Task Processing Time & $< 1$s cho grading/report & CI/CD stress test \\
+\hline
+CPU Utilization & $\leq 70\%$ trung bình & Kubernetes Metrics Server \\
+\hline
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0}
+\caption{Performance}
+\label{tab:quality_performance}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\hline
+\textbf{Thuộc tính} & \textbf{Mục tiêu định lượng} & \textbf{Phương pháp đo lường} \\
+\hline
+Horizontal Scaling & Tự động scale pod khi CPU $> 70\%$ & HPA test bằng load generator \\
+\hline
+Concurrent Users & Hỗ trợ $\geq 5.000$ người dùng đồng thời & Load test (K6) \\
+\hline
+Elasticity Delay & $\leq 30$s khi scale-out & Observe pod schedule time \\
+\hline
+Event Queue Resilience & $0$ message loss trong peak load & RabbitMQ metrics \\
+\hline
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0}
+\caption{Scalability}
+\label{tab:quality_scalability}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\hline
+\textbf{Thuộc tính} & \textbf{Mục tiêu định lượng} & \textbf{Phương pháp đo lường} \\
+\hline
+Authentication & OAuth2.0 + JWT & Token expiration \& claim test \\
+\hline
+Authorization & RBAC (Role-Based Access Control) & Access matrix test \\
+\hline
+Encryption & TLS 1.3, AES-256 & SSL scan \& data dump audit \\
+\hline
+Vulnerability Scan & $0$ lỗi critical & OWASP ZAP + Snyk CI \\
+\hline
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0}
+\caption{Security}
+\label{tab:quality_security}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\hline
+\textbf{Thuộc tính} & \textbf{Mục tiêu định lượng} & \textbf{Phương pháp đo lường} \\
+\hline
+Uptime & $\geq 99.5\%$ & Grafana dashboard + Heartbeat probe \\
+\hline
+Mean Time to Recovery (MTTR) & $\leq 15$ phút & Incident response log \\
+\hline
+Backup Frequency & $1$ lần/ngày & Cron job audit \\
+\hline
+Failover Recovery & $< 60$s & Simulated pod kill test \\
+\hline
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0}
+\caption{Reliability \& Availability}
+\label{tab:quality_reliability}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\hline
+\textbf{Thuộc tính} & \textbf{Mục tiêu định lượng} & \textbf{Phương pháp đo lường} \\
+\hline
+Code Coverage & $\geq 80\%$ & Unit test coverage report \\
+\hline
+Build Success Rate & $\geq 95\%$ & CI/CD log \\
+\hline
+Defect Fix Time & $< 4$ giờ & Issue tracker \\
+\hline
+Module Coupling Index & $\leq 0.3$ & Static analysis tool (SonarQube) \\
+\hline
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0}
+\caption{Maintainability \& Testability}
+\label{tab:quality_maintainability}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\hline
+\textbf{Thuộc tính} & \textbf{Mục tiêu định lượng} & \textbf{Phương pháp đo lường} \\
+\hline
+Log Coverage & $100\%$ transaction có traceID & OpenTelemetry \\
+\hline
+Error Detection Time & $< 5$ phút & Alert latency measurement \\
+\hline
+Distributed Tracing Depth & $\geq 3$ spans/service & Jaeger trace data \\
+\hline
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0}
+\caption{Observability}
+\label{tab:quality_observability}
+\end{table}
+\FloatBarrier
+
+\noindent\textbf{Tổng kết}
+
+Phần Non-Functional Requirements đảm bảo hệ thống ITS đạt được các tiêu chí vận hành cốt lõi:
+\begin{itemize}
+    \item Nhanh (Performance) -- phản hồi $< 500$ms.
+    \item Mở rộng (Scalability) -- xử lý $> 5.000$ người dùng đồng thời.
+    \item An toàn (Security) -- tuân thủ FERPA/GDPR, mã hóa toàn hệ thống.
+    \item Ổn định (Reliability) -- uptime $\geq 99.5\%$.
+    \item Dễ duy trì (Maintainability) -- coverage $\geq 80\%$.
+    \item Giám sát được (Observability) -- truy vết toàn bộ yêu cầu và lỗi.
+\end{itemize}
+
+Những đặc tính này là nền tảng kỹ thuật đảm bảo kiến trúc ITS có thể vận hành ổn định, mở rộng linh hoạt và dễ dàng thích ứng với các mô hình AI mới trong tương lai.

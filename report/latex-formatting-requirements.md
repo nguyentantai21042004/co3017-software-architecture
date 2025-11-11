@@ -1,516 +1,327 @@
-# Hướng Dẫn Format LaTeX cho Báo Cáo
+# LaTeX Formatting Requirements
 
-## Tổng Quan
+Tài liệu này mô tả chi tiết các yêu cầu format cho tất cả các file LaTeX trong dự án báo cáo Kiến trúc Phần mềm (CO3017).
 
-Tài liệu này mô tả các quy tắc format LaTeX đã được áp dụng cho các báo cáo Problem Set 3. Các quy tắc này đảm bảo tính nhất quán, chuyên nghiệp và dễ đọc cho tài liệu LaTeX.
+## 1. Cấu trúc Document
 
----
+### 1.1 Sectioning Commands
+- **Section**: Sử dụng `\section{}` cho các phần chính (ví dụ: "Tổng Quan Dự Án", "Phân Tích Bối Cảnh Và Yêu Cầu")
+- **Subsection**: Sử dụng `\subsection{}` cho các phần con (ví dụ: "Yêu Cầu Chức Năng", "Ràng Buộc và Giả Định")
+- **Subsubsection**: Sử dụng `\subsubsection{}` cho các phần con nhỏ hơn (ví dụ: "User Stories", "Architecture Characteristics")
+- **Không sử dụng số thứ tự**: Loại bỏ tất cả số thứ tự như "1.4", "1.4.1" trong tiêu đề
 
-## 1. Cấu Trúc Hierarchical
+### 1.2 Paragraph Formatting
+- **Đoạn văn đầu tiên**: Sử dụng `\indentpar \indentpar` cho đoạn văn đầu tiên sau section/subsection/subsubsection
+- **Đoạn văn tiếp theo**: Không cần `\indentpar`, LaTeX sẽ tự động indent theo cấu hình `\parindent`
+- **Tiêu đề phụ**: Sử dụng `\noindent\textbf{}` cho các tiêu đề phụ trong nội dung (ví dụ: "Nguyên tắc phân tách Aggregates:")
 
-### 1.1 Sections và Subsections
+## 2. Text Formatting
 
-- Sử dụng `\section{}`, `\subsection{}`, `\subsubsection{}` theo cấu trúc phân cấp
-- **Không viết hoa toàn bộ** trong tiêu đề, chỉ viết hoa chữ cái đầu của từ quan trọng
+### 2.1 Bold và Italic
+- **Bold**: Sử dụng `\textbf{}` cho text in đậm
+- **Italic**: Sử dụng `\textit{}` cho text in nghiêng
+- **Bold + Italic**: Sử dụng `\textbf{\textit{}}` nếu cần
 
-**Ví dụ:**
-```latex
-\section{Câu 1. Cryptographic Hardness}
-\subsection{Câu 1.1. P vs NP}
-\subsubsection{(a) (5 điểm) Kịch bản "Ngày Tận Thế Của Mật Mã"}
-```
+### 2.2 Quotes
+- **Double quotes**: Sử dụng LaTeX quotes ``...'' (backticks và single quotes)
+- **Single quotes**: Sử dụng `'...'` (single quotes)
 
-**Tránh:**
-```latex
-\section{CÂU 1. CRYPTOGRAPHIC HARDNESS}  ❌
-\subsection{CÂU 1.1. P VS NP}  ❌
-```
+### 2.3 Special Characters
+- **Em dash (—)**: Thay bằng `--` (double hyphen)
+- **En dash (–)**: Thay bằng `--` (double hyphen)
+- **Ampersand (&)**: Escape thành `\&` trong text, hoặc `&` trong bảng
+- **Percent (%)**: Escape thành `\%` trong text
+- **Dollar ($)**: Escape thành `\$` trong text, hoặc `$...$` cho math mode
+- **Hash (#)**: Escape thành `\#`
+- **Underscore (_)**: Escape thành `\_` trong text, hoặc `_` trong math mode
+- **Caret (^)**: Escape thành `\^{}` trong text, hoặc `^` trong math mode
+- **Curly braces**: Escape thành `\{` và `\}`
+- **Backslash**: Escape thành `\textbackslash`
 
-### 1.2 Format Câu Trả Lời
+### 2.4 Unicode Characters
+- **Loại bỏ**: Tất cả các ký tự Unicode đặc biệt như `⸻`, `🔹`, `✅` phải được loại bỏ hoặc thay thế
+- **Thay thế**: 
+  - `⸻` → Loại bỏ hoặc thay bằng `---`
+  - `🔹` → Thay bằng `\noindent\textbf{Lưu ý:}` hoặc `\noindent\textbf{Nguyên tắc:}`
+  - `✅` → Loại bỏ hoặc thay bằng `\noindent\textbf{Tổng kết}`
 
-Mỗi phần trả lời bắt đầu với:
-```latex
-\begin{center}
-    \textbf{Trả lời:}
-\end{center}
-```
+## 3. Mathematical Expressions
 
-Sau đó là tiêu đề phụ (nếu có):
-```latex
-\textbf{(a) Chỉ định các lựa chọn thuật toán mật mã}
-```
+### 3.1 Inline Math
+- **Số**: Sử dụng `$...$` cho các số và biểu thức toán học ngắn
+- **Ví dụ**: `$\geq 90\%$`, `$< 500$ms`, `$\$300$/tháng`
 
----
+### 3.2 Display Math
+- **Biểu thức dài**: Sử dụng `\[...\]` hoặc `$$...$$` cho biểu thức toán học dài
+- **Không dùng**: `$$...$$` (deprecated), ưu tiên `\[...\]`
 
-## 2. Format Toán Học
+### 3.3 Common Symbols
+- **Greater than or equal**: `$\geq$`
+- **Less than or equal**: `$\leq$`
+- **Greater than**: `$>$`
+- **Less than**: `$<$`
+- **Arrow**: `$\rightarrow$` hoặc `$\to$`
+- **Percent**: `\%` trong text, `$\%$` trong math mode
 
-### 2.1 Biến và Ký Hiệu
+## 4. Lists
 
-- Tất cả biến toán học phải được đặt trong `$...$` hoặc `\(...\)` cho inline math
-- Sử dụng `\[...\]` hoặc `$$...$$` cho display math (không khuyến khích `$$`)
-
-**Ví dụ:**
-```latex
-Khóa bí mật chung $S$ được tính từ $S = ab \cdot G$.
-Công thức: $d = r^{-1} \cdot (s \cdot k - h) \pmod{n}$
-```
-
-### 2.2 Các Phép Toán
-
-- Phép nhân: `$a \cdot b$` hoặc `$a \times b$` (không dùng `*` trong math mode)
-- Phép lũy thừa: `$2^{256}$`, `$k^{-1}$`
-- Phép modulo: `$a \pmod{n}$` hoặc `$a \bmod n$`
-- Phép cộng/trừ: `$a + b$`, `$a - b$`
-- Phép so sánh: `$S < L$`, `$k \leq n$`
-- Mũi tên: `$\rightarrow$` hoặc `$\to$` cho `→`
-
-**Ví dụ:**
-```latex
-$A = a \cdot G$ và $B = b \cdot G$
-$S = ab \cdot G$
-$s = k^{-1} \cdot (H(m) + r \cdot d) \pmod{n}$
-```
-
-### 2.3 Ký Hiệu Đặc Biệt
-
-- Tập hợp số nguyên: `$\mathbb{Z}$`, `$\mathbb{Z}_p^*$`
-- Xấp xỉ: `$\sim$` cho `~`
-- Dấu ngoặc kép trong math: `$``...''$` (không dùng `"`)
-
----
-
-## 3. Format Code Blocks
-
-### 3.1 Verbatim Environment
-
-Sử dụng `\begin{verbatim}...\end{verbatim}` cho code blocks:
-
-```latex
-\begin{verbatim}
-def scalar_mult_naive(k, G):
-    """
-    Tinh k*G bang double-and-add
-    KHONG AN TOAN - co timing leak
-    """
-    result = POINT_AT_INFINITY
-    temp = G
-    
-    for bit in bits(k):
-        if bit == 1:
-            result = result + temp
-        temp = temp + temp
-    
-    return result
-\end{verbatim}
-```
-
-**Lưu ý:**
-- Loại bỏ emoji và special characters trong code
-- Chuyển Unicode sang ASCII khi cần (ví dụ: `→` thành `->`)
-- Không dùng box-drawing characters Unicode (như `┌`, `─`, `│`), thay bằng ASCII (`+`, `-`, `|`)
-
-### 3.2 Inline Code
-
-Sử dụng `\texttt{}` cho tên file, biến, hoặc code ngắn:
-
-```latex
-File \texttt{main.tex} chứa cấu hình chính.
-```
-
----
-
-## 4. Format Lists
-
-### 4.1 Itemize (Danh sách không đánh số)
-
+### 4.1 Itemize (Bullet Points)
 ```latex
 \begin{itemize}
-    \item Mục đầu tiên
-    \item Mục thứ hai
-    \item Mục thứ ba
-\end{itemize}
-```
-
-### 4.2 Enumerate (Danh sách có đánh số)
-
-```latex
-\begin{enumerate}
-    \item Bước đầu tiên
-    \item Bước thứ hai
-    \item Bước thứ ba
-\end{enumerate}
-```
-
-### 4.3 Nested Lists
-
-```latex
-\begin{itemize}
-    \item \textbf{Tiêu đề phụ:}
-    \begin{enumerate}
-        \item Chi tiết 1
-        \item Chi tiết 2
-    \end{enumerate}
-    \item \textbf{Tiêu đề phụ khác:}
+    \item Item 1
+    \item Item 2
     \begin{itemize}
-        \item Chi tiết a
-        \item Chi tiết b
+        \item Sub-item 1
+        \item Sub-item 2
     \end{itemize}
 \end{itemize}
 ```
 
----
-
-## 5. Format Tables
-
-### 5.1 Basic Table
-
+### 4.2 Enumerate (Numbered Lists)
 ```latex
-\begin{center}
-\begin{tabular}{|l|l|l|}
-\hline
-\textbf{Cột 1} & \textbf{Cột 2} & \textbf{Cột 3} \\
-\hline
-Dòng 1, Cột 1 & Dòng 1, Cột 2 & Dòng 1, Cột 3 \\
-\hline
-Dòng 2, Cột 1 & Dòng 2, Cột 2 & Dòng 2, Cột 3 \\
-\hline
-\end{tabular}
-\end{center}
-```
-
-### 5.2 Table với Math
-
-```latex
-\begin{center}
-\begin{tabular}{|l|l|l|}
-\hline
-\textbf{Kỹ thuật} & \textbf{Overhead} & \textbf{Độ an toàn} \\
-\hline
-Naive implementation & $0\%$ & Không an toàn \\
-\hline
-Montgomery Ladder & $+15\%$ & An toàn \\
-\hline
-\end{tabular}
-\end{center}
-```
-
----
-
-## 6. Format Text Styling
-
-### 6.1 Bold và Italic
-
-- **Bold:** `\textbf{text}` cho tiêu đề, từ khóa quan trọng
-- **Italic:** `\textit{text}` cho nguồn tham khảo, thuật ngữ
-
-**Ví dụ:**
-```latex
-\textbf{(a) Chỉ định các lựa chọn thuật toán mật mã}
-\textit{Nguồn:} Mục 2.3 (Chương 8) - ``EdDSA: Tiêu chuẩn hiện đại...''
-```
-
-### 6.2 Quotes
-
-- Sử dụng dấu ngoặc kép LaTeX: `` `...' `` cho quotes đơn, `` ``...'' `` cho quotes kép
-
-**Ví dụ:**
-```latex
-EdDSA là ``xác định'' (deterministic).
-Tài liệu khuyến nghị ``an toàn và nhanh hơn''.
-```
-
----
-
-## 7. Xử Lý Special Characters
-
-### 7.1 Emoji và Symbols
-
-**Loại bỏ hoặc thay thế:**
-- ✅ → `\textbf{✓}` hoặc bỏ
-- ❌ → `\textbf{✗}` hoặc bỏ
-- ⚡ → bỏ hoặc thay bằng text
-- 📍 → `\textit{Nguồn:}` hoặc bỏ
-- 🔴, 🟠, 🟡, 🟢 → bỏ hoặc thay bằng text mô tả
-
-**Ví dụ:**
-```latex
-❌ Không an toàn  →  \textbf{Không} an toàn
-✅ An toàn  →  An toàn
-📍 Nguồn: ...  →  \textit{Nguồn:} ...
-```
-
-### 7.2 Unicode Characters
-
-- Chuyển Unicode sang LaTeX equivalents:
-  - `√` → `$\sqrt{}$`
-  - `Σ` → `$\sum$`
-  - `·` → `$\cdot$`
-  - `→` → `$\rightarrow$` hoặc `$\to$`
-  - `≤`, `≥` → `$\leq$`, `$\geq$`
-  - `≠` → `$\neq$`
-  - `≈` → `$\approx$`
-
-### 7.3 Escape Characters
-
-- `&` → `\&` (trong text mode)
-- `%` → `\%`
-- `$` → `\$` (trong text mode)
-- `#` → `\#`
-- `_` → `\_` (trong text mode)
-- `^` → `\^{}` (trong text mode)
-- `{` → `\{`
-- `}` → `\}`
-
----
-
-## 8. Format Nguồn Tham Khảo
-
-### 8.1 Inline Citations
-
-```latex
-\textit{Nguồn:} Mục 2.3 (Chương 8) - ``EdDSA: Tiêu chuẩn hiện đại (2011)...''
-```
-
-### 8.2 Source Lists
-
-```latex
-\textbf{Nguồn tham chiếu:}
-\begin{itemize}
-    \item Mục 2.3 (Chương 8): ECDSA và EdDSA
-    \item Mục 3.2 (Chương 8): Curve25519 an toàn hơn
-    \item Ví dụ 2 (Chương 8): PlayStation 3 hack - bài học về ECDSA
-\end{itemize}
-```
-
----
-
-## 9. Spacing và Layout
-
-### 9.1 Vertical Spacing
-
-Sử dụng `\vspace{}` khi cần thiết:
-```latex
-\vspace{0.5cm}
-```
-
-### 9.2 No Indent
-
-Sử dụng `\noindent` khi cần bắt đầu đoạn không thụt lề:
-```latex
-\noindent\textbf{Tiêu đề:} Nội dung...
-```
-
-### 9.3 Line Breaks
-
-- Sử dụng `\\` cho line break trong tables
-- Sử dụng blank line (`\n\n`) để tạo paragraph break
-
----
-
-## 10. Quy Tắc Viết Hoa
-
-### 10.1 Tiêu Đề
-
-- **Không viết hoa toàn bộ** trừ khi là từ viết tắt (VD: ECDSA, MITM, CA)
-- Chỉ viết hoa chữ cái đầu của từ quan trọng
-
-**Ví dụ:**
-```latex
-✅ \subsection{Câu 2. Kiến trúc hệ thống liên lạc an toàn}
-❌ \subsection{CÂU 2. KIẾN TRÚC HỆ THỐNG LIÊN LẠC AN TOÀN}
-```
-
-### 10.2 Tiêu Đề Phụ
-
-```latex
-✅ \textbf{(a) Chỉ định các lựa chọn thuật toán mật mã}
-✅ \textbf{1. Khởi tạo lòng tin (Bootstrap Trust):}
-✅ \textbf{2. Phân phối khóa (Key Distribution):}
-```
-
----
-
-## 11. Cấu Trúc Câu Trả Lời Hoàn Chỉnh
-
-### 11.1 Template Cơ Bản
-
-```latex
-\begin{center}
-    \textbf{Trả lời:}
-\end{center}
-
-\textbf{(a) Tiêu đề câu trả lời}
-
-Nội dung giới thiệu...
-
-\textbf{1. Tiêu đề phụ đầu tiên:}
-
-\begin{itemize}
-    \item Chi tiết 1
-    \item Chi tiết 2
-\end{itemize}
-
-\textbf{2. Tiêu đề phụ thứ hai:}
-
 \begin{enumerate}
-    \item Bước 1
-    \item Bước 2
+    \item First item
+    \item Second item
 \end{enumerate}
-
-\textit{Nguồn:} Mục X.X (Chương Y) - ``Mô tả nguồn...''
 ```
 
-### 11.2 Template với Code
+### 4.3 List Configuration
+- **Spacing**: Đã được cấu hình trong `main.tex` với `enumitem` package:
+  - `nosep, topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=0.5em, leftmargin=1.5em`
+- **Không cần điều chỉnh thêm**: Các cấu hình này đảm bảo spacing đồng nhất
 
+## 5. Tables
+
+### 5.1 Table Structure
+- **Regular tables**: Sử dụng `\begin{table}[ht]` với `tabularx`
+- **Long tables**: Sử dụng `\begin{longtable}` cho bảng có thể trải qua nhiều trang
+- **Float placement**: Sử dụng `[ht]` (here, top) cho table và figure
+
+### 5.2 Column Alignment
+- **Vertical centering**: Sử dụng `m{width}` cho căn giữa dọc
+- **Horizontal alignment**:
+  - **Centered**: `>{\centering\arraybackslash}m{width}`
+  - **Justified**: `>{\noindent\justifying\arraybackslash}X` hoặc `>{\noindent\justifying\arraybackslash}p{width}`
+  - **Left aligned**: `>{\raggedright\arraybackslash}X` (không khuyến khích, ưu tiên justify)
+  - **Right aligned**: `>{\raggedleft\arraybackslash}X`
+
+### 5.3 Table Formatting Requirements
+- **Căn giữa dọc**: Tất cả các ô phải căn giữa theo chiều dọc
+- **Căn đều 2 bên (justify)**: Tất cả các cột text phải căn đều 2 bên, không thụt đầu dòng
+- **No indent**: Sử dụng `\noindent` trong định nghĩa cột để loại bỏ indent
+- **Column width**: Sử dụng `tabularx` với `\textwidth` để bảng tự động điều chỉnh độ rộng
+- **Row height**: Sử dụng `\renewcommand{\arraystretch}{1.5}` hoặc giá trị phù hợp để tăng khoảng cách dòng
+
+### 5.4 Table Caption và Label
+- **Caption**: Luôn thêm `\caption{}` sau `\end{tabularx}` hoặc `\end{longtable}`
+- **Label**: Luôn thêm `\label{}` sau `\caption{}` với format `tab:table_name`
+- **Position**: Caption luôn nằm dưới bảng (đã cấu hình trong `main.tex`)
+
+### 5.5 Table Example
 ```latex
-\begin{center}
-    \textbf{Trả lời:}
-\end{center}
-
-\textbf{(a) Thiết kế tấn công timing}
-
-\textbf{A. Kiến thức nền}
-
-\textit{Nguồn:} Mục 2.3 (Chương 8) - ``ECDSA: Tiêu chuẩn cũ...''
-
-\textbf{Quy trình ký ECDSA:}
-\begin{enumerate}
-    \item Chọn nonce ngẫu nhiên: $k$
-    \item Tính điểm: $R = k \cdot G$
-\end{enumerate}
-
-\textbf{B. Điểm yếu có thể khai thác}
-
-\begin{verbatim}
-def attack_function():
-    # Code here
-    pass
-\end{verbatim}
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\hline
+\textbf{Column 1} & \textbf{Column 2} \\
+\hline
+Content 1 & Content 2 \\
+\hline
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0}
+\caption{Table Caption}
+\label{tab:table_name}
+\end{table}
+\FloatBarrier
 ```
 
----
-
-## 12. Checklist Format
-
-Trước khi hoàn thành, kiểm tra:
-
-- [ ] Tất cả tiêu đề không viết hoa toàn bộ
-- [ ] Tất cả biến toán học trong `$...$`
-- [ ] Code blocks trong `\begin{verbatim}...\end{verbatim}`
-- [ ] Loại bỏ hoặc thay thế emoji
-- [ ] Sử dụng dấu ngoặc kép LaTeX (``...'')
-- [ ] Escape special characters đúng cách
-- [ ] Mỗi phần trả lời có `\begin{center}\textbf{Trả lời:}\end{center}`
-- [ ] Tables được đặt trong `\begin{center}...\end{center}`
-- [ ] Lists sử dụng `\begin{itemize}` hoặc `\begin{enumerate}`
-- [ ] Nguồn tham khảo format với `\textit{Nguồn:}`
-
----
-
-## 13. Ví Dụ Hoàn Chỉnh
-
+### 5.6 Longtable Example
 ```latex
-\subsubsection{(a) (8 điểm) Phòng thí nghiệm tấn công kênh bên}
-
-Bạn được giao nhiệm vụ kiểm thử triển khai ECDSA...
-
-\begin{center}
-    \textbf{Trả lời:}
-\end{center}
-
-\textbf{i. Thiết kế tấn công timing chống ECDSA}
-
-\textbf{A. Kiến thức nền về ECDSA}
-
-\textit{Nguồn:} Mục 2.3 (Chương 8) - ``ECDSA: Tiêu chuẩn cũ, được NIST chuẩn hóa. \textbf{Điểm yếu chí mạng:} Khi ký, ECDSA yêu cầu một số ngẫu nhiên bí mật $k$ (gọi là 'nonce'). Nếu $k$ bị rò rỉ, bị lặp lại, hoặc có thể dự đoán, khóa riêng (private key) $d$ sẽ bị lộ ngay lập tức!''
-
-\textbf{Quy trình ký ECDSA (đơn giản hóa):}
-\begin{enumerate}
-    \item Chọn nonce ngẫu nhiên: $k$
-    \item Tính điểm: $R = k \cdot G$
-    \item Lấy tọa độ $x$: $r = R.x \pmod{n}$
-    \item Tính: $s = k^{-1} \cdot (H(m) + r \cdot d) \pmod{n}$
-    \item Chữ ký: $(r, s)$
-\end{enumerate}
-
-\textbf{B. Điểm yếu có thể khai thác}
-
-\textbf{Các phép toán có thời gian khác nhau:}
-
-\textbf{1. Scalar multiplication: $k \cdot G$}
-\begin{itemize}
-    \item Phụ thuộc vào các bit của $k$
-    \item Có thể phân biệt bit 0 vs bit 1
-\end{itemize}
-
-\textbf{2. Modular inversion: $k^{-1}$}
-\begin{itemize}
-    \item Có thể phụ thuộc vào giá trị $k$
-    \item Một số thuật toán không constant-time
-\end{itemize}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|>{\centering\arraybackslash}m{1.5cm}|>{\noindent\justifying\arraybackslash}p{2.5cm}|}
+\caption{Long Table}
+\label{tab:long_table}
+\\
+\hline
+\textbf{Column 1} & \textbf{Column 2} \\
+\hline
+\endfirsthead
+\caption[]{Long Table (tiếp theo)}
+\\
+\hline
+\textbf{Column 1} & \textbf{Column 2} \\
+\hline
+\endhead
+\hline
+\endfoot
+\hline
+\endlastfoot
+Content 1 & Content 2 \\
+\hline
+\end{longtable}
+\normalsize
 ```
 
----
+## 6. Figures
 
-## 14. Lưu Ý Quan Trọng
-
-1. **Không thêm nội dung:** Chỉ format, không thêm hoặc xóa nội dung
-2. **Giữ nguyên ý nghĩa:** Đảm bảo format không làm thay đổi ý nghĩa
-3. **Nhất quán:** Áp dụng cùng một style cho toàn bộ document
-4. **Kiểm tra lỗi:** Sau khi format, chạy `read_lints` để kiểm tra lỗi LaTeX
-5. **Tối ưu:** Ưu tiên readability và professional appearance
-
----
-
-## 15. Các Lỗi Thường Gặp và Cách Sửa
-
-### 15.1 Unicode trong Verbatim
-
-**Lỗi:**
+### 6.1 Figure Structure
 ```latex
-\begin{verbatim}
-┌─────────────────────┐
-│   Unicode box       │
-└─────────────────────┘
-\end{verbatim}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/figure_name.png}
+    \caption{Figure Caption}
+    \label{fig:figure_name}
+\end{figure}
+\FloatBarrier
 ```
 
-**Sửa:**
+### 6.2 Figure Placement
+- **Float placement**: Sử dụng `[ht]` (here, top)
+- **Centering**: Luôn sử dụng `\centering` trong figure environment
+- **Width**: Điều chỉnh `width` phù hợp (ví dụ: `0.6\textwidth`, `1.0\textwidth`)
+
+### 6.3 Multiple Figures Side-by-Side
 ```latex
-\begin{verbatim}
-+---------------------+
-|   ASCII box         |
-+---------------------+
-\end{verbatim}
+\begin{figure}[ht]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/figure1.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/figure2.png}
+    \end{minipage}
+    \caption{Two figures side by side}
+    \label{fig:two_figures}
+\end{figure}
+\FloatBarrier
 ```
 
-### 15.2 Math Mode Thiếu
+### 6.4 Figure Caption và Label
+- **Caption**: Luôn thêm `\caption{}` sau `\includegraphics`
+- **Label**: Luôn thêm `\label{}` sau `\caption{}` với format `fig:figure_name`
+- **Position**: Caption luôn nằm dưới hình (đã cấu hình trong `main.tex`)
 
-**Lỗi:**
-```latex
-Giá trị k nhỏ hơn n
-```
+## 7. Spacing và Layout
 
-**Sửa:**
-```latex
-Giá trị $k$ nhỏ hơn $n$
-```
+### 7.1 Paragraph Spacing
+- **Parskip**: `\setlength{\parskip}{0.3em}` (đã cấu hình trong `main.tex`)
+- **Parindent**: `\setlength{\parindent}{1.5em}` (đã cấu hình trong `main.tex`)
 
-### 15.3 Quotes Sai
+### 7.2 Section Spacing
+- **Section spacing**: Đã cấu hình trong `main.tex` với `titlesec`:
+  - `\titlespacing*{\section}{0pt}{0.2em}{0.2em}`
+  - `\titlespacing*{\subsection}{0pt}{0.2em}{0.2em}`
+  - `\titlespacing*{\subsubsection}{0pt}{0.2em}{0.2em}`
 
-**Lỗi:**
-```latex
-EdDSA là "xác định"
-```
+### 7.3 Float Spacing
+- **Float separation**: Đã cấu hình trong `main.tex`:
+  - `\setlength{\floatsep}{5pt plus 2pt minus 2pt}`
+  - `\setlength{\textfloatsep}{5pt plus 2pt minus 2pt}`
+  - `\setlength{\intextsep}{10pt plus 2pt minus 2pt}`
 
-**Sửa:**
-```latex
-EdDSA là ``xác định''
-```
+### 7.4 Float Barrier
+- **Sử dụng `\FloatBarrier`**: Sau mỗi bảng hoặc hình cuối cùng trong một section/subsection để đảm bảo text tiếp theo không bị nằm ở trang cũ
+- **Không dùng `\clearpage`**: Thay bằng `\FloatBarrier` từ package `placeins`
 
----
+## 8. Code Blocks
 
-## Kết Luận
+### 8.1 Inline Code
+- Sử dụng `\texttt{}` cho inline code
+- Ví dụ: `\texttt{docker build}`
 
-Tài liệu này cung cấp hướng dẫn chi tiết để format LaTeX một cách nhất quán và chuyên nghiệp. Khi format, hãy tham khảo các quy tắc trên và sử dụng các template có sẵn để đảm bảo tính nhất quán.
+### 8.2 Code Blocks
+- Sử dụng `\begin{verbatim}...\end{verbatim}` cho code blocks
+- Hoặc sử dụng `lstlisting` environment nếu cần syntax highlighting
+
+## 9. Packages Required
+
+Các package sau đã được thêm vào `main.tex`:
+- `enumitem`: Cho list spacing
+- `titlesec`: Cho section spacing
+- `tabularx`: Cho bảng tự động điều chỉnh độ rộng
+- `longtable`: Cho bảng trải qua nhiều trang
+- `caption`: Cho caption formatting
+- `placeins`: Cho `\FloatBarrier`
+- `ragged2e`: Cho `\justifying` command
+
+## 10. Checklist Formatting
+
+Khi format một file LaTeX mới, kiểm tra:
+
+- [ ] Loại bỏ tất cả số thứ tự trong tiêu đề (section/subsection/subsubsection)
+- [ ] Sử dụng `\indentpar \indentpar` cho đoạn văn đầu tiên
+- [ ] Sử dụng `\noindent\textbf{}` cho tiêu đề phụ
+- [ ] Loại bỏ tất cả ký tự Unicode đặc biệt (⸻, 🔹, ✅)
+- [ ] Escape tất cả ký tự đặc biệt (&, %, $, #, _, ^, {, }, \)
+- [ ] Thay `—` bằng `--`
+- [ ] Sử dụng `$...$` cho số và biểu thức toán học
+- [ ] Chuyển bullet points thành `itemize`
+- [ ] Chuyển numbered lists thành `enumerate`
+- [ ] Format bảng với `tabularx` hoặc `longtable`
+- [ ] Căn giữa dọc: sử dụng `m{width}`
+- [ ] Căn đều 2 bên: sử dụng `>{\noindent\justifying\arraybackslash}`
+- [ ] Thêm `\caption{}` và `\label{}` cho tất cả bảng
+- [ ] Thêm `\caption{}` và `\label{}` cho tất cả hình
+- [ ] Thêm `\FloatBarrier` sau bảng/hình cuối cùng trong section
+- [ ] Kiểm tra không có lỗi LaTeX
+
+## 11. Common Issues và Solutions
+
+### 11.1 Text trong bảng bị thụt đầu dòng
+- **Vấn đề**: Text trong ô bảng bị indent
+- **Giải pháp**: Thêm `\noindent` vào định nghĩa cột: `>{\noindent\justifying\arraybackslash}`
+
+### 11.2 Text không căn đều 2 bên
+- **Vấn đề**: Text trong ô bảng không căn đều
+- **Giải pháp**: Sử dụng `\justifying` thay vì `\raggedright`: `>{\noindent\justifying\arraybackslash}`
+
+### 11.3 Caption nằm trên bảng/hình
+- **Vấn đề**: Caption xuất hiện phía trên bảng/hình
+- **Giải pháp**: Đã cấu hình `position=bottom` trong `main.tex`, kiểm tra lại cấu hình
+
+### 11.4 Text nằm ở trang cũ sau bảng
+- **Vấn đề**: Text tiếp theo bị nằm ở trang cũ khi có bảng ở cuối
+- **Giải pháp**: Thêm `\FloatBarrier` sau bảng/hình cuối cùng trong section
+
+### 11.5 Bảng không căn giữa dọc
+- **Vấn đề**: Nội dung trong ô không căn giữa theo chiều dọc
+- **Giải pháp**: Sử dụng `m{width}` thay vì `p{width}`, và thêm `\renewcommand{\tabularxcolumn}[1]{m{#1}}`
+
+### 11.6 Khoảng cách không đồng nhất
+- **Vấn đề**: Khoảng cách giữa các phần không đồng nhất
+- **Giải pháp**: Đã cấu hình trong `main.tex`, không cần điều chỉnh thêm
+
+## 12. Best Practices
+
+1. **Consistency**: Đảm bảo format đồng nhất trong toàn bộ document
+2. **Readability**: Ưu tiên tính dễ đọc, không quá phức tạp
+3. **Maintainability**: Sử dụng các cấu hình chung trong `main.tex` thay vì hardcode
+4. **Labels**: Sử dụng naming convention nhất quán cho labels (ví dụ: `tab:`, `fig:`)
+5. **Comments**: Thêm comments trong code nếu cần giải thích logic phức tạp
+6. **Testing**: Luôn compile LaTeX sau khi format để kiểm tra lỗi
+
+## 13. Naming Conventions
+
+### 13.1 Table Labels
+- Format: `tab:table_name`
+- Ví dụ: `tab:user_stories`, `tab:architecture_characteristics`
+
+### 13.2 Figure Labels
+- Format: `fig:figure_name`
+- Ví dụ: `fig:usecase-9`, `fig:domain-model-class-diagram`
+
+### 13.3 File Names
+- Format: `section_number_section_name.tex`
+- Ví dụ: `2.3_functional_requirements.tex`, `2.4_non_functional_requirements.tex`
+
+## 14. Summary
+
+Tài liệu này mô tả đầy đủ các yêu cầu format cho LaTeX documents trong dự án. Tất cả các file `.tex` trong thư mục `report/contents/` phải tuân thủ các quy tắc này để đảm bảo tính nhất quán và chất lượng của báo cáo.
 
