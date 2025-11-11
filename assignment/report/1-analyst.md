@@ -1,3 +1,57 @@
+# Phân tích yêu cầu người dùng & Use Cases
+
+Mục tiêu của bước này: Từ đề tài, tổng hợp các yêu cầu thành các user stories, thể hiện ai làm gì – để đạt được điều gì.
+
+| **STT** | **Actor**      | **Phạm vi**            | **User Story (As a [role], I want [goal] so that [reason])**                                                                                                                                     |
+|-----------|----------------|------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **US0**   | **Learner**    | **Cá nhân hóa**        | Là một **Học sinh**, tôi muốn **hệ thống đánh giá kiến thức hiện tại của tôi** để nó có thể **đề xuất lộ trình học tập tối ưu**, không lãng phí thời gian vào những gì tôi đã biết.              |
+| **US1**   | **Learner**    | **Phản hồi**           | Là một **Học sinh**, tôi muốn **nhận được gợi ý (hints) và giải thích ngay lập tức** sau khi tôi mắc lỗi trong bài tập, để tôi có thể **tự sửa chữa và hiểu được khái niệm đó ngay lập tức**.    |
+| **US2**   | **Learner**    | **Đánh giá**           | Là một **Học sinh**, tôi muốn **xem tiến trình học tập của mình** (**điểm**, **thời gian hoàn thành**, **các kỹ năng đã thành thạo**) để tôi có thể **theo dõi sự cải thiện của bản thân**.      |
+| **US3**   | **Learner**    | **Vòng lặp học tập**   | Là một **Học sinh**, tôi muốn **hệ thống tự động đưa lại bài tập về các kỹ năng tôi chưa thành thạo sau một khoảng thời gian**, để **củng cố kiến thức đã học**.                                 |
+| **US4**   | **Instructor** | **Nội dung**           | Là một **Giảng viên**, tôi muốn **gắn metadata** (**độ khó**, **kỹ năng**, **chủ đề**) cho mỗi bài tập mới để **thuật toán cá nhân hóa có thể sử dụng chúng một cách chính xác**.               |
+| **US5**   | **Instructor** | **Giám sát**           | Là một **Giảng viên**, tôi muốn **xem báo cáo tổng hợp về hiệu suất của cả lớp** để tôi có thể **xác định những chủ đề mà đa số học sinh đang gặp khó khăn**.                                   |
+| **US6**   | **Instructor** | **Báo cáo chi tiết**   | Là một **Giảng viên**, tôi muốn **tạo báo cáo chi tiết về hiệu suất và lộ trình học tập của một học sinh cụ thể**, để tôi có thể **tư vấn cá nhân hóa (one-on-one)**.                            |
+| **US7**   | **Admin**      | **Quản trị**           | Là một **Quản trị viên**, tôi muốn **quản lý các tài khoản Giảng viên** và **phân quyền truy cập nội dung** để đảm bảo **tính bảo mật** và **kiểm soát hệ thống**.                              |
+| **US8**   | **Admin**      | **Quản lý Vận hành**   | Là một **Quản trị viên**, tôi muốn **có khả năng deploy/swap (thay đổi) các phiên bản mới của Mô hình AI (ví dụ: thuật toán gợi ý mới) mà không cần downtime hệ thống chính**, để **đảm bảo Modularity và Deployability (ACs quan trọng cho ITS)**. |
+
+# Yêu cầu chức năng
+
+Yêu cầu chức năng là những mô tả chi tiết về các **chức năng**, **hành vi** và **nhiệm vụ** mà hệ thống cần thực hiện để thỏa mãn **nhu cầu của người dùng**.
+
+**Đặc điểm của yêu cầu chức năng:**
+- Trả lời câu hỏi: **“Hệ thống sẽ thực hiện những gì?”**
+- Diễn tả các **hành động**, **quy trình** và **kết quả đầu ra** mong đợi từ hệ thống.
+- Thường được trình bày qua các **use case**, **user story** hoặc **liệt kê chức năng cụ thể**.
+
+| **STT** | **Tên chức năng**                     | **Mô tả chi tiết**                                                                                                                                                                                       | **Tiêu chí chấp nhận / Kết quả mong đợi**                                                                                                         | **Đối tượng sử dụng** | **User Story (Liên quan)**                                         |
+|---------|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|--------------------------------------------------------------------|
+| **FR1** | **Đăng ký & Xác thực**               | **Người dùng** có thể tạo **tài khoản mới** bằng **email/password** hoặc **đăng nhập** với tài khoản đã có.                                                                                             | **Email xác nhận** được gửi khi đăng ký; người dùng chỉ có thể truy cập **tính năng tương ứng với role**.                                        | **H, GV, A**         | **US7**                                                         |
+| **FR2** | **Hồ sơ & Cài đặt Học tập**          | **Hồ sơ** gồm **tên, tuổi, trình độ, sở thích, mục tiêu học, ngôn ngữ, lịch học**; hỗ trợ **bài kiểm tra đầu vào** (*diagnostic test*).                                                                | Người dùng có thể **cập nhật thông tin, cài đặt lịch học, nhận nhắc nhở** bằng **email/push notification**. Kết quả diagnostic test được lưu vào **Learner Model**. | **H**                | **US0**                                                         |
+| **FR3** | **Quản lý Nội dung Học tập**         | **Giảng viên** có thể **tạo, biên tập khóa học, chương, bài học**. Hỗ trợ nhiều **định dạng nội dung** (**text, video, slide, quiz, coding task…**).                                                  | Giảng viên có thể **gắn thẻ (tagging)**, **nội dung có versioning**, và **phân quyền truy cập** (**public/private/group**).                    | **GV**               | **US4**                                                         |
+| **FR4** | **Cấu trúc Khóa học & Lộ trình**     | Mỗi **khóa** có **mục tiêu, kỹ năng**, **pre-tests, post-tests**. Hỗ trợ **lộ trình tuyến tính và adaptive**.                                                                                          | **Milestones, checkpoint**, điều kiện mở khóa bài tiếp theo được cấu hình (ví dụ **≥70% điểm quiz**).                                            | **GV, H**            | **US0, US3**                                                   |
+| **FR5** | **Đánh giá & Thẩm định**             | Hỗ trợ nhiều **kiểu bài**: **MCQ, essay, coding, upload, project**. Có **auto-grading** và **review thủ công**.                                                                                        | Học sinh có thể **làm bài giới hạn thời gian**; **điểm số, lịch sử** lưu trong **gradebook**.                                                    | **H, GV**            | **US2**                                                         |
+| **FR6** | **Hệ thống Phản hồi & Remediation**  | Cung cấp **phản hồi tức thì**, **gợi ý bài học bù (remediation)** khi **học sinh yếu kỹ năng** nào đó.                                                                                                | Hiển thị **giải thích đáp án, gợi ý học lại bài liên quan**, hỗ trợ **hướng dẫn step-by-step**.                                                  | **H**                | **US1, US3**                                                   |
+| **FR7** | **Adaptive Learning Engine**         | **Engine** thu thập **dữ liệu học tập** (kết quả, thời gian, tương tác) để **cá nhân hóa lộ trình học**.                                                                                               | **Gợi ý bài tiếp theo** dựa trên **điểm mạnh/yếu**, hỗ trợ **spaced repetition** và **mastery-based learning**.                                 | **H, GV**            | **US0, US3**                                                   |
+| **FR8** | **Dashboard & Báo cáo**              | Hiển thị **tiến độ, điểm số, lịch học, milestones**. **Giảng viên** xem **tổng quan lớp, điểm yếu phổ biến**.                                                                                          | Có thể **xuất dữ liệu ra CSV/PDF** (**Báo cáo tổng hợp**); **Admin** xem **báo cáo hệ thống** (**active users, usage, logs**).                  | **H, GV, A**         | **US2, US5, US6**                                              |
+| **FR9** | **Tương tác & Giao tiếp**           | **Bình luận, thảo luận, chat 1-1, diễn đàn** theo khóa học, hệ thống **thông báo in-app/email/push**.                                                                                                 | **Giao tiếp realtime**, hỗ trợ **comment** dưới bài học, **gửi thông báo** cá nhân hoặc theo nhóm.                                              | **H, GV**            | -                                                                  |
+| **FR10**| **Quản lý lớp & Phân nhóm**          | **Giảng viên** có thể **tạo lớp, mời học sinh, chia nhóm cho project**.                                                                                                                                | Hỗ trợ **vai trò trong lớp** (**TA, student, observer**), **giao bài nhóm, đánh giá theo nhóm**.                                                | **GV**               | -                                                                  |
+| **FR11**| **Bảo mật & Quản lý quyền (RBAC)**   | Hệ thống **phân quyền rõ theo vai trò**; có **audit logs** cho các thao tác nhạy cảm.                                                                                                                 | Người dùng chỉ truy cập tính năng được phép; **mọi thay đổi được ghi lại** (tuân thủ **FR1**).                                                  | **Tất cả**           | **US7**                                                         |
+| **FR12**| **Admin & Vận hành Hệ thống**        | **Admin** quản lý **users, roles, cấu hình hệ thống, backup/restore dữ liệu, moderation**.                                                                                                            | Có **health checks, báo cáo vi phạm, logs hệ thống**. Bao gồm yêu cầu từ US8 (Live Model Swapping) đã bổ sung.                                         | **A**                | **US7, US8**                                                    |
+| **FR13**| **Gamification & Động lực**          | Cung cấp **XP, badges, leaderboard, streak learning, challenge mode**.                                                                                                                                 | **Học sinh được thưởng** khi hoàn thành bài học, có **bảng xếp hạng và phần thưởng**.                                                           | **H**                | **US2**                                                         |
+
+# Yêu cầu phi chức năng
+
+| **Nhóm Yêu cầu**      | **AC ID** | **Đặc tính Kiến trúc**         | **Mục tiêu Định lượng & Chiến lược Tuân thủ**                                                                                                                                                                                                                          | **User Story (Liên quan)** |
+|------------------------|-----------|--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|
+| Mở rộng chức năng      | AC1       | Modularity & Extensibility     | Chiến lược: Kiến trúc Service-based (Microservices), API versioning, thiết kế Plugin-friendly (tuân thủ OCP).                                                                                                                                                            | US8, US0, US4               |
+| Khả năng Mở rộng       | AC2       | Scalability                    | Mục tiêu: Hỗ trợ ≥ 5,000 user concurrent. Chiến lược: Horizontal scaling cho các service; dùng Kubernetes và Kafka/RabbitMQ cho giao tiếp bất đồng bộ.                                                                                                                   | US2, US5, US6               |
+| Hiệu năng              | AC3       | Performance                    | Mục tiêu: API phổ biến <300ms; tác vụ nặng (grading/report) <1s. Chiến lược: Redis caching, Indexing, Async workers cho tác vụ nền.                                                                                                                                     | US0, US1, US2               |
+| Kiểm thử               | AC4       | Testability & Maintainability  | Mục tiêu: Unit test ≥ 80%. Chiến lược: Áp dụng SOLID & Clean/Hexagonal Architecture để code dễ test; CI/CD tự động.                                                                                                                                                     | US8                         |
+| Bảo mật                | AC6       | Security & Privacy             | Mục tiêu: Hash mật khẩu bằng bcrypt/argon2. Chiến lược: RBAC (FR11), audit logs, HTTPS toàn hệ thống; tuân thủ OWASP Top 10.                                                                                                                                           | US7                         |
+| Độ tin cậy             | AC7       | Reliability & Availability     | Mục tiêu: SLA ≥ 99.5% uptime. Chiến lược: Retry logic, Queues cho tác vụ async; backup dữ liệu hàng ngày.                                                                                                                                                              | US3, US7, US8               |
+| Giám sát               | AC8       | Observability                  | Chiến lược: Thu thập Metrics, distributed tracing (Jaeger) và structured logging (ELK/EFK) để theo dõi và cảnh báo sự cố.                                                                                                                                              | US5, US6, US7               |
+| Chi phí                | AC9       | Cost Efficiency                | Chiến lược: Tối ưu tài nguyên bằng Auto-scaling theo tải thực tế; sử dụng Serverless cho tác vụ không thường xuyên (ví dụ: báo cáo định kỳ).                                                                                                                            | US7                         |
+
 ## Tổng quan Use Case & Domain Model
 
 ### 1. Mô tả Use Case (Ánh xạ từ User Stories)
@@ -376,3 +430,251 @@ Bảng dưới cho thấy cách Domain Model dẫn đến quyết định kiến
 - **I = 0**: Rất ổn định (nhiều service phụ thuộc, ít thay đổi) → Content, Policy Modules
 - **I → 1**: Bất ổn (ít phụ thuộc, thay đổi nhiều) → LearnerModel (cập nhật liên tục)
 - **Nguyên tắc**: Policy (I≈0) không nên phụ thuộc vào Detail (I→1) → Dependency Inversion Principle
+
+
+# Nhiệm vụ Chưa Hoàn Thành
+
+## Sơ đồ 1: Sơ đồ Kiến trúc Tổng quan (C4 - Container Diagram)
+
+### 1.1. Mục đích
+Trực quan hóa quyết định Microservices của bạn. Sơ đồ này cho người đọc thấy các "hộp" (services) chính mà bạn đã định nghĩa trong file 1.3 (ví dụ: Auth Service, LearnerModel Service, Content Service, Adaptive Engine Service...) và cách chúng giao tiếp với nhau (ví dụ: qua API Gateway, qua Kafka).
+
+### 1.2. Chiến lược
+Bám sát vào bảng "Ánh xạ Aggregate → Microservice/Component" để vẽ sơ đồ.
+
+```mermaid
+c4container
+    title Sơ đồ Kiến trúc Tổng quan (C4 Container - Microservices) [Dựa trên 1.3]
+
+    ' ---- Actors (Từ 1.0) ----
+    Person(learner, "Learner", "Học sinh (US0-3)")
+    Person(instructor, "Instructor", "Giảng viên (US4-6)")
+    Person(admin, "Admin", "Quản trị viên (US7-8)")
+
+    ' ---- Databases & Message Queue (Từ 1.2 & 1.3) ----
+    SystemDb(postgres_db, "PostgreSQL DB", "Lưu trữ chính (Users, Content, Progress)")
+    SystemDb(redis_cache, "Redis Cache", "Cache LearnerModel, Paths (AC3)")
+    SystemQueue(kafka, "Kafka / RabbitMQ", "Message Bus (AC2, AC7)")
+
+    ' ---- System Boundary (ITS) ----
+    System_Boundary(its, "Hệ thống Gia sư Thông minh (ITS)") {
+        ' ---- Services (Ánh xạ từ 1.3) ----
+        Container(gateway, "API Gateway", "Spring Cloud / Nginx", "Cổng vào chính, điều phối, xác thực")
+        Container(auth, "Auth Service", "Java/Spring", "Quản lý User & RBAC (FR1, FR11) [từ UserManagementAggregate]")
+        Container(learner_svc, "Learner Service", "Java/Spring", "Quản lý Profile & Tiến độ (FR2) [từ LearnerAggregate]")
+        Container(content_svc, "Content Mgmt Service", "Java/Spring", "Quản lý Nội dung & Metadata (FR3, FR4) [từ ContentAggregate]")
+        Container(learner_model_svc, "LearnerModel Service", "Golang", "Lưu trạng thái AI, BKT (FR7, US8) [từ LearnerModelAggregate]")
+        Container(adaptive_engine, "Adaptive Engine", "Golang", "Tạo lộ trình, gợi ý (FR7, US0) [từ AdaptivePathGenerator]")
+        Container(scoring_svc, "Scoring Service", "Python/Go", "Chấm điểm & Phản hồi (FR5, FR6) [từ ScoringEngine]")
+        Container(feedback_svc, "Feedback Service", "Golang", "Tạo gợi ý, remediation (FR6) [từ FeedbackGenerator]")
+
+        ' ---- Service Relationships (Sync) ----
+        Rel(gateway, auth, "Xác thực (AuthN/AuthZ)", "REST/gRPC")
+        Rel(gateway, learner_svc, "Profile, Progress (UC-03)")
+        Rel(gateway, content_svc, "Quản lý nội dung (UC-05)")
+        Rel(gateway, adaptive_engine, "Yêu cầu Lộ trình (UC-08)")
+        Rel(gateway, scoring_svc, "Nộp bài (UC-09)")
+        Rel(gateway, feedback_svc, "Yêu cầu gợi ý (UC-10)")
+
+        ' ---- Internal Service-to-Service (Sync) ----
+        Rel(adaptive_engine, learner_model_svc, "Đọc trạng thái (I=0.6)", "gRPC")
+        Rel(adaptive_engine, content_svc, "Đọc metadata (I=0)", "gRPC")
+        Rel(feedback_svc, learner_model_svc, "Đọc trạng thái yếu", "gRPC")
+        Rel(feedback_svc, content_svc, "Đọc nội dung remediation", "gRPC")
+    }
+
+    ' ---- User Flows (HTTPS) ----
+    Rel_Back(learner, gateway, "Sử dụng hệ thống")
+    Rel_Back(instructor, gateway, "Sử dụng hệ thống")
+    Rel_Back(admin, gateway, "Sử dụng hệ thống")
+
+    ' ---- Database/Cache Flows ----
+    Rel(auth, postgres_db, "Đọc/Ghi Users, Roles")
+    Rel(learner_svc, postgres_db, "Đọc/Ghi Profiles")
+    Rel(content_svc, postgres_db, "Đọc/Ghi Content (I=0)")
+    Rel(learner_model_svc, postgres_db, "Đọc/Ghi BKT state")
+    Rel(learner_model_svc, redis_cache, "Đọc/Ghi cache (AC3)")
+    Rel(adaptive_engine, redis_cache, "Ghi cache lộ trình (TTL 15m) [1.3]")
+
+    ' ---- Async Flows (Event-driven) ----
+    Rel(scoring_svc, kafka, "Publish 'SubmissionCompleted'")
+    Rel(learner_model_svc, kafka, "Consume 'SubmissionCompleted'")
+```
+
+## Sơ đồ 2: Sơ đồ Module (Clean Architecture Diagram)
+
+### 2.1. Mục đích
+Trực quan hóa bên trong một Microservice. Bạn đã đề cập đến Clean Architecture (hoặc Hexagonal) và cung cấp code Golang. Sơ đồ này sẽ cho thấy các lớp (Domain, Application, Infrastructure) và cách nguyên tắc DIP được áp dụng (các lớp bên ngoài phụ thuộc vào interface của lớp bên trong).
+
+### 2.2. Chiến lược
+Chọn một service quan trọng để vẽ, ví dụ: Adaptive Engine Service và minh họa AdaptivePathGenerator (Domain Service) của bạn nằm ở đâu.
+
+```mermaid
+graph TD
+    title Sơ đồ Module (Clean Architecture) - Service: Adaptive Engine [Dựa trên 1.3]
+
+    subgraph Lớp Infrastructure (Vành ngoài)
+        direction LR
+        A[gRPC/REST Controllers<br>(Endpoint: /generate-path)]
+        B[LearnerModelRepoImpl<br>(Client: Postgres/Redis)]
+        C[ContentRepoImpl<br>(Client: Postgres)]
+    end
+
+    subgraph Lớp Application (Use Cases)
+        direction LR
+        D[AdaptivePathAppService<br>(Xử lý Use Case UC-08)]
+    end
+
+    subgraph "Lớp Domain (Lõi nghiệp vụ - I=0)"
+        direction LR
+        E[Entity: AdaptivePath<br>Entity: PathNode]
+        F[<b>Domain Service:<br>AdaptivePathGenerator</b><br>(Chứa logic/thuật toán FR7)]
+        G[<b>Interface:<br>LearnerModelRepository</b>]
+        H[<b>Interface:<br>ContentRepository</b>]
+    end
+
+    ' --- Mũi tên thể hiện Sự phụ thuộc (Dependency Rule) --- '
+    ' --- Luôn hướng vào trong (DIP) --- '
+    
+    ' Lớp Infrastructure phụ thuộc vào Lớp Application
+    A -- "Gọi (invokes)" --> D
+
+    ' Lớp Infrastructure (Implementation) phụ thuộc vào Lớp Domain (Interface)
+    B -- "<b>Implement (hiện thực hóa)</b>" --> G
+    C -- "<b>Implement (hiện thực hóa)</b>" --> H
+
+    ' Lớp Application phụ thuộc vào Lớp Domain (Interfaces & Services)
+    D -- "Sử dụng (uses)" --> F
+    D -- "Phụ thuộc (depends on)" --> G
+    D -- "Phụ thuộc (depends on)" --> H
+
+    ' Lớp Domain (Domain Service) phụ thuộc vào Interface (cùng lớp)
+    F -- "<b>Phụ thuộc (depends on)</b>" --> G
+    F -- "<b>Phụ thuộc (depends on)</b>" --> H
+
+    ' Lớp Domain (Domain Service) tạo ra Entities
+    F -- "Tạo (creates)" --> E
+
+    ' Styling: Tô đậm các thành phần cốt lõi
+    style F fill:#fdf,stroke:#333,stroke-width:2px
+    style G fill:#dfd,stroke:#333,stroke-width:2px
+    style H fill:#dfd,stroke:#333,stroke-width:2px
+```
+
+## Sơ đồ 3: Sơ đồ Tuần tự (Sequence Diagram)
+
+### 3.1. Mục đích
+Minh họa một luồng nghiệp vụ quan trọng chạy qua nhiều service.
+
+### 3.2. Chiến lược
+Chọn một Use Case quan trọng từ danh sách của bạn (file 1.3). Tôi đề xuất bạn chọn UC-08 (Bắt đầu/Tiếp tục Học tập Thích ứng).
+
+```mermaid
+sequenceDiagram
+    title Sơ đồ Tuần tự (Sequence Diagram) - UC-08: Bắt đầu Học tập Thích ứng
+
+    actor Learner
+    participant Gateway as API Gateway
+    participant Engine as Adaptive Engine (Golang)
+    participant LearnerModel as LearnerModel Svc (Golang)
+    participant Content as Content Mgmt Svc (Java)
+    participant Cache as Redis Cache (AC3)
+
+    Learner->>Gateway: 1. Yêu cầu bài học tiếp theo
+    Gateway->>Engine: 2. GeneratePath(learnerId)
+    
+    Engine->>Cache: 3. Đọc cache lộ trình (Key: path:learnerId)
+    
+    alt Cache Miss (Cache không có hoặc hết hạn 15p)
+        Cache-->>Engine: 4. (null)
+        
+        ' --- Bắt đầu logic của AdaptivePathGenerator --- '
+        Engine->>LearnerModel: 5. Đọc LearnerModel (GetSkillMastery)
+        LearnerModel-->>Engine: 6. Trả về SkillMasteryScore (ví dụ: Algebra: 0.3)
+        
+        Engine->>Content: 7. Đọc ContentMetadata (cho kỹ năng yếu)
+        Content-->>Engine: 8. Trả về Metadata (bài tập, độ khó)
+        
+        activate Engine
+        note right of Engine: 9. Áp dụng thuật toán (AdaptivePathGenerator)<br/>Tạo lộ trình (AdaptivePath)
+        deactivate Engine
+        ' --- Kết thúc logic của AdaptivePathGenerator --- '
+        
+        Engine->>Cache: 10. Lưu kết quả vào cache (TTL=15min)
+        Cache-->>Engine: 11. (OK)
+        
+        Engine-->>Gateway: 12. Trả về AdaptivePath (mới)
+    else Cache Hit
+        Cache-->>Engine: 4. Trả về AdaptivePath (từ cache)
+        Engine-->>Gateway: 12. Trả về AdaptivePath (từ cache)
+    end
+    
+    Gateway-->>Learner: 13. Hiển thị nội dung bài học
+```
+
+## Sơ đồ 4: Sơ đồ Triển khai (Deployment Diagram)
+
+### 4.1. Mục đích
+Trực quan hóa yêu cầu phi chức năng AC2 (Scalability) và AC1 (Modularity).
+
+### 4.2. Chiến lược
+Vẽ một sơ đồ đơn giản thể hiện bạn dự định triển khai các service này như thế nào. (Ví dụ: Sử dụng Kubernetes Cluster, với các Pods cho từng service, kết nối với Kafka và cơ sở dữ liệu (Postgres/Redis) như bạn đã đề cập).
+
+```mermaid
+graph TD
+    title Sơ đồ Triển khai (Deployment Diagram) [Tuân thủ AC1, AC2, AC8]
+
+    User[Learner/Instructor] --> LB[Cloud Load Balancer (HTTPS)]
+    
+    subgraph "VPC (Mạng riêng ảo)"
+        subgraph "Kubernetes Cluster (GKE/EKS/AKS)" [AC2: Scalability]
+            direction LR
+            LB --> Ingress[K8s Ingress Gateway]
+
+            subgraph "Node 1"
+                P1[Pod: Adaptive Engine (Go)]
+                P2[Pod: LearnerModel Svc (Go)]
+                P3[Pod: Auth Service (Java)]
+            end
+            
+            subgraph "Node 2"
+                P4[Pod: Adaptive Engine (Go) - Replica]
+                P5[Pod: Content Svc (Java)]
+                P6[Pod: Scoring Svc (Python)]
+            end
+            
+            subgraph "Node N (Auto-scaled HPA)"
+                P7[Pod: Adaptive Engine (Go) - Replica N]
+                P8[Pod: LearnerModel Svc (Go) - Replica N]
+            end
+
+            ' Service Discovery '
+            Ingress -- "service: adaptive-engine" --> P1
+            Ingress -- "service: adaptive-engine" --> P4
+            Ingress -- "service: adaptive-engine" --> P7
+            Ingress -- "service: content-svc" --> P5
+            P1 -- "service: learner-model" --> P2
+            P1 -- "service: learner-model" --> P8
+            
+            ' Observability (AC8) '
+            P1 --> O1[Logs/Metrics (ELK/Prometheus/Jaeger)]
+            P2 --> O1
+            P5 --> O1
+        end
+
+        subgraph "Managed Services (Cloud Provider)"
+            M1[Managed PostgreSQL (Cloud SQL/RDS)]
+            M2[Managed Redis (MemoryStore/ElastiCache)]
+            M3[Managed Kafka (Confluent/MSK) [AC2]]
+        end
+    end
+
+    ' --- Kết nối từ Pods ra bên ngoài Cluster --- '
+    P2 -- "Đọc/Ghi state" --> M1
+    P8 -- "Đọc/Ghi state" --> M1
+    P2 -- "Đọc/Ghi cache" --> M2
+    P3 -- "Đọc/Ghi users" --> M1
+    P5 -- "Đọc/Ghi content" --> M1
+    P6 -- "Publish event" --> M3
+    P2 -- "Consume event" --> M3
+```
