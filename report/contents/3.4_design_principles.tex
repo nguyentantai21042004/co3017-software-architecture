@@ -55,16 +55,136 @@
 
 \indentpar Tiêu chuẩn bảo mật tập trung cho toàn hệ thống, bao gồm xác thực (AuthN) tại Auth Service, phân quyền (AuthZ) tại API Gateway, và bảo vệ dữ liệu cá nhân (PII) thông qua phân tách và mã hóa. Các quyết định này được giải thích đầy đủ ở Mục~3.3, ADR-6 và ADR-7.
 
+\indent\textbf{d. Event-Driven Communication (ADR-8 \& ADR-9)}
+
+\indentpar Sử dụng RabbitMQ cho giao tiếp bất đồng bộ giữa các service và áp dụng Saga Pattern với Transactional Outbox cho distributed transactions. Các quyết định này đảm bảo tính nhất quán eventual consistency và giảm coupling giữa các service. Chi tiết xem Mục~3.3, ADR-8 và ADR-9.
+
+\indent\textbf{e. Observability-First Design (ADR-10)}
+
+\indentpar Áp dụng Distributed Tracing và Structured Logging (JSON) cho toàn bộ hệ thống. Mọi request phải có Trace ID được propagate qua HTTP headers và RabbitMQ message headers. Chi tiết xem Mục~3.3, ADR-10.
+
+\subsubsection{Cấu trúc Code và API Design}
+
+\indentpar \indentpar Để đảm bảo các nguyên tắc thiết kế được áp dụng nhất quán, các tiêu chuẩn về cấu trúc code và thiết kế API được quy định rõ ràng.
+
+\indent\textbf{a. Code Organization Standard}
+
+\indentpar Tất cả các microservice (cả Java và Go) phải tuân theo cấu trúc thư mục chuẩn theo Clean Architecture:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{domain/}: chứa Entities, Value Objects, Domain Services, và Aggregates. Không được phụ thuộc vào bất kỳ framework hay library nào.
+    \item \textbf{application/}: chứa Use Cases và Repository Interfaces (Ports). Chỉ được phụ thuộc vào tầng domain.
+    \item \textbf{adapters/}: chứa Controllers (HTTP handlers), Repositories (DB implementations), Message Consumers/Publishers.
+    \item \textbf{infrastructure/}: chứa configuration, framework setup, và external dependencies.
+\end{itemize}
+
+\indent\textbf{b. API Design Principles}
+
+\indentpar Các REST API phải tuân theo các nguyên tắc sau để đảm bảo tính nhất quán và dễ sử dụng:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{RESTful conventions:} sử dụng đúng HTTP methods (GET, POST, PUT, DELETE), status codes chuẩn (200, 201, 400, 404, 500), và resource-oriented URLs.
+    \item \textbf{Versioning:} tất cả API phải được version (ví dụ: `/api/v1/users`), cho phép thay đổi mà không breaking existing clients.
+    \item \textbf{Error handling:} trả về error responses có cấu trúc nhất quán với format JSON: \texttt{\{"error": "...", "message": "...", "trace\_id": "..."\}}.
+    \item \textbf{Pagination:} các endpoint trả về danh sách phải hỗ trợ pagination (ví dụ: `?page=1\&size=20`) để tránh tải quá nhiều dữ liệu.
+    \item \textbf{Idempotency:} các operation quan trọng (ví dụ: payment, submission) phải idempotent để an toàn khi retry.
+\end{itemize}
+
+\indent\textbf{c. Naming Conventions}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Java:} PascalCase cho class, camelCase cho method/variable, UPPER\_SNAKE\_CASE cho constants.
+    \item \textbf{Go:} PascalCase cho exported symbols, camelCase cho unexported, package names viết thường không dùng underscore.
+    \item \textbf{Database:} snake\_case cho table và column names.
+    \item \textbf{API endpoints:} kebab-case cho URLs (ví dụ: `/learner-models`).
+\end{itemize}
+
+\subsubsection{Enforcement \& Verification}
+
+\indentpar \indentpar Các nguyên tắc thiết kế chỉ có giá trị nếu chúng được thực thi (enforced) và xác minh (verified) một cách tự động. Dưới đây là các cơ chế đảm bảo tuân thủ.
+
+\indent\textbf{a. Architecture Tests (ArchUnit)}
+
+\indentpar Sử dụng \textbf{ArchUnit} (cho Java) và các công cụ tương tự để viết các unit test kiểm tra kiến trúc:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item Kiểm tra Dependency Rule: tầng domain không được phụ thuộc vào tầng adapters/infrastructure.
+    \item Kiểm tra Naming conventions: các class Repository phải kết thúc bằng \texttt{Repository}.
+    \item Kiểm tra Layer violations: Controllers không được truy cập trực tiếp vào DB.
+\end{itemize}
+
+\noindent \textit{Ví dụ ArchUnit test (Java):}
+\begin{verbatim}
+@Test
+void domainLayer_shouldNotDependOnInfrastructure() {
+    noClasses().that().resideInAPackage("..domain..")
+        .should().dependOnClassesThat()
+        .resideInAPackage("..infrastructure..")
+        .check(importedClasses);
+}
+\end{verbatim}
+
+\indent\textbf{b. Static Analysis \& Linting}
+
+\indentpar Các công cụ static analysis được tích hợp vào CI/CD pipeline:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Java:} SonarQube với Quality Gate (code coverage $> 80\%$, no critical bugs/vulnerabilities), Checkstyle cho code style.
+    \item \textbf{Go:} golangci-lint (kết hợp nhiều linters: golint, gofmt, govet, staticcheck).
+    \item \textbf{Dependency Check:} OWASP Dependency Check để phát hiện các dependency có vulnerability.
+\end{itemize}
+
+\indent\textbf{c. Code Review Guidelines}
+
+\indentpar Mọi Pull Request phải được review bởi ít nhất một senior developer và phải tuân thủ các tiêu chí sau:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item Tuân thủ Clean Architecture: logic nghiệp vụ ở tầng domain, không bị ``leak'' ra controller.
+    \item Tuân thủ SOLID: SRP được áp dụng (một class chỉ làm một việc).
+    \item Test coverage: mọi business logic phải có unit test.
+    \item Documentation: các public API và complex logic phải có comment/docstring.
+\end{itemize}
+
+\subsubsection{Architecture Metrics \& Monitoring}
+
+\indentpar \indentpar Để đánh giá liên tục chất lượng kiến trúc, các metrics sau được theo dõi định kỳ:
+
+\indent\textbf{a. Code Quality Metrics}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Cyclomatic Complexity:} độ phức tạp của method, nên $< 10$.
+    \item \textbf{Lack of Cohesion Methods (LCOM):} đo mức độ gắn kết của class, nên thấp.
+    \item \textbf{Afferent/Efferent Coupling:} số lượng dependencies vào/ra của một module.
+    \item \textbf{Instability Index (I):} $I = C_e / (C_e + C_a)$, domain layer nên có $I \approx 0$ (stable).
+\end{itemize}
+
+\indent\textbf{b. Test Quality Metrics}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Code Coverage:} mục tiêu $> 80\%$ cho domain và application layers.
+    \item \textbf{Mutation Testing Score:} đánh giá chất lượng test bằng cách mutate code và xem test có fail không. Mục tiêu $> 70\%$.
+    \item \textbf{Test Execution Time:} unit tests phải chạy nhanh ($< 5$ phút), integration tests $< 15$ phút.
+\end{itemize}
+
+\indent\textbf{c. Runtime Quality Metrics}
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Service Response Time:} P95 latency $< 500$ms cho synchronous APIs.
+    \item \textbf{Error Rate:} $< 1\%$ cho production traffic.
+    \item \textbf{Trace Coverage:} $> 95\%$ requests có Trace ID (theo ADR-10).
+\end{itemize}
+
 \subsubsection{Kết luận}
 
-\indentpar \indentpar Các nguyên tắc thiết kế được trình bày trong mục này không phải là lý thuyết suông, mà là nền tảng kỹ thuật cụ thể để hiện thực hóa kiến trúc ITS. Chúng tạo thành một ``bộ công cụ thiết kế'' (design toolkit) nhất quán, đảm bảo rằng:
+\indentpar \indentpar Các nguyên tắc thiết kế được trình bày trong mục này không phải là lý thuyết suông, mà là nền tảng kỹ thuật cụ thể, có thể thực thi và xác minh tự động để hiện thực hóa kiến trúc ITS. Chúng tạo thành một ``bộ công cụ thiết kế'' (design toolkit) nhất quán, đảm bảo rằng:
 
 \begin{itemize}[leftmargin=0.7cm]
     \item Mọi microservice đều tuân theo Clean/Hexagonal Architecture, đảm bảo AC1 (Modularity) và AC4 (Testability).
     \item Ranh giới nghiệp vụ được xác định rõ ràng thông qua Domain-Driven Design, giảm thiểu coupling và tăng cường cohesion.
     \item SOLID Principles được áp dụng nhất quán trên cả hai ngôn ngữ (Java/Golang), đảm bảo AC7 (Maintainability).
-    \item Các tiêu chuẩn bảo mật và kiểm thử được thống nhất, giảm rủi ro không nhất quán giữa các team.
+    \item Các tiêu chuẩn bảo mật, kiểm thử, API design, và observability được thống nhất, giảm rủi ro không nhất quán giữa các team.
+    \item Tuân thủ các nguyên tắc được đảm bảo thông qua Architecture Tests, Static Analysis, Code Review, và Metrics Monitoring.
 \end{itemize}
 
 \vspace{0.5em}
-\noindent Tóm lại, chuỗi \textbf{Mục~3.1 (ACs Prioritization) \textrightarrow{} Mục~3.2 (Architecture Style Selection) \textrightarrow{} Mục~3.3 (ADRs) \textrightarrow{} Mục~3.4 (Design Principles)} tạo thành một lộ trình thiết kế kiến trúc hoàn chỉnh, có thể truy vết từ yêu cầu phi chức năng (Mục~2.4) xuống các quyết định kỹ thuật chi tiết nhất.
+\noindent Tóm lại, chuỗi \textbf{Mục~3.1 (ACs Prioritization) \textrightarrow{} Mục~3.2 (Architecture Style Selection) \textrightarrow{} Mục~3.3 (ADRs) \textrightarrow{} Mục~3.4 (Design Principles)} tạo thành một lộ trình thiết kế kiến trúc hoàn chỉnh, có thể truy vết từ yêu cầu phi chức năng (Mục~2.4) xuống các quyết định kỹ thuật chi tiết nhất, với cơ chế enforcement và verification rõ ràng để đảm bảo chất lượng kiến trúc được duy trì trong suốt vòng đời phát triển.

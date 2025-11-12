@@ -11,7 +11,7 @@ Phần này sử dụng mô hình \textbf{Architecture Decision Record (ADR)} đ
 
 \subsubsection{Tổng quan các quyết định}
 
-\indentpar \indentpar Các quyết định được sắp xếp theo thứ tự từ nền tảng (ADR-1 \textrightarrow{} ADR-3) đến lớp vận hành (ADR-5 \textrightarrow{} ADR-7).
+\indentpar \indentpar Các quyết định được sắp xếp theo thứ tự từ nền tảng (ADR-1 \textrightarrow{} ADR-3) đến lớp vận hành (ADR-5 \textrightarrow{} ADR-7) và các thành phần hỗ trợ (ADR-8 \textrightarrow{} ADR-10).
 
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
@@ -34,6 +34,12 @@ ADR-5 & Định nghĩa chiến lược kiểm thử (Testing Pyramid) & AC4, AC7
 ADR-6 & Thiết kế kiến trúc bảo mật tập trung (AuthN/AuthZ) & AC6 \\
 \hline
 ADR-7 & Chiến lược bảo vệ dữ liệu cá nhân (Data Privacy \& Compliance) & AC6 \\
+\hline
+ADR-8 & Lựa chọn Message Broker cho giao tiếp bất đồng bộ & AC1, AC2, AC3 \\
+\hline
+ADR-9 & Chiến lược nhất quán dữ liệu phân tán (Saga Pattern) & AC1, AC6 \\
+\hline
+ADR-10 & Chiến lược quan sát hệ thống (Observability Strategy) & AC9 \\
 \hline
 \end{tabularx}
 \caption{Tổng quan các Architecture Decision Records}
@@ -439,6 +445,205 @@ ADR-7 & Chiến lược bảo vệ dữ liệu cá nhân (Data Privacy \& Compli
 \end{tabularx}
 \caption{Tóm tắt ADR-7: Data Privacy \& Compliance}
 \label{tab:adr7-summary}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\subsubsection{ADR-8: Lựa chọn Message Broker}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|D{2.4cm}|E|}
+\hline
+\textbf{Hạng mục}\rule{0pt}{1.6em} & \multicolumn{1}{c|}{\textbf{Nội dung}} \\
+\hline
+\textbf{Bối cảnh} & \begin{itemize}[leftmargin=0.4cm]
+    \item Kiến trúc của hệ thống là \textbf{Hybrid Microservices + Event-Driven} (Mục~3.2), yêu cầu một message broker để xử lý giao tiếp bất đồng bộ.
+    \item Hệ thống cần truyền tải các \textbf{Domain Events} giữa các service (ví dụ: `SubmissionCompleted`, `LearnerModelUpdated`) giữa `ScoringService`, `AdaptiveEngine`, và `LearnerModelService`.
+    \item Cần một cơ chế đáng tin cậy để đảm bảo các sự kiện được gửi và nhận một cách nhất quán.
+\end{itemize} \\
+\hline
+\textbf{Quyết định} & \begin{itemize}[leftmargin=0.4cm]
+    \item Chọn \textbf{RabbitMQ} làm message broker chính cho hệ thống.
+    \item Sử dụng các exchange types phù hợp (direct, topic, fanout) để định tuyến sự kiện.
+    \item Cấu hình durable queues và persistent messages để đảm bảo tính bền vững.
+\end{itemize} \\
+\hline
+\textbf{Lý luận} & \begin{itemize}[leftmargin=0.4cm]
+    \item RabbitMQ là ``smart broker'' (broker thông minh), hỗ trợ các mô hình định tuyến phức tạp thông qua \textbf{exchanges} và \textbf{routing keys}.
+    \item Phù hợp với nghiệp vụ phức tạp của ITS, nơi cần định tuyến các sự kiện cụ thể (ví dụ: ``chấm điểm thất bại'', ``sự kiện theo chủ đề X'') đến các consumer cụ thể.
+    \item Hỗ trợ mô hình ``smart broker / dumb consumer'', giúp các service consumer (như `ScoringService`) giữ được sự đơn giản.
+    \item Hỗ trợ AC1 (Modularity) và AC2 (Scalability) thông qua khả năng mở rộng và tách biệt các service.
+\end{itemize} \\
+\hline
+\textbf{Hậu quả} & \textbf{Tích cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Định tuyến sự kiện linh hoạt, phù hợp với kiến trúc Event-Driven.
+    \item Giảm độ phức tạp ở phía consumer, tăng tính mô-đun.
+\end{itemize}
+\textbf{Tiêu cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item RabbitMQ có thể trở thành điểm nghẽn nếu không được cấu hình đúng.
+    \item Yêu cầu quản lý cluster và monitoring để đảm bảo độ sẵn sàng cao.
+\end{itemize} \\
+\hline
+\textbf{Rủi ro} & \begin{itemize}[leftmargin=0.4cm]
+    \item Rủi ro: RabbitMQ cluster sự cố gây gián đoạn toàn bộ giao tiếp bất đồng bộ.
+    \item Giảm thiểu: triển khai RabbitMQ cluster với High Availability (HA), sử dụng managed service (ví dụ: CloudAMQP) hoặc Kubernetes StatefulSet với persistent volumes.
+\end{itemize} \\
+\hline
+\textbf{Các lựa chọn} & \begin{itemize}[leftmargin=0.4cm]
+    \item \textbf{Apache Kafka:} Bị từ chối vì Kafka là ``dumb log'' (log lưu trữ tuần tự) và yêu cầu ``smart consumer'' (consumer phải tự quản lý offset). Mặc dù Kafka vượt trội về thông lượng (throughput) rất cao và khả năng replay sự kiện, mô hình định tuyến phức tạp của RabbitMQ được đánh giá là phù hợp hơn với nhu cầu nghiệp vụ hiện tại.
+    \item \textbf{NATS:} Bị từ chối vì NATS tập trung vào hiệu suất cực cao và đơn giản, nhưng thiếu các cơ chế đảm bảo (durability) và định tuyến phức tạp mạnh mẽ như RabbitMQ.
+\end{itemize} \\
+\hline
+\textbf{Liên quan} & \begin{itemize}[leftmargin=0.4cm]
+    \item Phụ thuộc vào quyết định kiến trúc Event-Driven ở Mục~3.2.
+    \item Ảnh hưởng trực tiếp đến ADR-9 (Saga Pattern sử dụng RabbitMQ để gửi events).
+    \item Ảnh hưởng đến ADR-10 (Observability cần trace ID trong message headers của RabbitMQ).
+\end{itemize} \\
+\hline
+\end{tabularx}
+\caption{Tóm tắt ADR-8: Lựa chọn Message Broker}
+\label{tab:adr8-summary}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\subsubsection{ADR-9: Chiến lược Nhất quán Dữ liệu (Saga Pattern)}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|D{2.4cm}|E|}
+\hline
+\textbf{Hạng mục}\rule{0pt}{1.6em} & \multicolumn{1}{c|}{\textbf{Nội dung}} \\
+\hline
+\textbf{Bối cảnh} & \begin{itemize}[leftmargin=0.4cm]
+    \item Trong kiến trúc Microservices, các giao dịch nghiệp vụ (business transactions) thường phải trải dài qua nhiều service, mỗi service lại sở hữu cơ sở dữ liệu riêng (ví dụ: `User Management Service` dùng Postgres, `LearnerModelService` có thể dùng DB khác).
+    \item Do đó, không thể dùng ACID transaction truyền thống.
+    \item Một ví dụ điển hình là yêu cầu ``Right to be Forgotten'' (Quyền được Lãng quên) trong ADR-7, yêu cầu xóa PII ở `User Management Service` và cũng phải kích hoạt xóa dữ liệu ẩn danh ở các service khác.
+\end{itemize} \\
+\hline
+\textbf{Quyết định} & \begin{enumerate}[leftmargin=0.4cm]
+    \item Áp dụng \textbf{Saga Pattern} để quản lý các giao dịch phân tán (distributed transactions).
+    \item Ưu tiên sử dụng mô hình \textbf{Saga Choreography} (Điều phối Phi tập trung) hơn là Orchestration.
+    \item Áp dụng \textbf{Transactional Outbox Pattern} để đảm bảo các sự kiện được gửi đi một cách đáng tin cậy (ngay cả khi service bị sập sau khi commit DB).
+\end{enumerate} \\
+\hline
+\textbf{Lý luận} & \begin{itemize}[leftmargin=0.4cm]
+    \item \textbf{Saga Choreography:} Phù hợp tự nhiên với kiến trúc \textbf{Event-Driven} (Mục~3.2) mà chúng ta đã chọn. Các service sẽ phát ra các sự kiện (ví dụ: `UserDeleted`) và các service khác sẽ lắng nghe và phản ứng lại, thay vì bị điều khiển bởi một ``nhạc trưởng'' (orchestrator) trung tâm. Điều này giúp giảm coupling và tránh một điểm lỗi đơn (Single Point of Failure).
+    \item \textbf{Transactional Outbox Pattern:} Để tránh kịch bản ``dual-write'' (lỗi khi commit DB thành công nhưng gửi event thất bại), service sẽ ghi nghiệp vụ (ví dụ: xóa user) và ghi sự kiện (event) vào một bảng ``Outbox'' trong cùng một giao dịch (transaction) CSDL. Một tiến trình riêng (ví dụ: Debezium hoặc một worker) sẽ đọc từ bảng Outbox này và gửi sự kiện đến RabbitMQ (ADR-8). Điều này đảm bảo tính nhất quán ``At-Least-Once''.
+    \item Hỗ trợ AC1 (Modularity) bằng cách giảm coupling giữa các service.
+    \item Hỗ trợ AC6 (Security) bằng cách đảm bảo tính nhất quán khi xóa dữ liệu PII.
+\end{itemize} \\
+\hline
+\textbf{Hậu quả} & \textbf{Tích cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Giảm coupling giữa các service, tăng tính mô-đun.
+    \item Đảm bảo tính nhất quán cuối cùng (eventual consistency) trong hệ thống phân tán.
+    \item Tránh điểm lỗi đơn so với Saga Orchestration.
+\end{itemize}
+\textbf{Tiêu cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Phức tạp hơn ACID transaction, yêu cầu xử lý compensation (bù trừ) khi có lỗi.
+    \item Transactional Outbox Pattern yêu cầu thêm một bảng và một worker process.
+    \item Khó debug khi có lỗi trong một saga dài.
+\end{itemize} \\
+\hline
+\textbf{Rủi ro} & \begin{itemize}[leftmargin=0.4cm]
+    \item Rủi ro: một service trong saga bị lỗi và không thể thực hiện compensation, dẫn đến trạng thái không nhất quán.
+    \item Giảm thiểu: thiết kế các compensation handler rõ ràng, sử dụng idempotent operations, và monitoring để phát hiện sớm các saga bị ``stuck''.
+    \item Rủi ro: Transactional Outbox worker bị lỗi, events không được gửi.
+    \item Giảm thiểu: triển khai worker với retry mechanism và dead-letter queue, monitoring số lượng events trong Outbox.
+\end{itemize} \\
+\hline
+\textbf{Các lựa chọn} & \begin{itemize}[leftmargin=0.4cm]
+    \item \textbf{Saga Orchestration:} Bị từ chối (cho hiện tại) vì nó yêu cầu một service ``Orchestrator'' trung tâm, làm tăng độ phức tạp và tạo ra một điểm nghẽn (bottleneck) tiềm ẩn.
+    \item \textbf{Two-Phase Commit (2PC):} Bị từ chối vì đây là một giao thức đồng bộ (blocking), vi phạm nguyên tắc performance và khả năng phục hồi (resilience) của microservices.
+\end{itemize} \\
+\hline
+\textbf{Liên quan} & \begin{itemize}[leftmargin=0.4cm]
+    \item Phụ thuộc ADR-7 (Right to be Forgotten yêu cầu distributed transaction).
+    \item Phụ thuộc ADR-8 (RabbitMQ được sử dụng để gửi các domain events trong saga).
+    \item Ảnh hưởng đến thiết kế của tất cả các service cần tham gia vào distributed transactions.
+\end{itemize} \\
+\hline
+\end{tabularx}
+\caption{Tóm tắt ADR-9: Chiến lược Nhất quán Dữ liệu}
+\label{tab:adr9-summary}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\subsubsection{ADR-10: Chiến lược Quan sát Hệ thống (Observability Strategy)}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|D{2.4cm}|E|}
+\hline
+\textbf{Hạng mục}\rule{0pt}{1.6em} & \multicolumn{1}{c|}{\textbf{Nội dung}} \\
+\hline
+\textbf{Bối cảnh} & \begin{itemize}[leftmargin=0.4cm]
+    \item Hệ thống là một hệ thống phân tán, bất đồng bộ và đa ngôn ngữ (\textbf{Polyglot}: Java + Go, ADR-1).
+    \item Để đáp ứng \textbf{AC9: Observability}, việc gỡ lỗi (debug) một request (ví dụ: ``tại sao việc nộp bài của tôi bị chậm?'') là cực kỳ phức tạp, vì nó đi qua API Gateway (Go), `ScoringService` (Go), `RabbitMQ`, và `LearnerModelService` (Go/Java).
+    \item Đã xác định các công cụ (Prometheus, Grafana, Loki), nhưng cần các tiêu chuẩn (standards) để chúng hoạt động hiệu quả.
+\end{itemize} \\
+\hline
+\textbf{Quyết định} & \begin{enumerate}[leftmargin=0.4cm]
+    \item \textbf{Distributed Tracing (Truy vết Phân tán):} Bắt buộc triển khai. Mọi request vào hệ thống (tại API Gateway) phải được gán một \textbf{Trace ID} (hoặc Correlation ID) duy nhất.
+    \item \textbf{Propagation (Lan truyền):} Trace ID này \textbf{bắt buộc} phải được lan truyền (propagated):
+    \begin{itemize}[nosep]
+        \item Qua các \textbf{HTTP headers} trong các cuộc gọi service-to-service (ví dụ: Go gọi Java).
+        \item Qua các \textbf{Message Headers} của RabbitMQ (ADR-8) cho các flow bất đồng bộ.
+    \end{itemize}
+    \item \textbf{Structured Logging (Logging có Cấu trúc):} Tất cả các service (cả Java và Go) \textbf{bắt buộc} phải ghi log dưới định dạng \textbf{JSON}.
+    \item \textbf{Log Content:} Mọi dòng log JSON bắt buộc phải chứa \texttt{Trace ID} (từ mục 1) để liên kết các log của nhiều service về cùng một request.
+\end{enumerate} \\
+\hline
+\textbf{Lý luận} & \begin{itemize}[leftmargin=0.4cm]
+    \item \textbf{Distributed Tracing:} Cho phép tái tạo lại toàn bộ hành trình của một request, xác định service nào bị chậm hoặc gây ra lỗi. Sử dụng công cụ như Jaeger hoặc OpenTelemetry.
+    \item \textbf{Structured Logging (JSON):} Cho phép các công cụ như \textbf{Loki} phân tích (parse) và lập chỉ mục (index) log một cách hiệu quả. Thay vì tìm kiếm text (ví dụ: \texttt{grep}), chúng ta có thể query (ví dụ: \texttt{SELECT * WHERE trace\_id == 'abc-123'}).
+    \item Sự kết hợp này là cách duy nhất để đáp ứng \textbf{AC9: Observability} trong một kiến trúc phức tạp và polyglot.
+    \item Hỗ trợ AC9 (Observability) bằng cách cung cấp khả năng debug và monitor toàn bộ hệ thống.
+\end{itemize} \\
+\hline
+\textbf{Hậu quả} & \textbf{Tích cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Có thể truy vết toàn bộ luồng xử lý của một request qua nhiều service.
+    \item Dễ dàng phát hiện và debug các vấn đề về hiệu năng hoặc lỗi.
+    \item Hỗ trợ phân tích và tối ưu hóa hệ thống.
+\end{itemize}
+\textbf{Tiêu cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Tăng overhead về hiệu năng do phải ghi log và trace.
+    \item Yêu cầu tất cả các service phải tuân thủ các tiêu chuẩn logging và tracing.
+    \item Chi phí lưu trữ và xử lý log/trace data.
+\end{itemize} \\
+\hline
+\textbf{Rủi ro} & \begin{itemize}[leftmargin=0.4cm]
+    \item Rủi ro: Trace ID không được propagate đúng cách, dẫn đến mất khả năng truy vết.
+    \item Giảm thiểu: sử dụng middleware/library chuẩn (ví dụ: OpenTelemetry SDK) cho cả Java và Go, code review nghiêm ngặt, và integration tests để verify propagation.
+    \item Rủi ro: Log volume quá lớn gây tốn kém và chậm hệ thống.
+    \item Giảm thiểu: cấu hình log levels phù hợp (ví dụ: chỉ log INFO trở lên ở production), sử dụng log sampling cho các request thường xuyên, và retention policies.
+\end{itemize} \\
+\hline
+\textbf{Các lựa chọn} & \begin{itemize}[leftmargin=0.4cm]
+    \item \textbf{Logging văn bản thuần túy (Plain-text logging):} Bị từ chối. Mặc dù dễ đọc trong môi trường development local, nó hoàn toàn vô dụng trong một hệ thống phân tán, không thể phân tích và truy vấn tập trung.
+    \item \textbf{Chỉ dùng Metrics (Prometheus) mà không có Tracing:} Bị từ chối vì metrics chỉ cho biết ``có vấn đề'' nhưng không cho biết ``vấn đề ở đâu'' trong một request cụ thể.
+\end{itemize} \\
+\hline
+\textbf{Liên quan} & \begin{itemize}[leftmargin=0.4cm]
+    \item Phụ thuộc ADR-1 (Polyglot yêu cầu tiêu chuẩn logging/tracing nhất quán cho cả Java và Go).
+    \item Phụ thuộc ADR-8 (RabbitMQ message headers cần chứa \texttt{Trace ID}).
+    \item Ảnh hưởng đến AC9 (Observability) đã được ưu tiên trong Mục~3.1.
+\end{itemize} \\
+\hline
+\end{tabularx}
+\caption{Tóm tắt ADR-10: Chiến lược Quan sát Hệ thống}
+\label{tab:adr10-summary}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
