@@ -1,7 +1,6 @@
-\subsection{Yêu Cầu Chứng Năng}
+\subsection{Yêu Cầu Chức Năng}
 
-\indentpar \indentpar Phần này mô tả chi tiết các yêu cầu chức năng của hệ thống ITS (Intelligent Tutoring System), được hình thành từ User Stories, Use Cases và Domain Model đã phân tích ở các phần trước.
-Mục tiêu là đảm bảo mỗi chức năng đều phản ánh nhu cầu của stakeholder, liên kết trực tiếp với Vision Statement.
+\indentpar \indentpar Các yêu cầu chức năng của hệ thống ITS (Intelligent Tutoring System) được trình bày chi tiết dưới đây dựa trên User Stories, Use Cases và Domain Model đã phân tích trước đó. Mỗi chức năng nhằm đáp ứng các nhu cầu cụ thể của stakeholder và được liên kết chặt chẽ với Vision Statement.
 
 \subsubsection{User Stories}
 
@@ -12,73 +11,73 @@ Các User Stories này được ánh xạ trực tiếp sang các Use Case và �
 
 \small
 \setlength{\tabcolsep}{3pt}
-\begin{longtable}{|>{\centering\arraybackslash}m{0.8cm}|>{\centering\arraybackslash}m{1.2cm}|>{\centering\arraybackslash}m{1.6cm}|>{\noindent\justifying\arraybackslash}p{5.8cm}|>{\noindent\justifying\arraybackslash}p{5.8cm}|}
+\begin{longtable}{|>{\centering\arraybackslash}m{0.8cm}|>{\centering\arraybackslash}m{1.5cm}|>{\noindent\justifying\arraybackslash}p{6.5cm}|>{\noindent\justifying\arraybackslash}p{6.5cm}|}
 \caption{User Stories}
 \label{tab:user_stories}
 \\
 \hline
-\textbf{STT} & \textbf{Actor} & \textbf{Phạm vi} & \textbf{User Story} & \textbf{Tiêu chí Chấp nhận} \\
+\textbf{STT} & \textbf{Actor} & \textbf{User Story} & \textbf{Tiêu chí Chấp nhận} \\
 \hline
 \endfirsthead
 \caption[]{User Stories (tiếp theo)}
 \\
 \hline
-\textbf{STT} & \textbf{Actor} & \textbf{Phạm vi} & \textbf{User Story} & \textbf{Tiêu chí Chấp nhận} \\
+\textbf{STT} & \textbf{Actor} & \textbf{User Story} & \textbf{Tiêu chí Chấp nhận} \\
 \hline
 \endhead
 \hline
 \endfoot
 \hline
 \endlastfoot
-\textbf{US0} & \textbf{Learner} & \textbf{Cá nhân hóa} & 
+\textbf{US0} & \textbf{Learner} & 
 Là một \textbf{Học sinh}, tôi muốn \textbf{hệ thống đánh giá kiến thức hiện tại của tôi} để nó có thể \textbf{đề xuất lộ trình học tập tối ưu}, không lãng phí thời gian vào những gì tôi đã biết. & 
 $1.$ Hệ thống phải cung cấp một bài kiểm tra đầu vào (diagnostic test).\newline
 $2.$ Lộ trình học tập được tạo ra phải bỏ qua các chủ đề mà học sinh đã đạt $> 90\%$ trong bài kiểm tra.\newline
 $3.$ Lộ trình phải ưu tiên các chủ đề mà học sinh yếu nhất (ví dụ: $< 30\%$ điểm). \\
 \hline
-\textbf{US1} & \textbf{Learner} & \textbf{Phản hồi} & 
+\textbf{US1} & \textbf{Learner} & 
 Là một \textbf{Học sinh}, tôi muốn \textbf{nhận được gợi ý (hints) và giải thích ngay lập tức} sau khi tôi mắc lỗi trong bài tập, để tôi có thể \textbf{tự sửa chữa và hiểu được khái niệm đó ngay lập tức}. & 
 $1.$ Khi trả lời sai một câu hỏi, một nút ``Gợi ý'' (Hint) xuất hiện.\newline
 $2.$ Gợi ý phải liên quan trực tiếp đến lỗi sai.\newline
 $3.$ Sau khi nộp bài, hệ thống hiển thị giải thích chi tiết cho từng câu trả lời sai. \\
 \hline
-\textbf{US2} & \textbf{Learner} & \textbf{Đánh giá} & 
+\textbf{US2} & \textbf{Learner} & 
 Là một \textbf{Học sinh}, tôi muốn \textbf{xem tiến trình học tập của mình} (\textbf{điểm}, \textbf{thời gian hoàn thành}, \textbf{các kỹ năng đã thành thạo}) để tôi có thể \textbf{theo dõi sự cải thiện của bản thân}. & 
 $1.$ Dashboard cá nhân hiển thị điểm trung bình chung.\newline
 $2.$ Có một biểu đồ trực quan hóa mức độ thành thạo của từng kỹ năng (ví dụ: ``Đại số: $80\%$'').\newline
 $3.$ Lịch sử làm bài (thời gian, điểm số) được ghi lại và có thể xem lại. \\
 \hline
-\textbf{US3} & \textbf{Learner} & \textbf{Vòng lặp học tập} & 
+\textbf{US3} & \textbf{Learner} & 
 Là một \textbf{Học sinh}, tôi muốn \textbf{hệ thống tự động đưa lại bài tập về các kỹ năng tôi chưa thành thạo sau một khoảng thời gian}, để \textbf{củng cố kiến thức đã học}. & 
 $1.$ Hệ thống phải theo dõi ngày cuối cùng học sinh luyện tập một kỹ năng.\newline
 $2.$ Nếu một kỹ năng $< 70\%$ và đã $> 7$ ngày chưa luyện tập, hệ thống tự động thêm bài ôn tập vào lộ trình.\newline
 $3.$ Các bài tập ôn tập được đánh dấu là ``Ôn tập'' (Review). \\
 \hline
-\textbf{US4} & \textbf{Instructor} & \textbf{Nội dung} & 
+\textbf{US4} & \textbf{Instructor} & 
 Là một \textbf{Giảng viên}, tôi muốn \textbf{gắn metadata} (\textbf{độ khó}, \textbf{kỹ năng}, \textbf{chủ đề}) cho mỗi bài tập mới để \textbf{thuật toán cá nhân hóa có thể sử dụng chúng một cách chính xác}. & 
 $1.$ Form tạo bài tập mới phải có các trường bắt buộc: ``Độ khó'' (Dropdown: Dễ, TB, Khó), ``Kỹ năng liên quan'' (Tag input).\newline
 $2.$ Không thể lưu bài tập nếu thiếu metadata bắt buộc.\newline
 $3.$ Giảng viên có thể tạo/thêm các ``Kỹ năng'' mới vào hệ thống. \\
 \hline
-\textbf{US5} & \textbf{Instructor} & \textbf{Giám sát} & 
+\textbf{US5} & \textbf{Instructor} & 
 Là một \textbf{Giảng viên}, tôi muốn \textbf{xem báo cáo tổng hợp về hiệu suất của cả lớp} để tôi có thể \textbf{xác định những chủ đề mà đa số học sinh đang gặp khó khăn}. & 
 $1.$ Báo cáo hiển thị điểm trung bình của cả lớp cho từng chủ đề.\newline
 $2.$ Báo cáo làm nổi bật $3$ kỹ năng/chủ đề có tỷ lệ làm sai cao nhất.\newline
 $3.$ Dữ liệu báo cáo có thể được xuất ra file CSV. \\
 \hline
-\textbf{US6} & \textbf{Instructor} & \textbf{Báo cáo chi tiết} & 
+\textbf{US6} & \textbf{Instructor} & 
 Là một \textbf{Giảng viên}, tôi muốn \textbf{tạo báo cáo chi tiết về hiệu suất và lộ trình học tập của một học sinh cụ thể}, để tôi có thể \textbf{tư vấn cá nhân hóa (one-on-one)}. & 
 $1.$ Giảng viên có thể chọn một học sinh từ danh sách lớp.\newline
 $2.$ Báo cáo hiển thị lộ trình học tập đầy đủ của học sinh đó.\newline
 $3.$ Báo cáo so sánh thời gian học sinh dành cho một chủ đề so với trung bình của lớp. \\
 \hline
-\textbf{US7} & \textbf{Admin} & \textbf{Quản trị} & 
+\textbf{US7} & \textbf{Admin} & 
 Là một \textbf{Quản trị viên}, tôi muốn \textbf{quản lý các tài khoản Giảng viên} và \textbf{phân quyền truy cập nội dung} để đảm bảo \textbf{tính bảo mật} và \textbf{kiểm soát hệ thống}. & 
 $1.$ Admin có thể tạo, vô hiệu hóa, hoặc xóa tài khoản Giảng viên.\newline
 $2.$ Admin có thể gán vai trò (ví dụ: Giảng viên, TA) cho tài khoản.\newline
 $3.$ Admin có thể thiết lập quyền truy cập của một Giảng viên vào một khóa học cụ thể. \\
 \hline
-\textbf{US8} & \textbf{Admin} & \textbf{Quản lý Vận hành} & 
+\textbf{US8} & \textbf{Admin} & 
 Là một \textbf{Quản trị viên}, tôi muốn \textbf{có khả năng deploy/swap (thay đổi) các phiên bản mới của Mô hình AI (ví dụ: thuật toán gợi ý mới) mà không cần downtime hệ thống chính}, để \textbf{đảm bảo Modularity và Deployability (ACs quan trọng cho ITS)}. & 
 $1.$ Hệ thống hỗ trợ triển khai Blue/Green hoặc Canary cho service AI.\newline
 $2.$ Hệ thống chính (Học sinh) không bị gián đoạn (lỗi $503$) trong quá trình deploy.\newline
@@ -100,63 +99,130 @@ Chúng đóng vai trò là cầu nối giữa yêu cầu người dùng và ki�
 \small
 \setlength{\tabcolsep}{2pt}
 \renewcommand{\tabularxcolumn}[1]{m{#1}}
-\begin{longtable}{|>{\centering\arraybackslash}m{1cm}|>{\centering\arraybackslash}m{2.5cm}|>{\centering\arraybackslash}m{2.5cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{1.5cm}|>{\centering\arraybackslash}m{5.5cm}|}
+\begin{longtable}{|>{\centering\arraybackslash}p{1cm}|>{\centering\arraybackslash}p{2.5cm}|>{\noindent\justifying\arraybackslash}p{2.5cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{1.5cm}|>{\noindent\justifying\arraybackslash}p{5.5cm}|}
 \caption{Use Cases}
 \label{tab:use_cases}
 \\
 \hline
-\textbf{Usecase ID} & \textbf{Tên Usecase} & \textbf{Mục đích} & \textbf{Tác nhân} & \textbf{FR liên quan} & \textbf{Luồng Cơ bản (Basic Flow)} \\
+\textbf{ID} & \textbf{Tên Usecase} & \textbf{Mục đích} & \textbf{Tác nhân} & \textbf{FR} & \textbf{Luồng Cơ bản (Basic Flow)} \\
 \hline
 \endfirsthead
 \caption[]{Use Cases (tiếp theo)}
 \\
 \hline
-\textbf{Usecase ID} & \textbf{Tên Usecase} & \textbf{Mục đích} & \textbf{Tác nhân} & \textbf{FR liên quan} & \textbf{Luồng Cơ bản (Basic Flow)} \\
+\textbf{ID} & \textbf{Tên Usecase} & \textbf{Mục đích} & \textbf{Tác nhân} & \textbf{FR} & \textbf{Luồng Cơ bản (Basic Flow)} \\
 \hline
 \endhead
 \hline
 \endfoot
 \hline
 \endlastfoot
-\textbf{UC-01} & Đăng ký Tài khoản & Tạo tài khoản mới trong hệ thống. & Learner, Instructor, Admin & FR1 & $1.$ User truy cập trang đăng ký. $2.$ Nhập email, password, chọn role (Learner/Instructor). $3.$ Hệ thống validate và tạo tài khoản. $4.$ Gửi email xác nhận. $5.$ User xác nhận email và kích hoạt tài khoản. \\
+\textbf{UC-01} & Đăng ký Tài khoản & Tạo tài khoản mới trong hệ thống. & Learner, Instructor, Admin & FR1 & $1.$ User truy cập trang đăng ký.\newline
+$2.$ Nhập email, password, chọn role (Learner/Instructor).\newline
+$3.$ Hệ thống validate và tạo tài khoản.\newline
+$4.$ Gửi email xác nhận.\newline
+$5.$ User xác nhận email và kích hoạt tài khoản. \\
 \hline
-\textbf{UC-02} & Đăng nhập \& Xác thực & Cho phép người dùng đăng nhập và truy cập hệ thống. & Learner, Instructor, Admin & FR1, FR11 & $1.$ User nhập email và password. $2.$ Hệ thống xác thực thông tin. $3.$ Kiểm tra role và phân quyền (RBAC). $4.$ Tạo session và chuyển đến dashboard tương ứng với role. \\
+\textbf{UC-02} & Đăng nhập \& Xác thực & Cho phép người dùng đăng nhập và truy cập hệ thống. & Learner, Instructor, Admin & FR1, FR11 & $1.$ User nhập email và password.\newline
+$2.$ Hệ thống xác thực thông tin.\newline
+$3.$ Kiểm tra role và phân quyền (RBAC).\newline
+$4.$ Tạo session và chuyển đến dashboard tương ứng với role. \\
 \hline
-\textbf{UC-03} & Cập nhật Hồ sơ \& Cài đặt Học tập & Learner cập nhật thông tin cá nhân và tùy chọn học tập. & Learner & FR2 & $1.$ Learner truy cập trang hồ sơ. $2.$ Cập nhật tên, tuổi, trình độ, sở thích, mục tiêu, lịch học. $3.$ Thiết lập nhắc nhở (email/push). $4.$ Hệ thống lưu thông tin vào LearnerProfile. \\
+\textbf{UC-03} & Cập nhật Hồ sơ \& Cài đặt Học tập & Learner cập nhật thông tin cá nhân và tùy chọn học tập. & Learner & FR2 & $1.$ Learner truy cập trang hồ sơ.\newline
+$2.$ Cập nhật tên, tuổi, trình độ, sở thích, mục tiêu, lịch học.\newline
+$3.$ Thiết lập nhắc nhở (email/push).\newline
+$4.$ Hệ thống lưu thông tin vào LearnerProfile. \\
 \hline
-\textbf{UC-04} & Thực hiện Bài kiểm tra Đầu vào & Đánh giá kiến thức ban đầu để xây dựng Learner Model. & Learner & FR2, FR5 & $1.$ Learner bắt đầu diagnostic test. $2.$ Hệ thống hiển thị câu hỏi đa dạng về kỹ năng. $3.$ Learner trả lời. $4.$ Hệ thống chấm điểm và tạo SkillMasteryScore. $5.$ Kết quả lưu vào LearnerModel. \\
+\textbf{UC-04} & Thực hiện Bài kiểm tra Đầu vào & Đánh giá kiến thức ban đầu để xây dựng Learner Model. & Learner & FR2, FR5 & $1.$ Learner bắt đầu diagnostic test.\newline
+$2.$ Hệ thống hiển thị câu hỏi đa dạng về kỹ năng.\newline
+$3.$ Learner trả lời.\newline
+$4.$ Hệ thống chấm điểm và tạo SkillMasteryScore.\newline
+$5.$ Kết quả lưu vào LearnerModel. \\
 \hline
-\textbf{UC-05} & Tạo Khóa học \& Nội dung Học tập & Instructor tạo khóa học, chương, bài học với đa dạng định dạng. & Instructor & FR3 & $1.$ Instructor tạo khóa học mới. $2.$ Tạo chương và bài học (text, video, slide, quiz, coding task). $3.$ Cấu hình versioning và phân quyền (public/private/group). $4.$ Lưu vào ContentAggregate. \\
+\textbf{UC-05} & Tạo Khóa học \& Nội dung Học tập & Instructor tạo khóa học, chương, bài học với đa dạng định dạng. & Instructor & FR3 & $1.$ Instructor tạo khóa học mới.\newline
+$2.$ Tạo chương và bài học (text, video, slide, quiz, coding task).\newline
+$3.$ Cấu hình versioning và phân quyền (public/private/group).\newline
+$4.$ Lưu vào ContentAggregate. \\
 \hline
-\textbf{UC-06} & Gắn Metadata \& Tagging cho Nội dung & Instructor gắn metadata để hỗ trợ thuật toán AI. & Instructor & FR3, FR4 & $1.$ Instructor chọn nội dung đã tạo. $2.$ Gắn tags: kỹ năng, độ khó, chủ đề. $3.$ Hệ thống lưu MetadataTag. $4.$ ContentMetadata có sẵn cho Adaptive Engine. \\
+\textbf{UC-06} & Gắn Metadata \& Tagging cho Nội dung & Instructor gắn metadata để hỗ trợ thuật toán AI. & Instructor & FR3, FR4 & $1.$ Instructor chọn nội dung đã tạo.\newline
+$2.$ Gắn tags: kỹ năng, độ khó, chủ đề.\newline
+$3.$ Hệ thống lưu MetadataTag.\newline
+$4.$ ContentMetadata có sẵn cho Adaptive Engine. \\
 \hline
-\textbf{UC-07} & Cấu hình Lộ trình Khóa học & Instructor thiết lập mục tiêu, milestones, điều kiện mở khóa bài học. & Instructor & FR4 & $1.$ Instructor định nghĩa mục tiêu khóa học và kỹ năng yêu cầu. $2.$ Thiết lập pre-test, post-test. $3.$ Cấu hình điều kiện mở khóa (ví dụ: $\geq 70\%$ điểm quiz). $4.$ Lưu cấu trúc lộ trình. \\
+\textbf{UC-07} & Cấu hình Lộ trình Khóa học & Instructor thiết lập mục tiêu, milestones, điều kiện mở khóa bài học. & Instructor & FR4 & $1.$ Instructor định nghĩa mục tiêu khóa học và kỹ năng yêu cầu.\newline
+$2.$ Thiết lập pre-test, post-test.\newline
+$3.$ Cấu hình điều kiện mở khóa (ví dụ: $\geq 70\%$ điểm quiz).\newline
+$4.$ Lưu cấu trúc lộ trình. \\
 \hline
-\textbf{UC-08} & Bắt đầu/Tiếp tục Học tập Thích ứng & Cung cấp bài học tiếp theo tối ưu dựa trên Learner Model. & Learner & FR7, FR4 & $1.$ Learner yêu cầu bài học tiếp theo. $2.$ Hệ thống gọi Adaptive Engine (FR7). $3.$ Engine đọc LearnerModel và ContentMetadata. $4.$ Đề xuất ContentID tối ưu (spaced repetition, mastery-based). $5.$ Hiển thị nội dung. \\
+\textbf{UC-08} & Bắt đầu/Tiếp tục Học tập Thích ứng & Cung cấp bài học tiếp theo tối ưu dựa trên Learner Model. & Learner & FR7, FR4 & $1.$ Learner yêu cầu bài học tiếp theo.\newline
+$2.$ Hệ thống gọi Adaptive Engine (FR7).\newline
+$3.$ Engine đọc LearnerModel và ContentMetadata.\newline
+$4.$ Đề xuất ContentID tối ưu (spaced repetition, mastery-based).\newline
+$5.$ Hiển thị nội dung. \\
 \hline
-\textbf{UC-09} & Làm Bài tập \& Assessment & Learner thực hiện bài tập (MCQ, essay, coding, upload, project). & Learner & FR5 & $1.$ Learner mở bài tập. $2.$ Đọc đề và trả lời (trong thời gian giới hạn nếu có). $3.$ Submit câu trả lời. $4.$ Hệ thống lưu vào gradebook. \\
+\textbf{UC-09} & Làm Bài tập \& Assessment & Learner thực hiện bài tập (MCQ, essay, coding, upload, project). & Learner & FR5 & $1.$ Learner mở bài tập.\newline
+$2.$ Đọc đề và trả lời (trong thời gian giới hạn nếu có).\newline
+$3.$ Submit câu trả lời.\newline
+$4.$ Hệ thống lưu vào gradebook. \\
 \hline
-\textbf{UC-10} & Chấm điểm \& Phản hồi Tức thì & Hệ thống chấm điểm và cung cấp phản hồi/gợi ý ngay lập tức. & Learner & FR5, FR6 & $1.$ Learner gửi câu trả lời (FR5). $2.$ Scoring/Feedback Service chấm điểm (auto-grading hoặc manual review). $3.$ Tạo feedback, hints, giải thích đáp án. $4.$ Hiển thị Score và Hint ($< 500$ms). $5.$ Cập nhật LearnerModel. \\
+\textbf{UC-10} & Chấm điểm \& Phản hồi Tức thì & Hệ thống chấm điểm và cung cấp phản hồi/gợi ý ngay lập tức. & Learner & FR5, FR6 & $1.$ Learner gửi câu trả lời (FR5).\newline
+$2.$ Scoring/Feedback Service chấm điểm (auto-grading hoặc manual review).\newline
+$3.$ Tạo feedback, hints, giải thích đáp án.\newline
+$4.$ Hiển thị Score và Hint ($< 500$ms).\newline
+$5.$ Cập nhật LearnerModel. \\
 \hline
-\textbf{UC-11} & Gợi ý Bài học Bù (Remediation) & Đề xuất bài học bổ sung khi Learner yếu kỹ năng. & Learner & FR6, FR7 & $1.$ Hệ thống phát hiện kỹ năng yếu từ LearnerModel. $2.$ FeedbackGenerator tạo gợi ý bài học liên quan. $3.$ Hiển thị danh sách bài học bù với hướng dẫn step-by-step. $4.$ Learner chọn bài học để học lại. \\
+\textbf{UC-11} & Gợi ý Bài học Bù (Remediation) & Đề xuất bài học bổ sung khi Learner yếu kỹ năng. & Learner & FR6, FR7 & $1.$ Hệ thống phát hiện kỹ năng yếu từ LearnerModel.\newline
+$2.$ FeedbackGenerator tạo gợi ý bài học liên quan.\newline
+$3.$ Hiển thị danh sách bài học bù với hướng dẫn step-by-step.\newline
+$4.$ Learner chọn bài học để học lại. \\
 \hline
-\textbf{UC-12} & Xem Dashboard \& Tiến độ Học tập & Learner xem tiến độ, điểm số, milestones. & Learner & FR8 & $1.$ Learner truy cập dashboard. $2.$ Hệ thống hiển thị tiến độ, điểm số, lịch học, milestones, skill mastery. $3.$ Learner có thể xuất báo cáo (CSV/PDF). \\
+\textbf{UC-12} & Xem Dashboard \& Tiến độ Học tập & Learner xem tiến độ, điểm số, milestones. & Learner & FR8 & $1.$ Learner truy cập dashboard.\newline
+$2.$ Hệ thống hiển thị tiến độ, điểm số, lịch học, milestones, skill mastery.\newline
+$3.$ Learner có thể xuất báo cáo (CSV/PDF). \\
 \hline
-\textbf{UC-13} & Xem Báo cáo Tổng hợp Lớp & Instructor xem tổng quan hiệu suất của cả lớp. & Instructor & FR8 & $1.$ Instructor chọn lớp. $2.$ Hệ thống tạo báo cáo tổng hợp: điểm trung bình, điểm yếu phổ biến, phân bố kỹ năng. $3.$ Instructor phân tích và điều chỉnh nội dung. \\
+\textbf{UC-13} & Xem Báo cáo Tổng hợp Lớp & Instructor xem tổng quan hiệu suất của cả lớp. & Instructor & FR8 & $1.$ Instructor chọn lớp.\newline
+$2.$ Hệ thống tạo báo cáo tổng hợp: điểm trung bình, điểm yếu phổ biến, phân bố kỹ năng.\newline
+$3.$ Instructor phân tích và điều chỉnh nội dung. \\
 \hline
-\textbf{UC-14} & Tạo Báo cáo Chi tiết Học sinh & Instructor tạo báo cáo cá nhân hóa cho một học sinh. & Instructor & FR8 & $1.$ Instructor chọn học sinh. $2.$ Hệ thống truy xuất LearnerModel, ProgressRecord. $3.$ Tạo báo cáo: lộ trình học, điểm mạnh/yếu, thời gian học. $4.$ Xuất PDF/CSV để tư vấn one-on-one. \\
+\textbf{UC-14} & Tạo Báo cáo Chi tiết Học sinh & Instructor tạo báo cáo cá nhân hóa cho một học sinh. & Instructor & FR8 & $1.$ Instructor chọn học sinh.\newline
+$2.$ Hệ thống truy xuất LearnerModel, ProgressRecord.\newline
+$3.$ Tạo báo cáo: lộ trình học, điểm mạnh/yếu, thời gian học.\newline
+$4.$ Xuất PDF/CSV để tư vấn one-on-one. \\
 \hline
-\textbf{UC-15} & Tương tác \& Thảo luận & Learner/Instructor tham gia thảo luận, chat, bình luận. & Learner, Instructor & FR9 & $1.$ User truy cập diễn đàn hoặc bài học. $2.$ Gửi comment/câu hỏi. $3.$ Hệ thống gửi thông báo realtime (in-app/email/push) cho người liên quan. $4.$ User khác trả lời. \\
+\textbf{UC-15} & Tương tác \& Thảo luận & Learner/Instructor tham gia thảo luận, chat, bình luận. & Learner, Instructor & FR9 & $1.$ User truy cập diễn đàn hoặc bài học.\newline
+$2.$ Gửi comment/câu hỏi.\newline
+$3.$ Hệ thống gửi thông báo realtime (in-app/email/push) cho người liên quan.\newline
+$4.$ User khác trả lời. \\
 \hline
-\textbf{UC-16} & Quản lý Lớp \& Phân nhóm & Instructor tạo lớp, mời học sinh, chia nhóm. & Instructor & FR10 & $1.$ Instructor tạo lớp mới. $2.$ Mời học sinh qua email/link. $3.$ Phân vai trò (TA, student, observer). $4.$ Chia nhóm cho project. $5.$ Giao bài nhóm và đánh giá theo nhóm. \\
+\textbf{UC-16} & Quản lý Lớp \& Phân nhóm & Instructor tạo lớp, mời học sinh, chia nhóm. & Instructor & FR10 & $1.$ Instructor tạo lớp mới.\newline
+$2.$ Mời học sinh qua email/link.\newline
+$3.$ Phân vai trò (TA, student, observer).\newline
+$4.$ Chia nhóm cho project.\newline
+$5.$ Giao bài nhóm và đánh giá theo nhóm. \\
 \hline
-\textbf{UC-17} & Quản lý Người dùng \& Phân quyền (RBAC) & Admin quản lý tài khoản và phân quyền chi tiết. & Admin & FR1, FR11 & $1.$ Admin truy cập trang quản lý users. $2.$ Tạo/sửa/xóa tài khoản. $3.$ Gán role và permissions. $4.$ Mọi thao tác ghi vào audit logs. $5.$ User chỉ truy cập tính năng được phép. \\
+\textbf{UC-17} & Quản lý Người dùng \& Phân quyền (RBAC) & Admin quản lý tài khoản và phân quyền chi tiết. & Admin & FR1, FR11 & $1.$ Admin truy cập trang quản lý users.\newline
+$2.$ Tạo/sửa/xóa tài khoản.\newline
+$3.$ Gán role và permissions.\newline
+$4.$ Mọi thao tác ghi vào audit logs.\newline
+$5.$ User chỉ truy cập tính năng được phép. \\
 \hline
-\textbf{UC-18} & Hoán đổi Mô hình AI (Live Swap) & Triển khai phiên bản AI mới không downtime. & Admin & FR12 & $1.$ Admin yêu cầu triển khai Model V2. $2.$ Deployment Service chạy V2 song song với V1. $3.$ Traffic chuyển dần sang V2 (Blue/Green/Canary). $4.$ Monitoring kiểm tra health. $5.$ Ngừng V1 khi V2 ổn định. \\
+\textbf{UC-18} & Hoán đổi Mô hình AI (Live Swap) & Triển khai phiên bản AI mới không downtime. & Admin & FR12 & $1.$ Admin yêu cầu triển khai Model V2.\newline
+$2.$ Deployment Service chạy V2 song song với V1.\newline
+$3.$ Traffic chuyển dần sang V2 (Blue/Green/Canary).\newline
+$4.$ Monitoring kiểm tra health.\newline
+$5.$ Ngừng V1 khi V2 ổn định. \\
 \hline
-\textbf{UC-19} & Giám sát \& Vận hành Hệ thống & Admin quản lý cấu hình, backup, logs, moderation. & Admin & FR12 & $1.$ Admin truy cập admin panel. $2.$ Kiểm tra health checks, logs hệ thống. $3.$ Thực hiện backup/restore dữ liệu. $4.$ Xử lý báo cáo vi phạm (moderation). $5.$ Cấu hình hệ thống (feature flags, limits). \\
+\textbf{UC-19} & Giám sát \& Vận hành Hệ thống & Admin quản lý cấu hình, backup, logs, moderation. & Admin & FR12 & $1.$ Admin truy cập admin panel.\newline
+$2.$ Kiểm tra health checks, logs hệ thống.\newline
+$3.$ Thực hiện backup/restore dữ liệu.\newline
+$4.$ Xử lý báo cáo vi phạm (moderation).\newline
+$5.$ Cấu hình hệ thống (feature flags, limits). \\
 \hline
-\textbf{UC-20} & Nhận Phần thưởng \& Gamification & Learner nhận XP, badges, tham gia leaderboard. & Learner & FR13 & $1.$ Learner hoàn thành bài học/milestone. $2.$ Hệ thống tính XP, trao badge. $3.$ Cập nhật leaderboard. $4.$ Hiển thị streak learning, challenge mode. $5.$ Learner được động viên tiếp tục học. \\
+\textbf{UC-20} & Nhận Phần thưởng \& Gamification & Learner nhận XP, badges, tham gia leaderboard. & Learner & FR13 & $1.$ Learner hoàn thành bài học/milestone.\newline
+$2.$ Hệ thống tính XP, trao badge.\newline
+$3.$ Cập nhật leaderboard.\newline
+$4.$ Hiển thị streak learning, challenge mode.\newline
+$5.$ Learner được động viên tiếp tục học. \\
 \hline
 \end{longtable}
 \normalsize
@@ -167,12 +233,12 @@ Chúng đóng vai trò là cầu nối giữa yêu cầu người dùng và ki�
 
 \begin{figure}[ht]
     \centering
-    \begin{minipage}{0.48\textwidth}
+    \begin{minipage}{0.35\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/usecase_9.png}
     \end{minipage}
     \hfill
-    \begin{minipage}{0.48\textwidth}
+    \begin{minipage}{0.6\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/usecase_10.png}
     \end{minipage}

@@ -1,6 +1,8 @@
-UC-09 – Làm Bài tập và Assessment
+<span style="font-size: 24px;"><b>UC-09 – Làm Bài tập và Assessment</b></span>
 
-Mục tiêu: Học viên thực hiện bài tập hoặc bài kiểm tra; hệ thống lưu kết quả để phục vụ bước chấm điểm.
+<span style="font-size: 18px;">
+<b>Mục tiêu:</b> Học viên thực hiện bài tập hoặc bài kiểm tra; hệ thống lưu kết quả để phục vụ bước chấm điểm.
+</span>
 
 ```mermaid
 graph TD
@@ -17,16 +19,20 @@ graph TD
     UC09 -- "extends" --> UC10
 ```
 
-Giải thích:
-- Instructor tạo nội dung (UC-05).
-- Learner thực hiện bài tập (UC-09).
+<span style="font-size: 18px;">
+<b>Giải thích:</b><br>
+- Instructor tạo nội dung (UC-05).<br>
+- Learner thực hiện bài tập (UC-09).<br>
 - Khi nộp bài, hệ thống mở rộng (extends) đến UC-10 để chấm điểm và phản hồi.
+</span>
 
 ---
 
-UC-10 – Chấm điểm và Phản hồi Tức thì
+<span style="font-size: 24px;"><b>UC-10 – Chấm điểm và Phản hồi Tức thì</b></span>
 
-Mục tiêu: Tự động chấm điểm và trả phản hồi nhanh cho người học (< 1 s), đồng thời cập nhật Learner Model.
+<span style="font-size: 18px;">
+<b>Mục tiêu:</b> Tự động chấm điểm và trả phản hồi nhanh cho người học (&lt; 1 s), đồng thời cập nhật Learner Model.
+</span>
 
 ```mermaid
 graph TD
@@ -47,17 +53,21 @@ graph TD
     Instructor -. monitor .-> UC10
 ```
 
-Giải thích:
-- UC-10 bao gồm hai chức năng chính:
-  - Auto-Grading Service: tính điểm.
-  - Feedback Generator: tạo gợi ý/hints.
+<span style="font-size: 18px;">
+<b>Giải thích:</b><br>
+- UC-10 bao gồm hai chức năng chính:<br>
+  - <b>Auto-Grading Service</b>: tính điểm.<br>
+  - <b>Feedback Generator</b>: tạo gợi ý/hints.<br>
 - Nếu kết quả kém, hệ thống mở rộng đến UC-11 để đề xuất bài học bù.
+</span>
 
 ---
 
-UC-11 – Gợi ý Bài học Bù (Remediation)
+<span style="font-size: 24px;"><b>UC-11 – Gợi ý Bài học Bù (Remediation)</b></span>
 
-Mục tiêu: Khi học viên yếu kỹ năng nào đó, hệ thống đề xuất nội dung phù hợp để củng cố.
+<span style="font-size: 18px;">
+<b>Mục tiêu:</b> Khi học viên yếu kỹ năng nào đó, hệ thống đề xuất nội dung phù hợp để củng cố.
+</span>
 
 ```mermaid
 graph TD
@@ -75,11 +85,13 @@ graph TD
     Learner --> UC11
     Instructor -. review .-> UC11
 ```
-- Kích hoạt khi người học sai liên tục hoặc mastery score < 0.6.
-- Adaptive Learning Engine và Feedback Service cùng xử lý để sinh danh sách bài bù.
+<span style="font-size: 18px;">
+- Kích hoạt khi người học sai liên tục hoặc mastery score &lt; 0.6.<br>
+- Adaptive Learning Engine và Feedback Service cùng xử lý để sinh danh sách bài bù.<br>
 - Instructor có thể xem và xác nhận lộ trình ôn tập.
+</span>
 
-Tổng quan chuỗi Use Case 09 → 10 → 11
+<span style="font-size: 20px;"><b>Tổng quan chuỗi Use Case 09 → 10 → 11</b></span>
 
 ```mermaid
 graph LR
@@ -87,10 +99,12 @@ graph LR
     UC10 --> UC11["UC-11: Gợi ý Bài học Bù"]
 ```
 
-Đây là vòng lặp học tập thích ứng của ITS:
-1. Người học làm bài (UC-09) →
-2. Hệ thống chấm điểm và phản hồi (UC-10) →
+<span style="font-size: 18px;">
+<b>Đây là vòng lặp học tập thích ứng của ITS:</b><br>
+1. Người học làm bài (UC-09) →<br>
+2. Hệ thống chấm điểm và phản hồi (UC-10) →<br>
 3. Nếu cần, đề xuất bài học bù (UC-11) → quay về lộ trình mới.
+</span>
 
 ```mermaid
 classDiagram
