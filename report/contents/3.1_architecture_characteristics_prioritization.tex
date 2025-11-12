@@ -1,0 +1,102 @@
+\section{Thiêt Kế Kiến Trúc}
+
+\subsection{Đặc Điểm Kiến Trúc Ưu Tiên}
+
+\indentpar \indentpar Sau khi xác định tập hợp các yêu cầu phi chức năng (Non-Functional Requirements) ở Chương 1, bước đầu tiên trong giai đoạn thiết kế kiến trúc là ưu tiên hóa các đặc tính kiến trúc (Architecture Characteristics – ACs).
+Việc này giúp chuyển hóa các tiêu chí chất lượng trừu tượng thành các định hướng kỹ thuật cụ thể, đóng vai trò là cầu nối chiến lược giữa yêu cầu nghiệp vụ và quyết định thiết kế hệ thống.
+
+\subsubsection{Ma Trận Đặc Điểm}
+
+\indentpar \indentpar Toàn bộ 9 đặc tính kiến trúc đã được xác định từ Chương 1 được tổng hợp và sắp xếp theo tác động nghiệp vụ, rủi ro kỹ thuật, và mức độ ưu tiên.
+Bảng ma trận bên dưới không chỉ phản ánh độ quan trọng của từng AC đối với mục tiêu tổng thể của ITS, mà còn cho thấy những yếu tố nào sẽ chi phối trực tiếp kiến trúc hệ thống trong các phần sau.
+
+\textbf{Lưu ý:} Những AC có thứ hạng cao (AC1–AC4, AC6) sẽ là trọng tâm cho các quyết định ở phần 2.2 và 2.3, trong khi các AC thứ cấp (AC5–AC9) sẽ định hình cách triển khai và vận hành thực tế.
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3.8cm}|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{2.4cm}|>{\centering\arraybackslash}X|}
+\hline
+\textbf{Đặc điểm}\rule{0pt}{1.8em} & \textbf{Tác động nghiệp vụ} & \textbf{Rủi ro kỹ thuật} & \textbf{Ưu tiên} & \textbf{Ghi chú (Vai trò chính)} \\
+\hline
+Modularity (AC1) & Cao & Cao & 1 (Cao nhất) & Định hình kiến trúc Microservices; cô lập logic AI; hỗ trợ ``Live AI Model Swapping'' (FR12). \\
+\hline
+Scalability (AC2) & Cao & Cao & 1 (Cao nhất) & Xử lý tải người dùng đồng thời ($\geq 5{,}000$) và các tác vụ tính toán AI nặng. \\
+\hline
+Performance (AC3) & Cao & Thấp & 1 (Cao nhất) & Đảm bảo trải nghiệm học tập mượt mà; phản hồi thời gian thực ($< 500$ms). \\
+\hline
+Testability (AC4) & Cao & Thấp & 2 (Cao) & Đảm bảo tính đúng đắn của thuật toán AI; hỗ trợ bởi Clean Architecture (ADR-3). \\
+\hline
+Security (AC6) & Cao & Cao & 2 (Cao) & Bảo vệ dữ liệu nhạy cảm (PII) của người học và nội dung (FR11); tuân thủ GDPR/FERPA. \\
+\hline
+Maintainability (AC7) & Trung bình & Thấp & 2 (Cao) & Giảm chi phí vòng đời; dễ dàng sửa lỗi và cải tiến hệ thống. \\
+\hline
+Deployability (AC5) & Trung bình & Trung bình & 3 (Trung bình) & Hỗ trợ triển khai độc lập từng service và ``Live AI Model Swapping''. \\
+\hline
+Observability (AC9) & Trung bình & Thấp & 3 (Trung bình) & Debug, monitor, và phát hiện sự cố trong hệ thống microservices phân tán. \\
+\hline
+Extensibility (AC8) & Thấp & Trung bình & 4 (Thấp) & Hỗ trợ thêm tính năng mới (ví dụ: loại câu hỏi mới) mà không sửa code lõi (tuân thủ OCP). \\
+\hline
+\end{tabularx}
+\caption{Ma trận ưu tiên các đặc điểm kiến trúc}
+\label{tab:architecture-characteristics-prioritization}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+Sau khi xác định mức độ ưu tiên, bước tiếp theo là phân tích các đánh đổi (trade-offs) giữa những đặc tính này.
+Không một hệ thống nào có thể đạt tối đa mọi tiêu chí cùng lúc — việc hiểu rõ chúng xung đột ở đâu và sẽ hy sinh yếu tố nào là điều kiện tiên quyết để đưa ra \textbf{“kiến trúc ít tệ nhất” (the least worst architecture)} cho ITS.
+
+\subsubsection{Phân tích Đánh Đổi}
+
+\indentpar \indentpar Mọi quyết định kiến trúc đều là sự đánh đổi. Phần này trình bày các trade-off chính mà nhóm kiến trúc chấp nhận để đạt được mục tiêu ưu tiên đã nêu trong ma trận ACs, cùng với các biện pháp giảm thiểu rủi ro tương ứng.
+
+\noindent \textbf{Trade-off: (AC1) Modularity \& (AC2) Scalability vs. Simplicity}
+\begin{itemize}[leftmargin=0.7cm]
+    \item Scenario: Lựa chọn kiến trúc (Microservices) để hỗ trợ ``Live AI Model Swapping'' (FR12) và tải $> 5{,}000$ người dùng.
+    \item Decision: Ưu tiên Modularity \& Scalability hơn Simplicity.
+    \item Rationale: Chấp nhận độ phức tạp vận hành cao của Microservices nhằm đạt khả năng cô lập logic AI.
+    \item Mitigation:
+    \begin{enumerate}[nosep,leftmargin=0.9cm]
+        \item Modular Monolith cho MVP, sau đó chuyển dần sang Microservices bằng Strangler Fig Pattern.
+        \item Sử dụng các dịch vụ managed (GKE/EKS) để giảm tải vận hành.
+        \item Thực hành DevOps, chuẩn hóa CI/CD và chia sẻ templates nội bộ.
+    \end{enumerate}
+\end{itemize}
+
+\noindent \textbf{Trade-off: (AC4) Testability vs. Development Cost}
+\begin{itemize}[leftmargin=0.7cm]
+    \item Scenario: Thiết kế cấu trúc service đảm bảo kiểm thử chính xác thuật toán AI (FR7).
+    \item Decision: Ưu tiên Testability hơn chi phí phát triển ban đầu.
+    \item Rationale: Clean/Hexagonal Architecture (ADR-3) và Repository Pattern (ADR-4) tuy tăng boilerplate nhưng giảm rủi ro dài hạn, nâng cao độ tin cậy.
+    \item Mitigation:
+    \begin{enumerate}[nosep,leftmargin=0.9cm]
+        \item Cung cấp code templates (Java/Golang) thống nhất theo ADR-3/ADR-4.
+        \item Định nghĩa Testing Pyramid (ADR-5) với mục tiêu $>80\%$ unit coverage.
+    \end{enumerate}
+\end{itemize}
+
+\noindent \textbf{Trade-off: (AC6) Security vs. (AC3) Performance}
+\begin{itemize}[leftmargin=0.7cm]
+    \item Scenario: Mã hóa PII và xác thực token làm tăng độ trễ hệ thống.
+    \item Decision: Ưu tiên Security trong giới hạn hiệu năng chấp nhận được.
+    \item Rationale: Bảo vệ PII và \texttt{LearnerModel} là bắt buộc; chấp nhận thêm 50--100\,ms latency do TLS/pgcrypto và JWT.
+    \item Mitigation:
+    \begin{enumerate}[nosep,leftmargin=0.9cm]
+        \item Xác thực JWT tập trung tại API Gateway (ADR-6).
+        \item Mã hóa chọn lọc các cột PII nhạy cảm (ADR-7) thay vì mã hóa toàn bộ cơ sở dữ liệu.
+    \end{enumerate}
+\end{itemize}
+
+\noindent \textbf{Trade-off: (AC3) Performance vs. (AC1) Modularity/Coupling}
+\begin{itemize}[leftmargin=0.7cm]
+    \item Scenario: Khi chia nhỏ hệ thống thành nhiều microservice quá mức (granularity quá mịn), mỗi luồng xử lý phải gọi qua mạng nhiều lần giữa các service, làm tăng độ trễ (latency) và giảm hiệu năng.
+    \item Decision: Giữ mức độ phân rã vừa phải (balanced granularity), ưu tiên hiệu năng cho các luồng thời gian thực, thay vì cố đạt tính mô-đun cực độ.
+    \item Rationale: Gom các chức năng có tính gắn kết chặt chẽ (functional cohesion) vào cùng service để duy trì latency $\leq 500$\,ms.
+    \item Mitigation:
+    \begin{enumerate}[nosep,leftmargin=0.9cm]
+        \item Phân rã dựa trên Bounded Context của Domain-Driven Design (DDD) thay vì tiêu chí thuần kỹ thuật.
+        \item Giao tiếp nội bộ sử dụng gRPC hoặc giao thức nhị phân hiệu quả.
+        \item Áp dụng Circuit Breaker và Retry với exponential backoff để xử lý lỗi mạng.
+    \end{enumerate}
+\end{itemize}
