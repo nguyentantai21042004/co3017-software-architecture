@@ -1,0 +1,445 @@
+\subsection{Architecture Decision Records}
+
+\indentpar \indentpar Sau khi lựa chọn kiến trúc tổng thể là \textbf{Hybrid Microservices + Event-Driven}, bước tiếp theo là ghi lại chi tiết các quyết định kỹ thuật quan trọng giúp hiện thực hóa kiến trúc đó. 
+Phần này sử dụng mô hình \textbf{Architecture Decision Record (ADR)} để mô tả bối cảnh, quyết định, lý do và hệ quả theo cách có thể truy vết (traceable) tới các yêu cầu nghiệp vụ và các đặc tính kiến trúc (ACs).
+
+\subsubsection{Tổng quan các quyết định}
+
+\indentpar \indentpar Các quyết định được sắp xếp theo thứ tự từ nền tảng (ADR-1 \textrightarrow{} ADR-3) đến lớp vận hành (ADR-5 \textrightarrow{} ADR-7).
+
+\renewcommand{\arraystretch}{1.3}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|C{1.8cm}|Y|C{3cm}|}
+\hline
+\textbf{ADR}\rule{0pt}{1.6em} & \textbf{Mục tiêu chính} & \textbf{Liên kết ACs} \\
+\hline
+ADR-1 & Xác định chiến lược ngôn ngữ đa nền tảng (Polyglot) & AC3, AC7 \\
+\hline
+ADR-2 & Lựa chọn cơ sở dữ liệu quan hệ chính (PostgreSQL) & AC6, AC7 \\
+\hline
+ADR-3 & Thiết lập mô hình kiến trúc nội bộ (Clean/Hexagonal) & AC1, AC4 \\
+\hline
+ADR-4 & Triển khai Repository Pattern để tách tầng dữ liệu & AC1, AC4 \\
+\hline
+ADR-5 & Định nghĩa chiến lược kiểm thử (Testing Pyramid) & AC4, AC7 \\
+\hline
+ADR-6 & Thiết kế kiến trúc bảo mật tập trung (AuthN/AuthZ) & AC6 \\
+\hline
+ADR-7 & Chiến lược bảo vệ dữ liệu cá nhân (Data Privacy \& Compliance) & AC6 \\
+\hline
+\end{tabularx}
+\caption{Tổng quan các Architecture Decision Records}
+\label{tab:adr-overview}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\subsubsection{ADR-1: Chiến lược lập trình đa ngôn ngữ}
+
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash\vspace{0.3em}}X<{\vspace{0.3em}}}
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|M{2.4cm}|Y|}
+\hline
+\textbf{Hạng mục}\rule{0pt}{1.6em} & \multicolumn{1}{c|}{\textbf{Nội dung}} \\
+\hline
+\textbf{Bối cảnh} & \begin{itemize}[leftmargin=0.4cm]
+    \item Hệ thống gồm nhiều nhóm dịch vụ với yêu cầu phi chức năng khác nhau:
+    \begin{itemize}[nosep]
+        \item Management Services (User, Content) cần logic nghiệp vụ phức tạp, hệ sinh thái phong phú và khả năng bảo trì cao.
+        \item Computation Services (Scoring, Feedback) yêu cầu hiệu năng cao, độ trễ thấp ($\leq 500\,\text{ms}$) và khả năng xử lý đồng thời lớn.
+        \item AI/ML Services đòi hỏi xử lý CPU chuyên sâu và chu kỳ lặp nhanh.
+    \end{itemize}
+    \item Đội ngũ phát triển có kinh nghiệm với cả Java và Golang.
+\end{itemize} \\
+\hline
+\textbf{Quyết định} & \begin{itemize}[leftmargin=0.4cm]
+    \item Áp dụng chiến lược Polyglot Programming cho từng nhóm dịch vụ.
+    \item Java 17+ (Spring Boot 3.x) cho các dịch vụ thiên về nghiệp vụ và bảo trì: `User Management Service`, `Content Service`.
+    \item Golang 1.21+ (Gin/Echo) cho các dịch vụ yêu cầu hiệu năng, concurrency và độ trễ thấp: `Scoring/Feedback Service`, `Adaptive Engine`, `Learner Model Service`, `API Gateway`.
+\end{itemize} \\
+\hline
+\textbf{Lý luận} & \begin{itemize}[leftmargin=0.4cm]
+    \item Hỗ trợ AC3 (Performance) \& AC2 (Scalability): Golang hiệu năng cao, khởi động nhanh, mô hình goroutine mạnh.
+    \item Hỗ trợ AC7 (Maintainability): Java/Spring Boot có hệ sinh thái trưởng thành cho nghiệp vụ, bảo mật, ORM.
+    \item ``Dùng công cụ tốt nhất cho từng bài toán'', tránh tư duy ``một búa cho mọi loại đinh''.
+    \item Giảm rủi ro khi chỉ sử dụng một ngôn ngữ duy nhất.
+\end{itemize} \\
+\hline
+\textbf{Hậu quả} & \textbf{Tích cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Tối ưu hiệu năng cho các dịch vụ thời gian thực.
+    \item Nâng cao khả năng bảo trì cho các dịch vụ nghiệp vụ.
+    \item Tận dụng thế mạnh của từng hệ sinh thái.
+\end{itemize}
+\textbf{Tiêu cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Cần chuyên môn ở hai ngôn ngữ và hai bộ công cụ (Maven/Gradle vs Go modules).
+    \item Chiến lược kiểm thử \& CI/CD phức tạp hơn.
+\end{itemize} \\
+\hline
+\textbf{Rủi ro} & \begin{itemize}[leftmargin=0.4cm]
+    \item Rủi ro: không nhất quán do vận hành hai hệ sinh thái song song.
+    \item Giảm thiểu: đào tạo chéo, chuẩn hóa cấu trúc dự án, chia sẻ template CI/CD, thống nhất chuẩn logging/monitoring.
+\end{itemize} \\
+\hline
+\textbf{Các lựa chọn} & \begin{itemize}[leftmargin=0.4cm]
+    \item Tất cả bằng Java: đơn giản về chuyên môn nhưng khó đạt AC3 (Performance).
+    \item Tất cả bằng Golang: tooling nhất quán nhưng thiếu hệ sinh thái nghiệp vụ, không đạt AC7 (Maintainability).
+\end{itemize} \\
+\hline
+\textbf{Liên quan} &  Ảnh hưởng tới ADR-3 (Clean Architecture cho Java/Go) và ADR-5 (Testing Pyramid cho hai stack). \\
+\hline
+\end{tabularx}
+\caption{Tóm tắt ADR-1: Chiến lược lập trình đa ngôn ngữ}
+\label{tab:adr1-summary}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\subsubsection{ADR-2: PostgreSQL là cơ sở dữ liệu quan hệ chính}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|M{2.4cm}|Y|}
+\hline
+\textbf{Hạng mục}\rule{0pt}{1.6em} & \multicolumn{1}{c|}{\textbf{Nội dung}} \\
+\hline
+\textbf{Bối cảnh} & `User Management` và `Content Service` yêu cầu cơ sở dữ liệu quan hệ bảo đảm ACID, hỗ trợ truy vấn phức tạp, RBAC, metadata dạng JSON và có cơ chế replication/backup trưởng thành. \\
+\hline
+\textbf{Quyết định} & \begin{itemize}[leftmargin=0.4cm]
+    \item Chọn PostgreSQL 15+ làm cơ sở dữ liệu quan hệ chính.
+    \item Cấu hình: primary-standby replication, connection pooling (PgBouncer), WAL archiving để hỗ trợ point-in-time recovery.
+\end{itemize} \\
+\hline
+\textbf{Lý luận} & \begin{itemize}[leftmargin=0.4cm]
+    \item Hỗ trợ AC6 (Security) với row-level security và cơ chế bảo mật nâng cao.
+    \item Hỗ trợ AC7 (Maintainability) nhờ tuân thủ ACID và quản lý lược đồ mạnh.
+    \item Hỗ trợ metadata linh hoạt qua JSON/JSONB.
+    \item Giảm rủi ro mất hoặc không nhất quán dữ liệu so với NoSQL.
+\end{itemize} \\
+\hline
+\textbf{Hậu quả} & \textbf{Tích cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Đảm bảo toàn vẹn dữ liệu, truy vấn phong phú, không bị vendor lock-in.
+\end{itemize}
+\textbf{Tiêu cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Hạn chế mở rộng theo chiều dọc, cần tối ưu index.
+    \item Di trú schema tốn công sức.
+\end{itemize} \\
+\hline
+\textbf{Rủi ro} & \begin{itemize}[leftmargin=0.4cm]
+    \item Rủi ro: hiệu năng suy giảm khi tải nặng hoặc truy vấn chưa tối ưu.
+    \item Giảm thiểu: dùng read replica, đánh index phù hợp, connection pooling và giám sát slow query.
+\end{itemize} \\
+\hline
+\textbf{Các lựa chọn} & \begin{itemize}[leftmargin=0.4cm]
+    \item MySQL: phổ biến nhưng hỗ trợ JSON và truy vấn phức tạp kém hơn.
+    \item NoSQL (MongoDB): mở rộng ngang tốt nhưng thiếu ACID và truy vấn quan hệ.
+\end{itemize} \\
+\hline
+\textbf{Liên quan} & \begin{itemize}[leftmargin=0.4cm]
+    \item Tác động tới ADR-4 (Repository Pattern với Postgres) và ADR-7 (Data Privacy tận dụng `pgcrypto`).
+\end{itemize} \\
+\hline
+\end{tabularx}
+\caption{Tóm tắt ADR-2: PostgreSQL là cơ sở dữ liệu quan hệ chính}
+\label{tab:adr2-summary}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\subsubsection{ADR-3: Clean/Hexagonal Architecture for All Services}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|M{2.4cm}|Y|}
+\hline
+\textbf{Hạng mục}\rule{0pt}{1.6em} & \multicolumn{1}{c|}{\textbf{Nội dung}} \\
+\hline
+\textbf{Bối cảnh} & \begin{itemize}[leftmargin=0.4cm]
+    \item Các AC ưu tiên: AC4 (Testability), AC1 (Modularity), AC7 (Maintainability).
+    \item Kiến trúc tầng truyền thống thường kết dính logic nghiệp vụ với hạ tầng, khiến việc kiểm thử độc lập và thay đổi trở nên khó khăn.
+\end{itemize} \\
+\hline
+\textbf{Quyết định} & \begin{itemize}[leftmargin=0.4cm]
+    \item Áp dụng Clean/Hexagonal Architecture cho toàn bộ microservice (Java và Go).
+    \item Tuân thủ Dependency Rule: phụ thuộc hướng từ Infrastructure \textrightarrow{} Adapters \textrightarrow{} Application \textrightarrow{} Domain.
+\end{itemize} \\
+\hline
+\textbf{Lý luận} & \begin{itemize}[leftmargin=0.4cm]
+    \item Đảm bảo AC4: logic nghiệp vụ và use case có thể unit test độc lập.
+    \item Đảm bảo AC1/AC7: tách rõ mối quan tâm, cho phép thay đổi framework/DB mà không ảnh hưởng domain.
+    \item Thực thi Dependency Inversion Principle (DIP).
+    \item Giảm rủi ro vendor lock-in và ``big ball of mud'' khi hệ thống mở rộng.
+\end{itemize} \\
+\hline
+\textbf{Hậu quả} & \textbf{Tích cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Domain thuần túy, unit test dễ dàng, có thể thay đổi DB mà không sửa logic.
+\end{itemize}
+\textbf{Tiêu cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Tăng boilerplate, đường cong học tập cao hơn, số lượng tệp lớn.
+\end{itemize} \\
+\hline
+\textbf{Rủi ro} & \begin{itemize}[leftmargin=0.4cm]
+    \item Rủi ro: đội ngũ (đặc biệt junior) áp dụng sai, vi phạm quy tắc phụ thuộc.
+    \item Giảm thiểu: cung cấp template chuẩn cho Java/Go, tài liệu chi tiết, code review nghiêm.
+\end{itemize} \\
+\hline
+\textbf{Các lựa chọn} & \begin{itemize}[leftmargin=0.4cm]
+    \item Layered Architecture: quen thuộc nhưng kết dính chặt với framework/DB, không đáp ứng AC4.
+\end{itemize} \\
+\hline
+\textbf{Liên quan} & \begin{itemize}[leftmargin=0.4cm]
+    \item Phụ thuộc lựa chọn kiến trúc tổng thể; ảnh hưởng trực tiếp ADR-1, ADR-4, ADR-5.
+\end{itemize} \\
+\hline
+\end{tabularx}
+\caption{Tóm tắt ADR-3: Clean/Hexagonal Architecture}
+\label{tab:adr3-summary}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\subsubsection{ADR-4: Repository Pattern with Interface Abstraction}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|M{2.4cm}|Y|}
+\hline
+\textbf{Hạng mục}\rule{0pt}{1.6em} & \multicolumn{1}{c|}{\textbf{Nội dung}} \\
+\hline
+\textbf{Bối cảnh} & \begin{itemize}[leftmargin=0.4cm]
+    \item ADR-3 yêu cầu tầng application không phụ thuộc trực tiếp vào hạ tầng/ORM.
+    \item Mục tiêu: đảo ngược phụ thuộc để đạt AC1 (Modularity) và AC4 (Testability).
+\end{itemize} \\
+\hline
+\textbf{Quyết định} & \begin{enumerate}[leftmargin=0.4cm]
+    \item Định nghĩa repository interfaces (ports) trong tầng application.
+    \item Cài đặt interfaces trong tầng infrastructure (adapters) bằng ORM/SQL.
+    \item Sử dụng Dependency Injection để cung cấp implementation (ví dụ `PostgresUserRepository`) cho các use case.
+\end{enumerate} \\
+\hline
+\textbf{Lý luận} & \begin{itemize}[leftmargin=0.4cm]
+    \item Đảm bảo AC4: cho phép unit test use case với mock repository.
+    \item Đảm bảo AC1: hoán đổi công nghệ DB mà không sửa logic ứng dụng.
+    \item Thực thi DIP theo yêu cầu ADR-3.
+    \item Giảm rủi ro logic nghiệp vụ phụ thuộc ORM cụ thể.
+\end{itemize} \\
+\hline
+\textbf{Hậu quả} & \textbf{Tích cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Kiểm thử không cần DB, dễ hoán đổi triển khai, ranh giới dữ liệu rõ ràng.
+\end{itemize}
+\textbf{Tiêu cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Nhiều interface cần bảo trì, phải ánh xạ domain entity với DB entity.
+\end{itemize} \\
+\hline
+\textbf{Rủi ro} & \begin{itemize}[leftmargin=0.4cm]
+    \item Rủi ro: việc mapping giữa domain object và DB object tốn thời gian.
+    \item Giảm thiểu: dùng thư viện mapping (ví dụ MapStruct) hoặc code generation.
+\end{itemize} \\
+\hline
+\textbf{Các lựa chọn} & \begin{itemize}[leftmargin=0.4cm]
+    \item Dùng ORM trực tiếp trong use case: giảm boilerplate nhưng vi phạm ADR-3, không đạt AC4.
+\end{itemize} \\
+\hline
+\textbf{Liên quan} & \begin{itemize}[leftmargin=0.4cm]
+    \item Phụ thuộc ADR-3; ảnh hưởng ADR-5 (mock repository cho unit test) và ADR-2 (triển khai Postgres cụ thể).
+\end{itemize} \\
+\hline
+\end{tabularx}
+\caption{Tóm tắt ADR-4: Repository Pattern with Interface Abstraction}
+\label{tab:adr4-summary}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\subsubsection{ADR-5: Testing Strategy (Testing Pyramid)}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|M{2.4cm}|Y|}
+\hline
+\textbf{Hạng mục}\rule{0pt}{1.6em} & \multicolumn{1}{c|}{\textbf{Nội dung}} \\
+\hline
+\textbf{Bối cảnh} & \begin{itemize}[leftmargin=0.4cm]
+    \item Cần chiến lược kiểm thử rõ ràng để đạt AC4 (Testability) trong môi trường Microservices + Polyglot.
+    \item Logic AI yêu cầu độ chính xác và độ tin cậy cao.
+\end{itemize} \\
+\hline
+\textbf{Quyết định} & \begin{enumerate}[leftmargin=0.4cm]
+    \item Unit Tests ($\geq 80\%$ coverage): kiểm thử logic domain/application độc lập; dùng JUnit 5/Mockito, `go test`/`testify`; mock toàn bộ I/O.
+    \item Integration Tests: kiểm thử tương tác với DB/message broker bằng `@SpringBootTest` và Testcontainers.
+    \item End-to-End Tests: xác thực luồng nghiệp vụ qua API Gateway bằng Cypress/Playwright/Postman/K6, chỉ tập trung happy path quan trọng.
+\end{enumerate} \\
+\hline
+\textbf{Lý luận} & \begin{itemize}[leftmargin=0.4cm]
+    \item Đảm bảo AC4 dựa trên nền tảng kỹ thuật ADR-3 và ADR-4.
+    \item Đảm bảo độ tin cậy cao cho các thuật toán AI/Scoring.
+    \item Phát hiện lỗi sớm ở tầng Unit Test, giảm chi phí so với phát hiện ở E2E.
+\end{itemize} \\
+\hline
+\textbf{Hậu quả} & \textbf{Tích cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Chất lượng code đáng tin cậy, phát hiện lỗi sớm, logic AI được kiểm thử kỹ.
+\end{itemize}
+\textbf{Tiêu cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Testcontainers tăng thời gian CI/CD; E2E dễ flaky; đội ngũ cần học Testcontainers.
+\end{itemize} \\
+\hline
+\textbf{Rủi ro} & \begin{itemize}[leftmargin=0.4cm]
+    \item Rủi ro: CI chạy chậm do integration test; giảm thiểu bằng cách tách pipeline (Unit mỗi commit, Integration/E2E khi PR/merge main).
+    \item Rủi ro: E2E không ổn định; giảm thiểu bằng cách giới hạn E2E cho happy path quan trọng.
+\end{itemize} \\
+\hline
+\textbf{Các lựa chọn} & \begin{itemize}[leftmargin=0.4cm]
+    \item Chỉ Unit Test: nhanh nhưng bỏ lỡ lỗi tích hợp.
+    \item Chỉ E2E (Ice Cream Cone): chậm, đắt đỏ, khó xác định nguyên nhân lỗi.
+    \item Contract Tests: hữu ích nhưng quá phức tạp cho giai đoạn MVP hiện tại.
+\end{itemize} \\
+\hline
+\textbf{Liên quan} & \begin{itemize}[leftmargin=0.4cm]
+    \item Phụ thuộc ADR-1, ADR-3, ADR-4; định hình cách thiết kế unit test cho cả hai stack.
+\end{itemize} \\
+\hline
+\end{tabularx}
+\caption{Tóm tắt ADR-5: Testing Strategy}
+\label{tab:adr5-summary}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\subsubsection{ADR-6: Security Architecture (AuthN \& AuthZ)}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|M{2.4cm}|Y|}
+\hline
+\textbf{Hạng mục}\rule{0pt}{1.6em} & \multicolumn{1}{c|}{\textbf{Nội dung}} \\
+\hline
+\textbf{Bối cảnh} & \begin{itemize}[leftmargin=0.4cm]
+    \item Cần cơ chế bảo mật mạnh mẽ cho hệ thống microservices đáp ứng AC6 (Security), FR11 (RBAC) và AC2 (Scalability).
+\end{itemize} \\
+\hline
+\textbf{Quyết định} & \begin{enumerate}[leftmargin=0.4cm]
+    \item Authentication: triển khai Auth Service (Java/Spring Security) như Identity Provider tuân thủ OAuth~2.0/OIDC, phát hành JWT (access + refresh).
+    \item Authorization ở rìa hệ thống: API Gateway (Go) xác thực JWT cho mọi request bên ngoài.
+    \item Authorization nội bộ: Gateway chuyển tiếp `X-User-ID`, `X-User-Roles`; các service nội bộ tin tưởng header và thực thi RBAC.
+\end{enumerate} \\
+\hline
+\textbf{Lý luận} & \begin{itemize}[leftmargin=0.4cm]
+    \item Đáp ứng AC6 với thiết kế theo chuẩn OAuth 2.0/OIDC.
+    \item Duy trì AC1 bằng cách tách AuthN/AuthZ khỏi dịch vụ nghiệp vụ.
+    \item Đảm bảo AC2 nhờ JWT stateless, hỗ trợ mở rộng ngang.
+    \item Tránh lặp lại logic xác thực ở từng service, giảm rủi ro không nhất quán.
+\end{itemize} \\
+\hline
+\textbf{Hậu quả} & \textbf{Tích cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Bảo mật tập trung, đơn giản hóa dịch vụ nghiệp vụ, dễ dàng scale.
+\end{itemize}
+\textbf{Tiêu cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Auth Service và Gateway là điểm lỗi đơn, yêu cầu độ sẵn sàng cao.
+    \item Mô hình tin tưởng Gateway kém an toàn hơn Zero Trust; JWT cần TTL ngắn và cơ chế refresh phức tạp.
+\end{itemize} \\
+\hline
+\textbf{Rủi ro} & \begin{itemize}[leftmargin=0.4cm]
+    \item Rủi ro: Auth Service/Gateway sự cố gây downtime toàn hệ thống. Giảm thiểu: triển khai HA với nhiều replica trên Kubernetes.
+    \item Rủi ro: Tấn công nội bộ bypass Gateway và giả mạo header. Giảm thiểu: sử dụng VPC riêng và Network Policies để chỉ Gateway gọi được service nội bộ.
+\end{itemize} \\
+\hline
+\textbf{Các lựa chọn} & \begin{itemize}[leftmargin=0.4cm]
+    \item mTLS (Zero Trust): bảo mật cao nhưng quá phức tạp cho giai đoạn hiện tại.
+    \item Session Cookies: đơn giản nhưng không phù hợp microservices, không đáp ứng AC2.
+    \item Mỗi service tự validate JWT: bảo mật hơn nhưng tăng latency và lặp lại logic, vi phạm SRP.
+\end{itemize} \\
+\hline
+\textbf{Liên quan} & \begin{itemize}[leftmargin=0.4cm]
+    \item Phụ thuộc ADR-1 (API Gateway dùng Go, Auth Service dùng Java); ảnh hưởng ADR-7 (JWT cung cấp `LearnerID` ẩn danh).
+\end{itemize} \\
+\hline
+\end{tabularx}
+\caption{Tóm tắt ADR-6: Security Architecture}
+\label{tab:adr6-summary}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\subsubsection{ADR-7: Data Privacy \& Compliance (GDPR/FERPA)}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|M{2.4cm}|Y|}
+\hline
+\textbf{Hạng mục}\rule{0pt}{1.6em} & \multicolumn{1}{c|}{\textbf{Nội dung}} \\
+\hline
+\textbf{Bối cảnh} & \begin{itemize}[leftmargin=0.4cm]
+    \item ITS xử lý dữ liệu cá nhân nhạy cảm (PII) của học sinh và phải tuân thủ GDPR/FERPA, đáp ứng AC6 (Security).
+\end{itemize} \\
+\hline
+\textbf{Quyết định} & \begin{enumerate}[leftmargin=0.4cm]
+    \item Phân tách PII: chỉ `User Management Service` lưu trữ PII (PostgreSQL theo ADR-2).
+    \item Ẩn danh hóa: các service khác chỉ tham chiếu `LearnerID` (UUID) đã ẩn danh.
+    \item Mã hóa PII khi lưu trữ bằng `pgcrypto`.
+    \item Mã hóa khi truyền (TLS cho mọi giao tiếp).
+    \item Thực thi ``Right to be Forgotten'' qua API dành cho Admin, phát sự kiện để các service khác xóa dữ liệu liên quan.
+\end{enumerate} \\
+\hline
+\textbf{Lý luận} & \begin{itemize}[leftmargin=0.4cm]
+    \item Bảo vệ PII theo nguyên tắc đặc quyền tối thiểu: dịch vụ chấm điểm không cần biết danh tính thật.
+    \item Đáp ứng yêu cầu tuân thủ GDPR/FERPA và giảm rủi ro nếu một service bị xâm nhập.
+\end{itemize} \\
+\hline
+\textbf{Hậu quả} & \textbf{Tích cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Bảo vệ PII ở mức cao, giảm bề mặt tấn công, tuân thủ pháp lý.
+\end{itemize}
+\textbf{Tiêu cực:}
+\begin{itemize}[leftmargin=0.4cm]
+    \item Việc ``join'' dữ liệu phức tạp hơn (cần gọi thêm User Service hoặc cache PII).
+    \item Mã hóa cấp độ cột ảnh hưởng hiệu năng truy vấn và indexing.
+    \item Thực thi Right to be Forgotten trong hệ thống phân tán đòi hỏi cơ chế như Saga pattern.
+\end{itemize} \\
+\hline
+\textbf{Rủi ro} & \begin{itemize}[leftmargin=0.4cm]
+    \item Rủi ro: tăng độ trễ khi phải phối hợp nhiều service để tổng hợp dữ liệu. Giảm thiểu: sử dụng API Gateway để aggregate hoặc cache PII ít thay đổi (Redis).
+    \item Rủi ro: quy trình xóa không nhất quán, PII còn sót ở service khác. Giảm thiểu: áp dụng Saga pattern dựa trên event để đảm bảo yêu cầu xóa lan tỏa.
+\end{itemize} \\
+\hline
+\textbf{Các lựa chọn} & \begin{itemize}[leftmargin=0.4cm]
+    \item Lưu PII ở mọi nơi: đơn giản nhưng vi phạm pháp lý, rủi ro bảo mật cao.
+    \item Chỉ mã hóa toàn bộ database: dễ triển khai nhưng không bảo vệ nếu ứng dụng bị xâm nhập; cần mã hóa cấp cột.
+\end{itemize} \\
+\hline
+\textbf{Liên quan} & \begin{itemize}[leftmargin=0.4cm]
+    \item Phụ thuộc ADR-2 (PostgreSQL + `pgcrypto`) và ADR-6 (JWT cung cấp khóa ẩn danh `LearnerID`).
+\end{itemize} \\
+\hline
+\end{tabularx}
+\caption{Tóm tắt ADR-7: Data Privacy \& Compliance}
+\label{tab:adr7-summary}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\subsubsection{Kết luận}
+
+\indentpar \indentpar Chuỗi ADR trên được thiết kế xoay quanh các Architecture Characteristics đã được ưu tiên trong Mục~3.1, hiện thực hóa thông qua kiến trúc lai đã chọn ở Mục~3.2. Nói cách khác, các AC xác định ``chúng ta cần gì'', phần lựa chọn kiến trúc quyết định ``chúng ta dùng kiến trúc nào'', và các ADR mô tả ``chúng ta sẽ xây dựng nó như thế nào''. 

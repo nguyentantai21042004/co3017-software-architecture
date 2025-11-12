@@ -1,0 +1,83 @@
+\subsection{Nguyên tắc thiết kế}
+
+\indentpar \indentpar Để hiện thực hóa các đặc tính kiến trúc (ACs) đã ưu tiên---đặc biệt là \textbf{AC1: Modularity}, \textbf{AC4: Testability}, và \textbf{AC7: Maintainability}---hệ thống ITS sẽ tuân thủ một bộ các nguyên tắc thiết kế và tiêu chuẩn kỹ thuật cốt lõi. Các nguyên tắc này định hình cấu trúc bên trong của mỗi service và cách chúng tương tác với nhau.
+
+\subsubsection{Các nguyên tắc cốt lõi}
+
+\indentpar \indentpar Các nguyên tắc này là nền tảng triết lý cho mọi quyết định thiết kế.
+
+\indent\textbf{a. Domain-Driven Design (DDD)}
+
+\indentpar DDD là nguyên tắc chủ đạo để phân tích nghiệp vụ và thu hẹp khoảng cách giữa logic nghiệp vụ cốt lõi và thiết kế kiến trúc. Chúng ta sử dụng DDD để xác định ranh giới (boundaries) cho các microservice. Các khái niệm DDD chính được áp dụng bao gồm:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Bounded Contexts (Bối cảnh Bó buộc):} Hệ thống được phân rã thành các ``ranh giới nghiệp vụ'' (Bounded Context) rõ ràng. Mỗi Bounded Context sẽ (cuối cùng) trở thành một microservice hoặc một nhóm microservice liên quan, ví dụ: `User Management`, `Content`, và `Learner Model`.
+    \item \textbf{Aggregates (Tổng thể):} Là khái niệm trung tâm để đảm bảo tính nhất quán dữ liệu. Mỗi Aggregate xác định một ranh giới giao dịch (transaction boundary). Các Aggregate chính đã được xác định bao gồm `LearnerAggregate`, `LearnerModelAggregate`, và `ContentAggregate`.
+    \item \textbf{Entities \& Value Objects:} Phân biệt rõ các đối tượng có danh tính (Entities, ví dụ: `Learner`, `Course`) và các đối tượng thuộc tính bất biến (Value Objects, ví dụ: `MetadataTag`, `ProgressRecord`).
+    \item \textbf{Domain Services \& Domain Events:} Các nghiệp vụ phức tạp liên quan đến nhiều Aggregate được xử lý bởi `Domain Services` (ví dụ: `AdaptivePathGenerator`, `ScoringEngine`). Giao tiếp giữa các Aggregate/Context (ví dụ: khi chấm điểm xong) được thực hiện bất đồng bộ thông qua `Domain Events` (ví dụ: `SubmissionCompleted`).
+\end{itemize}
+
+\indent\textbf{b. SOLID Principles}
+
+\indentpar Việc tuân thủ 5 nguyên tắc SOLID là bắt buộc để đạt được \textbf{AC7: Maintainability} và \textbf{AC4: Testability}. Các nguyên tắc này được áp dụng chi tiết cho cả code Java và Golang:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{S - Single Responsibility Principle (SRP):} Mỗi class/module chỉ có một lý do để thay đổi. Ví dụ, một `UserService` không nên tự gửi email; nó nên ủy quyền cho một `EmailService` riêng biệt.
+    \item \textbf{O - Open/Closed Principle (OCP):} Mở rộng cho việc mở rộng nhưng đóng cho việc sửa đổi. Nguyên tắc này được thực thi bằng cách sử dụng các interface. Ví dụ: `GeneratePathUseCase` phụ thuộc vào interface `PathGenerator`, cho phép chúng ta dễ dàng thêm một `AIPathGenerator` mới mà không cần sửa đổi `BasicPathGenerator` hay chính Use Case đó.
+    \item \textbf{L - Liskov Substitution Principle (LSP):} Các đối tượng của lớp con có thể thay thế các đối tượng của lớp cha mà không làm thay đổi tính đúng đắn của chương trình.
+    \item \textbf{I - Interface Segregation Principle (ISP):} Client không nên bị buộc phải phụ thuộc vào các interface mà chúng không sử dụng. Thay vì một ``fat interface'' `LearnerService`, chúng ta chia nhỏ nó thành các interface tập trung như `ProfileReader`, `SkillMasteryReader`, và `SkillMasteryWriter`.
+    \item \textbf{D - Dependency Inversion Principle (DIP):} Các module cấp cao không nên phụ thuộc vào các module cấp thấp; cả hai nên phụ thuộc vào abstractions (interfaces). Đây là nguyên tắc nền tảng của Clean Architecture.
+\end{itemize}
+
+\indent\textbf{c. Clean/Hexagonal Architecture}
+
+\indentpar Đây là kiểu kiến trúc nội bộ (Internal Architecture Pattern) bắt buộc được chọn cho \textbf{TẤT CẢ} các microservice (cả Java và Golang).
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Mục tiêu:} Là nguyên tắc kỹ thuật chính để đạt được \textbf{AC-4: Testability}.
+    \item \textbf{Dependency Rule:} Nguyên tắc cốt lõi là \textbf{Quy tắc Phụ thuộc (Dependency Rule)}. Mọi phụ thuộc phải hướng vào trong. Các lớp ngoài (Frameworks, DBs) phụ thuộc vào các lớp trong (Use Cases, Entities). Logic nghiệp vụ cốt lõi không bao giờ được phép biết về chi tiết hạ tầng (ví dụ: logic `ScoringEngine` không biết nó đang dùng Postgres hay Mongo).
+    \item \textbf{Cấu trúc:} Các service được tổ chức thành các tầng đồng tâm: `Domain` (trong cùng), `Application` (Use Cases), `Adapters` (Controllers, Repositories), và `Infrastructure` (Frameworks, Drivers).
+\end{itemize}
+
+\subsubsection{Các mẫu triển khai và tiêu chuẩn}
+
+\indentpar Để thực thi các nguyên tắc trên, các mẫu (patterns) và tiêu chuẩn kỹ thuật cụ thể sau đây được áp dụng.
+
+\indent\textbf{a. Repository Pattern (ADR-4)}
+
+\indentpar Đây là mẫu kỹ thuật bắt buộc để triển khai nguyên tắc DIP và Clean Architecture.
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Quy tắc:} Các \textbf{Repository Interfaces} (Ports) được định nghĩa trong tầng `application` (ví dụ: `UserRepository`, `ContentRepository`).
+    \item \textbf{Triển khai:} Các \textbf{Implementations} (Adapters) (ví dụ: `PostgresUserRepository`, `MongoLearnerRepository`) nằm trong tầng `infrastructure` và chứa logic ORM (JPA/Hibernate) hoặc SQL thô (pgx).
+    \item \textbf{Lợi ích:} Cho phép tầng `application` (Use Cases) được unit test hoàn toàn độc lập bằng cách ``tiêm'' (inject) các repository giả (mock repositories), đạt được \textbf{AC-4: Testability}.
+\end{itemize}
+
+\indent\textbf{b. Testing Pyramid Strategy (ADR-5)}
+
+\indentpar \indentpar Đây là tiêu chuẩn kiểm thử chính thức của dự án để đảm bảo chất lượng code và tính đúng đắn của thuật toán AI.
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Nền tảng (Unit Tests):} Chiếm phần lớn (SLO: \textbf{$> 80\%$ code coverage} cho `domain` và `application` layers). Bắt buộc phải mock tất cả I/O (database, network).
+    \item \textbf{Tầng giữa (Integration Tests):} Kiểm thử sự tích hợp của service với hạ tầng (DB, Message Broker). Tiêu chuẩn là sử dụng \textbf{Testcontainers} để khởi tạo các tài nguyên (Postgres, Kafka) trong Docker khi chạy kiểm thử.
+    \item \textbf{Đỉnh (E2E Tests):} Số lượng ít, chỉ tập trung vào các luồng nghiệp vụ quan trọng (critical user flows) để tránh tình trạng không ổn định (flakiness).
+\end{itemize}
+
+\indent\textbf{c. Centralized Security Standard (ADR-6)}
+
+\indentpar \indentpar Đây là tiêu chuẩn bảo mật cho việc xác thực (AuthN) và phân quyền (AuthZ) trong toàn hệ thống microservices.
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Authentication (AuthN):} Tập trung tại một `Auth Service` (Java/Spring Security), tuân thủ \textbf{OAuth 2.0 / OIDC} và phát hành \textbf{JWTs} (Access/Refresh Tokens).
+    \item \textbf{Authorization (AuthZ):} Thực hiện tại ``cửa ngõ'' (edge). \textbf{API Gateway} (Golang) chịu trách nhiệm \textbf{validate} tất cả JWTs. Các service nội bộ \textbf{tin tưởng} Gateway và chỉ cần đọc thông tin user (ví dụ: `X-User-ID`, `X-User-Roles`) từ request header để thực thi RBAC (FR11).
+\end{itemize}
+
+\indent\textbf{d. Data Privacy \& Anonymization Standard (ADR-7)}
+
+\indentpar \indentpar Đây là tiêu chuẩn bắt buộc để xử lý Dữ liệu Cá nhân Nhạy cảm (PII) và tuân thủ GDPR/FERPA.
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{PII Isolation (Phân tách PII):} Dữ liệu PII (tên, email) \textbf{CHỈ} được lưu trữ trong `User Management Service`.
+    \item \textbf{Anonymization (Ẩn danh hóa):} Tất cả các service nghiệp vụ khác (Scoring, Adaptive Engine, Learner Model) \textbf{KHÔNG ĐƯỢC PHÉP} lưu trữ PII. Chúng phải tham chiếu đến người dùng thông qua một \textbf{`LearnerID` (UUID)} đã được ẩn danh.
+    \item \textbf{Encryption at Rest (Mã hóa khi lưu trữ):} Các cột PII trong `User Management Service` phải được mã hóa ở cấp độ cột (ví dụ: sử dụng `pgcrypto` của PostgreSQL).
+\end{itemize}

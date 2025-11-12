@@ -1,164 +1,495 @@
-Dưới đây là nội dung chi tiết cho Chương 2, Mục 2.1, được tổng hợp chính xác từ các tài liệu bạn đã cung cấp.
+Chắc chắn rồi. Dưới đây là nội dung chi tiết cho Mục 2.3, được xây dựng chính xác dựa trên nội dung các tệp bạn đã cung cấp và tuân thủ mẫu ADR (Architecture Decision Record) mà bạn yêu cầu.
 
----
+-----
 
-## CHAPTER 2: ARCHITECTURE DESIGN
+### 2.3 Architecture Decision Records
 
-### 2.1 Architecture Characteristics Prioritization
+Phần này ghi lại các quyết định kiến trúc quan trọng (ADR) đã được đưa ra để định hình hệ thống ITS. Mỗi ADR tuân theo một cấu trúc thống nhất để làm rõ bối cảnh, quyết định, lý do và các hậu quả đi kèm.
 
-Việc ưu tiên hóa các Đặc tính Kiến trúc (Architecture Characteristics - ACs) là bước nền tảng, đóng vai trò là cầu nối chiến lược giữa yêu cầu nghiệp vụ và các quyết định kỹ thuật. Các quyết định này định hình cấu trúc hệ thống và quản lý các đánh đổi (trade-offs) không thể tránh khỏi.
+## ADR-1: Polyglot Programming Strategy
 
-#### 2.1.1 Characteristics Matrix
+### Status
 
-Bảng ma trận dưới đây tổng hợp 9 đặc tính kiến trúc đã được xác định cho hệ thống ITS, phân tích tác động nghiệp vụ, rủi ro/độ phức tạp kỹ thuật, và mức độ ưu tiên tương ứng.
+✅ **Accepted**
+*(Date: 2025-10-13, Deciders: Architecture Team)*
 
-| Characteristic | Business Impact | Technical Risk / Effort | Priority | Notes (Vai trò chính) |
-| :--- | :--- | :--- | :--- | :--- |
-| **Modularity (AC1)** | ⭐⭐⭐⭐⭐ **High** | **High** | **1** (Cao nhất) | Định hình kiến trúc Microservices; cô lập logic AI; hỗ trợ "Live AI Model Swapping" (FR12). |
-| **Scalability (AC2)** | ⭐⭐⭐⭐⭐ **High** | **High** | **1** (Cao nhất) | Xử lý tải người dùng đồng thời (≥ 5,000) và các tác vụ tính toán AI nặng. |
-| **Performance (AC3)** | ⭐⭐⭐⭐⭐ **High** | **Low** | **1** (Cao nhất) | Đảm bảo trải nghiệm học tập mượt mà; phản hồi thời gian thực (\<500ms). |
-| **Testability (AC4)** | ⭐⭐⭐⭐ **High** | **Low** | **2** (Cao) | Đảm bảo tính đúng đắn của thuật toán AI; hỗ trợ bởi Clean Architecture (ADR-3). |
-| **Security (AC6)** | ⭐⭐⭐⭐ **High** | **High** | **2** (Cao) | Bảo vệ dữ liệu nhạy cảm (PII) của người học và nội dung (FR11); Tuân thủ GDPR/FERPA. |
-| **Maintainability (AC7)** | ⭐⭐⭐ **Medium** | **Low** | **2** (Cao) | Giảm chi phí vòng đời; dễ dàng sửa lỗi và cải tiến hệ thống. |
-| **Deployability (AC5)** | ⭐⭐⭐ **Medium** | **Medium** | **3** (Trung bình) | Hỗ trợ triển khai độc lập từng service và "Live AI Model Swapping". |
-| **Observability (AC9)** | ⭐⭐ **Medium** | **Low** | **3** (Trung bình) | Debug, monitor, và phát hiện sự cố trong hệ thống microservices phân tán. |
-| **Extensibility (AC8)** | ⭐ **Low** | **Medium** | **4** (Thấp) | Hỗ trợ thêm tính năng mới (ví dụ: loại câu hỏi mới) mà không sửa code lõi (tuân thủ OCP). |
+### Context
 
----
+Hệ thống ITS bao gồm nhiều loại dịch vụ (services) với các yêu cầu phi chức năng khác nhau:
 
-#### 2.1.2 Trade-off Analysis
+  * **Management Services** (Quản lý User, Content): Đòi hỏi logic nghiệp vụ phức tạp, cần hệ sinh thái (ecosystem) rộng lớn và khả năng bảo trì (Maintainability) cao.
+  * **Computation Services** (Chấm điểm, Phản hồi): Đòi hỏi hiệu suất (Performance) rất cao, độ trễ thấp (≤500ms), và khả năng xử lý đồng thời (Concurrency) xuất sắc để phản hồi thời gian thực.
+  * **AI/ML Services** (Lõi thích ứng): Yêu cầu xử lý tính toán CPU chuyên sâu (CPU-intensive) và lặp lại thuật toán nhanh.
+  * **Ràng buộc:** Đội ngũ phát triển có kinh nghiệm với cả Java và Golang.
 
-Mọi quyết định kiến trúc đều là sự đánh đổi. Dưới đây là các phân tích đánh đổi quan trọng nhất được chấp nhận để tối ưu cho các đặc tính đã ưu tiên.
+### Decision
 
-**Trade-off: (AC1) Modularity & (AC2) Scalability vs. Simplicity (Độ đơn giản)**
+Sử dụng chiến lược **Polyglot Programming (Đa ngôn ngữ)**. Phân chia công nghệ dựa trên vai trò của service:
 
-* **Scenario:** Khi lựa chọn kiểu kiến trúc (ví dụ: Microservices) để hỗ trợ khả năng mở rộng cho \>5,000 người dùng và yêu cầu nghiệp vụ cốt lõi "Live AI Model Swapping" (FR12).
-* **Decision:** Chọn **Modularity & Scalability** hơn Simplicity.
-* **Rationale:** Chấp nhận độ phức tạp vận hành (complexity) cao hơn của kiến trúc Microservices. Đây là yêu cầu bắt buộc để đáp ứng tính mô-đun (cô lập logic AI) và khả năng triển khai độc lập (FR12), vốn là yêu cầu cốt lõi của hệ thống ITS.
-* **Mitigation (Giảm thiểu):**
-    1.  **Lộ trình Phát triển (Evolution Path):** Bắt đầu với **Modular Monolith** trong giai đoạn MVP (Giai đoạn 1) để giảm độ phức tạp ban đầu, sau đó di trú dần sang Microservices bằng **Strangler Fig Pattern** khi thực sự cần (Giai đoạn 2).
-    2.  **Sử dụng Dịch vụ Managed:** Giảm tải vận hành bằng cách sử dụng các dịch vụ được quản lý (ví dụ: GKE, EKS cho Kubernetes).
-    3.  **Đào tạo & Tiêu chuẩn hóa:** Đào tạo team về DevOps, chuẩn hóa cấu trúc dự án và chia sẻ các mẫu CI/CD.
+  * **Java 17+ (Spring Boot 3.x):** Dùng cho các service thiên về nghiệp vụ và bảo trì:
+      * `User Management Service`
+      * `Content Service`
+  * **Golang 1.21+ (Gin/Echo):** Dùng cho các service thiên về hiệu năng, đồng thời và độ trễ thấp:
+      * `Scoring/Feedback Service`
+      * `Adaptive Engine`
+      * `Learner Model Service`
+      * `API Gateway`
 
-**Trade-off: (AC4) Testability vs. Development Cost (Chi phí Phát triển)**
+### Rationale
 
-* **Scenario:** Khi quyết định cấu trúc code bên trong mỗi service để đảm bảo logic thuật toán AI (FR7) có thể được kiểm thử độc lập và chính xác.
-* **Decision:** Chọn **Testability** hơn chi phí phát triển ban đầu.
-* **Rationale:** Áp dụng bắt buộc **Clean/Hexagonal Architecture** (ADR-3) và **Repository Pattern** (ADR-4). Mặc dù việc này đòi hỏi cấu trúc code phức tạp hơn (nhiều boilerplate, interfaces) và đường cong học tập (learning curve) khó hơn, nó mang lại lợi ích chiến lược dài hạn: chi phí bảo trì (AC7) thấp hơn và độ tin cậy của thuật toán AI cao hơn.
-* **Mitigation (Giảm thiểu):**
-    1.  **Cung cấp Mẫu (Templates):** Tạo các mẫu code (code templates) và ví dụ rõ ràng cho cả Java và Golang để đảm bảo tính nhất quán (như đã định nghĩa trong ADR-3 và ADR-4).
-    2.  **Chiến lược Kiểm thử rõ ràng:** Định nghĩa rõ "Testing Pyramid" (ADR-5) để team tập trung vào Unit Test (mục tiêu \>80% coverage) cho logic nghiệp vụ, giảm sự phụ thuộc vào E2E test chậm và đắt đỏ.
+  * **Supports AC-3 (Performance) & AC-2 (Scalability):** Golang cung cấp hiệu suất gần bằng C, thời gian khởi động nhanh, và mô hình đồng thời (goroutines) xuất sắc, lý tưởng cho các dịch vụ thời gian thực (Scoring) và xử lý AI (Adaptive Engine).
+  * **Supports AC-7 (Maintainability):** Java/Spring Boot có một hệ sinh thái trưởng thành (Spring Security, Spring Data JPA/Hibernate) để xử lý logic nghiệp vụ phức tạp, RBAC, và các truy vấn ORM phức tạp, giúp code dễ đọc và bảo trì.
+  * **Addresses requirement:** Tối ưu hóa việc sử dụng công nghệ phù hợp nhất cho từng bài toán cụ thể, thay vì dùng "một búa cho mọi loại đinh".
+  * **Mitigates risk:** Giảm thiểu rủi ro dùng một ngôn ngữ duy nhất và thất bại:
+      * Nếu chỉ dùng Java: Rủi ro thất bại về **AC-3 (Performance)** ở các dịch vụ AI/scoring.
+      * Nếu chỉ dùng Golang: Rủi ro thất bại về **AC-7 (Maintainability)** khi xử lý nghiệp vụ phức tạp (ví dụ: RBAC, quản lý nội dung).
 
-**Trade-off: (AC6) Security vs. (AC3) Performance**
+### Consequences
 
-* **Scenario:** Khi triển khai các biện pháp bảo mật bắt buộc, như mã hóa PII và xác thực token, vốn tiêu tốn thêm tài nguyên CPU và tăng độ trễ (latency).
-* **Decision:** Chọn **Security** hơn Performance (trong giới hạn chấp nhận được).
-* **Rationale:** Việc bảo vệ dữ liệu nhạy cảm PII của người học (tuân thủ GDPR/FERPA) và đảm bảo tính toàn vẹn của `LearnerModel` là **không thể thương lượng**. Chúng ta chấp nhận một độ trễ nhỏ (ví dụ: 50-100ms) do mã hóa (TLS, pgcrypto) và xác thực JWT tại API Gateway (ADR-6).
-* **Mitigation (Giảm thiểu):**
-    1.  **Tối ưu Hóa tại Cổng:** Thực hiện xác thực JWT tập trung tại API Gateway (ADR-6), thay vì để mỗi service tự validate, giúp giảm gánh nặng cho các service nghiệp vụ.
-    2.  **Mã hóa Chọn lọc:** Chỉ mã hóa các cột PII nhạy cảm nhất (ADR-7), thay vì mã hóa toàn bộ cơ sở dữ liệu (Full Disk Encryption), để cân bằng giữa an ninh và hiệu năng query.
+**Positive:**
 
-**Trade-off: (AC3) Performance vs. (AC1) Modularity/Coupling**
+  * ✅ Tối ưu hóa hiệu năng cho các dịch vụ thời gian thực (real-time services).
+  * ✅ Tăng khả năng bảo trì cho các dịch vụ logic nghiệp vụ (business logic services).
+  * ✅ Cho phép đội ngũ tận dụng điểm mạnh của từng ngôn ngữ.
 
-* **Scenario:** Khi phân rã hệ thống thành các Microservices. Việc phân chia quá mịn (fine-grained) để tối ưu Modularity có thể dẫn đến quá nhiều lời gọi mạng (network calls), làm tăng độ trễ và ảnh hưởng tiêu cực đến Performance.
-* **Decision:** Chọn **Cân bằng (Balanced Granularity)**, ưu tiên Performance cho các luồng nghiệp vụ thời gian thực.
-* **Rationale:** Phải đảm bảo các chức năng nghiệp vụ liên quan chặt chẽ (Functional Cohesion) được đóng gói trong cùng một Service (Architecture Quantum). Ví dụ: logic chấm điểm và cập nhật model ban đầu có thể nằm cùng nhau để tránh giao tiếp mạng không cần thiết, duy trì mục tiêu latency ≤ 500ms.
-* **Mitigation (Giảm thiểu):**
-    1.  **Tuân thủ DDD:** Phân rã service dựa trên Bounded Context của Domain-Driven Design (DDD), thay vì phân rã theo kỹ thuật, để đảm bảo tính gắn kết nghiệp vụ.
-    2.  **Giao tiếp Nội bộ Hiệu quả:** Sử dụng gRPC hoặc các giao thức nhị phân hiệu quả (thay vì REST/JSON) cho giao tiếp service-to-service trong nội bộ (nếu cần).
-    3.  **Circuit Breaker & Retry:** Áp dụng các mẫu (pattern) như Circuit Breaker và Retry Logic (với Exponential Backoff) để xử lý lỗi mạng và latency cao một cách linh hoạt.
+**Negative:**
 
-    Chào bạn, tôi đã chuẩn bị nội dung chi tiết cho Mục 2.2, được trích xuất và tổng hợp chính xác từ các tài liệu phân tích (`2-architecture-characteristics.md` và `3-architecture-styles.md`) mà bạn đã cung cấp.
+  * ❌ Đội ngũ cần có chuyên môn ở cả hai ngôn ngữ.
+  * ❌ Sử dụng các bộ công cụ (tooling) khác nhau (Maven/Gradle vs Go modules).
+  * ❌ Các framework kiểm thử khác nhau (JUnit vs Go testing).
+  * ❌ Tăng độ phức tạp trong pipeline CI/CD.
 
----
+**Risks:**
 
-### 2.2 Architecture Style Selection
+  * **Risk 1:** Sự không nhất quán và tăng độ phức tạp trong phát triển và vận hành do sử dụng hai hệ sinh thái song song.
+  * **Mitigation:** Tổ chức các buổi đào tạo chéo; chuẩn hóa cấu trúc dự án cho cả hai ngôn ngữ; sử dụng các mẫu (templates) CI/CD dùng chung; và áp dụng định dạng monitoring/logging thống nhất.
 
-Việc lựa chọn kiểu kiến trúc (Architecture Style) là quyết định quan trọng nhất, định hình cấu trúc tổng thể của hệ thống. Quyết định này được đưa ra dựa trên một bộ tiêu chí đánh giá nghiêm ngặt, nhằm tìm ra kiến trúc "ít tệ nhất" (*the least worst architecture*), tối ưu hóa các đặc tính kiến trúc (ACs) đã được ưu tiên [cite: 2-architecture-characteristics.md, 3-architecture-styles.md].
+### Alternatives Considered
 
-#### 2.2.1 Evaluation Criteria
+1.  **Option A: Tất cả bằng Java**
+      * **Pros:** Chỉ cần chuyên môn một ngôn ngữ.
+      * **Cons:** Hiệu năng thấp hơn cho các dịch vụ thời gian thực; footprint bộ nhớ cao hơn (ảnh hưởng chi phí scaling).
+      * **Reason rejected:** Không đáp ứng mục tiêu **AC-3 (Performance)**.
+2.  **Option B: Tất cả bằng Golang**
+      * **Pros:** Bộ công cụ nhất quán.
+      * **Cons:** Hệ sinh thái chưa trưởng thành bằng Java cho các nghiệp vụ phức tạp; không có DI (Dependency Injection) tích hợp sẵn.
+      * **Reason rejected:** Không đáp ứng mục tiêu **AC-7 (Maintainability)** cho các nghiệp vụ phức tạp.
 
-Các kiểu kiến trúc được đánh giá dựa trên các tiêu chí sau, bắt nguồn trực tiếp từ các yêu cầu nghiệp vụ và bối cảnh kỹ thuật của dự án ITS:
+### Related Decisions
 
-1.  **Alignment with Primary ACs (Mức độ đáp ứng các ACs chính):** Đây là tiêu chí quan trọng nhất. Kiến trúc được chọn phải tối ưu hóa 4 ACs chính đã ưu tiên:
-    * **AC1: Modularity** (Hỗ trợ "Live AI Model Swapping" FR9, FR12)
-    * **AC2: Scalability** (Hỗ trợ \>5,000 người dùng đồng thời)
-    * **AC3: Performance** (Hỗ trợ phản hồi thời gian thực FR6)
-    * **AC4: Testability** (Đảm bảo tính đúng đắn của thuật toán AI) [cite: 2-architecture-characteristics.md, 3-architecture-styles.md].
-2.  **Technical Complexity (Độ phức tạp Kỹ thuật):** Đánh giá độ phức tạp khi phát triển, vận hành và giám sát (Observability) kiến trúc đó [cite: 3-architecture-styles.md]. Đây là một phần của trade-off (đánh đổi) với Scalability [cite: 2-architecture-characteristics.md].
-3.  **Team Expertise (Kỹ năng của Đội ngũ):** Xem xét rủi ro về kỹ năng. Ví dụ, một kiến trúc Microservices đòi hỏi kỹ năng DevOps chuyên biệt để quản lý Kubernetes và Service Mesh, đây là một rủi ro phải được quản lý [cite: 3-architecture-styles.md].
-4.  **Cost Implications (Tác động Chi phí):** Phân tích Tổng Chi phí Sở hữu (TCO), bao gồm chi phí hạ tầng ban đầu (ví dụ: Kubernetes, Message Broker) và chi phí bảo trì, mở rộng dài hạn [cite: 3-architecture-styles.md].
+  * **Influences:** ADR-3 (Clean Architecture phải được triển khai ở cả hai ngôn ngữ), ADR-5 (Chiến lược kiểm thử phải bao gồm cả hai hệ sinh thái Java và Golang).
 
-#### 2.2.2 Architecture Styles Comparison
+-----
 
-Dựa trên các tiêu chí trên, chúng ta đã so sánh 8 phong cách kiến trúc phổ biến. Bảng dưới đây tóm tắt các lựa chọn chính, đánh giá chúng dựa trên các ACs ưu tiên và các tiêu chí phụ.
+## ADR-2: PostgreSQL as Primary Relational Database
 
-* **Đánh giá:** ⭐ (Kém) đến ⭐⭐⭐⭐⭐ (Xuất sắc).
-* **Complexity (Độ phức tạp):** Đánh giá đảo ngược của "Simplicity" (Độ đơn giản) trong tệp phân tích [cite: 3-architecture-styles.md].
-* **Cost (Chi phí):** $ (Thấp) đến $$$$$ (Rất cao) [cite: 3-architecture-styles.md].
-* **Score (Điểm):** Điểm trung bình của 4 cột ACs (Modularity, Scalability, Performance, Complexity).
+### Status
 
+✅ **Accepted**
+*(Date: 2025-10-13, Deciders: Architecture Team)*
 
+### Context
 
-| Style | AC1: Modularity | AC2: Scalability | AC3: Performance | Complexity | Cost | **Score (Avg)** |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| Layered (Monolith) | ⭐ | ⭐ | ⭐⭐⭐⭐ | ⭐ | $ | **1.75 / 5.0** |
-| Modular Monolith | ⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ | $ | **2.75 / 5.0** |
-| Microkernel | ⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐ | ⭐⭐ | $ | **2.5 / 5.0** |
-| **Microservices** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | $$$$$ | **4.5 / 5.0** |
-| Service-based | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐ | $$ | **3.25 / 5.0** |
-| Service-oriented (SOA) | ⭐ | ⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | $$$$$ | **2.75 / 5.0** |
-| **Event-driven** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | $$ | **4.25 / 5.0** |
-| Space-based | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | $$$$$ | **4.5 / 5.0** |
+Các dịch vụ `User Management` và `Content Service` cần một cơ sở dữ liệu quan hệ (relational database) để đảm bảo:
 
-**Phân tích Kết quả:**
+  * Tính toàn vẹn giao dịch (ACID compliance).
+  * Hỗ trợ các truy vấn phức tạp (JOINs, aggregations).
+  * Quản lý xác thực và phân quyền (RBAC).
+  * Hỗ trợ lưu trữ dữ liệu linh hoạt (JSON) cho metadata.
+  * Yêu cầu là mã nguồn mở và có cơ chế replication/backup trưởng thành.
 
-* **Layered (Monolith):** Bị loại bỏ hoàn toàn do thất bại trong việc đáp ứng các ACs quan trọng nhất là Modularity (⭐) và Scalability (⭐) [cite: 3-architecture-styles.md].
-* **Modular Monolith:** Là một phương án dự phòng tốt (Fallback Option) hoặc chiến lược MVP (Giai đoạn 1), vì nó cân bằng giữa chi phí ($) và Modularity/Testability (⭐⭐⭐) [cite: 3-architecture-styles.md].
-* **Microservices:** Đạt điểm cao nhất (4.5) về khả năng đáp ứng các ACs, nhưng cũng đi kèm với Độ phức tạp (⭐⭐⭐⭐) và Chi phí ($$$$$) cao nhất [cite: 3-architecture-styles.md].
-* **Event-driven:** Đạt điểm rất cao (4.25), đặc biệt xuất sắc ở Scalability (⭐⭐⭐⭐⭐) và Performance/Responsiveness (⭐⭐⭐⭐⭐). Đây là một thành phần bổ trợ hoàn hảo [cite: 3-architecture-styles.md].
-* **Space-based:** Mặc dù đạt điểm cao (4.5), kiến trúc này được đánh giá là quá phức tạp (Complexity ⭐⭐⭐⭐⭐) và không cần thiết cho bối cảnh của ITS [cite: 3-architecture-styles.md].
+### Decision
 
----
+Sử dụng **PostgreSQL 15+** làm cơ sở dữ liệu quan hệ chính cho `User Management Service` và `Content Service`.
+Cấu hình sẽ bao gồm:
 
-#### 2.2.3 Final Architecture Decision
+  * Primary-Standby replication.
+  * Connection pooling (ví dụ: PgBouncer).
+  * WAL archiving (lưu trữ WAL) để phục hồi theo thời điểm (point-in-time recovery).
 
-Dựa trên phân tích đánh giá và so sánh ở trên, quyết định kiến trúc cuối cùng được đưa ra.
+### Rationale
 
-**Selected Architecture: Hybrid Microservices + Event-Driven Architecture** [cite: 3-architecture-styles.md]
+  * **Supports AC-6 (Security):** PostgreSQL cung cấp các tính năng bảo mật nâng cao như Row-level security (Bảo mật cấp độ hàng).
+  * **Supports AC-7 (Maintainability):** Đảm bảo ACID và tính toàn vẹn dữ liệu mạnh mẽ.
+  * **Addresses requirement:** PostgreSQL có khả năng hỗ trợ JSON/JSONB vượt trội (cho metadata linh hoạt) và xử lý các truy vấn phức tạp tốt hơn MySQL.
+  * **Mitigates risk:** Giảm thiểu rủi ro mất mát hoặc không nhất quán dữ liệu cho các thông tin quan trọng (user, content) mà NoSQL có thể gặp phải.
 
-Chúng ta lựa chọn một kiến trúc lai (hybrid), kết hợp sức mạnh của hai phong cách:
+### Consequences
 
-1.  **Microservices** được sử dụng làm cấu trúc phân chia (partitioning) chính, dựa trên miền nghiệp vụ (Domain-Driven Design) [cite: 3-architecture-styles.md, main.pdf].
-2.  **Event-Driven Architecture (EDA)** được sử dụng làm mẫu giao tiếp chính (communication pattern) cho các tương tác bất đồng bộ, xử lý thời gian thực [cite: 3-architecture-styles.md, main.pdf].
+**Positive:**
 
-**Justification (Lý do):**
+  * ✅ Đảm bảo tính toàn vẹn dữ liệu mạnh mẽ (ACID).
+  * ✅ Khả năng truy vấn phong phú, bao gồm hỗ trợ JSONB hiệu quả.
+  * ✅ Không bị khóa bởi nhà cung cấp (vendor lock-in) vì là mã nguồn mở.
 
-1.  **Tối ưu hóa các ACs Cốt lõi:** Kiến trúc Microservices đáp ứng trực tiếp các yêu cầu cao nhất:
-    * **AC1: Modularity & AC5: Deployability:** Cho phép triển khai và hoán đổi các phiên bản Mô hình AI (ví dụ: `AdaptivePathGenerator`) một cách độc lập mà không gây downtime, đáp ứng yêu cầu **"Live AI Model Swapping" (FR9, FR12)** [cite: 3-architecture-styles.md].
-    * **AC2: Scalability:** Cho phép mở rộng (scale) độc lập từng service (ví dụ: `ScoringService`) khi tải tính toán AI tăng cao, thay vì phải mở rộng toàn bộ ứng dụng [cite: 3-architecture-styles.md].
-    * **AC4: Testability:** Khi kết hợp với Clean Architecture (quyết định trong mục 4.2 của file 3), mỗi service trở thành một khối mã nhỏ, dễ dàng kiểm thử độc lập, đảm bảo tính đúng đắn của thuật toán [cite: 3-architecture-styles.md].
+**Negative:**
 
-2.  **Đáp ứng Yêu cầu Nghiệp vụ Thời gian thực:** Thành phần Event-Driven (EDA) là bắt buộc để:
-    * Xử lý **"Real-time Feedback" (FR6)**: Khi một học sinh nộp bài, sự kiện `SubmissionCompleted` được bắn đi, cho phép nhiều service (Scoring, LearnerModel) xử lý song song và bất đồng bộ.
-    * Hỗ trợ **"Adaptive Learning" (FR4, FR7):** Các cập nhật về mô hình người học (LearnerModel) có thể được xử lý qua hàng đợi (message queue), giúp tăng **AC3: Performance/Responsiveness** và **Fault-tolerance** (khả năng chịu lỗi) cho hệ thống [cite: 3-architecture-styles.md, main.pdf].
+  * ❌ Gặp giới hạn về mở rộng theo chiều dọc (Vertical scaling).
+  * ❌ Yêu cầu tối ưu hóa index cẩn thận cho các truy vấn phức tạp.
+  * ❌ Việc di trú (migrate) schema có thể phức tạp.
 
-3.  **Quản lý Rủi ro và Đánh đổi (Trade-off):** Chúng ta nhận diện rõ rủi ro lớn nhất của lựa chọn này là **Độ phức tạp Vận hành Cao** [cite: 3-architecture-styles.md]. Quyết định này được đưa ra kèm theo một chiến lược giảm thiểu rủi ro (Mitigation Strategy) rõ ràng thông qua Lộ trình Phát triển theo từng giai đoạn [cite: 3-architecture-styles.md].
+**Risks:**
 
-**Implementation Strategy (Chiến lược Triển khai):**
+  * **Risk 1:** Hiệu suất hệ thống suy giảm do tải nặng hoặc các truy vấn không được tối ưu.
+  * **Mitigation:** Sử dụng read replicas (bản sao chỉ đọc) cho các workload đọc nhiều; triển khai chiến lược đánh index phù hợp; sử dụng connection pooling; và giám sát các truy vấn chậm (slow queries).
 
-Để giảm thiểu rủi ro về độ phức tạp ban đầu, chúng ta sẽ **KHÔNG** xây dựng Microservices từ ngày đầu tiên. Thay vào đó, chúng ta áp dụng một lộ trình phát triển (Evolution Path) linh hoạt [cite: 3-architecture-styles.md]:
+### Alternatives Considered
 
-* **Phase 1: Modular Monolith (MVP)**
-    * Xây dựng một ứng dụng Monolith duy nhất.
-    * Bên trong monolith, code được tổ chức nghiêm ngặt thành các **modules nghiệp vụ** (ví dụ: `learner`, `content`, `scoring`) và bắt buộc tuân thủ **Clean Architecture** (ADR-3) và **DIP** (ADR-4) [cite: 3-architecture-styles.md, 5-architecture-decisions.md].
-    * *Mục tiêu:* Time-to-market nhanh, chi phí thấp, và tập trung vào nghiệp vụ, trong khi vẫn đảm bảo AC4 (Testability) [cite: 3-architecture-styles.md].
+1.  **Option A: MySQL**
+      * **Pros:** Phổ biến.
+      * **Cons:** Hỗ trợ JSON kém hơn PostgreSQL; xử lý truy vấn phức tạp kém hiệu quả hơn.
+      * **Reason rejected:** PostgreSQL phù hợp hơn với yêu cầu hỗ trợ metadata linh hoạt (JSON) và các truy vấn phức tạp của ITS.
+2.  **Option B: NoSQL (ví dụ: MongoDB)**
+      * **Pros:** Mở rộng theo chiều ngang tốt.
+      * **Cons:** Cần tính toàn vẹn quan hệ (users/roles); cần các truy vấn JOIN phức tạp; cần ACID cho các dữ liệu quan trọng.
+      * **Reason rejected:** Không đáp ứng yêu cầu về tính toàn vẹn dữ liệu và nghiệp vụ quan hệ cho các service này.
 
-* **Phase 2: Extract Critical Services (Strangler Fig Pattern)**
-    * Khi hệ thống phát triển và có yêu cầu thực tế về Scalability (ví dụ: `ScoringService` bị quá tải), chúng ta sẽ áp dụng **Strangler Fig Pattern** [cite: 3-architecture-styles.md].
-    * Tách module `Scoring` ra thành Microservice đầu tiên.
-    * Một API Gateway (hoặc Proxy) sẽ được thiết lập để điều hướng traffic `/api/score` đến service mới, trong khi các traffic khác vẫn đi vào Monolith [cite: 3-architecture-styles.md].
+### Related Decisions
 
-* **Phase 3: Full Microservices Ecosystem**
-    * Lặp lại quy trình ở Giai đoạn 2, tiếp tục "bóc tách" (extract) các service khác (như `AdaptiveEngine`, `LearnerModelService`) ra khỏi Monolith khi nhu cầu nghiệp vụ và tải hệ thống yêu cầu.
-    * *Mục tiêu:* Đạt được một hệ thống Microservices phân tán hoàn chỉnh, tối ưu cho AC1, AC2, và AC5 [cite: 3-architecture-styles.md].
+  * **Influences:** ADR-4 (Repository Pattern sẽ có các triển khai cụ thể cho PostgreSQL); ADR-7 (Chiến lược Data Privacy sẽ tận dụng các extension của PostgreSQL như `pgcrypto`).
+
+-----
+
+## ADR-3: Clean/Hexagonal Architecture for All Services
+
+### Status
+
+✅ **Accepted**
+*(Date: 2025-10-13, Deciders: Architecture Team)*
+
+### Context
+
+Hệ thống ITS cần phải đảm bảo các ACs quan trọng:
+
+  * **AC-4 (Testability):** Logic nghiệp vụ và thuật toán AI phải dễ dàng kiểm thử độc lập mà không cần khởi động framework hay cơ sở dữ liệu.
+  * **AC-1 (Modularity):** Tách biệt rõ ràng các mối quan tâm (separation of concerns).
+  * **AC-7 (Maintainability):** Code phải dễ hiểu, dễ sửa đổi, và độc lập với các chi tiết hạ tầng (DB, framework).
+  * **Vấn đề:** Các kiến trúc tầng (layered) truyền thống thường tạo ra sự kết dính chặt (tight coupling) giữa logic nghiệp vụ và cơ sở dữ liệu/framework, làm cho việc kiểm thử và thay đổi trở nên khó khăn.
+
+### Decision
+
+Áp dụng **Clean Architecture** (hoặc Hexagonal/Onion Architecture) cho **TẤT CẢ** các microservices (cả Java và Golang).
+Cấu trúc này tuân thủ **Dependency Rule** (Quy tắc Phụ thuộc): Mọi phụ thuộc phải hướng vào trong, từ các lớp ngoài (hạ tầng, adapters) vào các lớp trong (ứng dụng, domain).
+
+```
+Infrastructure → Adapters → Application → Domain
+(Framework/DB) → (Controllers) → (Use Cases) → (Entities)
+```
+
+### Rationale
+
+  * **Supports AC-4 (Testability):** Đây là lợi ích lớn nhất. Logic nghiệp vụ (Domain) và các Use Cases (Application) có thể được unit test một cách độc lập, không cần DB hay framework.
+  * **Supports AC-1 (Modularity) & AC-7 (Maintainability):** Tách biệt rõ ràng các mối quan tâm. Logic nghiệp vụ cốt lõi (domain) không biết gì về cơ sở dữ liệu đang được sử dụng (Postgres hay Mongo) hoặc cách nó được kích hoạt (REST hay gRPC).
+  * **Addresses requirement:** Đảm bảo tuân thủ **Dependency Inversion Principle (DIP)**. Cho phép thay đổi hạ tầng (ví dụ: đổi từ Spring sang Micronaut, hoặc từ Postgres sang MySQL) mà không ảnh hưởng đến logic nghiệp vụ.
+  * **Mitigates risk:** Ngăn ngừa rủi ro hệ thống bị khóa cứng vào một công nghệ cụ thể (vendor lock-in) và rủi ro code trở nên "rối như spaghetti" (big ball of mud) khi dự án phát triển.
+
+### Consequences
+
+**Positive:**
+
+  * ✅ Logic nghiệp vụ ở tầng `application` là "thuần túy" (không phụ thuộc framework).
+  * ✅ Có thể kiểm thử Use Cases với các repository giả (mock repositories).
+  * ✅ Có thể hoán đổi DB mà không cần chạm đến logic nghiệp vụ.
+  * ✅ Ranh giới rõ ràng giữa các tầng.
+
+**Negative:**
+
+  * ❌ Nhiều code boilerplate hơn (phải định nghĩa interfaces, DTOs).
+  * ❌ Đường cong học tập (learning curve) dốc hơn cho các lập trình viên mới.
+  * ❌ Nhiều tệp/packages hơn để điều hướng.
+
+**Risks:**
+
+  * **Risk 1:** Đội ngũ phát triển (đặc biệt là junior) có thể thấy khó khăn và áp dụng không nhất quán, dẫn đến vi phạm quy tắc phụ thuộc.
+  * **Mitigation:** Cung cấp các mẫu code (templates) chi tiết cho cả Java và Golang (như trong tệp ADR); tài liệu hóa rõ ràng; và thực hiện code reviews nghiêm ngặt để đảm bảo sự tuân thủ.
+
+### Alternatives Considered
+
+1.  **Option A: Traditional Layered Architecture** (Kiến trúc tầng truyền thống)
+      * **Pros:** Đơn giản, quen thuộc.
+      * **Cons:** Kết dính chặt (tight coupling) logic nghiệp vụ với framework/DB; khó kiểm thử độc lập.
+      * **Reason rejected:** Thất bại hoàn toàn trong việc đáp ứng **AC-4 (Testability)**, vốn là ưu tiên hàng đầu.
+
+### Related Decisions
+
+  * **Depends on:** Quyết định chọn kiến trúc tổng thể (Modular Monolith / Microservices).
+  * **Influences:** ADR-1 (Phải triển khai Clean Architecture ở cả hai stack Java và Go); ADR-4 (Repository Pattern là một hệ quả kỹ thuật trực tiếp của ADR này); ADR-5 (Chiến lược Unit Test phụ thuộc hoàn toàn vào ADR này).
+
+-----
+
+## ADR-4: Repository Pattern with Interface Abstraction
+
+### Status
+
+✅ **Accepted**
+*(Date: 2025-10-13, Deciders: Architecture Team)*
+
+### Context
+
+  * **Vấn đề:** Theo sau ADR-3 (Clean Architecture), logic nghiệp vụ (Application Layer) cần truy cập dữ liệu, nhưng không được phép phụ thuộc trực tiếp vào các chi tiết hạ tầng (như ORM hoặc database driver).
+  * **Mục tiêu:** Cần một mẫu thiết kế (design pattern) để đảo ngược sự phụ thuộc (DIP), giúp:
+      * **AC-1 (Modularity):** Tách rời logic nghiệp vụ khỏi logic truy cập dữ liệu.
+      * **AC-4 (Testability):** Dễ dàng giả lập (mock) tầng dữ liệu trong khi kiểm thử.
+
+### Decision
+
+Triển khai **Repository Pattern** với **Interface Abstraction**:
+
+1.  **Định nghĩa Repository Interfaces** (Ports) trong tầng `application`. Các interface này là "thuần túy" (không có chi tiết về framework).
+2.  **Triển khai (Implement) các Interfaces** (Adapters) trong tầng `infrastructure`. Các lớp triển khai này sẽ chứa logic ORM (Hibernate, GORM) hoặc SQL thô.
+3.  **Sử dụng Dependency Injection** để "tiêm" các triển khai cụ thể (ví dụ: `PostgresUserRepository`) vào các Use Cases (vốn chỉ biết đến interface `UserRepository`).
+
+### Rationale
+
+  * **Supports AC-4 (Testability):** Cho phép các Use Cases được kiểm thử bằng cách "tiêm" vào một mock repository (ví dụ: `MockUserRepository`) thay vì một repository thật.
+  * **Supports AC-1 (Modularity):** Cho phép thay đổi công nghệ cơ sở dữ liệu (ví dụ: đổi từ `PostgresContentRepository` sang `MongoContentRepository`) mà không cần thay đổi một dòng code nào trong tầng `application`.
+  * **Addresses requirement:** Đây là cách triển khai kỹ thuật cụ thể của **Dependency Inversion Principle (DIP)** mà ADR-3 yêu cầu.
+  * **Mitigates risk:** Giảm thiểu rủi ro logic nghiệp vụ bị phụ thuộc vào các chi tiết của ORM (ví dụ: các `UserEntity` của JPA).
+
+### Consequences
+
+**Positive:**
+
+  * ✅ Logic nghiệp vụ có thể kiểm thử mà không cần cơ sở dữ liệu.
+  * ✅ Có thể hoán đổi các triển khai cơ sở dữ liệu.
+  * ✅ Ranh giới truy cập dữ liệu rõ ràng.
+
+**Negative:**
+
+  * ❌ Nhiều interface hơn để bảo trì.
+  * ❌ Cần thêm một lớp ánh xạ (mapping) giữa các domain entities (ví dụ: `User`) và các DB entities (ví dụ: `UserEntity`).
+
+**Risks:**
+
+  * **Risk 1:** Việc ánh xạ (mapping) giữa các đối tượng domain và đối tượng DB có thể trở nên tẻ nhạt và tốn thời gian.
+  * **Mitigation:** Sử dụng các thư viện ánh xạ (ví dụ: MapStruct cho Java) hoặc tự động sinh code (code generation) để giảm bớt code boilerplate.
+
+### Alternatives Considered
+
+1.  **Option A: Sử dụng ORM trực tiếp trong Use Cases**
+      * **Pros:** Ít code boilerplate hơn.
+      * **Cons:** Logic nghiệp vụ bị kết dính chặt với ORM; không thể unit test độc lập (phải dùng integration test).
+      * **Reason rejected:** Vi phạm nghiêm trọng ADR-3 và thất bại trong việc đáp ứng **AC-4 (Testability)**.
+
+### Related Decisions
+
+  * **Depends on:** ADR-3 (Repository Pattern là một chiến thuật để thực thi Clean Architecture).
+  * **Influences:** ADR-5 (Chiến lược Unit Test dựa hoàn toàn vào việc mocking các interface repository này); ADR-2 (Cần phải có các triển khai repository cụ thể cho PostgreSQL).
+
+-----
+
+## ADR-5: Testing Strategy (Testing Pyramid)
+
+### Status
+
+✅ **Accepted**
+*(Date: 2025-10-14, Deciders: Architecture Team, QA Lead)*
+
+### Context
+
+Cần một chiến lược kiểm thử rõ ràng để đảm bảo **AC-4 (Testability)** và chất lượng code trong môi trường Microservices + Polyglot (ADR-1). Logic AI (Adaptive Engine, Scoring) đòi hỏi độ chính xác và độ tin cậy rất cao.
+
+### Decision
+
+Áp dụng mô hình **"Testing Pyramid" (Kim tự tháp Kiểm thử)**:
+
+1.  **Unit Tests (Nền tảng - 80%+):**
+      * Mục tiêu: Kiểm thử logic (Domain) và (Application) độc lập.
+      * Công nghệ: JUnit 5/Mockito (Java), `go test`/`testify/mock` (Go).
+      * Quy tắc: Bắt buộc mock tất cả I/O (database, network).
+      * SLO: Code coverage **\> 80%** cho `domain` và `application` layers.
+2.  **Integration Tests (Tầng giữa):**
+      * Mục tiêu: Kiểm thử tích hợp của service với hạ tầng (Database, Message Broker).
+      * Công nghệ: `@SpringBootTest` (Java), `go test` + **Testcontainers** (cho cả hai).
+      * Quy tắc: Kiểm tra các repository (ADR-4) có thể ghi/đọc đúng từ DB thật (chạy trong Docker).
+3.  **End-to-End (E2E) Tests (Đỉnh tháp):**
+      * Mục tiêu: Xác thực các luồng nghiệp vụ quan trọng qua toàn bộ hệ thống (giả lập từ API Gateway).
+      * Công nghệ: Cypress, Playwright, hoặc Postman/K6.
+      * Quy tắc: Chỉ test các luồng chính (ví dụ: UC-10: Nộp bài & nhận phản hồi). Giữ số lượng test ít để tránh không ổn định (flakiness).
+
+### Rationale
+
+  * **Supports AC-4 (Testability):** Cung cấp một chiến lược toàn diện để đạt được AC-4. ADR-3/ADR-4 là nền tảng kỹ thuật cho phép Unit Test hiệu quả, và ADR-5 định nghĩa cách thực thi nó.
+  * **Addresses requirement:** Đảm bảo độ tin cậy cao cho các thuật toán AI/Scoring.
+  * **Mitigates risk:** Phát hiện lỗi sớm ở tầng Unit Test (rẻ nhất, nhanh nhất) thay vì ở E2E Test (đắt nhất, chậm nhất). Integration test với Testcontainers giúp giảm rủi ro lỗi tích hợp (ví dụ: sai câu query SQL) mà Unit Test bỏ lỡ.
+
+### Consequences
+
+**Positive:**
+
+  * ✅ Độ tin cậy cao vào chất lượng code.
+  * ✅ Phát hiện lỗi sớm (Unit/Integration tests chạy trong CI pipeline).
+  * ✅ Logic AI được kiểm thử kỹ lưỡng bằng Unit Test.
+
+**Negative:**
+
+  * ❌ `Testcontainers` làm tăng thời gian chạy CI/CD pipeline (vì phải khởi động Docker).
+  * ❌ E2E tests có thể không ổn định (flaky) và khó debug.
+  * ❌ Yêu cầu đội ngũ phải học cách sử dụng Testcontainers.
+
+**Risks:**
+
+  * **Risk 1:** CI pipeline chạy quá chậm do Integration tests.
+  * **Mitigation:** Phân tách các bước (stage) trong CI: chạy Unit Test trên mỗi commit, chỉ chạy Integration/E2E Test khi tạo Pull Request hoặc merge vào main.
+  * **Risk 2:** E2E tests không ổn định (flaky).
+  * **Mitigation:** Giới hạn số lượng E2E tests chỉ cho các luồng "happy path" quan trọng nhất (ví dụ: đăng nhập, nộp bài).
+
+### Alternatives Considered
+
+1.  **Option A: Chỉ Unit Tests**
+      * **Pros:** Rất nhanh.
+      * **Cons:** Bỏ lỡ các lỗi tích hợp (ví dụ: sai cấu hình DB, sai câu query SQL).
+      * **Reason rejected:** Không đủ độ tin cậy.
+2.  **Option B: Chỉ E2E Tests (Ice Cream Cone Pattern)**
+      * **Pros:** Không có.
+      * **Cons:** Rất chậm, đắt đỏ, khó bảo trì, và khó xác định nguyên nhân gốc rễ của lỗi.
+      * **Reason rejected:** Cực kỳ không hiệu quả và giòn (brittle).
+3.  **Option C: Tách Contract Tests (ví dụ: Pact.io)**
+      * **Pros:** Rất tốt cho việc xác thực giao tiếp giữa các microservices.
+      * **Cons:** Quá phức tạp cho giai đoạn MVP.
+      * **Reason rejected:** Sẽ được xem xét trong tương lai, nhưng hiện tại là quá phức tạp.
+
+### Related Decisions
+
+  * **Depends on:** ADR-1 (Phải hỗ trợ cả Java và Go), ADR-3 và ADR-4 (Unit Test chỉ hiệu quả khi có Clean Architecture và Repository Pattern).
+
+-----
+
+## ADR-6: Security Architecture (AuthN & AuthZ)
+
+### Status
+
+✅ **Accepted**
+*(Date: 2025-10-14, Deciders: Architecture Team, Security Lead)*
+
+### Context
+
+Cần một cơ chế bảo mật (Authentication - AuthN và Authorization - AuthZ) mạnh mẽ cho hệ thống Microservices phân tán, đáp ứng:
+
+  * **AC-6 (Security):** Bảo vệ tài nguyên hệ thống.
+  * **FR11 (RBAC):** Hỗ trợ phân quyền dựa trên vai trò (Learner, Instructor, Admin).
+  * **AC-2 (Scalability):** Cơ chế bảo mật phải là stateless (không lưu trạng thái) để hỗ trợ mở rộng theo chiều ngang.
+
+### Decision
+
+Áp dụng mô hình **Bảo mật Tập trung (Centralized Auth)**:
+
+1.  **Authentication (AuthN):** Một `Auth Service` (Java/Spring Security) đóng vai trò là Identity Provider (IdP) trung tâm, tuân thủ **OAuth 2.0 / OIDC**. Dịch vụ này phát hành **JSON Web Tokens (JWTs)** (Access Token + Refresh Token).
+2.  **Authorization (AuthZ) - Edge Level:** **API Gateway** (Golang) là cổng bảo mật duy nhất. Gateway sẽ **xác thực (validate) JWT** trên MỌI request đến từ bên ngoài. Nếu JWT không hợp lệ, request bị từ chối ngay lập tức.
+3.  **Authorization (AuthZ) - Service Level (RBAC):** Sau khi xác thực, API Gateway chuyển tiếp thông tin người dùng (ví dụ: `X-User-ID`, `X-User-Roles`) vào header của request nội bộ. Các service bên trong (ví dụ: `ContentService`) **tin tưởng** thông tin từ Gateway và sử dụng `X-User-Roles` để kiểm tra RBAC (ví dụ: "chỉ `Instructor` mới được tạo nội dung").
+
+### Rationale
+
+  * **Supports AC-6 (Security):** Cung cấp một "cửa ngõ" bảo mật mạnh mẽ, tuân thủ các tiêu chuẩn ngành (OAuth 2.0/OIDC).
+  * **Supports AC-1 (Modularity - SRP):** Logic AuthN/AuthZ phức tạp được tập trung tại Auth Service và API Gateway. Các service nghiệp vụ (Scoring, Adaptive) được giữ đơn giản, không cần quan tâm đến việc xác thực chữ ký JWT.
+  * **Supports AC-2 (Scalability):** Sử dụng JWTs là stateless, hoàn toàn phù hợp với việc mở rộng ngang các service.
+  * **Addresses requirement:** Đáp ứng FR11 (RBAC) bằng cách truyền vai trò (roles) trong header.
+  * **Mitigates risk:** Giảm thiểu rủi ro logic xác thực bị triển khai lặp lại và không nhất quán ở mỗi service.
+
+### Consequences
+
+**Positive:**
+
+  * ✅ Bảo mật mạnh mẽ tại "cửa ngõ" (Gateway).
+  * ✅ Các service nghiệp vụ được đơn giản hóa (chỉ cần đọc header).
+  * ✅ Dễ dàng scale các service (stateless).
+
+**Negative:**
+
+  * ❌ `Auth Service` và `API Gateway` trở thành các điểm lỗi đơn (Single Points of Failure - SPoFs). Chúng phải có độ sẵn sàng (Availability) cực cao.
+  * ❌ Mô hình "tin tưởng Gateway" (passing headers) kém an toàn hơn mô hình Zero Trust (nơi mỗi service tự xác thực lẫn nhau).
+  * ❌ JWTs phải có thời gian sống ngắn (ví dụ: 15 phút) và cần cơ chế refresh token phức tạp.
+
+**Risks:**
+
+  * **Risk 1:** `Auth Service` hoặc `API Gateway` bị sập, toàn bộ hệ thống ngừng hoạt động.
+  * **Mitigation:** Đảm bảo triển khai các thành phần này với cấu hình High Availability (HA), chạy nhiều bản sao (replicas) trong Kubernetes.
+  * **Risk 2:** Một kẻ tấn công nội bộ (internal) có thể bypass Gateway và gọi thẳng vào service nghiệp vụ với header giả mạo.
+  * **Mitigation:** Sử dụng Mạng riêng ảo (VPC) và các Chính sách Mạng (Network Policies) của Kubernetes để đảm bảo chỉ có API Gateway mới được phép gọi các service nội bộ.
+
+### Alternatives Considered
+
+1.  **Option A: mTLS (Zero Trust)**
+      * **Pros:** Bảo mật cao nhất, mỗi service xác thực lẫn nhau.
+      * **Cons:** Cực kỳ phức tạp để triển khai và quản lý chứng chỉ (certificates) cho MVP.
+      * **Reason rejected:** Quá phức tạp (overkill) cho giai đoạn hiện tại.
+2.  **Option B: Session Cookies (Stateful)**
+      * **Pros:** Truyền thống, đơn giản.
+      * **Cons:** Không phù hợp với Microservices và **AC-2 (Scalability)** (yêu cầu sticky session hoặc shared cache).
+      * **Reason rejected:** Không thể mở rộng (non-scalable).
+3.  **Option C: Mỗi service tự validate JWT**
+      * **Pros:** Bảo mật hơn (không tin tưởng header).
+      * **Cons:** Tăng latency (mỗi service phải gọi Auth Service để lấy public key); lặp lại logic.
+      * **Reason rejected:** Không hiệu quả và vi phạm SRP.
+
+### Related Decisions
+
+  * **Depends on:** ADR-1 (API Gateway dùng Go, Auth Service dùng Java).
+  * **Influences:** ADR-7 (Thông tin `X-User-ID` từ JWT sẽ là "chìa khóa" ẩn danh để liên kết đến dữ liệu PII).
+
+-----
+
+## ADR-7: Data Privacy & Compliance (GDPR/FERPA)
+
+### Status
+
+✅ **Accepted**
+*(Date: 2025-10-14, Deciders: Architecture Team, Compliance Officer)*
+
+### Context
+
+  * Hệ thống ITS xử lý Dữ liệu Cá nhân Nhạy cảm (PII - Personally Identifiable Information) của học sinh, bao gồm tên, email, và kết quả học tập.
+  * Hệ thống phải tuân thủ các quy định về bảo mật dữ liệu như **GDPR** (Châu Âu) và **FERPA** (Mỹ).
+  * Cần một chiến lược để giảm thiểu rủi ro rò rỉ PII, tuân thủ **AC-6 (Security)** ở mức cao nhất.
+
+### Decision
+
+Áp dụng chiến lược **"Phân tách PII (PII Isolation)"** và **"Ẩn danh hóa (Anonymization)"**:
+
+1.  **Phân tách PII:** Dữ liệu PII (tên, email, SĐT) **CHỈ** được lưu trữ trong `User Management Service` (Database: Postgres - ADR-2).
+2.  **Ẩn danh hóa:** Tất cả các service khác (ví dụ: `LearnerModelService`, `ScoringService`, `AdaptiveEngine`) **KHÔNG BAO GIỜ** được lưu trữ PII. Chúng phải tham chiếu đến người dùng thông qua một **`LearnerID` (UUID)** đã được ẩn danh.
+3.  **Mã hóa PII (Encryption at Rest):** Các cột chứa PII (ví dụ: `email`, `full_name`) trong database Postgres của `User Management Service` phải được **mã hóa ở cấp độ cột** (ví dụ: sử dụng extension `pgcrypto`).
+4.  **Mã hóa khi Truyền tải (Encryption in Transit):** Tất cả giao tiếp (nội bộ và bên ngoài) phải sử dụng **TLS (HTTPS)**.
+5.  **Quyền được Lãng quên (Right to be Forgotten):** Triển khai một API (chỉ Admin) cho phép xóa dữ liệu người dùng dựa trên `LearnerID`, API này sẽ kích hoạt các sự kiện (event) để các service khác xóa dữ liệu liên quan.
+
+### Rationale
+
+  * **Supports AC-6 (Security):** Đây là biện pháp bảo mật cốt lõi để bảo vệ dữ liệu người dùng. Nó tuân thủ Nguyên tắc Đặc quyền Tối thiểu (Principle of Least Privilege) - `ScoringService` không cần biết tên học sinh để chấm bài.
+  * **Addresses requirement:** Đáp ứng trực tiếp các yêu cầu tuân thủ (Compliance) của GDPR và FERPA.
+  * **Mitigates risk:** Giảm thiểu rủi ro một cách đáng kể. Ngay cả khi `LearnerModelService` bị xâm nhập, kẻ tấn công cũng không thể lấy được danh tính thật của học sinh (chỉ có các UUID ẩn danh).
+
+### Consequences
+
+**Positive:**
+
+  * ✅ Bảo mật PII và tuân thủ pháp lý ở mức độ cao.
+  * ✅ Giảm đáng kể bề mặt tấn công (attack surface).
+  * ✅ Thực thi tốt Nguyên tắc Đặc quyền Tối thiểu (Least Privilege).
+
+**Negative:**
+
+  * ❌ Tăng độ phức tạp. Việc "join" dữ liệu (ví dụ: hiển thị tên học sinh bên cạnh điểm số) trở nên khó khăn hơn. Nó đòi hỏi phải gọi 2 service (User Service + Scoring Service) và join ở tầng ứng dụng (API Gateway hoặc Frontend).
+  * ❌ Mã hóa cấp độ cột (pgcrypto) làm giảm hiệu năng query trên các cột đó (không thể index hiệu quả).
+  * ❌ Triển khai API "Right to be Forgotten" phức tạp trong hệ thống phân tán (cần dùng Saga pattern).
+
+**Risks:**
+
+  * **Risk 1:** Hiệu năng hệ thống bị ảnh hưởng do phải gọi nhiều service để tổng hợp dữ liệu (ví dụ: lấy tên user và điểm số).
+  * **Mitigation:** Sử dụng API Gateway để tổng hợp (aggregate) các lời gọi, hoặc sử dụng cơ chế cache (Redis) cho các dữ liệu PII ít thay đổi (như tên).
+  * **Risk 2:** Việc triển khai "Right to be Forgotten" không nhất quán, PII bị xóa ở User Service nhưng dữ liệu ẩn danh vẫn còn ở các service khác.
+  * **Mitigation:** Sử dụng một Saga Pattern (dựa trên Event-Driven) để đảm bảo yêu cầu xóa được gửi đến tất cả các service liên quan một cách đáng tin cậy.
+
+### Alternatives Considered
+
+1.  **Option A: Lưu PII ở mọi nơi**
+      * **Pros:** Đơn giản, dễ query.
+      * **Cons:** Vi phạm pháp lý (GDPR/FERPA); rủi ro bảo mật cực kỳ cao. Một service bị hack là mất tất cả PII.
+      * **Reason rejected:** Không thể chấp nhận được về mặt bảo mật và pháp lý.
+2.  **Option B: Chỉ mã hóa Toàn bộ Database (Full Disk Encryption)**
+      * **Pros:** Đơn giản hơn mã hóa cột.
+      * **Cons:** Không đủ. Nếu service (ứng dụng) bị xâm nhập, kẻ tấn công vẫn đọc được PII (vì hệ điều hành đã giải mã đĩa). Mã hóa cột bảo vệ chống lại cả việc ứng dụng bị xâm nhập.
+      * **Reason rejected:** Không đủ an toàn (Fails AC-6).
+
+### Related Decisions
+
+  * **Depends on:** ADR-2 (Cần PostgreSQL để sử dụng `pgcrypto`); ADR-6 (Cần JWT và `LearnerID` để làm khóa ẩn danh).
