@@ -2,9 +2,9 @@
 
 \indentpar \indentpar Các yêu cầu chức năng của hệ thống ITS (Intelligent Tutoring System) được trình bày chi tiết dưới đây dựa trên User Stories, Use Cases và Domain Model đã phân tích trước đó. Mỗi chức năng nhằm đáp ứng các nhu cầu cụ thể của stakeholder và được liên kết chặt chẽ với Vision Statement.
 
-\subsubsection{User Stories}
+\subsubsection{Câu chuyện người dùng}
 
-\indentpar \indentpar Các User Stories mô tả hành vi mong đợi của người dùng theo dạng ``As a [role], I want [goal] so that [benefit]''.
+\indentpar \indentpar Các Câu chuyện người dùng (User Stories) mô tả hành vi mong đợi của người dùng theo dạng ``As a [role], I want [goal] so that [benefit]''.
 Mỗi story được gắn kèm tiêu chí chấp nhận (Acceptance Criteria) để đảm bảo có thể kiểm chứng được trong kiểm thử và đánh giá. 
 
 Các User Stories này được ánh xạ trực tiếp sang các Use Case và được hiện thực hóa trong Domain Model.
@@ -86,9 +86,9 @@ $3.$ Admin có thể rollback về phiên bản AI trước đó trong vòng $5$
 \end{longtable}
 \normalsize
 
-\subsubsection{Use Cases}
+\subsubsection{Trường hợp sử dụng}
 
-\indentpar \indentpar Các Use Case cụ thể hóa cách người dùng tương tác với hệ thống để đạt được mục tiêu nghiệp vụ.
+\indentpar \indentpar Các Trường hợp sử dụng (Use Case) cụ thể hóa cách người dùng tương tác với hệ thống để đạt được mục tiêu nghiệp vụ.
 Chúng đóng vai trò là cầu nối giữa yêu cầu người dùng và kiến trúc kỹ thuật, giúp xác định rõ:
 \begin{itemize}
     \item Actor nào tham gia,
@@ -242,22 +242,22 @@ $5.$ Learner được động viên tiếp tục học. \\
         \centering
         \includegraphics[width=\textwidth]{images/usecase_10.png}
     \end{minipage}
-    \caption{Use Case: Làm Bài tập \& Assessment (trái) và Chấm điểm \& Phản hồi Tức thì (phải)}
+    \caption{Use Case Làm Bài tập (trái) \& Chấm điểm, Phản hồi Tức thì (phải)}
     \label{fig:usecase-9-10}
 \end{figure}
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.6\textwidth]{images/usecase_11.png}
-    \caption{Use Case: Gợi ý Bài học Bù}
+    \caption{Use Case Gợi ý Bài học Bù}
     \label{fig:usecase-11}
 \end{figure}
 
 \FloatBarrier
 
-\subsubsection{Domain Model}
+\subsubsection{Mô hình miền ứng dụng}
 
-\indentpar \indentpar Domain Model mô tả bộ khung logic nghiệp vụ cốt lõi của Hệ thống Gia sư Thông minh (Intelligent Tutoring System – ITS).
+\indentpar \indentpar Mô hình miền ứng dụng (Domain Model) mô tả bộ khung logic nghiệp vụ cốt lõi của Hệ thống Gia sư Thông minh (Intelligent Tutoring System – ITS).
 Mục tiêu không chỉ là xác định “hệ thống có những lớp nào”, mà còn là hiểu lý do tại sao cần các lớp đó, chúng tương tác với nhau ra sao, và tác động thế nào đến quyết định kiến trúc.
 
 Domain Model đóng vai trò cầu nối giữa phân tích nghiệp vụ (Use Cases) và thiết kế kiến trúc (Architecture Design) — đảm bảo rằng mọi quyết định kỹ thuật đều bắt nguồn từ nghiệp vụ thực tế.

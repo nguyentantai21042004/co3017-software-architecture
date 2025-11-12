@@ -3,23 +3,24 @@
 ## Mục Tiêu
 
 So sánh các kiểu kiến trúc phổ biến và chọn ra phong cách phù hợp nhất để hiện thực hóa các Architecture Characteristics (ACs) đã được ưu tiên cao nhất cho ITS:
-- **AC1: Modularity**
-- **AC2: Scalability**  
-- **AC3: Performance**
-- **AC4: Testability**
 
----
+  - **AC1: Modularity**
+  - **AC2: Scalability**
+  - **AC3: Performance**
+  - **AC4: Testability**
 
-## 1. Ma Trận Đặc Điểm Kiến Trúc (Architecture Characteristics Matrix)
+-----
+
+## 1\. Ma Trận Đặc Điểm Kiến Trúc (Architecture Characteristics Matrix)
 
 ### 1.1. Bảng So Sánh Tổng Quát
 
 Bảng dưới đây so sánh 8 phong cách kiến trúc phổ biến dựa trên 13 đặc điểm quan trọng:
 
 | **Đặc Điểm / Tiêu Chí** | **Layered** | **Modular Monolith** | **Microkernel** | **Microservices** | **Service-based** | **Service-oriented (SOA)** | **Event-driven** | **Space-based** |
-|-------------------------|-------------|----------------------|-----------------|-------------------|-------------------|----------------------------|------------------|-----------------|
+|---|---|---|---|---|---|---|---|---|
 | **Partitioning** | Technical | Domain | Technical | Domain | Domain | Technical | Technical | Technical |
-| **Cost** | $ | $ | $ | $$$$$ | $$ | $$$$$ | $$ | $$$$$ |
+| **Cost** | $|$ | $ | $$$$$|$$ | $$$$$|$$ | $$$$$ |
 | **Maintainability** | ⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
 | **Testability** | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐ | ⭐⭐ | ⭐ |
 | **Deployability** | ⭐ | ⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
@@ -33,38 +34,43 @@ Bảng dưới đây so sánh 8 phong cách kiến trúc phổ biến dựa trê
 | **Interoperability** | ⭐ | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ |
 
 **Chú thích:**
-- **Partitioning:** Technical (phân chia theo kỹ thuật) vs Domain (phân chia theo nghiệp vụ)
-- **Cost:** $ (thấp) → $$$$$ (rất cao)
-- **Đặc điểm khác:** ⭐ (kém) → ⭐⭐⭐⭐⭐ (xuất sắc)
+
+  - **Partitioning:** Technical (phân chia theo kỹ thuật) vs Domain (phân chia theo nghiệp vụ)
+  - **Cost:** $ (thấp) → $$$$$ (rất cao)
+  - **Đặc điểm khác:** ⭐ (kém) → ⭐⭐⭐⭐⭐ (xuất sắc)
 
 ### 1.2. Giải Thích Các Đặc Điểm Quan Trọng
 
 #### **Partitioning (Phương Pháp Phân Chia)**
-- **Technical:** Phân chia theo các tầng kỹ thuật (Presentation, Business, Data)
-  - *Ví dụ:* Layered, Event-driven, Space-based
-- **Domain:** Phân chia theo các miền nghiệp vụ (User Management, Content Delivery, Assessment)
-  - *Ví dụ:* Microservices, Service-based, Modular Monolith
+
+  - **Technical:** Phân chia theo các tầng kỹ thuật (Presentation, Business, Data)
+      - *Ví dụ:* Layered, Event-driven, Space-based
+  - **Domain:** Phân chia theo các miền nghiệp vụ (User Management, Content Delivery, Assessment)
+      - *Ví dụ:* Microservices, Service-based, Modular Monolith
 
 #### **Maintainability (Khả Năng Bảo Trì)**
-- **Cao (⭐⭐⭐⭐⭐):** Microservices - mỗi service độc lập, dễ sửa đổi
-- **Thấp (⭐):** Layered, SOA - tight coupling, thay đổi lan tỏa
+
+  - **Cao (⭐⭐⭐⭐⭐):** Microservices - mỗi service độc lập, dễ sửa đổi
+  - **Thấp (⭐):** Layered, SOA - tight coupling, thay đổi lan tỏa
 
 #### **Testability (Khả Năng Kiểm Thử)**
-- **Cao (⭐⭐⭐⭐⭐):** Microservices - test độc lập từng service
-- **Thấp (⭐):** SOA, Space-based - phụ thuộc nhiều, khó mock
+
+  - **Cao (⭐⭐⭐⭐⭐):** Microservices - test độc lập từng service
+  - **Thấp (⭐):** SOA, Space-based - phụ thuộc nhiều, khó mock
 
 #### **Scalability (Khả Năng Mở Rộng)**
-- **Cao (⭐⭐⭐⭐⭐):** Microservices, Event-driven, Space-based - scale từng component
-- **Thấp (⭐):** Layered - phải scale toàn bộ application
 
----
+  - **Cao (⭐⭐⭐⭐⭐):** Microservices, Event-driven, Space-based - scale từng component
+  - **Thấp (⭐):** Layered - phải scale toàn bộ application
 
-## 2. Ánh Xạ Architecture Characteristics Của ITS
+-----
+
+## 2\. Ánh Xạ Architecture Characteristics Của ITS
 
 Dựa trên các **Architecture Characteristics** đã xác định cho ITS, chúng ta ánh xạ chúng với bảng so sánh:
 
 | **ITS Architecture Characteristics** | **Tương Ứng Trong Bảng** | **Ưu Tiên** |
-|--------------------------------------|--------------------------|-------------|
+|---|---|---|
 | AC1: Modularity | Maintainability, Evolvability | ⭐⭐⭐ (Cao) |
 | AC2: Scalability | Scalability, Elasticity | ⭐⭐⭐ (Cao) |
 | AC3: Performance | Responsiveness | ⭐⭐⭐ (Cao) |
@@ -72,16 +78,16 @@ Dựa trên các **Architecture Characteristics** đã xác định cho ITS, ch�
 | AC5: Deployability | Deployability | ⭐⭐⭐ (Cao) |
 | AC6: Security | *(Cần đánh giá riêng)* | ⭐⭐⭐ (Cao) |
 
----
+-----
 
-## 3. So Sánh Các Phong Cách Kiến Trúc Cho ITS
+## 3\. So Sánh Các Phong Cách Kiến Trúc Cho ITS
 
 ### 3.1. Đánh Giá Chi Tiết
 
 | **Architecture Style** | **Phù Hợp Với ITS?** | **Ưu Điểm Cho ITS** | **Nhược Điểm Cho ITS** | **Điểm Tổng** |
-|------------------------|----------------------|---------------------|------------------------|---------------|
+|---|---|---|---|---|
 | **Layered** | ❌ Không | - Đơn giản (⭐⭐⭐⭐⭐)<br>- Chi phí thấp ($) | - Scalability thấp (⭐)<br>- Testability thấp (⭐⭐)<br>- Không hỗ trợ Modularity | **2/10** |
-| **Modular Monolith** | ⚠️ Có thể (cho MVP) | - Chi phí thấp ($)<br>- Maintainability tốt (⭐⭐⭐)<br>- Đơn giản vừa phải (⭐⭐⭐⭐) | - Scalability hạn chế (⭐⭐)<br>- Testability trung bình (⭐⭐⭐)<br>- Không hỗ trợ live model swapping | **5/10** |
+| **Modular Monolith** | ⚠️ **Phương án dự phòng/MVP** | - Chi phí thấp ($)<br>- Maintainability tốt (⭐⭐⭐)<br>- Đơn giản vừa phải (⭐⭐⭐⭐) | - Scalability hạn chế (⭐⭐)<br>- Testability trung bình (⭐⭐⭐)<br>- Không hỗ trợ live model swapping | **5/10** |
 | **Microkernel** | ⚠️ Có thể | - Evolvability cao (⭐⭐⭐⭐⭐)<br>- Abstraction tốt (⭐⭐⭐⭐⭐)<br>- Hỗ trợ plugin architecture | - Scalability hạn chế (⭐⭐)<br>- Responsiveness thấp (⭐⭐)<br>- Không phù hợp với distributed system | **6/10** |
 | **Microservices** | ✅ **Rất Phù Hợp** | - Maintainability xuất sắc (⭐⭐⭐⭐⭐)<br>- Testability xuất sắc (⭐⭐⭐⭐⭐)<br>- Scalability xuất sắc (⭐⭐⭐⭐⭐)<br>- Deployability xuất sắc (⭐⭐⭐⭐⭐)<br>- **Hỗ trợ live model swapping** | - Chi phí cao ($$$$$)<br>- Độ phức tạp cao (⭐⭐)<br>- Cần DevOps expertise | **9/10** |
 | **Service-based** | ⚠️ Có thể | - Chi phí vừa phải ($$)<br>- Scalability tốt (⭐⭐⭐⭐)<br>- Interoperability tốt (⭐⭐⭐⭐) | - Testability thấp (⭐⭐)<br>- Deployability thấp (⭐⭐)<br>- Không linh hoạt như Microservices | **6/10** |
@@ -92,7 +98,7 @@ Dựa trên các **Architecture Characteristics** đã xác định cho ITS, ch�
 ### 3.2. So Sánh Chi Tiết: Monolithic vs Microservices
 
 | **Tiêu chí** | **Monolithic Architecture** | **Microservices Architecture** |
-|--------------|----------------------------|-------------------------------|
+|---|---|---|
 | **AC1: Modularity** | Thấp. Mặc dù có thể tổ chức module lô-gíc (package), việc triển khai vật lý là đơn lẻ, dẫn đến khớp nối cứng nhắc giữa các module. | Rất Cao. Các dịch vụ AI/Domain (ví dụ: Adaptive Engine, Scoring Engine) được cô lập thành các đơn vị triển khai độc lập (Architecture Quantum). |
 | **AC2: Scalability** | Thấp. Phải nhân bản toàn bộ ứng dụng (kể cả phần không cần mở rộng). Khó mở rộng các module tính toán nặng (AI) độc lập. | Rất Cao. Có thể Scale Horizontally chỉ các service cần thiết (ví dụ: Scoring Engine) để xử lý tải nặng. |
 | **AC3: Performance** | Trung bình. Không có network overhead, nhưng khó tối ưu từng phần. | Cao. Có thể tối ưu từng service, nhưng có network latency. |
@@ -100,9 +106,9 @@ Dựa trên các **Architecture Characteristics** đã xác định cho ITS, ch�
 | **AC5: Deployability** | Thấp. Thay đổi nhỏ (bug fix) yêu cầu triển khai lại toàn bộ ứng dụng, không thể hỗ trợ Live AI Model Swapping (FR9). | Rất Cao. Cho phép triển khai độc lập và liên tục từng dịch vụ (ví dụ: hoán đổi phiên bản Adaptive Engine V2 mà không cần downtime). |
 | **Simplicity** | Cao. Đơn giản khi bắt đầu, vận hành và gỡ lỗi (debugging) dễ hơn. | Thấp. Độ phức tạp cao (network, distributed tracing, service mesh). |
 
----
+-----
 
-## 4. Quyết Định Kiến Trúc
+## 4\. Quyết Định Kiến Trúc
 
 ### 4.1. Lựa Chọn: Hybrid Microservices + Event-Driven Architecture
 
@@ -110,57 +116,68 @@ Dựa trên các **Architecture Characteristics** đã xác định cho ITS, ch�
 
 **Lý do:**
 
-1. **Microservices làm nền tảng:**
-   - Đáp ứng tất cả yêu cầu về Modularity (AC1), Scalability (AC2), Testability (AC4)
-   - Hỗ trợ live AI model swapping (FR9, FR12)
-   - Cho phép independent deployment (AC5: Deployability)
-   - Mỗi service có thể sử dụng công nghệ phù hợp nhất
+1.  **Microservices làm nền tảng:**
 
-2. **Event-Driven cho real-time components:**
-   - Xử lý real-time feedback (FR6)
-   - Xử lý adaptive learning (FR4)
-   - Giảm coupling giữa các services
-   - Tăng responsiveness và fault-tolerance
+      - Đáp ứng tất cả yêu cầu về Modularity (AC1), Scalability (AC2), Testability (AC4)
+      - Hỗ trợ live AI model swapping (FR9, FR12)
+      - Cho phép independent deployment (AC5: Deployability)
+      - Mỗi service có thể sử dụng công nghệ phù hợp nhất
+
+2.  **Event-Driven cho real-time components:**
+
+      - Xử lý real-time feedback (FR6)
+      - Xử lý adaptive learning (FR4)
+      - Giảm coupling giữa các services
+      - Tăng responsiveness và fault-tolerance
 
 ### 4.2. Justification (Biện Minh Chi Tiết)
 
 #### **Bắt buộc về Modularity & Deployability**
+
 ITS có yêu cầu cốt lõi là **Live AI Model Swapping (FR9, FR12)**. Chỉ Microservices mới cho phép:
-- Triển khai và hoán đổi các phiên bản Mô hình AI (ví dụ: AdaptivePathGenerator) độc lập
-- Không gây downtime khi cập nhật
-- Củng cố tính Modularity (AC1) và Deployability (AC5)
+
+  - Triển khai và hoán đổi các phiên bản Mô hình AI (ví dụ: AdaptivePathGenerator) độc lập
+  - Không gây downtime khi cập nhật
+  - Củng cố tính Modularity (AC1) và Deployability (AC5)
 
 #### **Yêu cầu về Scalability**
+
 Tải tính toán nặng và biến động của các thuật toán AI/ML (FR7) yêu cầu:
-- Mở rộng độc lập từng service
-- Auto-scaling theo nhu cầu thực tế
-- Điều mà Monolithic không thể đáp ứng hiệu quả (AC2)
+
+  - Mở rộng độc lập từng service
+  - Auto-scaling theo nhu cầu thực tế
+  - Điều mà Monolithic không thể đáp ứng hiệu quả (AC2)
 
 #### **Hỗ trợ Testability**
+
 Microservices, khi kết hợp với Clean/Hexagonal Architecture bên trong mỗi service:
-- Logic AI/Domain có tính Testability (AC4) rất cao
-- Cần thiết cho tính đúng đắn của thuật toán
-- Dễ dàng unit test và integration test
 
----
+  - Logic AI/Domain có tính Testability (AC4) rất cao
+  - Cần thiết cho tính đúng đắn của thuật toán
+  - Dễ dàng unit test và integration test
 
-## 5. Lựa Chọn Mẫu Kiến Trúc Nội Bộ (Internal Architecture Pattern)
+-----
+
+## 5\. Lựa Chọn Mẫu Kiến Trúc Nội Bộ (Internal Architecture Pattern)
 
 ### 5.1. Clean Architecture / Hexagonal Architecture
 
 Để đảm bảo **Testability (AC4)** và **Maintainability (AC7)** bên trong mỗi Microservice, ta sẽ áp dụng:
 
 **Clean Architecture (hoặc Hexagonal/Onion Architecture):**
-- Bảo vệ Logic Nghiệp vụ Cốt lõi (Domain Services) khỏi các chi tiết bên ngoài
-- Tách biệt khỏi Database, Framework, và UI
+
+  - Bảo vệ Logic Nghiệp vụ Cốt lõi (Domain Services) khỏi các chi tiết bên ngoài
+  - Tách biệt khỏi Database, Framework, và UI
 
 **Thực thi Dependency Inversion Principle (DIP):**
-- Các Interactor/Use Cases (Policy Modules, như AdaptivePathGenerator) chỉ phụ thuộc vào Interfaces (Abstraction)
-- Không phụ thuộc vào các lớp triển khai (Concretion)
+
+  - Các Interactor/Use Cases (Policy Modules, như AdaptivePathGenerator) chỉ phụ thuộc vào Interfaces (Abstraction)
+  - Không phụ thuộc vào các lớp triển khai (Concretion)
 
 **Thực thi Single Responsibility Principle (SRP):**
-- Đảm bảo các lớp bên trong mỗi tầng có độ Functional Cohesion cao nhất
-- Mỗi class chỉ có một lý do để thay đổi
+
+  - Đảm bảo các lớp bên trong mỗi tầng có độ Functional Cohesion cao nhất
+  - Mỗi class chỉ có một lý do để thay đổi
 
 ### 5.2. Cấu Trúc Bên Trong Mỗi Service
 
@@ -176,59 +193,127 @@ Microservice (ví dụ: Learner Model Service)
     └── REST API, GraphQL, gRPC endpoints
 ```
 
----
+-----
 
-## 6. Trade-offs Được Chấp Nhận
+## 6\. Phân tích Đánh đổi và Chi phí (Trade-offs & Cost Analysis)
 
-### 6.1. Complexity vs Scalability & Modularity
+### 6.1. Trade-offs Được Chấp Nhận
 
-| **Trade-off** | **Quyết Định** | **Mitigation** |
-|---------------|---------------|----------------|
+| **Trade-off** | **Quyết Định** | **Mitigation (Giảm thiểu)** |
+|---|---|---|
 | **Simplicity (⭐⭐) ↔ Scalability (⭐⭐⭐⭐⭐)** | Chấp nhận độ phức tạp cao để đạt Scalability tối ưu | - Sử dụng managed Kubernetes (GKE, EKS)<br>- Infrastructure as Code (Terraform)<br>- Training DevOps team |
 | **Development Cost (+30%) ↔ Testability (⭐⭐⭐⭐⭐)** | Chấp nhận chi phí cao hơn để đạt Testability cao | - Invest in testing frameworks<br>- TDD practices<br>- Automated testing |
 | **Network Latency ↔ Modularity** | Chấp nhận latency để đạt tính module hóa | - Implement caching (Redis)<br>- Use gRPC cho internal calls<br>- Optimize service boundaries |
 
-### 6.2. Tổng Kết Trade-offs
+### 6.2. Bảng Tổng Kết Trade-offs
 
 **Chấp nhận:**
-- ❌ High complexity (Simplicity ⭐⭐)
-- ❌ High cost ($$$$$)
-- ❌ Steep learning curve
-- ❌ Network latency overhead
+
+  - ❌ High complexity (Simplicity ⭐⭐)
+  - ❌ High cost ($$$$$)
+  - ❌ Steep learning curve
+  - ❌ Network latency overhead
 
 **Đạt được:**
-- ✅ Excellent Modularity (⭐⭐⭐⭐⭐)
-- ✅ Excellent Scalability (⭐⭐⭐⭐⭐)
-- ✅ Excellent Testability (⭐⭐⭐⭐⭐)
-- ✅ Excellent Deployability (⭐⭐⭐⭐⭐)
-- ✅ Support for Live AI Model Swapping
 
----
+  - ✅ Excellent Modularity (⭐⭐⭐⭐⭐)
+  - ✅ Excellent Scalability (⭐⭐⭐⭐⭐)
+  - ✅ Excellent Testability (⭐⭐⭐⭐⭐)
+  - ✅ Excellent Deployability (⭐⭐⭐⭐⭐)
+  - ✅ Support for Live AI Model Swapping
 
-## 7. Kết Luận
+### 6.3. Phân tích Tổng Chi phí Sở hữu (TCO Analysis)
 
-### 7.1. Architecture Style Cuối Cùng
+Việc lựa chọn Microservices là một quyết định chiến lược về chi phí:
+
+  - **Chi phí Ban đầu (Cao):**
+
+      * **Hạ tầng:** Yêu cầu hạ tầng phức tạp (Kubernetes, Service Mesh, API Gateway, Message Broker).
+      * **Phát triển:** Thời gian thiết lập ban đầu lâu hơn do phải định nghĩa ranh giới service, API contracts.
+      * **DevOps:** Yêu cầu kỹ năng DevOps chuyên biệt để thiết lập CI/CD và giám sát (Observability).
+
+  - **Chi phí Dài hạn (Thấp hơn nếu thành công):**
+
+      * **Bảo trì:** Dễ dàng hơn (AC7). Sửa lỗi trong một service không ảnh hưởng đến service khác.
+      * **Mở rộng (Scalability):** Tối ưu chi phí. Chỉ scale các service cần thiết (AC2), thay vì scale toàn bộ monolith, giúp tiết kiệm chi phí tài nguyên.
+      * **Phát triển tính năng:** Nhanh hơn. Các team có thể phát triển độc lập.
+
+**Kết luận TCO:** Chúng ta chấp nhận chi phí ban đầu cao để đổi lấy chi phí vận hành và mở rộng tối ưu trong dài hạn, phù hợp với tầm nhìn hỗ trợ hàng ngàn người dùng.
+
+-----
+
+## 7\. Chiến lược Phát triển và Rủi ro (Evolution Strategy & Risk)
+
+Quyết định chọn Microservices mang lại nhiều rủi ro về độ phức tạp. Do đó, chúng ta cần một chiến lược phát triển theo từng giai đoạn và các phương án dự phòng.
+
+### 7.1. Phân tích Rủi ro Kiến trúc (Risk Matrix)
+
+| **Rủi ro** | **Mô tả** | **Khả năng xảy ra** | **Tác động** | **Phương án Giảm thiểu (Mitigation)** |
+|---|---|---|---|---|
+| **Độ phức tạp Vận hành** | Team không đủ kỹ năng DevOps để quản lý Kubernetes, Service Mesh, và Observability. | Cao | Rất Cao | 1. Sử dụng dịch vụ managed (GKE, EKS) để giảm tải vận hành.<br>2. Bắt đầu với **Modular Monolith** (xem 7.2).<br>3. Đào tạo team, thuê chuyên gia DevOps. |
+| **Lỗi Hệ thống Phân tán** | Lỗi mạng, service bị treo, latency cao gây ảnh hưởng dây chuyền. | Cao | Cao | 1. Áp dụng **Circuit Breaker Pattern**.<br>2. Thiết lập Retry Logic với Exponential Backoff.<br>3. Giám sát chặt chẽ (AC9: Observability). |
+| **Tính nhất quán Dữ liệu** | Dữ liệu bị mất đồng bộ giữa các service (ví dụ: `ScoringService` và `LearnerModelService`). | Trung bình | Cao | 1. Sử dụng **Eventual Consistency** qua Message Broker (Kafka/RabbitMQ).<br>2. Áp dụng **Saga Pattern** cho các transaction kéo dài.<br>3. Thiết lập cơ chế bù trừ (compensating transactions). |
+| **Phân rã Service Sai** | Chọn sai ranh giới (boundaries) cho service, dẫn đến high coupling (khớp nối cao) và phải thiết kế lại. | Trung bình | Rất Cao | 1. Tuân thủ chặt chẽ **Domain-Driven Design (DDD)**.<br>2. Bắt đầu với các service lớn (coarse-grained) rồi mới tách nhỏ dần khi hiểu rõ nghiệp vụ. |
+
+### 7.2. Lộ trình Phát triển (Evolution Path): Từ Modular Monolith đến Microservices
+
+Để giảm thiểu rủi ro về độ phức tạp ban đầu (Risk 1 & 4), chúng ta sẽ không xây dựng Microservices từ ngày đầu tiên.
+
+**Giai đoạn 1: MVP (Minimum Viable Product) → Modular Monolith**
+
+1.  **Kiến trúc:** Xây dựng một ứng dụng **Monolith** duy nhất.
+2.  **Thiết kế:** Bên trong monolith, code được tổ chức thành các **modules nghiệp vụ** (ví dụ: `learner`, `content`, `scoring`) với ranh giới rõ ràng, tuân thủ Clean Architecture và DIP.
+3.  **Lợi ích:** Time-to-market nhanh, đơn giản, chi phí thấp, team tập trung học nghiệp vụ. Vẫn đảm bảo `Testability (AC4)` ở mức tốt.
+
+**Giai đoạn 2: Phát triển (Post-MVP) → Áp dụng Strangler Fig Pattern**
+
+1.  **Kích hoạt:** Khi hệ thống bắt đầu có yêu cầu về `Scalability (AC2)` (ví dụ: service chấm điểm bị quá tải).
+2.  **Chiến lược:** Áp dụng **Strangler Fig Pattern** để di trú dần dần.
+3.  **Các bước:**
+      * Tách module `Scoring` ra thành một **Microservice** mới (`ScoringService`).
+      * Thiết lập một API Gateway (hoặc proxy) để điều hướng các request `/api/score` đến service mới này.
+      * Các phần còn lại (ví dụ: `/api/user`) vẫn đi vào Monolith.
+      * Lặp lại quy trình này cho các service khác (như `AdaptiveEngine`) khi cần thiết.
+
+**Lợi ích của Lộ trình này:** Giảm rủi ro, cho phép team học hỏi dần, và chỉ tăng độ phức tạp khi thực sự cần thiết.
+
+### 7.3. Phương án Dự phòng (Fallback Option)
+
+  - **Phương án:** **Modular Monolith** (đã được đánh giá 5/10 ở Bảng 3.1).
+  - **Kích hoạt:** Nếu sau Giai đoạn 1 (MVP), team đánh giá rằng chi phí và độ phức tạp của việc chuyển sang Microservices (Giai đoạn 2) là quá cao so với nguồn lực hiện tại.
+  - **Hành động:** Chúng ta sẽ **dừng lộ trình di trú** và tập trung tối ưu hóa Modular Monolith.
+  - **Đánh đổi chấp nhận:** Chúng ta sẽ chấp nhận `Scalability` ở mức trung bình (⭐⭐) và `Deployability` trung bình (⭐⭐⭐). Hệ thống vẫn đảm bảo `Testability` (⭐⭐⭐) và `Maintainability` (⭐⭐⭐), đủ tốt để vận hành ở quy mô nhỏ hơn (\< 1,000 người dùng) trước khi tìm kiếm thêm đầu tư/nguồn lực.
+
+-----
+
+## 8\. Kết Luận
+
+### 8.1. Architecture Style Cuối Cùng
 
 **Hybrid Microservices + Event-Driven Architecture**
 
 **Justification:**
-1. ✅ Đáp ứng tất cả Architecture Characteristics quan trọng của ITS
-2. ✅ Hỗ trợ tất cả Functional Requirements (đặc biệt FR9, FR12: Live AI Model Swapping)
-3. ✅ Đáp ứng Non-Functional Requirements (scalability, performance, availability)
-4. ⚠️ Trade-offs chấp nhận được với chiến lược mitigation rõ ràng
 
-### 7.2. Internal Architecture Pattern
+1.  ✅ Đáp ứng tất cả Architecture Characteristics quan trọng của ITS.
+2.  ✅ Hỗ trợ tất cả Functional Requirements (đặc biệt FR9, FR12: Live AI Model Swapping).
+3.  ✅ Đáp ứng Non-Functional Requirements (scalability, performance, availability).
+4.  ⚠️ Trade-offs và Rủi ro chấp nhận được với **Lộ trình Phát triển (Evolution Path)** và **Phương án Giảm thiểu (Mitigation)** rõ ràng.
 
-**Clean Architecture** cho mỗi Microservice:
-- High testability
-- Technology independence
-- Long-term maintainability
-- Tuân thủ SOLID principles
+### 8.2. Internal Architecture Pattern
 
----
+**Clean Architecture** cho mỗi Microservice (và cho các module trong Monolith ở Giai đoạn 1):
+
+  - High testability
+  - Technology independence
+  - Long-term maintainability
+  - Tuân thủ SOLID principles
+
+-----
 
 **Tài liệu tham khảo:**
-- Software Architecture: The Hard Parts (Neal Ford et al.)
-- Building Microservices (Sam Newman)
-- Fundamentals of Software Architecture (Mark Richards, Neal Ford)
-- Clean Architecture (Robert C. Martin)
+
+  - Software Architecture: The Hard Sparts (Neal Ford et al.)
+  - Building Microservices (Sam Newman)
+  - Fundamentals of Software Architecture (Mark Richards, Neal Ford)
+  - Clean Architecture (Robert C. Martin)
+  - Monolith to Microservices (Sam Newman)
