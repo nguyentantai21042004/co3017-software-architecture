@@ -257,22 +257,33 @@ $5.$ Learner được động viên tiếp tục học. \\
 
 \subsubsection{Domain Model}
 
-\indentpar \indentpar Phần Domain Model mô tả cấu trúc logic nghiệp vụ cốt lõi của Hệ thống Gia sư Thông minh (Intelligent Tutoring System -- ITS).
-Nó là cầu nối giữa phân tích yêu cầu (Use Cases) và thiết kế kiến trúc (Architecture Design), giúp xác định các thực thể (entities), ranh giới (aggregates) và dịch vụ miền (domain services).
+\indentpar \indentpar Domain Model mô tả bộ khung logic nghiệp vụ cốt lõi của Hệ thống Gia sư Thông minh (Intelligent Tutoring System – ITS).
+Mục tiêu không chỉ là xác định “hệ thống có những lớp nào”, mà còn là hiểu lý do tại sao cần các lớp đó, chúng tương tác với nhau ra sao, và tác động thế nào đến quyết định kiến trúc.
 
-\noindent\textbf{Aggregates}
+Domain Model đóng vai trò cầu nối giữa phân tích nghiệp vụ (Use Cases) và thiết kế kiến trúc (Architecture Design) — đảm bảo rằng mọi quyết định kỹ thuật đều bắt nguồn từ nghiệp vụ thực tế.
 
-Trong ITS, mỗi Aggregate đại diện cho một nhóm thực thể có quan hệ nghiệp vụ chặt chẽ, được quản lý bởi một Aggregate Root duy nhất.
-Các Aggregates được xác định dựa trên hành vi nghiệp vụ và tần suất thay đổi, nhằm đảm bảo tính mô-đun (modularity), tính mở rộng (scalability) và tính tách biệt (separation of concerns).
+\textbf{a. Aggregates}
 
-\begin{table}[ht]
+Trong một hệ thống học tập cá nhân hóa như ITS, dữ liệu người học, nội dung học tập và mô hình AI thay đổi với tốc độ và tần suất khác nhau.
+Nếu tất cả dữ liệu được gói trong một cấu trúc đơn (monolithic entity), hệ thống sẽ dễ gặp lỗi, xung đột dữ liệu và khóa giao dịch (transaction lock).
+Vì vậy, ITS phân rã domain theo “ranh giới nghiệp vụ” (Bounded Context) bằng các Aggregate để đảm bảo tính nhất quán, tách biệt và mở rộng dễ dàng.
+
+Nguyên tắc thiết kế Aggregate trong ITS
+\begin{itemize}[leftmargin=1.5em]
+    \item Mỗi Aggregate có transaction boundary riêng biệt và chỉ cập nhật dữ liệu thuộc phạm vi của chính nó.\footnotemark
+    \item Các Aggregate giao tiếp qua Domain Events (RabbitMQ) để đảm bảo eventual consistency.
+    \item Các Aggregate có tần suất thay đổi cao được triển khai như các service độc lập.
+\end{itemize}
+\footnotetext{Trong ITS, \textbf{transaction boundary} là giới hạn đảm bảo tính nhất quán dữ liệu nội bộ một Aggregate duy nhất. Mỗi giao dịch chỉ cập nhật dữ liệu thuộc Aggregate đó; các thay đổi ảnh hưởng đến Aggregate khác sẽ được truyền qua Domain Events (Kafka/RabbitMQ). Cách thiết kế này giúp hệ thống đạt hiệu năng cao, tránh deadlock, đồng thời duy trì eventual consistency giữa các service như Scoring, LearnerModel và AdaptiveEngine.}
+
+\begin{table}[H]
 \centering
 \small
-\renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\tabularxcolumn}[1]{p{#1}}
 \renewcommand{\arraystretch}{1.65}
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{4cm}|>{\noindent\justifying\arraybackslash}X|}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{4cm}|>{\centering\arraybackslash}X|}
 \hline
-\textbf{Aggregate} & \textbf{Trách nhiệm chính (Responsibility)} \\
+\textbf{Aggregate} & \multicolumn{1}{c|}{\textbf{Trách nhiệm chính (Responsibility)}} \\
 \hline
 LearnerAggregate & Quản lý thông tin hồ sơ cá nhân, tiến trình học tập, lịch sử hoạt động của người học. \\
 \hline
@@ -285,28 +296,36 @@ AdaptivePathAggregate & Đại diện cho lộ trình học tập được tạo
 UserManagementAggregate & Quản lý người dùng, xác thực (AuthN), phân quyền (AuthZ), và nhật ký hoạt động (audit logs). \\
 \hline
 \end{tabularx}
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
 \renewcommand{\arraystretch}{1.0}
 \caption{Aggregates}
 \label{tab:aggregates}
 \end{table}
 
-\noindent\textbf{Nguyên tắc phân tách Aggregates:}
-\begin{itemize}
-    \item Mỗi Aggregate có transaction boundary riêng biệt.
-    \item Giao tiếp giữa các Aggregate thực hiện qua Domain Events hoặc Message Queue (Kafka/RabbitMQ) để đảm bảo eventual consistency.
-    \item Các Aggregate có tần suất cập nhật cao (như LearnerModelAggregate) được tách riêng để giảm độ coupling với phần dữ liệu ít thay đổi.
+\textbf{b. Entities}
+
+Entities là “linh hồn” của domain — phản ánh các khái niệm nghiệp vụ có danh tính rõ ràng (ID duy nhất) và trạng thái thay đổi theo thời gian. Chúng giúp ánh xạ các hành vi cụ thể (như “nộp bài”, “chấm điểm”, “tạo lộ trình”) thành các lớp có thể lập trình được.
+
+Cách Entities gắn với Aggregates
+\begin{itemize}[leftmargin=1.5em]
+    \item Mỗi Aggregate Root quản lý một tập Entity con.
+    \item Learner là Root của LearnerProfile và ProgressRecord; Course là Root của Chapter và ContentUnit.
+    \item Mỗi Entity chỉ thay đổi trong phạm vi Aggregate của nó, đảm bảo tính nhất quán cục bộ.
 \end{itemize}
 
-\noindent\textbf{Entities}
+Lý do quan trọng
+\begin{itemize}[leftmargin=1.5em]
+    \item Thiết kế database theo nguyên tắc CQRS (Command Query Responsibility Segregation).
+    \item Tách logic cập nhật khỏi logic đọc (read model) để cải thiện hiệu năng.
+    \item Hạn chế side-effects khi nhiều service cùng truy cập dữ liệu người học.
+\end{itemize}
 
-Các Entity là các đối tượng nghiệp vụ có định danh duy nhất và được quản lý trong phạm vi của một Aggregate.
-
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \small
-\renewcommand{\tabularxcolumn}[1]{m{#1}}
-\renewcommand{\arraystretch}{1.75} % <-- Tăng khoảng cách dòng trong bảng này
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\renewcommand{\tabularxcolumn}[1]{p{#1}}
+\renewcommand{\arraystretch}{1.75}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3.5cm}|>{\centering\arraybackslash}p{3.5cm}|>{\centering\arraybackslash}X|}
 \hline
 \textbf{Aggregate thuộc về} & \textbf{Entity chính} & \textbf{Mô tả ngắn gọn} \\
 \hline
@@ -321,24 +340,35 @@ AdaptivePathAggregate & AdaptivePath, PathNode, RecommendationScore & Biểu di�
 UserManagementAggregate & User, Role, Permission, AuditLog & Đảm bảo bảo mật và phân quyền truy cập trong toàn hệ thống. \\
 \hline
 \end{tabularx}
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
 \renewcommand{\arraystretch}{1.0}
 \caption{Entities}
 \label{tab:entities}
 \end{table}
 
-\noindent\textbf{Lưu ý:} Tất cả các Entity đều tuân thủ nguyên tắc SRP (Single Responsibility Principle) -- mỗi lớp chỉ chịu trách nhiệm một phần của nghiệp vụ, tránh chồng chéo dữ liệu.
+\textbf{c. Value Objects}
 
-\noindent\textbf{Value Objects}
+Value Objects là các dữ liệu không mang danh tính riêng nhưng cần tính bất biến để đảm bảo độ chính xác và khả năng tái sử dụng. Chúng thường được nhúng trong Entities hoặc Domain Events, giúp hạn chế lỗi khi cache và giữ cho domain tuân thủ OCP (Open-Closed Principle).
 
-Value Objects là các đối tượng bất biến (immutable), được so sánh theo giá trị thay vì danh tính.
-Trong ITS, chúng được sử dụng để tăng tính an toàn dữ liệu và tính tái sử dụng trong nhiều Aggregates.
+Ví dụ trong ITS
+\begin{itemize}[leftmargin=1.5em]
+    \item MetadataTag mô tả kỹ năng, độ khó, chủ đề bài học.
+    \item ProgressRecord lưu trạng thái hoàn thành bài học (đã xong, đang học, lỗi).
+    \item RecommendationScore là điểm gợi ý khi tạo lộ trình học mới.
+\end{itemize}
 
-\begin{table}[ht]
+Vai trò kiến trúc
+\begin{itemize}[leftmargin=1.5em]
+    \item Đảm bảo tính bất biến và rõ ràng khi chuyển dữ liệu giữa các microservice.
+    \item Cho phép mở rộng thêm thuộc tính hoặc cách tính mới mà không ảnh hưởng logic cũ (OCP).
+\end{itemize}
+
+\begin{table}[H]
 \centering
 \small
-\renewcommand{\tabularxcolumn}[1]{m{#1}}
-\renewcommand{\arraystretch}{1.7} % <-- tăng độ cao cho mỗi hàng
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\renewcommand{\tabularxcolumn}[1]{p{#1}}
+\renewcommand{\arraystretch}{1.7}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3.5cm}|>{\centering\arraybackslash}X|}
 \hline
 \textbf{Value Object} & \textbf{Vai trò} \\
 \hline
@@ -346,28 +376,34 @@ MetadataTag & Đại diện cho thẻ (tag) mô tả kỹ năng, chủ đề ho�
 \hline
 RecommendationScore & Điểm đánh giá đề xuất nội dung dựa trên sự phù hợp với LearnerModel. \\
 \hline
-ProgressRecord & Ghi lại tiến trình học tập, trạng thái hoàn thành, và thời gian học của người học. \\
+ProgressRecord & Ghi lại tiến trình học tập, trạng thái hoàn thành và thời gian học của người học. \\
 \hline
 DiagnosticResult & Kết quả của bài kiểm tra đầu vào (diagnostic test), dùng để khởi tạo LearnerModel. \\
 \hline
 \end{tabularx}
-\renewcommand{\arraystretch}{1.0} % khôi phục arraystretch mặc định cho các bảng sau
+\renewcommand{\arraystretch}{1.0}
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
 \caption{Value Objects}
 \label{tab:value_objects}
 \end{table}
 
-\noindent\textbf{Lưu ý:} Các Value Object được thiết kế theo nguyên tắc OCP (Open-Closed Principle): có thể mở rộng để thêm thuộc tính (ví dụ thêm loại thẻ metadata mới) mà không cần sửa đổi lớp gốc.
+\textbf{d. Domain Services}
 
-\noindent\textbf{Domain Services}
+Domain Services xử lý những quy tắc nghiệp vụ liên quan đồng thời đến nhiều Aggregate nên không thể đặt vào một Entity cụ thể mà vẫn giữ được SRP. Ví dụ, tạo lộ trình học cá nhân hóa cần dữ liệu từ cả LearnerModel lẫn Content, hay chấm điểm phải phối hợp thông tin Assessment và Learner.
 
-Domain Services là nơi chứa logic nghiệp vụ phức tạp không thuộc riêng một Entity hoặc Aggregate nào, được thiết kế theo DIP (Dependency Inversion Principle) để có thể hoán đổi dễ dàng các thuật toán hoặc cách triển khai.
+Ảnh hưởng đến kiến trúc
+\begin{itemize}[leftmargin=1.5em]
+    \item Mỗi Domain Service có input/output rõ ràng, ít phụ thuộc vào service khác.
+    \item Dễ tách thành microservice độc lập, thuận lợi cho kiểm thử tự động (unit test + mock repository).
+    \item Hỗ trợ triển khai Blue/Green cho AI model mà không gây downtime hệ thống.
+\end{itemize}
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \small
-\renewcommand{\tabularxcolumn}[1]{m{#1}}
-\renewcommand{\arraystretch}{1.7} % <-- tăng độ cao cho mỗi hàng
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\renewcommand{\tabularxcolumn}[1]{p{#1}}
+\renewcommand{\arraystretch}{1.7}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3.5cm}|>{\centering\arraybackslash}X|}
 \hline
 \textbf{Domain Service} & \textbf{Mô tả \& Vai trò nghiệp vụ} \\
 \hline
@@ -382,26 +418,37 @@ RemediationEngine & Phân tích kỹ năng yếu, đề xuất bài học bù ho
 AuthenticationService & Quản lý xác thực (login, JWT issuance) và phân quyền truy cập. \\
 \hline
 \end{tabularx}
-\renewcommand{\arraystretch}{1.0} % khôi phục arraystretch mặc định cho các bảng sau
+\renewcommand{\arraystretch}{1.0}
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
 \caption{Domain Services}
 \label{tab:domain_services}
 \end{table}
 
-\noindent\textbf{Lưu ý:} Mỗi Domain Service tương ứng với một Microservice độc lập trong kiến trúc ITS, đảm bảo khả năng triển khai độc lập (deployability) và test độc lập (testability).
+\textbf{e. Domain Events}
 
-Ví dụ: AdaptivePathGenerator nằm trong Adaptive Engine Service, ScoringEngine và FeedbackGenerator nằm trong Evaluation \& Feedback Services.
+Domain Events là cơ chế giao tiếp giữa các thành phần ITS như Scoring, Feedback, LearnerModel mà không cần phụ thuộc lẫn nhau. Các service chỉ cần phát ra hoặc lắng nghe sự kiện, nhờ đó hệ thống vẫn vận hành trơn tru dù kiến trúc tách rời.
 
-\noindent\textbf{Domain Events}
+Chuỗi sự kiện tiêu biểu trong ITS
+\begin{enumerate}[leftmargin=1.5em]
+    \item Learner nộp bài → ScoringEngine phát sự kiện \texttt{SubmissionCompleted}.
+    \item LearnerModel Service nhận sự kiện → cập nhật trạng thái kỹ năng.
+    \item Adaptive Engine nhận \texttt{LearnerModelUpdated} → tái tạo lộ trình học.
+    \item Feedback Service phát \texttt{FeedbackGenerated} → dashboard hiển thị phản hồi tức thì.
+\end{enumerate}
 
-Domain Events phản ánh các thay đổi quan trọng trong trạng thái hệ thống.
-Chúng là cơ chế giúp các microservices giao tiếp theo mô hình event-driven, giảm phụ thuộc trực tiếp giữa các module.
+Lợi ích kiến trúc
+\begin{itemize}[leftmargin=1.5em]
+    \item Nâng cao khả năng mở rộng và chịu lỗi vì các service không gọi trực tiếp nhau.
+    \item Hỗ trợ xử lý bất đồng bộ: tác vụ nặng (AI inference, chấm điểm) chạy nền mà vẫn giữ thời gian phản hồi <500ms.
+    \item Dễ mở rộng: có thể bổ sung listener mới mà không phải chỉnh sửa logic hiện có.
+\end{itemize}
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \small
-\renewcommand{\tabularxcolumn}[1]{m{#1}}
-\renewcommand{\arraystretch}{1.7} % <-- tăng độ cao cho mỗi hàng
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3cm}|>{\centering\arraybackslash}m{2.5cm}|>{\centering\arraybackslash}m{2.5cm}|>{\noindent\justifying\arraybackslash}X|}
+\renewcommand{\tabularxcolumn}[1]{p{#1}}
+\renewcommand{\arraystretch}{1.7}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{2.5cm}|>{\centering\arraybackslash}p{2.5cm}|>{\centering\arraybackslash}X|}
 \hline
 \textbf{Domain Event} & \textbf{Nguồn phát sinh (Publisher)} & \textbf{Người tiêu thụ (Consumer)} & \textbf{Mục đích} \\
 \hline
@@ -416,18 +463,16 @@ PathGenerated & Adaptive Engine & Cache/Redis + Dashboard & Lưu trữ và hiể
 UserCreated / RoleAssigned & Auth Service & Admin Service & Đồng bộ quyền truy cập và nhật ký hệ thống. \\
 \hline
 \end{tabularx}
-\renewcommand{\arraystretch}{1.0} % khôi phục lại mặc định cho các bảng sau
+\renewcommand{\arraystretch}{1.0}
+\renewcommand{\tabularxcolumn}[1]{m{#1}}
 \caption{Domain Events}
 \label{tab:domain_events}
 \end{table}
 
-\noindent\textbf{Lưu ý:} Các sự kiện này được truyền qua Kafka hoặc RabbitMQ, đảm bảo tính asynchronous communication và eventual consistency giữa các dịch vụ.
-
-Ví dụ: khi SubmissionCompleted được phát đi, LearnerModel Service sẽ tự động cập nhật điểm thành thạo kỹ năng mà không cần gọi API đồng bộ.
-
 \noindent\textbf{Domain Model Class Diagram}
 
-Sơ đồ dưới đây minh họa mối quan hệ giữa các Aggregate và Entity chính, thể hiện cách Domain Model được tổ chức logic theo DDD và chuẩn bị cho việc phân rã thành Microservices trong kiến trúc tổng thể.
+Sơ đồ dưới đây minh họa mối quan hệ giữa các Aggregates và Entities chính trong hệ thống, thể hiện cách các khái niệm nghiệp vụ được tổ chức và liên kết theo tư duy Domain-Driven Design (DDD).
+Mục tiêu của mô hình là giúp hiểu rõ cấu trúc và luồng nghiệp vụ cốt lõi của ITS, làm nền tảng cho các quyết định thiết kế kiến trúc và triển khai sau này.
 
 \begin{figure}[ht]
     \centering

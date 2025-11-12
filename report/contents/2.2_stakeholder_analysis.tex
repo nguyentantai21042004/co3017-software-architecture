@@ -1,11 +1,11 @@
-\subsection{Phân tích các Bên Liên quan (Stakeholder)}
+\subsection{Phân tích các Bên Liên quan}
 
-\indentpar \indentpar Phân tích các bên liên quan là bước quan trọng nhằm kết nối tầm nhìn hệ thống (Vision Statement) với các yêu cầu cụ thể (Functional \& Non-functional Requirements).
+\indentpar \indentpar Phân tích các bên liên quan (Stakeholder) là bước quan trọng nhằm kết nối tầm nhìn hệ thống (Vision Statement) với các yêu cầu cụ thể (Functional \& Non-functional Requirements).
 Mục tiêu của phần này là xác định ai chịu ảnh hưởng, ai ra quyết định, và ai trực tiếp sử dụng hệ thống, từ đó giúp định hướng kiến trúc phần mềm ITS theo nhu cầu thực tế của từng nhóm.
 
 \subsubsection{Ma trận Bên Liên quan}
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \small
 \renewcommand{\tabularxcolumn}[1]{m{#1}}
@@ -41,13 +41,14 @@ Các stakeholder trên tương ứng trực tiếp với các ``actors'' đã đ
 
 \subsubsection{Yêu cầu và Mối quan hệ giữa các Bên Liên quan}
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \footnotesize
 \renewcommand{\tabularxcolumn}[1]{m{#1}}
+\renewcommand{\arraystretch}{1.4}
 \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
 \hline
-\textbf{Stakeholder} & \textbf{Nhu cầu chính} & \textbf{Kỳ vọng chất lượng} & \textbf{Ràng buộc} & \textbf{Liên kết} & \textbf{Chỉ số thành công} \\
+\textbf{Stakeholder} & \textbf{Nhu cầu chính} & \textbf{Kỳ vọng} & \textbf{Ràng buộc} & \textbf{Liên kết} & \textbf{Chỉ số thành công} \\
 \hline
 \textbf{Learner} (Người học) & 
 Cá nhân hóa lộ trình học theo năng lực và tiến độ. Phản hồi tức thì sau khi nộp bài. Giao diện thân thiện, dễ sử dụng trên mọi thiết bị. & 
@@ -85,6 +86,7 @@ Quyết định đến thiết kế C4 Diagram, Module Diagram, Sequence Diagram
 Code coverage $\geq 80\%$. Mỗi service deploy độc lập không ảnh hưởng hệ thống. \\
 \hline
 \end{tabularx}
+\renewcommand{\arraystretch}{1.0}
 \caption{Yêu cầu và Mối quan hệ giữa các Bên Liên quan}
 \label{tab:stakeholder_requirements}
 \end{table}
