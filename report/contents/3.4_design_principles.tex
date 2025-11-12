@@ -1,6 +1,6 @@
 \subsection{Nguyên tắc thiết kế}
 
-\indentpar \indentpar Để hiện thực hóa các đặc tính kiến trúc (ACs) đã ưu tiên---đặc biệt là \textbf{AC1: Modularity}, \textbf{AC4: Testability}, và \textbf{AC7: Maintainability}---hệ thống ITS sẽ tuân thủ một bộ các nguyên tắc thiết kế và tiêu chuẩn kỹ thuật cốt lõi. Các nguyên tắc này định hình cấu trúc bên trong của mỗi service và cách chúng tương tác với nhau.
+\indentpar \indentpar Sau khi xác lập kiến trúc tổng thể (Mục~3.2) và các quyết định kỹ thuật chi tiết (Mục~3.3), phần này trình bày các nguyên tắc thiết kế cốt lõi (design principles) để hiện thực hóa các đặc tính kiến trúc (ACs) đã ưu tiên---đặc biệt là \textbf{AC1: Modularity}, \textbf{AC4: Testability}, và \textbf{AC7: Maintainability}. Các nguyên tắc này định hình cấu trúc bên trong của mỗi service và cách chúng tương tác với nhau.
 
 \subsubsection{Các nguyên tắc cốt lõi}
 
@@ -34,50 +34,37 @@
 \indentpar Đây là kiểu kiến trúc nội bộ (Internal Architecture Pattern) bắt buộc được chọn cho \textbf{TẤT CẢ} các microservice (cả Java và Golang).
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Mục tiêu:} Là nguyên tắc kỹ thuật chính để đạt được \textbf{AC-4: Testability}.
+    \item \textbf{Mục tiêu:} Là nguyên tắc kỹ thuật chính để đạt được \textbf{AC4: Testability}.
     \item \textbf{Dependency Rule:} Nguyên tắc cốt lõi là \textbf{Quy tắc Phụ thuộc (Dependency Rule)}. Mọi phụ thuộc phải hướng vào trong. Các lớp ngoài (Frameworks, DBs) phụ thuộc vào các lớp trong (Use Cases, Entities). Logic nghiệp vụ cốt lõi không bao giờ được phép biết về chi tiết hạ tầng (ví dụ: logic `ScoringEngine` không biết nó đang dùng Postgres hay Mongo).
     \item \textbf{Cấu trúc:} Các service được tổ chức thành các tầng đồng tâm: `Domain` (trong cùng), `Application` (Use Cases), `Adapters` (Controllers, Repositories), và `Infrastructure` (Frameworks, Drivers).
 \end{itemize}
 
 \subsubsection{Các mẫu triển khai và tiêu chuẩn}
 
-\indentpar Để thực thi các nguyên tắc trên, các mẫu (patterns) và tiêu chuẩn kỹ thuật cụ thể sau đây được áp dụng.
+\indentpar Để thực thi các nguyên tắc trên, các mẫu (patterns) và tiêu chuẩn kỹ thuật cụ thể đã được định nghĩa chi tiết trong Mục~3.3 (Architecture Decision Records). Phần này tóm tắt vai trò của từng mẫu trong việc hiện thực hóa các nguyên tắc cốt lõi:
 
 \indent\textbf{a. Repository Pattern (ADR-4)}
 
-\indentpar Đây là mẫu kỹ thuật bắt buộc để triển khai nguyên tắc DIP và Clean Architecture.
-
-\begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Quy tắc:} Các \textbf{Repository Interfaces} (Ports) được định nghĩa trong tầng `application` (ví dụ: `UserRepository`, `ContentRepository`).
-    \item \textbf{Triển khai:} Các \textbf{Implementations} (Adapters) (ví dụ: `PostgresUserRepository`, `MongoLearnerRepository`) nằm trong tầng `infrastructure` và chứa logic ORM (JPA/Hibernate) hoặc SQL thô (pgx).
-    \item \textbf{Lợi ích:} Cho phép tầng `application` (Use Cases) được unit test hoàn toàn độc lập bằng cách ``tiêm'' (inject) các repository giả (mock repositories), đạt được \textbf{AC-4: Testability}.
-\end{itemize}
+\indentpar Đây là mẫu kỹ thuật bắt buộc để triển khai nguyên tắc DIP và Clean Architecture, đảm bảo tầng domain và application không phụ thuộc vào chi tiết hạ tầng cụ thể (ví dụ: ORM, SQL). Chi tiết đầy đủ về quyết định này, bao gồm context, rationale, và trade-offs, được trình bày ở Mục~3.3, ADR-4.
 
 \indent\textbf{b. Testing Pyramid Strategy (ADR-5)}
 
-\indentpar \indentpar Đây là tiêu chuẩn kiểm thử chính thức của dự án để đảm bảo chất lượng code và tính đúng đắn của thuật toán AI.
+\indentpar Đây là tiêu chuẩn kiểm thử chính thức để đảm bảo chất lượng code và tính đúng đắn của thuật toán AI. Chiến lược này tuân theo Testing Pyramid: phần lớn là Unit Tests ($> 80\%$ coverage), kế đến là Integration Tests (dùng Testcontainers), và cuối cùng là E2E Tests cho các luồng nghiệp vụ quan trọng. Chi tiết đầy đủ xem Mục~3.3, ADR-5.
+
+\indent\textbf{c. Centralized Security Standard (ADR-6 \& ADR-7)}
+
+\indentpar Tiêu chuẩn bảo mật tập trung cho toàn hệ thống, bao gồm xác thực (AuthN) tại Auth Service, phân quyền (AuthZ) tại API Gateway, và bảo vệ dữ liệu cá nhân (PII) thông qua phân tách và mã hóa. Các quyết định này được giải thích đầy đủ ở Mục~3.3, ADR-6 và ADR-7.
+
+\subsubsection{Kết luận}
+
+\indentpar \indentpar Các nguyên tắc thiết kế được trình bày trong mục này không phải là lý thuyết suông, mà là nền tảng kỹ thuật cụ thể để hiện thực hóa kiến trúc ITS. Chúng tạo thành một ``bộ công cụ thiết kế'' (design toolkit) nhất quán, đảm bảo rằng:
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Nền tảng (Unit Tests):} Chiếm phần lớn (SLO: \textbf{$> 80\%$ code coverage} cho `domain` và `application` layers). Bắt buộc phải mock tất cả I/O (database, network).
-    \item \textbf{Tầng giữa (Integration Tests):} Kiểm thử sự tích hợp của service với hạ tầng (DB, Message Broker). Tiêu chuẩn là sử dụng \textbf{Testcontainers} để khởi tạo các tài nguyên (Postgres, Kafka) trong Docker khi chạy kiểm thử.
-    \item \textbf{Đỉnh (E2E Tests):} Số lượng ít, chỉ tập trung vào các luồng nghiệp vụ quan trọng (critical user flows) để tránh tình trạng không ổn định (flakiness).
+    \item Mọi microservice đều tuân theo Clean/Hexagonal Architecture, đảm bảo AC1 (Modularity) và AC4 (Testability).
+    \item Ranh giới nghiệp vụ được xác định rõ ràng thông qua Domain-Driven Design, giảm thiểu coupling và tăng cường cohesion.
+    \item SOLID Principles được áp dụng nhất quán trên cả hai ngôn ngữ (Java/Golang), đảm bảo AC7 (Maintainability).
+    \item Các tiêu chuẩn bảo mật và kiểm thử được thống nhất, giảm rủi ro không nhất quán giữa các team.
 \end{itemize}
 
-\indent\textbf{c. Centralized Security Standard (ADR-6)}
-
-\indentpar \indentpar Đây là tiêu chuẩn bảo mật cho việc xác thực (AuthN) và phân quyền (AuthZ) trong toàn hệ thống microservices.
-
-\begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Authentication (AuthN):} Tập trung tại một `Auth Service` (Java/Spring Security), tuân thủ \textbf{OAuth 2.0 / OIDC} và phát hành \textbf{JWTs} (Access/Refresh Tokens).
-    \item \textbf{Authorization (AuthZ):} Thực hiện tại ``cửa ngõ'' (edge). \textbf{API Gateway} (Golang) chịu trách nhiệm \textbf{validate} tất cả JWTs. Các service nội bộ \textbf{tin tưởng} Gateway và chỉ cần đọc thông tin user (ví dụ: `X-User-ID`, `X-User-Roles`) từ request header để thực thi RBAC (FR11).
-\end{itemize}
-
-\indent\textbf{d. Data Privacy \& Anonymization Standard (ADR-7)}
-
-\indentpar \indentpar Đây là tiêu chuẩn bắt buộc để xử lý Dữ liệu Cá nhân Nhạy cảm (PII) và tuân thủ GDPR/FERPA.
-
-\begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{PII Isolation (Phân tách PII):} Dữ liệu PII (tên, email) \textbf{CHỈ} được lưu trữ trong `User Management Service`.
-    \item \textbf{Anonymization (Ẩn danh hóa):} Tất cả các service nghiệp vụ khác (Scoring, Adaptive Engine, Learner Model) \textbf{KHÔNG ĐƯỢC PHÉP} lưu trữ PII. Chúng phải tham chiếu đến người dùng thông qua một \textbf{`LearnerID` (UUID)} đã được ẩn danh.
-    \item \textbf{Encryption at Rest (Mã hóa khi lưu trữ):} Các cột PII trong `User Management Service` phải được mã hóa ở cấp độ cột (ví dụ: sử dụng `pgcrypto` của PostgreSQL).
-\end{itemize}
+\vspace{0.5em}
+\noindent Tóm lại, chuỗi \textbf{Mục~3.1 (ACs Prioritization) \textrightarrow{} Mục~3.2 (Architecture Style Selection) \textrightarrow{} Mục~3.3 (ADRs) \textrightarrow{} Mục~3.4 (Design Principles)} tạo thành một lộ trình thiết kế kiến trúc hoàn chỉnh, có thể truy vết từ yêu cầu phi chức năng (Mục~2.4) xuống các quyết định kỹ thuật chi tiết nhất.

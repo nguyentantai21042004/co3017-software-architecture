@@ -75,7 +75,7 @@ Phân tích kết quả và định hướng lựa chọn:
 \begin{enumerate}[leftmargin=0.7cm]
     \item Tối ưu các ACs cốt lõi:
     \begin{itemize}[nosep]
-        \item Modularity (AC1) \\ Deployability (AC5): hỗ trợ Live AI Model Swapping (FR9, FR12).
+        \item Modularity (AC1) và Deployability (AC5): hỗ trợ Live AI Model Swapping (FR9, FR12).
         \item Scalability (AC2): mở rộng từng service độc lập, tránh bottleneck.
         \item Testability (AC4): kiểm thử độc lập nhờ Clean Architecture.
     \end{itemize}
@@ -92,7 +92,10 @@ Phân tích kết quả và định hướng lựa chọn:
 \indentpar \indentpar ITS không chuyển sang Microservices ngay lập tức mà từng bước để giảm rủi ro:
 
 \begin{enumerate}[leftmargin=0.7cm]
-    \item \textbf{Phase 1 -- Modular Monolith (MVP):} xây dựng monolith có cấu trúc module, áp dụng Clean Architecture \& DIP để thuận lợi tách rời.
-    \item \textbf{Phase 2 -- Extract Critical Services (Strangler Fig Pattern):} khi nhu cầu mở rộng xuất hiện (ví dụ ScoringService quá tải), tách module thành microservice riêng và định tuyến qua API Gateway.
+    \item \textbf{Phase 1 -- Modular Monolith (MVP):} xây dựng monolith có cấu trúc module, áp dụng Clean Architecture \& DIP (Mục~3.3, ADR-3; Mục~3.4) để thuận lợi tách rời.
+    \item \textbf{Phase 2 -- Extract Critical Services (Strangler Fig Pattern):} khi nhu cầu mở rộng xuất hiện (ví dụ ScoringService quá tải), tách module thành microservice riêng và định tuyến qua API Gateway. Strangler Fig Pattern là mô hình di chuyển dần từ hệ thống cũ sang mới, trong đó các chức năng được tách ra từng phần một, đồng thời hệ thống cũ vẫn hoạt động song song cho đến khi hoàn toàn thay thế.
     \item \textbf{Phase 3 -- Full Microservices Ecosystem:} tiếp tục tách các module còn lại khi hệ thống trưởng thành, hướng tới hệ sinh thái microservices tối ưu AC1, AC2, AC5.
 \end{enumerate}
+
+\vspace{0.5em}
+\noindent\textbf{Kết luận:} Quyết định kiến trúc lai này đóng vai trò là nền tảng cho toàn bộ các quyết định kỹ thuật chi tiết được trình bày trong Mục~3.3 (Architecture Decision Records) và Mục~3.4 (Design Principles).
