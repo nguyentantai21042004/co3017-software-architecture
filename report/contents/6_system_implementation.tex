@@ -1,0 +1,59 @@
+% ### CHƯƠNG HIỆN THỰC HỆ THỐNG
+
+% **1. [cite_start]Công nghệ sử dụng** [cite: 5, 6]
+% * [cite_start]**Nền tảng chính:** Java 21 và Spring Boot 3.4.4, sử dụng Maven làm công cụ xây dựng (build tool)[cite: 25, 26].
+% * **Các module đã hiện thực:**
+%     * [cite_start]Patient Service [cite: 25, 26]
+%     * [cite_start]Staff Service [cite: 25, 26]
+%     * [cite_start]Authentication Service (module bổ sung) [cite: 25, 26]
+% * **Dependencies và Công cụ hỗ trợ:**
+%     * [cite_start]**Lombok:** Giảm mã lặp (boilerplate code) trong Java, giúp mã nguồn gọn gàng và dễ bảo trì[cite: 25, 26].
+%     * [cite_start]**Eureka:** Quản lý và khám phá dịch vụ (Service Discovery) trong kiến trúc Microservices[cite: 25, 26].
+%     * [cite_start]**Spring Cloud Gateway:** Định tuyến yêu cầu từ client đến các microservices, hỗ trợ bảo mật và rate limiting[cite: 25, 26].
+%     * [cite_start]**Springdoc OpenAPI:** Tự động tạo tài liệu API (Swagger UI)[cite: 25, 26].
+%     * [cite_start]**Spring Data JPA:** Đơn giản hóa truy cập cơ sở dữ liệu[cite: 25, 26].
+% * **Repository của dự án:**
+%     * [cite_start]Backend: `https://github.com/hongphucle1010/SoftwareArchitecture-HospitalManagement` [cite: 25, 26]
+%     * [cite_start]Frontend (Giao diện demo): `https://github.com/tomdapchai/ktpm-fe` [cite: 25, 26]
+
+% **2. [cite_start]Cấu trúc thư mục** [cite: 5, 6]
+% * *Mục này liệt kê cấu trúc folder của dự án (chi tiết cấu trúc không có trong các đoạn trích).*
+
+% **3. [cite_start]Tính SOLID trong mã nguồn** [cite: 5, 6]
+% * **Nguyên tắc Trách nhiệm đơn nhất (SRP - Single Responsibility Principle):**
+%     * Giúp dự án tăng tính module.
+%     * Ban đầu có khó khăn: nhóm có xu hướng gộp nhiều chức năng vào một dịch vụ, ví dụ để Patient Service xử lý cả lịch hẹn.
+% * **Nguyên tắc Đóng/Mở (OCP - Open/Closed Principle):**
+%     * Đảm bảo dự án dễ dàng tích hợp tính năng mới mà không làm gián đoạn hệ thống hiện tại.
+% * **Nguyên tắc Thay thế Liskov (LSP - Liskov Substitution Principle):**
+%     * Hỗ trợ tính đa hình ở cấp lớp, tăng tính linh hoạt trong thiết kế các dịch vụ.
+% * **Nguyên tắc Phân tách giao diện (ISP - Interface Segregation Principle):**
+%     * Giảm độ phức tạp, giúp mã nguồn và API dễ hiểu, tăng tính module.
+%     * Khó khăn: việc định nghĩa API cho các microservices thiếu cụ thể, dẫn đến các endpoint dư thừa.
+% * **Nguyên tắc Đảo ngược sự phụ thuộc (DIP - Dependency Inversion Principle):**
+%     * Tăng tính linh hoạt, dễ kiểm thử, và giảm sự phụ thuộc chặt chẽ trong môi trường phân tán.
+
+% **4. [cite_start]Kết quả hiện thực** [cite: 5, 6]
+% * **Staff module (Quản lý Nhân viên):**
+%     * [cite_start]Xem khối lượng công việc của một nhân viên cụ thể (Hình 24)[cite: 27, 28].
+%     * [cite_start]Điều chỉnh khối lượng công việc (Hình 25)[cite: 27, 28].
+%     * [cite_start]Thêm dữ liệu khối lượng công việc cho một nhân viên (Hình 26)[cite: 27, 28].
+%     * [cite_start]Quản lý lịch trình nhân viên (Hình 27)[cite: 27, 28].
+%     * [cite_start]Lọc lịch trình theo ca và phòng ban (Hình 28, 29)[cite: 27, 28].
+%     * [cite_start]Lọc lịch trình theo khoảng ngày (Hình 30)[cite: 27, 28].
+%     * [cite_start]Xem chi tiết lịch làm việc (Hình 31)[cite: 27, 28].
+%     * [cite_start]Điều chỉnh lịch làm việc (Hình 32)[cite: 27, 28].
+%     * [cite_start]Thêm lịch làm việc cho nhân viên (Hình 33)[cite: 27, 28].
+% * **Patient module (Quản lý Bệnh nhân):**
+%     * [cite_start]Màn hình quản lý thông tin tài khoản bệnh nhân (Hình 34)[cite: 27].
+%     * [cite_start]Hiển thị danh sách tài khoản bệnh nhân đang hoạt động (Hình 35)[cite: 27].
+%     * [cite_start]Lọc danh sách tài khoản bệnh nhân (Hình 36)[cite: 27].
+% * *(Phần này còn nhiều kết quả hiện thực khác, nhưng chi tiết bị cắt bớt trong các đoạn trích)*
+
+% **5. [cite_start]Đóng gói** [cite: 5, 6]
+% * **Phương pháp:** Đóng gói các dịch vụ dưới dạng Docker image và đẩy lên Docker Hub.
+% * **Liên kết Docker Hub:**
+%     * API Gateway: `https://hub.docker.com/r/hongphucle1010/api-gateway`
+%     * Staff Service: `https://hub.docker.com/r/hongphucle1010/staff-service`
+%     * Patient Service: `https://hub.docker.com/r/hongphucle1010/patient-service`
+%     * Authentication Service: `https://hub.docker.com/r/hongphucle1010/authentication-service`

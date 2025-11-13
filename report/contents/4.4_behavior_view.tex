@@ -1,0 +1,32 @@
+
+% ### 3.4 Behavioral View (Sequence Diagrams)
+% *[Template: 3-4 pages]*
+
+% #### 3.4.1 Key Scenarios
+% ```markdown
+% [Create sequence diagrams for:]
+
+% 1. User Registration and Onboarding
+% 2. Adaptive Content Delivery
+% 3. Real-time Feedback Generation
+% 4. Assessment Submission and Scoring
+% 5. Instructor Report Generation
+
+% [Use PlantUML or Mermaid format]
+% ```
+
+% #### Example Template:
+% ```mermaid
+% sequenceDiagram
+%     participant S as Student
+%     participant G as API Gateway
+%     participant A as Auth Service
+%     participant U as User Service
+    
+%     S->>G: POST /register
+%     G->>A: Validate request
+%     A->>U: Create user
+%     U-->>A: User created
+%     A-->>G: JWT token
+%     G-->>S: 201 Created + token
+% ```
