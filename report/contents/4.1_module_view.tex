@@ -1,0 +1,182 @@
+\section{Góc Nhìn Kiến Trúc}
+
+\indentpar \indentpar Chương này trình bày chi tiết kiến trúc của hệ thống ITS thông qua các góc nhìn (views) khác nhau, tuân theo mô hình 4+1 View Model. Mỗi góc nhìn làm rõ một khía cạnh của hệ thống---từ cấu trúc tổ chức mã nguồn đến hành vi và triển khai---giúp các bên liên quan (stakeholders) có một cái nhìn thống nhất và toàn diện.
+
+Nếu Chương 3 tập trung vào việc ``chọn kiến trúc nào'' và ``quyết định ra sao'', thì Chương 4 trả lời câu hỏi ``kiến trúc đó trông như thế nào trong thực tế?''
+
+\subsection{Module View}
+
+\indentpar \indentpar Bắt đầu với Module View, góc nhìn mô tả cách hệ thống được phân rã và tổ chức code nội bộ theo Clean Architecture và Domain-Driven Design. 
+Module View (Góc nhìn Module) mô tả sự phân rã của hệ thống thành các thành phần (components) và các module con, cùng mối quan hệ giữa chúng. Góc nhìn này trả lời cho hai câu hỏi cốt lõi:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item ``Hệ thống được tổ chức như thế nào?''
+    \item ``Các phần code bên trong được cấu trúc ra sao?''
+\end{itemize}
+
+Module View đặc biệt quan trọng vì nó thể hiện cách các quyết định trong ADR-1 \textrightarrow{} ADR-4 (Polyglot, Clean Architecture, Repository Pattern) được hiện thực hóa ở cấp mã nguồn, giúp đạt được các đặc tính kiến trúc quan trọng nhất của ITS:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{AC1 -- Modularity:} Cho phép thay đổi hoặc hoán đổi mô hình AI (Live AI Model Swapping) mà không ảnh hưởng phần còn lại.
+    \item \textbf{AC4 -- Testability:} Logic nghiệp vụ có thể kiểm thử độc lập, nhờ tách biệt khỏi framework và database.
+    \item \textbf{AC7 -- Maintainability:} Cấu trúc code rõ ràng giúp dễ đọc, dễ mở rộng và bảo trì.
+\end{itemize}
+
+\subsubsection{Phân rã Hệ thống}
+
+\indentpar \indentpar Hệ thống ITS được thiết kế theo phong cách \textbf{Hybrid Microservices + Event-Driven Architecture}. Việc phân rã hệ thống \textbf{(System Decomposition)} dựa trên Bounded Contexts của Domain-Driven Design (DDD), trong đó mỗi service đại diện cho một nhóm nghiệp vụ độc lập (một domain context riêng).
+
+\noindent Hình~\ref{fig:system-decomposition} minh họa sơ đồ phân rã module cấp cao của toàn hệ thống:
+
+% \begin{figure}[H]
+% \centering
+% \fbox{\includegraphics[width=0.95\textwidth]{images/system-decomposition.png}}
+% \caption{Sơ đồ phân rã module cấp cao của hệ thống ITS}
+% \label{fig:system-decomposition}
+% \end{figure}
+
+\noindent Cấu trúc phân rã bao gồm các service chính sau:
+
+\begin{enumerate}[leftmargin=0.7cm]
+    \item \textbf{API Gateway Service} [Go - ADR-1]:
+    \begin{itemize}[nosep]
+        \item Request Routing Module
+        \item Authentication Proxy Module (Thực thi AuthZ - ADR-6)
+        \item Rate Limiting \& Load Balancing Module
+    \end{itemize}
+    
+    \item \textbf{Auth Service} [Java/Spring - ADR-1, ADR-6]:
+    \begin{itemize}[nosep]
+        \item Authentication Module (Phát hành JWT - AuthN)
+        \item Identity Provider Module (OAuth 2.0/OIDC)
+    \end{itemize}
+    
+    \item \textbf{User Management Service} [Java/Spring - ADR-1]:
+    \begin{itemize}[nosep]
+        \item Profile Management Module (Quản lý PII - ADR-7)
+        \item Authorization Module (Quản lý Roles/Permissions - RBAC)
+    \end{itemize}
+    
+    \item \textbf{Content Service} [Java/Spring - ADR-1]:
+    \begin{itemize}[nosep]
+        \item Course Management Module
+        \item Content Metadata Module (Quản lý tags, skills)
+        \item Content Delivery Module (API cho nội dung)
+    \end{itemize}
+    
+    \item \textbf{Scoring \& Feedback Service} [Go - ADR-1]:
+    \begin{itemize}[nosep]
+        \item Scoring Engine Module (Chấm điểm tự động)
+        \item Feedback Generator Module (Tạo phản hồi tức thì $< 500$ms - AC3)
+        \item Remediation Engine Module (Gợi ý bài học bù)
+    \end{itemize}
+    
+    \item \textbf{Learner Model Service} [Go - ADR-1]:
+    \begin{itemize}[nosep]
+        \item Skill Mastery Module (Quản lý trạng thái kỹ năng)
+        \item BKT/Analytics Module (Tính toán mô hình tri thức)
+    \end{itemize}
+    
+    \item \textbf{Adaptive Engine Service} [Go - ADR-1]:
+    \begin{itemize}[nosep]
+        \item Adaptive Path Generator Module (Tạo lộ trình cá nhân hóa)
+        \item A/B Testing Module (Hỗ trợ ``Live AI Model Swapping'' - FR12)
+    \end{itemize}
+    
+    \item \textbf{Shared Infrastructure} (Các thành phần hỗ trợ):
+    \begin{itemize}[nosep]
+        \item Message Broker (RabbitMQ - ADR-8, dùng cho Event-Driven)
+        \item Primary Database (PostgreSQL - ADR-2)
+        \item Observability Stack (Prometheus, Grafana, Loki - ADR-10)
+        \item Caching Layer (Redis)
+    \end{itemize}
+\end{enumerate}
+
+Phân rã này cũng thể hiện rõ \textbf{``Bounded Contexts''} của DDD, cho phép mỗi service có thể triển khai, kiểm thử và mở rộng độc lập mà vẫn phối hợp thông qua event bus (RabbitMQ theo ADR-8).
+
+\subsubsection{Cấu trúc các Tầng (Clean Architecture Layers)}
+
+\indentpar \indentpar Để hiện thực hóa ADR-3: Clean/Hexagonal Architecture, mọi service (Java và Go) đều tuân thủ chặt chẽ cấu trúc 4 tầng đồng tâm. Điều này đảm bảo Testability (AC4) và Maintainability (AC7)---tức là, logic nghiệp vụ có thể kiểm thử độc lập và dễ thay thế công nghệ bên ngoài mà không ảnh hưởng lõi.
+
+\textbf{Quy tắc Phụ thuộc (Dependency Rule):} Các vòng tròn bên ngoài (Infrastructure) chỉ được phép phụ thuộc vào vòng tròn bên trong (Application, Domain). Mã nguồn ở Domain và Application không biết gì về Framework hay Database.
+
+\noindent Hình~\ref{fig:clean-architecture-layers} minh họa nguyên tắc phụ thuộc giữa bốn tầng của kiến trúc Clean Architecture trong ITS:
+
+% \begin{figure}[H]
+% \centering
+% \fbox{\includegraphics[width=0.8\textwidth]{images/clean-architecture-layers.png}}
+% \caption{Sơ đồ tầng Clean Architecture với Dependency Rule}
+% \label{fig:clean-architecture-layers}
+% \end{figure}
+
+
+\noindent Bảng~\ref{tab:clean-architecture-layers} mô tả chi tiết vai trò và quy tắc của từng tầng:
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{Tầng} & \textbf{Trách nhiệm} & \textbf{Quy tắc phụ thuộc} & \textbf{Ví dụ cụ thể trong ITS} \\
+\hline
+Domain & Chứa logic nghiệp vụ cốt lõi (Entities, Value Objects, Repository Interface). & Không phụ thuộc vào bất kỳ tầng nào. & \texttt{Learner.java}, \texttt{Course.java}, \texttt{SkillMasteryScore.java}, \texttt{LearnerRepository.java}. \\
+\hline
+Application & Chứa các Use Cases điều phối luồng nghiệp vụ, định nghĩa Input/Output Port. & Chỉ phụ thuộc vào Domain. & \texttt{CreateNewCourseUseCase.java}, \texttt{UpdateSkillMasteryUseCase.java}, \texttt{SkillMasteryDTO.java}. \\
+\hline
+Interface Adapters & Cầu nối dữ liệu giữa Application và Infrastructure. & Phụ thuộc vào Application. & \texttt{LearnerController.java}, \texttt{PostgresLearnerRepository.java}. \\
+\hline
+Infrastructure & Chứa chi tiết kỹ thuật, framework, DB driver, message broker. & Phụ thuộc vào Interface Adapters. & Spring Boot, Gin, PostgreSQL driver, RabbitMQ client. \\
+\hline
+\end{tabularx}
+\caption{Vai trò và quy tắc phụ thuộc của các tầng Clean Architecture}
+\label{tab:clean-architecture-layers}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+
+\subsubsection{Cấu trúc Gói (Package Structure)}
+
+\indentpar \indentpar Phần này minh họa cách tổ chức mã nguồn thực tế (Java \& Go) sao cho phù hợp với Clean Architecture và Polyglot Strategy (ADR-1). Việc chuẩn hóa cấu trúc gói đảm bảo tính nhất quán giữa các ngôn ngữ, đồng thời giúp đội ngũ phát triển dễ dàng định hướng khi làm việc với các service khác nhau.
+
+\indent\textbf{a. Service Java (ví dụ: Content Service)}
+
+\noindent Hình~\ref{fig:java-package-structure} thể hiện cấu trúc thư mục của Content Service, rõ ràng phân chia 4 tầng Clean Architecture:
+
+% \begin{figure}[H]
+% \centering
+% \fbox{\includegraphics[width=0.75\textwidth]{images/java-package-structure.png}}
+% \caption{Cấu trúc package của Content Service (Java/Spring Boot)}
+% \label{fig:java-package-structure}
+% \end{figure}
+
+Giải thích cấu trúc:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \texttt{domain/}: chứa \texttt{Course.java}, \texttt{CourseRepository.java} (interface), các Value Objects và Domain Services. Tầng này hoàn toàn độc lập, không import bất kỳ framework nào.
+    \item \texttt{application/}: chứa các Use Cases như \texttt{CreateCourseUseCase.java}, \texttt{UpdateCourseUseCase.java} và các DTO (Data Transfer Objects).
+    \item \texttt{adapters/}: chứa \texttt{CourseController.java} (REST API), \texttt{PostgresCourseRepository.java} (implementation của \texttt{CourseRepository} interface).
+    \item \texttt{infrastructure/}: chứa \texttt{SpringBootApplication.java}, \texttt{DatabaseConfig.java}, dependency injection configuration.
+\end{itemize}
+
+\indent\textbf{b. Service Go (ví dụ: Learner Model Service)}
+
+\noindent Hình~\ref{fig:go-package-structure} thể hiện cấu trúc thư mục của Learner Model Service theo cách ``idiomatic Go'':
+
+% \begin{figure}[H]
+% \centering
+% \fbox{\includegraphics[width=0.75\textwidth]{images/go-package-structure.png}}
+% \caption{Cấu trúc package của Learner Model Service (Go)}
+% \label{fig:go-package-structure}
+% \end{figure}
+
+Giải thích cấu trúc:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \texttt{domain/}: chứa \texttt{learner.go}, \texttt{skill\_mastery.go}, \texttt{repository.go} (interface). Không có dependency ngoài Go standard library.
+    \item \texttt{application/}: chứa các use cases như \texttt{update\_skill\_mastery.go} và các DTO structs.
+    \item \texttt{adapters/}: chứa \texttt{http\_handler.go} (Gin handlers), \texttt{mongo\_repository.go} (implementation của repository interface).
+    \item \texttt{infrastructure/}: chứa \texttt{main.go}, \texttt{config.go}, router setup, dependency injection.
+\end{itemize}
+
+\textbf{Lưu ý:} Cả hai ngôn ngữ đều tuân thủ nguyên tắc Dependency Rule nghiêm ngặt: domain không biết gì về HTTP, database hay framework.

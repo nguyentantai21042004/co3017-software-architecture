@@ -99,11 +99,11 @@
     \item \textbf{API endpoints:} kebab-case cho URLs (ví dụ: `/learner-models`).
 \end{itemize}
 
-\subsubsection{Enforcement \& Verification}
+\subsubsection{Thực thi \& Xác minh}
 
 \indentpar \indentpar Các nguyên tắc thiết kế chỉ có giá trị nếu chúng được thực thi (enforced) và xác minh (verified) một cách tự động. Dưới đây là các cơ chế đảm bảo tuân thủ.
 
-\indent\textbf{a. Architecture Tests (ArchUnit)}
+\indent\textbf{a. Kiểm thử Kiến trúc (ArchUnit)}
 
 \indentpar Sử dụng \textbf{ArchUnit} (cho Java) và các công cụ tương tự để viết các unit test kiểm tra kiến trúc:
 
@@ -124,7 +124,7 @@ void domainLayer_shouldNotDependOnInfrastructure() {
 }
 \end{verbatim}
 
-\indent\textbf{b. Static Analysis \& Linting}
+\indent\textbf{b. Phân tích tĩnh \& Linting}
 
 \indentpar Các công cụ static analysis được tích hợp vào CI/CD pipeline:
 
@@ -134,7 +134,7 @@ void domainLayer_shouldNotDependOnInfrastructure() {
     \item \textbf{Dependency Check:} OWASP Dependency Check để phát hiện các dependency có vulnerability.
 \end{itemize}
 
-\indent\textbf{c. Code Review Guidelines}
+\indent\textbf{c. Hướng dẫn Review Code}
 
 \indentpar Mọi Pull Request phải được review bởi ít nhất một senior developer và phải tuân thủ các tiêu chí sau:
 
@@ -145,7 +145,7 @@ void domainLayer_shouldNotDependOnInfrastructure() {
     \item Documentation: các public API và complex logic phải có comment/docstring.
 \end{itemize}
 
-\subsubsection{Architecture Metrics \& Monitoring}
+\subsubsection{Các chỉ số kiến trúc \& Giám sát}
 
 \indentpar \indentpar Để đánh giá liên tục chất lượng kiến trúc, các metrics sau được theo dõi định kỳ:
 
