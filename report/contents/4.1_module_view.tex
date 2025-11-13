@@ -7,126 +7,61 @@ Nếu Chương 3 tập trung vào việc ``chọn kiến trúc nào'' và ``quy�
 \subsection{Module View}
 
 \indentpar \indentpar Bắt đầu với Module View, góc nhìn mô tả cách hệ thống được phân rã và tổ chức code nội bộ theo Clean Architecture và Domain-Driven Design. 
-Module View (Góc nhìn Module) mô tả sự phân rã của hệ thống thành các thành phần (components) và các module con, cùng mối quan hệ giữa chúng. Góc nhìn này trả lời cho hai câu hỏi cốt lõi:
+Module View (Góc nhìn Module) mô tả sự phân rã của hệ thống thành các thành phần (components) và các module con, cùng mối quan hệ giữa chúng. Góc nhìn này trả lời cho hai câu hỏi cốt lõi: \textit{``Hệ thống được tổ chức như thế nào?''} và \textit{``Các phần code bên trong được cấu trúc ra sao?''}
 
-\begin{itemize}[leftmargin=0.7cm]
-    \item ``Hệ thống được tổ chức như thế nào?''
-    \item ``Các phần code bên trong được cấu trúc ra sao?''
-\end{itemize}
-
-Module View đặc biệt quan trọng vì nó thể hiện cách các quyết định trong ADR-1 \textrightarrow{} ADR-4 (Polyglot, Clean Architecture, Repository Pattern) được hiện thực hóa ở cấp mã nguồn, giúp đạt được các đặc tính kiến trúc quan trọng nhất của ITS:
-
-\begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{AC1 -- Modularity:} Cho phép thay đổi hoặc hoán đổi mô hình AI (Live AI Model Swapping) mà không ảnh hưởng phần còn lại.
-    \item \textbf{AC4 -- Testability:} Logic nghiệp vụ có thể kiểm thử độc lập, nhờ tách biệt khỏi framework và database.
-    \item \textbf{AC7 -- Maintainability:} Cấu trúc code rõ ràng giúp dễ đọc, dễ mở rộng và bảo trì.
-\end{itemize}
+Module View đặc biệt quan trọng vì nó thể hiện cách các quyết định trong ADR-1 \textrightarrow{} ADR-4 (Polyglot, Clean Architecture, Repository Pattern) được hiện thực hóa ở cấp mã nguồn, giúp đạt được các đặc tính kiến trúc quan trọng nhất của ITS: 
+\textbf{AC1 -- Modularity}, \textbf{AC4 -- Testability}, và \textbf{AC7 -- Maintainability}.
 
 \subsubsection{Phân rã Hệ thống}
 
 \indentpar \indentpar Hệ thống ITS được thiết kế theo phong cách \textbf{Hybrid Microservices + Event-Driven Architecture}. Việc phân rã hệ thống \textbf{(System Decomposition)} dựa trên Bounded Contexts của Domain-Driven Design (DDD), trong đó mỗi service đại diện cho một nhóm nghiệp vụ độc lập (một domain context riêng).
 
-\noindent Hình~\ref{fig:system-decomposition} minh họa sơ đồ phân rã module cấp cao của toàn hệ thống:
+\vspace{1em}
 
-% \begin{figure}[H]
-% \centering
-% \fbox{\includegraphics[width=0.95\textwidth]{images/system-decomposition.png}}
-% \caption{Sơ đồ phân rã module cấp cao của hệ thống ITS}
-% \label{fig:system-decomposition}
-% \end{figure}
-
-\noindent Cấu trúc phân rã bao gồm các service chính sau:
-
-\begin{enumerate}[leftmargin=0.7cm]
-    \item \textbf{API Gateway Service} [Go - ADR-1]:
-    \begin{itemize}[nosep]
-        \item Request Routing Module
-        \item Authentication Proxy Module (Thực thi AuthZ - ADR-6)
-        \item Rate Limiting \& Load Balancing Module
-    \end{itemize}
-    
-    \item \textbf{Auth Service} [Java/Spring - ADR-1, ADR-6]:
-    \begin{itemize}[nosep]
-        \item Authentication Module (Phát hành JWT - AuthN)
-        \item Identity Provider Module (OAuth 2.0/OIDC)
-    \end{itemize}
-    
-    \item \textbf{User Management Service} [Java/Spring - ADR-1]:
-    \begin{itemize}[nosep]
-        \item Profile Management Module (Quản lý PII - ADR-7)
-        \item Authorization Module (Quản lý Roles/Permissions - RBAC)
-    \end{itemize}
-    
-    \item \textbf{Content Service} [Java/Spring - ADR-1]:
-    \begin{itemize}[nosep]
-        \item Course Management Module
-        \item Content Metadata Module (Quản lý tags, skills)
-        \item Content Delivery Module (API cho nội dung)
-    \end{itemize}
-    
-    \item \textbf{Scoring \& Feedback Service} [Go - ADR-1]:
-    \begin{itemize}[nosep]
-        \item Scoring Engine Module (Chấm điểm tự động)
-        \item Feedback Generator Module (Tạo phản hồi tức thì $< 500$ms - AC3)
-        \item Remediation Engine Module (Gợi ý bài học bù)
-    \end{itemize}
-    
-    \item \textbf{Learner Model Service} [Go - ADR-1]:
-    \begin{itemize}[nosep]
-        \item Skill Mastery Module (Quản lý trạng thái kỹ năng)
-        \item BKT/Analytics Module (Tính toán mô hình tri thức)
-    \end{itemize}
-    
-    \item \textbf{Adaptive Engine Service} [Go - ADR-1]:
-    \begin{itemize}[nosep]
-        \item Adaptive Path Generator Module (Tạo lộ trình cá nhân hóa)
-        \item A/B Testing Module (Hỗ trợ ``Live AI Model Swapping'' - FR12)
-    \end{itemize}
-    
-    \item \textbf{Shared Infrastructure} (Các thành phần hỗ trợ):
-    \begin{itemize}[nosep]
-        \item Message Broker (RabbitMQ - ADR-8, dùng cho Event-Driven)
-        \item Primary Database (PostgreSQL - ADR-2)
-        \item Observability Stack (Prometheus, Grafana, Loki - ADR-10)
-        \item Caching Layer (Redis)
-    \end{itemize}
-\end{enumerate}
+\begin{figure}[H]
+\centering
+{\includegraphics[width=0.95\textwidth]{images/system_decomposition.png}}
+\caption{Sơ đồ phân rã module cấp cao của hệ thống ITS}
+\label{fig:system-decomposition}
+\end{figure}
 
 Phân rã này cũng thể hiện rõ \textbf{``Bounded Contexts''} của DDD, cho phép mỗi service có thể triển khai, kiểm thử và mở rộng độc lập mà vẫn phối hợp thông qua event bus (RabbitMQ theo ADR-8).
 
-\subsubsection{Cấu trúc các Tầng (Clean Architecture Layers)}
+\subsubsection{Cấu trúc các Tầng}
 
-\indentpar \indentpar Để hiện thực hóa ADR-3: Clean/Hexagonal Architecture, mọi service (Java và Go) đều tuân thủ chặt chẽ cấu trúc 4 tầng đồng tâm. Điều này đảm bảo Testability (AC4) và Maintainability (AC7)---tức là, logic nghiệp vụ có thể kiểm thử độc lập và dễ thay thế công nghệ bên ngoài mà không ảnh hưởng lõi.
+\indentpar \indentpar Để hiện thực hóa ADR-3 (Clean/Hexagonal Architecture), tất cả service (Java và Go) đều tuân thủ kiến trúc phân tầng đồng tâm. Cách tiếp cận này tách biệt rõ Business Logic và Infrastructure, qua đó bảo đảm khả năng kiểm thử và bảo trì lâu dài.
 
-\textbf{Quy tắc Phụ thuộc (Dependency Rule):} Các vòng tròn bên ngoài (Infrastructure) chỉ được phép phụ thuộc vào vòng tròn bên trong (Application, Domain). Mã nguồn ở Domain và Application không biết gì về Framework hay Database.
+\noindent\textbf{Quy tắc Phụ thuộc (Dependency Rule)}
+\begin{itemize}[leftmargin=1.5em]
+    \item Luồng phụ thuộc của mã nguồn luôn đi từ vòng ngoài vào vòng trong
+    \item Tầng trung tâm (Domain, Application) không phụ thuộc vào Database, Framework hay UI
+    \item Giao tiếp từ trong ra ngoài phải thông qua các interface theo nguyên tắc Dependency Inversion
+\end{itemize}
 
-\noindent Hình~\ref{fig:clean-architecture-layers} minh họa nguyên tắc phụ thuộc giữa bốn tầng của kiến trúc Clean Architecture trong ITS:
+\vspace{1em}
 
-% \begin{figure}[H]
-% \centering
-% \fbox{\includegraphics[width=0.8\textwidth]{images/clean-architecture-layers.png}}
-% \caption{Sơ đồ tầng Clean Architecture với Dependency Rule}
-% \label{fig:clean-architecture-layers}
-% \end{figure}
-
-
-\noindent Bảng~\ref{tab:clean-architecture-layers} mô tả chi tiết vai trò và quy tắc của từng tầng:
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\textwidth]{images/clean-architecture-layers.png}
+\caption{Sơ đồ tầng Clean Architecture với Dependency Rule}
+\label{fig:clean-architecture-layers}
+\end{figure}
 
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
 \centering
 \small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}X|}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{3.5cm}|>{\centering\arraybackslash}X|}
 \hline
 \textbf{Tầng} & \textbf{Trách nhiệm} & \textbf{Quy tắc phụ thuộc} & \textbf{Ví dụ cụ thể trong ITS} \\
 \hline
-Domain & Chứa logic nghiệp vụ cốt lõi (Entities, Value Objects, Repository Interface). & Không phụ thuộc vào bất kỳ tầng nào. & \texttt{Learner.java}, \texttt{Course.java}, \texttt{SkillMasteryScore.java}, \texttt{LearnerRepository.java}. \\
+Domain & Định nghĩa các khái niệm cốt lõi của nghiệp vụ (Entities, Value Objects, Domain Events nội bộ) cùng các quy tắc bất biến. & Hoàn toàn độc lập; không tham chiếu ra ngoài mà chỉ phơi bày interface để tầng khác hiện thực. & \begin{tabular}{@{}c@{}}\texttt{Learner.java}\\\texttt{Course.java}\\\texttt{SkillMasteryScore.java}\\\texttt{LearnerRepository.java}\end{tabular} \\
 \hline
-Application & Chứa các Use Cases điều phối luồng nghiệp vụ, định nghĩa Input/Output Port. & Chỉ phụ thuộc vào Domain. & \texttt{CreateNewCourseUseCase.java}, \texttt{UpdateSkillMasteryUseCase.java}, \texttt{SkillMasteryDTO.java}. \\
+Application & Đóng gói các Use Case, điều phối tương tác giữa Domain qua các Input/Output Port và thực thi kịch bản nghiệp vụ. & Chỉ được phép phụ thuộc vào Domain; mọi phụ thuộc khác phải đi qua port. & \begin{tabular}{@{}c@{}}\texttt{CreateNewCourseUseCase.java}\\\texttt{UpdateSkillMasteryUseCase.java}\\\texttt{SkillMasteryDTO.java}\end{tabular} \\
 \hline
-Interface Adapters & Cầu nối dữ liệu giữa Application và Infrastructure. & Phụ thuộc vào Application. & \texttt{LearnerController.java}, \texttt{PostgresLearnerRepository.java}. \\
+Interface Adapters & Chuyển đổi dữ liệu, hiện thực các port, gom/chiếu dữ liệu giữa Application với bên ngoài (HTTP, DB, MQ). & Phụ thuộc ngược vào Application và Domain để triển khai các adapter cụ thể. & \begin{tabular}{@{}c@{}}\texttt{LearnerController.java}\\\texttt{PostgresLearnerRepository.java}\end{tabular} \\
 \hline
-Infrastructure & Chứa chi tiết kỹ thuật, framework, DB driver, message broker. & Phụ thuộc vào Interface Adapters. & Spring Boot, Gin, PostgreSQL driver, RabbitMQ client. \\
+Infrastructure & Cung cấp chi tiết kỹ thuật: framework, driver, cấu hình triển khai, message broker, scheduler. & Phụ thuộc vào Interface Adapters để cung ứng tài nguyên và wiring hạ tầng. & \begin{tabular}{@{}c@{}}Spring Boot\\Gin\\PostgreSQL driver\\RabbitMQ client\end{tabular} \\
 \hline
 \end{tabularx}
 \caption{Vai trò và quy tắc phụ thuộc của các tầng Clean Architecture}
@@ -134,49 +69,108 @@ Infrastructure & Chứa chi tiết kỹ thuật, framework, DB driver, message b
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
+\subsubsection{Cấu trúc Gói}
 
-\subsubsection{Cấu trúc Gói (Package Structure)}
+\indentpar \indentpar Việc chuẩn hóa, minh họa cách tổ chức mã nguồn thực tế (Java \& Go) sao cho phù hợp với Clean Architecture và Polyglot Strategy (ADR-1) nhằm đảm bảo tính nhất quán giữa các ngôn ngữ, đồng thời giúp đội ngũ phát triển dễ dàng định hướng khi làm việc với các service khác nhau.
 
-\indentpar \indentpar Phần này minh họa cách tổ chức mã nguồn thực tế (Java \& Go) sao cho phù hợp với Clean Architecture và Polyglot Strategy (ADR-1). Việc chuẩn hóa cấu trúc gói đảm bảo tính nhất quán giữa các ngôn ngữ, đồng thời giúp đội ngũ phát triển dễ dàng định hướng khi làm việc với các service khác nhau.
+\noindent\textbf{a. Service Java (Content Service)}
 
-\indent\textbf{a. Service Java (ví dụ: Content Service)}
+\noindent\textbf{Cấu trúc thư mục}
+\begin{center}
+\begin{minipage}{0.95\textwidth}
+\begin{verbatim}
+src/main/java/co3017/microservices/content_service/
+|-- adapter/
+|   `-- http/                # REST controllers, DTOs, response builders
+|-- config/                  # Spring Boot entry point, cross-cutting config
+|-- mappers/                 # Domain <-> Persistence transformers
+|-- models/                  # Domain entities & value objects
+|-- repository/              # Ports (interfaces) & Postgres adapters
+|   `-- postgresql/
+|       |-- entity/          # JPA entities
+|       |-- mapper/          # Persistence-specific mappers
+|       |-- specification/   # Query specifications (criteria builders)
+|       `-- springdata...    # Spring Data repositories + adapters
+`-- usecase/                 # Application layer contracts & services
+    |-- service/            # Use case implementations (business orchestration)
+    `-- types/              # Commands, queries, DTOs cho use cases
 
-\noindent Hình~\ref{fig:java-package-structure} thể hiện cấu trúc thư mục của Content Service, rõ ràng phân chia 4 tầng Clean Architecture:
+src/main/resources/          # Infrastructure config (YAML, SQL migrations)
+\end{verbatim}
+\end{minipage}
+\end{center}
 
-% \begin{figure}[H]
-% \centering
-% \fbox{\includegraphics[width=0.75\textwidth]{images/java-package-structure.png}}
-% \caption{Cấu trúc package của Content Service (Java/Spring Boot)}
-% \label{fig:java-package-structure}
-% \end{figure}
-
-Giải thích cấu trúc:
-
-\begin{itemize}[leftmargin=0.7cm]
-    \item \texttt{domain/}: chứa \texttt{Course.java}, \texttt{CourseRepository.java} (interface), các Value Objects và Domain Services. Tầng này hoàn toàn độc lập, không import bất kỳ framework nào.
-    \item \texttt{application/}: chứa các Use Cases như \texttt{CreateCourseUseCase.java}, \texttt{UpdateCourseUseCase.java} và các DTO (Data Transfer Objects).
-    \item \texttt{adapters/}: chứa \texttt{CourseController.java} (REST API), \texttt{PostgresCourseRepository.java} (implementation của \texttt{CourseRepository} interface).
-    \item \texttt{infrastructure/}: chứa \texttt{SpringBootApplication.java}, \texttt{DatabaseConfig.java}, dependency injection configuration.
+\noindent\textbf{Giải thích cấu trúc}
+\begin{itemize}[leftmargin=1.2em]
+    \item \textbf{Domain Layer} (\texttt{models/}, \texttt{repository/*.java}): chứa Aggregate Root, Value Object (\texttt{Course}, \texttt{ContentUnit}, \texttt{MetadataTag}). Các lớp thuần Java, không phụ thuộc framework; \texttt{repository/} định nghĩa các port như \texttt{CourseRepository}, \texttt{ContentVersionRepository}
+    \item \textbf{Application Layer} (\texttt{usecase/}): gồm interface \texttt{CourseUseCase}, \texttt{ContentUnitUseCase} và implementation \texttt{CourseService}. \texttt{usecase/types/} gom các command/query (\texttt{CreateCourseCommand}, \texttt{CourseSearchCriteria}) và DTO phản hồi (\texttt{CoursePageResult})
+    \item \textbf{Interface Adapters Layer} (\texttt{adapter/http}, \texttt{mappers/}): controller REST (\texttt{CourseController}) và DTO request/response chuyển đổi HTTP payload \(\rightarrow\) \texttt{usecase.types}. Các mapper nối domain với entity persistence, không phụ thuộc annotation đặc thù
+    \item \textbf{Infrastructure Layer} (\texttt{repository/postgresql}, \texttt{config/}, \texttt{resources/}): hiện thực port bằng Spring Data JPA (\texttt{JpaCourseRepository} \(\leftrightarrow\) \texttt{SpringDataCourseRepository}), cấu hình entry point (\texttt{ContentServiceApplication}, \texttt{CorsConfig}), và tài nguyên \texttt{application.yml}, script SQL
 \end{itemize}
 
-\indent\textbf{b. Service Go (ví dụ: Learner Model Service)}
-
-\noindent Hình~\ref{fig:go-package-structure} thể hiện cấu trúc thư mục của Learner Model Service theo cách ``idiomatic Go'':
-
-% \begin{figure}[H]
-% \centering
-% \fbox{\includegraphics[width=0.75\textwidth]{images/go-package-structure.png}}
-% \caption{Cấu trúc package của Learner Model Service (Go)}
-% \label{fig:go-package-structure}
-% \end{figure}
-
-Giải thích cấu trúc:
-
-\begin{itemize}[leftmargin=0.7cm]
-    \item \texttt{domain/}: chứa \texttt{learner.go}, \texttt{skill\_mastery.go}, \texttt{repository.go} (interface). Không có dependency ngoài Go standard library.
-    \item \texttt{application/}: chứa các use cases như \texttt{update\_skill\_mastery.go} và các DTO structs.
-    \item \texttt{adapters/}: chứa \texttt{http\_handler.go} (Gin handlers), \texttt{mongo\_repository.go} (implementation của repository interface).
-    \item \texttt{infrastructure/}: chứa \texttt{main.go}, \texttt{config.go}, router setup, dependency injection.
+\noindent\textbf{Tuân thủ Dependency Rule.}
+\begin{itemize}[leftmargin=1.2em]
+    \item \texttt{models/} và \texttt{repository/*.java} (domain) hoàn toàn độc lập, không biết gì về Spring, JPA hay HTTP
+    \item \texttt{usecase/} chỉ phụ thuộc domain interface, điều phối business logic thông qua port mà không quan tâm implementation cụ thể
+    \item \texttt{adapter/} và \texttt{repository/postgresql}, \texttt{config/} hiện thực các interface đó, phụ thuộc ngược vào \texttt{usecase/} nhưng không kéo domain vào vòng phụ thuộc
 \end{itemize}
 
-\textbf{Lưu ý:} Cả hai ngôn ngữ đều tuân thủ nguyên tắc Dependency Rule nghiêm ngặt: domain không biết gì về HTTP, database hay framework.
+Cấu trúc này cho phép đội ngũ áp dụng blueprint chung khi dịch sang Go, đảm bảo tính nhất quán về phân tầng và Dependency Rule giữa các ngôn ngữ trong hệ thống polyglot.
+
+\noindent\textbf{b. Service Go (Learner Model Service)}
+
+\noindent\textbf{Cấu trúc thư mục}
+\begin{center}
+\begin{minipage}{0.95\textwidth}
+\begin{verbatim}
+/Users/tantai/Workspaces/smap/smap-api/
+|-- domain/
+|   |-- internal/models/
+|   |-- internal/dbmodels/
+|   |-- internal/auth/ (uc_interface.go, uc_types.go, uc_errors.go, repo_interface.go)
+|   |-- internal/user/ (uc_interface.go, uc_types.go, uc_errors.go, repo_interface.go)
+|   |-- internal/role/ (uc_interface.go, uc_types.go, uc_errors.go, repo_interface.go)
+|   `-- internal/session/ (uc_interface.go, uc_types.go, uc_errors.go, repo_interface.go)
+|-- application/
+|   |-- internal/auth/usecase/
+|   |-- internal/user/usecase/
+|   |-- internal/role/usecase/
+|   |-- internal/session/usecase/
+|   `-- internal/core/smtp/usecase/
+|-- adapters/
+|   |-- internal/httpserver/
+|   |   |-- handler.go
+|   |   |-- httpserver.go
+|   |   `-- new.go
+|   |-- internal/middleware/
+|   |-- internal/auth/delivery/http/
+|   |-- internal/auth/delivery/rabbitmq/
+|   |-- internal/user/delivery/http/
+|   |-- internal/role/delivery/http/
+|   |-- internal/session/repository/mongo/
+|   |-- internal/user/repository/mongo/
+|   `-- internal/role/repository/mongo/
+`-- infrastructure/
+    |-- cmd/api/main.go
+    |-- cmd/consumer/main.go
+    |-- config/
+    |-- internal/appconfig/mongo/
+    |-- internal/appconfig/oauth/
+    |-- internal/consumer/
+    |-- pkg/
+    |   `-- log/, redis/, rabbitmq/, mongo/, email/, discord/
+    |   `-- scope/, otp/, response/, paginator/, errors/, util/, ...
+    `-- deployment/, docker-compose.yml, Jenkinsfile, Makefile
+\end{verbatim}
+\end{minipage}
+\end{center}
+
+\noindent\textbf{Giải thích cấu trúc}
+\begin{itemize}[leftmargin=1.2em]
+    \item \textbf{Domain Layer} (\texttt{domain/}): chứa entity thuần (\texttt{internal/models}, \texttt{internal/dbmodels}) và các contract (interface, DTO, error) của từng bounded context \texttt{internal/\{auth,user,role,session\}}. Hoàn toàn không phụ thuộc Gin, Mongo driver hay adapter cụ thể
+    \item \textbf{Application Layer} (\texttt{application/}): triển khai use case (\texttt{internal/\{auth,user,role,session\}/usecase}) và dịch vụ cốt lõi (\texttt{internal/core/smtp/usecase}). Các package này sử dụng interface từ \texttt{domain/}, điều phối giữa nhau (ví dụ \texttt{auth} gọi \texttt{userUC}, \texttt{roleUC}, \texttt{sessionUC}) và phát sự kiện RabbitMQ
+    \item \textbf{Interface Adapters Layer} (\texttt{adapters/}): gồm entry adapter (Gin handler, RabbitMQ producer) và data adapter (Mongo repository). \texttt{internal/httpserver}, \texttt{internal/middleware} định nghĩa router, middleware; \texttt{internal/\{module\}/delivery} ánh xạ request/response, gửi cảnh báo Discord; \texttt{internal/\{module\}/repository/mongo} hiện thực repository interface bằng MongoDB
+    \item \textbf{Infrastructure Layer} (\texttt{infrastructure/}): tập trung file khởi động, cấu hình, wiring và tiện ích dùng chung. \texttt{cmd/api/main.go}, \texttt{cmd/consumer/main.go} load config, khởi tạo logger/encrypter, kết nối Mongo/Redis/RabbitMQ, dựng HTTP server hoặc consumer. \texttt{config/}, \texttt{internal/appconfig/*}, \texttt{pkg/*} cung cấp adapter tái sử dụng (logger Zap, Redis client, Discord webhook, SMTP, i18n, paginator, OTP, response). Các artifact triển khai (deployment, Docker Compose, Jenkinsfile, Makefile) cũng nằm tại đây
+\end{itemize}
+
+Cách trình bày này giúp đội ngũ xem kiến trúc Go hiện tại dưới cùng một blueprint với các service khác (Java hoặc Go) mà ADR-1 đề ra, đồng thời duy trì biên rõ ràng để mở rộng hoặc refactor.

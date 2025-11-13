@@ -1,0 +1,105 @@
+\subsection{Component \& Connector View}
+
+\indentpar \indentpar Sau khi Module View đã mô tả cách ITS được tổ chức thành các module tĩnh ở cấp mã nguồn, phần này đi sâu vào khía cạnh động (runtime) - tức là, các thành phần thực thi (components) và các kênh giao tiếp (connectors) giữa chúng trong môi trường hoạt động thực tế.
+Nếu Module View trả lời câu hỏi \textit{``hệ thống được chia như thế nào''}, thì Component \& Connector View trả lời \textit{``các phần đó tương tác ra sao khi hệ thống chạy''}.
+
+Phần này đặc biệt quan trọng vì nó hiện thực hóa các quyết định trong các ADR như \textbf{ADR-1}, \textbf{ADR-3}, \textbf{ADR-6} và \textbf{ADR-7}. Đồng thời, phần này cũng trực tiếp thể hiện các ACs trọng yếu: \textbf{AC2}, \textbf{AC3} và \textbf{AC6}.
+
+\subsubsection{Sơ đồ Kiến trúc Dịch vụ}
+
+\indentpar \indentpar Sơ đồ này mô tả toàn bộ hệ sinh thái dịch vụ (microservices) của ITS trong môi trường Kubernetes, phân nhóm theo mục tiêu kỹ thuật (Java vs Go) và loại giao tiếp (sync vs async). Nó kế thừa trực tiếp cấu trúc từ System Decomposition, nhưng chuyển trọng tâm từ ``module logic'' sang ``kết nối hoạt động''.
+
+\vspace{1em}
+
+\begin{figure}[H]
+\centering
+\fbox{\includegraphics[width=0.93\textwidth]{images/service_architecture.png}}
+\caption{Sơ đồ kiến trúc dịch vụ của hệ thống ITS trong môi trường Kubernetes}
+\label{fig:service-architecture}
+\end{figure}
+
+\subsubsection{Các Mẫu Tích hợp}
+
+\indentpar \indentpar Phần này mô tả các mẫu kết nối (connector patterns) giữa các thành phần---yếu tố cốt lõi để hệ thống hoạt động trơn tru, mở rộng, và bền vững.
+
+\noindent\textbf{a. Giao tiếp Đồng bộ (Synchronous Communication)}
+
+Sử dụng cho các tương tác yêu cầu-phản hồi (request-response) ngay lập tức, nơi client phải chờ kết quả.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{images/synchronous_communication.png}
+\caption{Giao tiếp Đồng bộ}
+\label{fig:synchronous-communication}
+\end{figure}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Giao thức: REST qua HTTPS (cho giao tiếp Client-to-Gateway và các nghiệp vụ Java-to-Java); gRPC (cho giao tiếp nội bộ hiệu năng cao, đặc biệt giữa các service Go)
+    \item Định dạng: JSON
+    \item Bảo mật: JWT Bearer tokens trong header \texttt{Authorization} (theo ADR-6)
+\end{itemize}
+
+\noindent\textbf{b. Giao tiếp Bất đồng bộ (Asynchronous Communication)}
+
+Sử dụng để tách rời (decouple) các service, xử lý các tác vụ nền (background tasks) và đảm bảo hiệu suất (AC3). Đây là nền tảng của kiến trúc Event-Driven.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/asynchronous_communication.png}
+    \caption{Giao tiếp Bất đồng bộ}
+    \label{fig:asynchronous-communication}
+    \end{figure}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item Message Broker: RabbitMQ (sử dụng khả năng định tuyến AMQP linh hoạt cho các Domain Events, thay vì Kafka)
+    \item Định dạng: JSON
+    \item Mô hình (Patterns): Publish/Subscribe sử dụng Domain Events. Khi một nghiệp vụ quan trọng xảy ra (ví dụ: nộp bài), service gốc sẽ phát ra một sự kiện miền. Các service khác (consumers) lắng nghe sự kiện này mà không cần biết về service gốc
+\end{itemize}
+
+\subsubsection{Luồng Dữ liệu}
+
+\indentpar \indentpar Phần này minh họa các kịch bản thực thi quan trọng (scenarios), mô tả cách dữ liệu di chuyển qua hệ thống để hoàn thành các use case.
+
+\noindent\textbf{Luồng 1: Học tập Thích ứng (UC-08: Adaptive Learning Flow)}
+
+Kịch bản này xảy ra khi người học (Learner) hoàn thành một bài học và yêu cầu nội dung tiếp theo. Luồng này chủ yếu là đồng bộ (synchronous).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{images/adaptive_learning_flow.png}
+\caption{Luồng dữ liệu cho kịch bản Học tập Thích ứng}
+\label{fig:adaptive-learning-flow}
+\end{figure}
+
+\noindent\textbf{Luồng 2: Chấm điểm Bất đồng bộ (UC-10: Asynchronous Scoring)}
+
+Kịch bản này xảy ra khi người học (Learner) nộp một bài tập (ví dụ: quiz). Luồng này là sự kết hợp của đồng bộ (phản hồi tức thì) và bất đồng bộ (cập nhật nền) để đảm bảo AC3: Performance.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{images/asynchronous_scoring_flow.png}
+\caption{Luồng dữ liệu cho kịch bản Chấm điểm Bất đồng bộ}
+\label{fig:asynchronous-scoring-flow}
+\end{figure}
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item Learner nhấn ``Nộp bài''
+    \item Client gửi \texttt{POST /api/scoring/submit} (chứa câu trả lời) đến API Gateway
+    \item API Gateway xác thực JWT và chuyển tiếp request đến Scoring \& Feedback Service (Go)
+    \item \textbf{Scoring Service (Luồng đồng bộ)}:
+    \begin{enumerate}
+        \item Chạy thuật toán chấm điểm nhanh (ví dụ: so sánh đáp án quiz)
+        \item Tạo một phản hồi tức thì (ví dụ: ``Bạn đúng 8/10 câu'')
+        \item Trả về phản hồi nhanh cho API Gateway \(\rightarrow\) Client \(\rightarrow\) Learner (Hoàn thành trong <500ms)
+    \end{enumerate}
+    \item \textbf{Scoring Service (Luồng bất đồng bộ)}:
+    \begin{enumerate}
+        \item Phát (Publish) một sự kiện \texttt{SubmissionCompleted} (chứa kết quả chi tiết và user-id) lên RabbitMQ
+    \end{enumerate}
+    \item \textbf{Learner Model Service (Go) (Luồng bất đồng bộ - Consumer)}:
+    \begin{enumerate}
+        \item Nhận được sự kiện \texttt{SubmissionCompleted} từ RabbitMQ
+        \item Phân tích kết quả chi tiết và cập nhật \texttt{SkillMasteryScores} cho người học đó trong cơ sở dữ liệu
+        \item (Tùy chọn) Phát ra sự kiện \texttt{LearnerModelUpdated} để thông báo cho Adaptive Engine
+    \end{enumerate}
+\end{enumerate}
