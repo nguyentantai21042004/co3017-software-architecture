@@ -18,7 +18,7 @@
 
 % \subsubsection{Ví dụ Triển khai}
 
-% Như được minh họa trong tài liệu SOLID principles, chúng ta đã tách biệt rõ ràng các trách nhiệm.
+% \indentpar \indentpar Như được minh họa trong tài liệu SOLID principles, chúng ta đã tách biệt rõ ràng các trách nhiệm.
 
 % \noindent\textbf{Ví dụ 1: Tách biệt Service (Vi phạm và Sửa lỗi)}
 
@@ -154,7 +154,7 @@
 
 % \subsubsection{Ví dụ Code}
 
-% Đây là ví dụ quan trọng nhất để đáp ứng FR12: Live AI Model Swapping và được minh họa chi tiết trong tài liệu SOLID principles.
+% \indentpar \indentpar Đây là ví dụ quan trọng nhất để đáp ứng FR12: Live AI Model Swapping và được minh họa chi tiết trong tài liệu SOLID principles.
 
 % \noindent\textbf{Ví dụ: Chiến lược Gợi ý Mở rộng (Strategy Pattern)}
 
@@ -398,7 +398,7 @@
 
 % \subsubsection{Ví dụ Triển khai}
 
-% Ví dụ này cho thấy cách Tầng Application (cấp cao) phụ thuộc vào Interface, và Tầng Infrastructure (cấp thấp) cũng phụ thuộc vào Interface đó.
+% \indentpar \indentpar Ví dụ này cho thấy cách Tầng Application (cấp cao) phụ thuộc vào Interface, và Tầng Infrastructure (cấp thấp) cũng phụ thuộc vào Interface đó.
 
 % \noindent\textbf{Tầng Application (Cấp cao)}: Định nghĩa Use Case và Interface nó cần.
 
@@ -462,7 +462,7 @@
 
 % \subsubsection{Lợi ích Kiểm thử (Testing Benefits)}
 
-% DIP là chìa khóa để đạt được Testability (AC4) và mục tiêu Coverage > 80\% (ADR-5). Chúng ta có thể kiểm thử logic nghiệp vụ (UseCase) mà không cần CSDL.
+% \indentpar \indentpar DIP là chìa khóa để đạt được Testability (AC4) và mục tiêu Coverage $> 80\%$ (ADR-5). Chúng ta có thể kiểm thử logic nghiệp vụ (UseCase) mà không cần CSDL.
 
 % \begin{lstlisting}[language=Java, caption={Kiểm thử UseCase mà không cần CSDL}]
 % // Kiểm thử UseCase mà không cần CSDL
@@ -491,35 +491,37 @@
 
 % \subsection{Số liệu và Xác minh SOLID}
 
-% Chúng tôi sử dụng các công cụ phân tích tĩnh (static analysis) để liên tục đo lường mức độ tuân thủ SOLID.
+% \indentpar \indentpar Chúng tôi sử dụng các công cụ phân tích tĩnh (static analysis) để liên tục đo lường mức độ tuân thủ SOLID.
 
 % \subsubsection{Số liệu Code}
 
-% Các số liệu này được tích hợp vào CI/CD pipeline (ADR-5) để đảm bảo chất lượng.
+% \indentpar \indentpar Các số liệu này được tích hợp vào CI/CD pipeline (ADR-5) để đảm bảo chất lượng.
 
+% \renewcommand{\arraystretch}{1.8}
 % \begin{table}[H]
 % \centering
-% \renewcommand{\arraystretch}{1.8}
+% \small
 % \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\noindent\justifying\arraybackslash}X|}
 % \hline
-% \textbf{Số liệu} & \textbf{Mục tiêu} & \textbf{Công cụ} & \textbf{Trạng thái} & \textbf{Ý nghĩa (liên quan đến SOLID)} \\
+% \textbf{Số liệu}\rule{0pt}{1.6em} & \textbf{Mục tiêu} & \textbf{Công cụ} & \textbf{Trạng thái} & \textbf{Ý nghĩa (liên quan đến SOLID)} \\
 % \hline
-% Cyclomatic Complexity & < 10 & SonarQube & 7.2 & SRP/OCP: Độ phức tạp thấp cho thấy các phương thức tập trung, ít if/else \\
+% Cyclomatic Complexity & $< 10$ & SonarQube & 7.2 & SRP/OCP: Độ phức tạp thấp cho thấy các phương thức tập trung, ít if/else \\
 % \hline
-% Coupling (Afferent/Efferent) & < 5 & JDepend & 3.8 & DIP/ISP: Khớp nối (coupling) thấp cho thấy sự phụ thuộc vào abstraction \\
+% Coupling (Afferent/Efferent) & $< 5$ & JDepend & 3.8 & DIP/ISP: Khớp nối (coupling) thấp cho thấy sự phụ thuộc vào abstraction \\
 % \hline
-% Cohesion (LCOM4) & > 0.8 & SonarQube & 0.85 & SRP: Độ gắn kết (cohesion) cao cho thấy các lớp có trách nhiệm rõ ràng \\
+% Cohesion (LCOM4) & $> 0.8$ & SonarQube & 0.85 & SRP: Độ gắn kết (cohesion) cao cho thấy các lớp có trách nhiệm rõ ràng \\
 % \hline
-% Test Coverage & > 80\% & JaCoCo & 78\% & DIP: Tỷ lệ coverage cao là kết quả của việc áp dụng DIP, cho phép unit test \\
+% Test Coverage & $> 80\%$ & JaCoCo & 78\% & DIP: Tỷ lệ coverage cao là kết quả của việc áp dụng DIP, cho phép unit test \\
 % \hline
 % \end{tabularx}
 % \caption{Số liệu đo lường tuân thủ SOLID}
 % \label{tab:solid-metrics}
 % \end{table}
+% \renewcommand{\arraystretch}{1.0}
 
 % \subsubsection{Checklist Đánh giá (Code Review Checklist)}
 
-% Checklist này được sử dụng trong mọi Pull Request:
+% \indentpar \indentpar Checklist này được sử dụng trong mọi Pull Request:
 
 % \begin{itemize}[leftmargin=1.5em]
 %     \item[\Square] \textbf{SRP}: Lớp này có nhiều hơn một lý do để thay đổi không? (Ví dụ: Thay đổi nghiệp vụ VÀ thay đổi CSDL?)
@@ -538,23 +540,23 @@
 
 % \subsubsection{Kịch bản Thuộc tính Chất lượng}
 
-% Đánh giá kiến trúc dựa trên các kịch bản thực tế.
+% \indentpar \indentpar Đánh giá kiến trúc dựa trên các kịch bản thực tế.
 
+% \renewcommand{\arraystretch}{1.6}
 % \begin{table}[H]
 % \centering
-% \renewcommand{\arraystretch}{1.6}
 % \small
 % \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{2.5cm}|>{\noindent\justifying\arraybackslash}X|>{\noindent\justifying\arraybackslash}X|>{\noindent\justifying\arraybackslash}p{2.5cm}|>{\centering\arraybackslash}p{1.5cm}|}
 % \hline
-% \textbf{Thuộc tính (AC)} & \textbf{Kịch bản} & \textbf{Phản ứng Kiến trúc} & \textbf{Chỉ số Đo lường} & \textbf{Kết quả} \\
+% \textbf{Thuộc tính (AC)}\rule{0pt}{1.6em} & \textbf{Kịch bản} & \textbf{Phản ứng Kiến trúc} & \textbf{Chỉ số Đo lường} & \textbf{Kết quả} \\
 % \hline
-% Performance (AC3) & 5.000 người dùng đồng thời nộp bài (UC-10) và yêu cầu phản hồi tức thì & 1. Polyglot (ADR-1): Dùng Golang cho ScoringService\newline 2. EDA: Tách rời việc cập nhật LearnerModel\newline 3. Caching (Redis) cho PII & p95 latency < 500ms cho phản hồi tức thì & \CheckedBox \\
+% Performance (AC3) & 5.000 người dùng đồng thời nộp bài (UC-10) và yêu cầu phản hồi tức thì & 1. Polyglot (ADR-1): Dùng Golang cho ScoringService\newline 2. EDA: Tách rời việc cập nhật LearnerModel\newline 3. Caching (Redis) cho PII & p95 latency $< 500$ms cho phản hồi tức thì & \CheckedBox \\
 % \hline
 % Scalability (AC2) & Lượng người dùng tăng gấp 10 lần trong mùa cao điểm & 1. Kubernetes: Triển khai trên K8s\newline 2. HPA: Horizontal Pod Autoscaler\newline 3. Stateless: Services là stateless (JWT/ADR-6) & Service tự động scale-out (từ 3 lên 15 pod) & \CheckedBox \\
 % \hline
 % Modularity (AC1) / Deployability (AC5) & Team AI muốn triển khai thuật toán gợi ý mới (V2) mà không làm gián đoạn người dùng đang học (V1) & 1. OCP: AdaptiveEngine phụ thuộc vào interface\newline 2. Microservices: AdaptiveEngine là service độc lập\newline 3. Blue/Green deployment trên K8s & Zero downtime. Chuyển đổi 100\% traffic sang V2 trong < 5 phút & \CheckedBox \\
 % \hline
-% Testability (AC4) & Logic nghiệp vụ của AdaptiveEngine phải được xác minh là chính xác 100\% mà không cần chạy toàn bộ CSDL & 1. Clean Arch: Logic nghiệp vụ cô lập trong tầng Application/Domain\newline 2. DIP: Use Case phụ thuộc vào interfaces\newline 3. Testing Pyramid: Unit Tests mock repositories & Code Coverage cho module logic nghiệp vụ > 85\% & \CheckedBox \\
+% Testability (AC4) & Logic nghiệp vụ của AdaptiveEngine phải được xác minh là chính xác 100\% mà không cần chạy toàn bộ CSDL & 1. Clean Arch: Logic nghiệp vụ cô lập trong tầng Application/Domain\newline 2. DIP: Use Case phụ thuộc vào interfaces\newline 3. Testing Pyramid: Unit Tests mock repositories & Code Coverage cho module logic nghiệp vụ $> 85\%$ & \CheckedBox \\
 % \hline
 % Security (AC6) / Compliance & Một service (ví dụ: ScoringService) bị xâm nhập bởi kẻ tấn công & 1. Tách PII: Chỉ UserManagementService lưu PII\newline 2. Mã hóa: PII được mã hóa (at-rest) bằng pgcrypto\newline 3. AuthZ (ADR-6): API Gateway chặn cuộc gọi trái phép & Kẻ tấn công không thể truy cập PII từ service bị xâm nhập & \CheckedBox \\
 % \hline
@@ -562,10 +564,11 @@
 % \caption{Kịch bản đánh giá các thuộc tính chất lượng}
 % \label{tab:qa-scenarios}
 % \end{table}
+% \renewcommand{\arraystretch}{1.0}
 
 % \subsubsection{Phân tích Đánh đổi Kiến trúc}
 
-% Phân tích này xác nhận lại các đánh đổi đã được chấp nhận.
+% \indentpar \indentpar Phân tích này xác nhận lại các đánh đổi đã được chấp nhận.
 
 % \noindent\textbf{Sensitivity Points (Điểm nhạy cảm)}:
 % \begin{itemize}[leftmargin=1.5em]
@@ -577,7 +580,7 @@
 % \noindent\textbf{Trade-off Points (Điểm Đánh đổi)}:
 % \begin{itemize}[leftmargin=1.5em]
 %     \item \textbf{Microservices Complexity vs. Modularity}: Chúng ta chấp nhận độ phức tạp vận hành cao của Microservices để đạt được Modularity (cho FR12) và Scalability (AC2)
-%     \item \textbf{Eventual Consistency vs. Performance}: Chúng ta chọn mô hình Event-Driven cho việc chấm điểm. Điều này tăng hiệu năng (AC3) (phản hồi tức thì <500ms) nhưng đánh đổi bằng tính nhất quán tức thời (Learner Model được cập nhật sau vài giây)
+%     \item \textbf{Eventual Consistency vs. Performance}: Chúng ta chọn mô hình Event-Driven cho việc chấm điểm. Điều này tăng hiệu năng (AC3) (phản hồi tức thì $< 500$ms) nhưng đánh đổi bằng tính nhất quán tức thời (Learner Model được cập nhật sau vài giây)
 %     \item \textbf{Polyglot Programming vs. Team Expertise}: Chúng ta chọn Polyglot (ADR-1) để tối ưu hiệu năng (Go) và bảo trì (Java). Chúng ta chấp nhận rủi ro về chi phí đào tạo và sự phức tạp của CI/CD pipeline
 % \end{itemize}
 
@@ -598,17 +601,17 @@
 
 % \subsubsection{Các Cải tiến từ SOLID}
 
-% Việc áp dụng SOLID đã tạo ra những cải tiến đáng kể, đặc biệt khi so sánh với các dự án ``monolith'' truyền thống.
+% \indentpar \indentpar Việc áp dụng SOLID đã tạo ra những cải tiến đáng kể, đặc biệt khi so sánh với các dự án ``monolith'' truyền thống.
 
 % \noindent\textbf{Cải tiến Định lượng (Ước tính)}:
 
+% \renewcommand{\arraystretch}{1.6}
 % \begin{table}[H]
 % \centering
-% \renewcommand{\arraystretch}{1.6}
 % \small
 % \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{1.5cm}|>{\noindent\justifying\arraybackslash}X|}
 % \hline
-% \textbf{Số liệu} & \textbf{Trước SOLID (Monolith)} & \textbf{Sau SOLID (Clean Arch)} & \textbf{Cải tiến} & \textbf{Ý nghĩa} \\
+% \textbf{Số liệu}\rule{0pt}{1.6em} & \textbf{Trước SOLID (Monolith)} & \textbf{Sau SOLID (Clean Arch)} & \textbf{Cải tiến} & \textbf{Ý nghĩa} \\
 % \hline
 % Test Coverage & \textasciitilde45\% (Chủ yếu E2E) & \textasciitilde85\% (Chủ yếu Unit) & +88\% & DIP cho phép Unit Test logic nghiệp vụ (AC4) \\
 % \hline
@@ -622,6 +625,7 @@
 % \caption{Cải tiến định lượng từ việc áp dụng SOLID}
 % \label{tab:solid-improvements}
 % \end{table}
+% \renewcommand{\arraystretch}{1.0}
 
 % \noindent\textbf{Cải tiến Định tính}:
 % \begin{itemize}[leftmargin=1.5em]
@@ -664,7 +668,7 @@
 % \noindent\textbf{Event-Driven cho các Thành phần AI}:
 % \begin{itemize}[leftmargin=1.5em]
 %     \item Quyết định tách rời (decouple) ScoringService và LearnerModelService qua RabbitMQ là rất đúng đắn
-%     \item Nó giúp đạt được AC3: Performance (<500ms) bằng cách cho phép xử lý bất đồng bộ các mô hình ML/AI (cập nhật LearnerModel)
+%         \item Nó giúp đạt được AC3: Performance ($< 500$ms) bằng cách cho phép xử lý bất đồng bộ các mô hình ML/AI (cập nhật LearnerModel)
 % \end{itemize}
 
 % \noindent\textbf{Polyglot Programming (ADR-1)}:
@@ -727,15 +731,15 @@
 
 % \subsubsection{Sổ nợ Kỹ thuật (Technical Debt Register)}
 
-% Ghi lại các nợ kỹ thuật đã biết để lên kế hoạch xử lý.
+% \indentpar \indentpar Ghi lại các nợ kỹ thuật đã biết để lên kế hoạch xử lý.
 
+% \renewcommand{\arraystretch}{1.6}
 % \begin{table}[H]
 % \centering
-% \renewcommand{\arraystretch}{1.6}
 % \small
 % \begin{tabularx}{\textwidth}{|>{\noindent\justifying\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.5cm}|>{\noindent\justifying\arraybackslash}X|}
 % \hline
-% \textbf{Hạng mục Nợ} & \textbf{Tác động} & \textbf{Ưu tiên} & \textbf{Nỗ lực} & \textbf{Kế hoạch Xử lý} \\
+% \textbf{Hạng mục Nợ}\rule{0pt}{1.6em} & \textbf{Tác động} & \textbf{Ưu tiên} & \textbf{Nỗ lực} & \textbf{Kế hoạch Xử lý} \\
 % \hline
 % Thiếu Integration Tests (cho CSDL) & Cao & 1 (Cao) & 2 tuần & Bổ sung Testcontainers vào pipeline (ADR-5) để kiểm thử với CSDL thật (Postgres, Mongo) \\
 % \hline
@@ -751,3 +755,4 @@
 % \caption{Sổ nợ kỹ thuật và kế hoạch xử lý}
 % \label{tab:technical-debt}
 % \end{table}
+% \renewcommand{\arraystretch}{1.0}

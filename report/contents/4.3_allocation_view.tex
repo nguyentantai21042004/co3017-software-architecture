@@ -1,207 +1,220 @@
-% 3.3 Allocation View
+\subsection{Góc nhìn Phân bổ}
 
-% Trong kiến trúc On-Premise, hệ thống ITS được triển khai hoàn toàn trên hạ tầng nội bộ (private infrastructure), bao gồm:
-% 	•	Các Server vật lý hoặc Virtual Machines trong trung tâm dữ liệu.
-% 	•	Một Kubernetes Cluster tự quản lý (Self-managed K8s) do đội IT vận hành.
-% 	•	Các thành phần lưu trữ, mạng và giám sát được triển khai cục bộ.
+\indentpar \indentpar Trong kiến trúc On-Premise, hệ thống ITS được triển khai hoàn toàn trên hạ tầng nội bộ (private infrastructure), bao gồm:
+\begin{itemize}[leftmargin=0.7cm]
+    \item Các Server vật lý hoặc Virtual Machines trong trung tâm dữ liệu.
+    \item Một Kubernetes Cluster tự quản lý (Self-managed K8s) do đội IT vận hành.
+    \item Các thành phần lưu trữ, mạng và giám sát được triển khai cục bộ.
+\end{itemize}
 
-% Góc nhìn này ánh xạ các thành phần kiến trúc (Service Components) từ Mục 3.2 vào các tài nguyên vật lý và ảo tại trung tâm dữ liệu On-Premise.
+\indentpar \indentpar Góc nhìn này ánh xạ các thành phần kiến trúc (Service Components) từ Mục~4.2 vào các tài nguyên vật lý và ảo tại trung tâm dữ liệu On-Premise.
 
-% 🔗 Liên kết với phần trước:
-% 	•	3.1 Module View → cho biết cấu trúc code.
-% 	•	3.2 Component & Connector View → cho biết các thành phần và cách chúng giao tiếp.
-% 	•	3.3 Allocation View → mô tả chúng chạy trên máy chủ/vùng mạng nào, với cơ chế HA và DR ra sao trong môi trường On-Premise.
+\indentpar \indentpar Liên kết với phần trước:
+\begin{itemize}[leftmargin=0.7cm]
+    \item Mục~4.1 Module View → cho biết cấu trúc code.
+    \item Mục~4.2 Component \& Connector View → cho biết các thành phần và cách chúng giao tiếp.
+    \item Mục~4.3 Allocation View → mô tả chúng chạy trên máy chủ/vùng mạng nào, với cơ chế HA và DR ra sao trong môi trường On-Premise.
+\end{itemize}
 
-% Mục tiêu của Deployment View trong On-Premise:
-% 	•	AC2 – Scalability: Scale-out bằng Node Pools và tự động phân phối workload.
-% 	•	AC5 – Deployability: Tự động hóa CI/CD nội bộ, sử dụng Container Registry riêng.
-% 	•	AC9 – Observability: Quản lý logs/metrics phân tán trong hạ tầng nội bộ.
-% 	•	High Availability & Fault Tolerance: Đảm bảo hệ thống chạy ổn định ngay cả khi một node hoặc tủ rack gặp sự cố.
+\indentpar \indentpar Mục tiêu của Deployment View trong On-Premise:
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{AC2 -- Scalability:} Scale-out bằng Node Pools và tự động phân phối workload.
+    \item \textbf{AC5 -- Deployability:} Tự động hóa CI/CD nội bộ, sử dụng Container Registry riêng.
+    \item \textbf{AC9 -- Observability:} Quản lý logs/metrics phân tán trong hạ tầng nội bộ.
+    \item \textbf{High Availability \& Fault Tolerance:} Đảm bảo hệ thống chạy ổn định ngay cả khi một node hoặc tủ rack gặp sự cố.
+\end{itemize}
 
-% ⸻
+\subsubsection{Kiến trúc Triển khai (On-Premise Architecture)}
 
-% 3.3.1 Deployment Architecture (On-Premise Architecture)
+\indentpar \indentpar Kiến trúc triển khai On-Premise vẫn tuân thủ nguyên tắc Cloud-Native, nhưng tất cả thành phần được host trên:
+\begin{itemize}[leftmargin=0.7cm]
+    \item Máy chủ vật lý (Bare-metal servers) với CPU/RAM cao.
+    \item Hệ thống lưu trữ SAN/NAS cho database và persistent volumes.
+    \item Hệ thống ảo hóa nội bộ (VMware vSphere / Proxmox / OpenStack) cho Kubernetes nodes.
+    \item Load Balancer cứng (hardware LB) hoặc HAProxy/NGINX nội bộ.
+    \item Private Docker Registry để lưu images.
+\end{itemize}
 
-% Kiến trúc triển khai On-Premise vẫn tuân thủ nguyên tắc Cloud-Native, nhưng tất cả thành phần được host trên:
-% 	•	Máy chủ vật lý (Bare-metal servers) với CPU/RAM cao.
-% 	•	Hệ thống lưu trữ SAN/NAS cho database và persistent volumes.
-% 	•	Hệ thống ảo hóa nội bộ (VMware vSphere / Proxmox / OpenStack) cho Kubernetes nodes.
-% 	•	Load Balancer cứng (hardware LB) hoặc HAProxy/NGINX nội bộ.
-% 	•	Private Docker Registry để lưu images.
+\noindent \textbf{Hạ tầng phần cứng (Physical Infrastructure Layer)}
 
-% 🖥️ Hạ tầng phần cứng (Physical Infrastructure Layer)
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{Thành phần}\rule{0pt}{1.6em} & \textbf{Mô tả} \\
+\hline
+Rack Servers & 6--10 server vật lý, CPU Intel Xeon/AMD EPYC, RAM 128--256GB \\
+\hline
+Network & Switch Layer 2/3, VLAN tách biệt (DMZ / Internal / Storage) \\
+\hline
+Storage & SAN/NAS hỗ trợ RAID-10, Fiber Channel/iSCSI \\
+\hline
+Management & vCenter/Proxmox Dashboard cho quản lý VM \\
+\hline
+\end{tabularx}
+\caption{Hạ tầng phần cứng On-Premise}
+\label{tab:physical-infrastructure}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
 
-% Thành phần	Mô tả
-% Rack Servers	6–10 server vật lý, CPU Intel Xeon/AMD EPYC, RAM 128–256GB
-% Network	Switch Layer 2/3, VLAN tách biệt (DMZ / Internal / Storage)
-% Storage	SAN/NAS hỗ trợ RAID-10, Fiber Channel/iSCSI
-% Management	vCenter/Proxmox Dashboard cho quản lý VM
+\noindent \textbf{Kubernetes Cluster (Self-Managed)}
 
+\indentpar \indentpar Hệ thống chạy trên một cluster Kubernetes tự triển khai:
 
-% ⸻
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{Thành phần}\rule{0pt}{1.6em} & \textbf{Mô tả} \\
+\hline
+Master Nodes & 3 master để đảm bảo HA (etcd cluster) \\
+\hline
+Worker Nodes & 6--12 worker (tuỳ tải) \\
+\hline
+CNI & Calico hoặc Cilium \\
+\hline
+Ingress & NGINX Ingress hoặc Istio Gateway \\
+\hline
+Persistent Volumes & Rook-Ceph / Longhorn / NFS \\
+\hline
+\end{tabularx}
+\caption{Cấu hình Kubernetes Cluster}
+\label{tab:k8s-cluster}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
 
-% 🧩 Kubernetes Cluster (Self-Managed)
+\noindent \textbf{Phân vùng Mạng (Network Segmentation)}
 
-% Hệ thống chạy trên một cluster Kubernetes tự triển khai:
+\indentpar \indentpar Vì đây là môi trường On-Premise, việc phân vùng mạng (segmentation) là cực kỳ quan trọng:
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{DMZ Layer} → Load Balancer + API Gateway.
+    \item \textbf{Application Layer} → các pod Java/Go.
+    \item \textbf{Data Layer} → PostgreSQL, MongoDB, RabbitMQ, Redis.
+    \item \textbf{Monitoring Layer} → Prometheus, Grafana, Loki.
+\end{itemize}
 
-% Thành phần	Mô tả
-% Master Nodes	3 master để đảm bảo HA (etcd cluster)
-% Worker Nodes	6–12 worker (tuỳ tải)
-% CNI	Calico hoặc Cilium
-% Ingress	NGINX Ingress hoặc Istio Gateway
-% Persistent Volumes	Rook-Ceph / Longhorn / NFS
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/deployment_architecture_onprem.png}
+\caption{Kiến trúc Triển khai On-Premise}
+\label{fig:deployment-architecture-onprem}
+\end{figure}
 
+\subsubsection{Thông số Container (On-Premise Resource Planning)}
 
-% ⸻
+\indentpar \indentpar Do hệ thống chạy On-Premise, tài nguyên cần được quy hoạch tĩnh (static capacity planning), kết hợp với autoscaling dựa trên metrics nhưng bị ràng buộc bởi tài nguyên phần cứng.
 
-% 🌐 Network Segmentation
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.8cm}|}
+\hline
+\textbf{Service}\rule{0pt}{1.6em} & \textbf{Image Size} & \textbf{Memory Req/Lmt} & \textbf{CPU Req/Lmt} & \textbf{Replicas} & \textbf{Node Pool} \\
+\hline
+API Gateway (Go) & 30MB & 256MB/512MB & 0.25/1 & 3--10 & Node Pool A \\
+\hline
+Auth Service (Java) & 250MB & 512MB/1GB & 0.5/1.5 & 2--5 & Node Pool B \\
+\hline
+User Service (Java) & 250MB & 512MB/1GB & 0.5/1.5 & 2--5 & Node Pool B \\
+\hline
+Content Service (Java) & 250MB & 512MB/1GB & 0.5/1.5 & 2--5 & Node Pool B \\
+\hline
+Scoring Svc (Go) & 40MB & 256MB/1GB & 0.5/2 & 3--15 & Node Pool A \\
+\hline
+Learner Model (Go) & 40MB & 256MB/1GB & 0.5/2 & 3--10 & Node Pool A \\
+\hline
+Adaptive Engine (Go) & 40MB & 512MB/2GB & 1/3 & 2--8 & Node Pool A \\
+\hline
+\end{tabularx}
+\caption{Thông số Container và Resource Planning}
+\label{tab:container-specs}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
 
-% Vì đây là môi trường On-Premise, việc phân vùng mạng (segmentation) là cực kỳ quan trọng:
-% 	•	DMZ Layer → Load Balancer + API Gateway.
-% 	•	Application Layer → các pod Java/Go.
-% 	•	Data Layer → PostgreSQL, MongoDB, RabbitMQ, Redis.
-% 	•	Monitoring Layer → Prometheus, Grafana, Loki.
+\subsubsection{Thành phần Hạ tầng (On-Premise Stack)}
 
-% ⸻
+\indentpar \indentpar Dưới đây là toàn bộ thành phần hạ tầng bắt buộc khi triển khai ITS On-Premise.
 
-% 🖼️ HÌNH 3.10 – Deployment Architecture (On-Premise)
+\noindent \textbf{1. Load Balancer (Lớp DMZ)}
 
-% Gợi ý khi vẽ bản đẹp (Figma / Draw.io):
-% 	•	Tách thành 3 tầng: DMZ → App Nodes → Data Nodes.
-% 	•	Dùng icon server để thể hiện Bare-metal.
-% 	•	Dùng màu pastel để đảm bảo tính academic.
+\begin{itemize}[leftmargin=0.7cm]
+    \item Có thể dùng:
+    \begin{itemize}[nosep,leftmargin=0.9cm]
+        \item HAProxy (active-passive)
+        \item NGINX Plus
+        \item F5 BIG-IP (nếu doanh nghiệp có sẵn)
+    \end{itemize}
+    \item Chức năng:
+    \begin{itemize}[nosep,leftmargin=0.9cm]
+        \item SSL termination
+        \item Reverse proxy
+        \item Rate limit
+        \item WAF
+    \end{itemize}
+\end{itemize}
 
-% Dưới đây là bản Mermaid để bạn xem logic:
+\noindent \textbf{2. Database \& Storage Zone}
 
-% graph TD
-%     subgraph Users
-%         User(User<br/>Learner / Instructor / Admin)
-%     end
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{PostgreSQL HA Cluster:}
+    \begin{itemize}[nosep,leftmargin=0.9cm]
+        \item Patroni + etcd hoặc
+        \item pgPool-II + Streaming Replication
+    \end{itemize}
+    \item \textbf{MongoDB Replica Set:}
+    \begin{itemize}[nosep,leftmargin=0.9cm]
+        \item Chạy 3 node trong các rack khác nhau.
+    \end{itemize}
+    \item \textbf{Redis Sentinel Cluster:}
+    \begin{itemize}[nosep,leftmargin=0.9cm]
+        \item Dùng local SSD của server để đạt IOPS cao.
+    \end{itemize}
+    \item \textbf{RabbitMQ Cluster:}
+    \begin{itemize}[nosep,leftmargin=0.9cm]
+        \item Mirrored queues (Highly Available).
+        \item Phù hợp với Adaptive Learning \& Scoring Event-driven flow.
+    \end{itemize}
+\end{itemize}
 
-%     subgraph DMZ["DMZ Network (On-Prem Load Balancer)"]
-%         LB(Hardware Load Balancer<br/>HAProxy/NGINX)
-%     end
+\noindent \textbf{3. Observability Stack (AC9 -- On-Premise)}
 
-%     subgraph OnPremCluster["On-Premise Kubernetes Cluster"]
-%         direction TB
+\indentpar \indentpar Toàn bộ stack giám sát được cài trong namespace \texttt{its-monitoring}:
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Prometheus} -- metrics (scrape từ pods + node exporter)
+    \item \textbf{Loki} -- collector logs
+    \item \textbf{Grafana} -- dashboard hợp nhất
+    \item \textbf{Alertmanager} -- cảnh báo nội bộ (email/SMS/Zalo OA)
+    \item \textbf{OpenTelemetry Collector} -- gửi trace từ Java/Go đến Tempo/Jaeger
+    \item \textbf{Node Exporter} -- metrics phần cứng của mỗi server
+\end{itemize}
 
-%         Ingress(Ingress Controller<br/>TLS Termination)
+\subsubsection{So sánh Cloud vs On-Premise}
 
-%         subgraph "Namespace: its-prod"
-%             APIPod(API Gateway Pods<br/>Go)
-%             JavaPods(Java Services<br/>Auth / User / Content)
-%             GoPods(Go Services<br/>Scoring / Adaptive / Learner Model)
-%         end
-
-%         subgraph "Namespace: its-monitoring"
-%             Mon(Prometheus • Loki • Grafana)
-%         end
-%     end
-
-%     subgraph DataZone["Data Zone (Bare-metal / VMs)"]
-%         PG[(🐘 PostgreSQL<br/>Primary + Standby)]
-%         MG[(🍃 MongoDB<br/>Replica Set)]
-%         RD[(🔥 Redis HA Cluster)]
-%         MQ[(🐰 RabbitMQ<br/>Clustered)]
-%     end
-
-%     User --> LB --> Ingress
-%     Ingress --> APIPod
-%     Ingress --> JavaPods
-%     Ingress --> GoPods
-
-%     JavaPods -- JDBC --> PG
-%     JavaPods -- Redis --> RD
-
-%     GoPods -- Mongo --> MG
-%     GoPods -- JDBC --> PG
-%     GoPods -- AMQP --> MQ
-
-%     APIPod -- AMQP --> MQ
-%     Mon --- APIPod
-%     Mon --- JavaPods
-%     Mon --- GoPods
-
-
-% ⸻
-
-% 3.3.2 Container Specifications (On-Premise Resource Planning)
-
-% Do hệ thống chạy On-Premise, tài nguyên cần được quy hoạch tĩnh (static capacity planning), kết hợp với autoscaling dựa trên metrics nhưng bị ràng buộc bởi tài nguyên phần cứng.
-
-% Service	Image Size	Memory Req/Lmt	CPU Req/Lmt	Replicas	Node Pool
-% API Gateway (Go)	30MB	256MB/512MB	0.25/1	3–10	Node Pool A
-% Auth Service (Java)	250MB	512MB/1GB	0.5/1.5	2–5	Node Pool B
-% User Service (Java)	250MB	512MB/1GB	0.5/1.5	2–5	Node Pool B
-% Content Service (Java)	250MB	512MB/1GB	0.5/1.5	2–5	Node Pool B
-% Scoring Svc (Go)	40MB	256MB/1GB	0.5/2	3–15	Node Pool A
-% Learner Model (Go)	40MB	256MB/1GB	0.5/2	3–10	Node Pool A
-% Adaptive Engine (Go)	40MB	512MB/2GB	1/3	2–8	Node Pool A
-
-
-% ⸻
-
-% 3.3.3 Infrastructure Components (On-Premise Stack)
-
-% Dưới đây là toàn bộ thành phần hạ tầng bắt buộc khi triển khai ITS On-Premise.
-
-% ⸻
-
-% 1️⃣ Load Balancer (Lớp DMZ)
-% 	•	Có thể dùng:
-% 	•	HAProxy (active-passive)
-% 	•	NGINX Plus
-% 	•	F5 BIG-IP (nếu doanh nghiệp có sẵn)
-% 	•	Chức năng:
-% 	•	SSL termination
-% 	•	Reverse proxy
-% 	•	Rate limit
-% 	•	WAF
-
-% ⸻
-
-% 2️⃣ Database & Storage Zone
-
-% 🐘 PostgreSQL HA Cluster
-% 	•	Patroni + etcd hoặc
-% 	•	pgPool-II + Streaming Replication
-
-% 🍃 MongoDB Replica Set
-% 	•	Chạy 3 node trong các rack khác nhau.
-
-% 🔥 Redis Sentinel Cluster
-% 	•	Dùng local SSD của server để đạt IOPS cao.
-
-% 🐰 RabbitMQ Cluster
-% 	•	Mirrored queues (Highly Available).
-% 	•	Phù hợp với Adaptive Learning & Scoring Event-driven flow.
-
-% ⸻
-
-% 3️⃣ Observability Stack (AC9 – On-Premise)
-
-% Toàn bộ stack giám sát được cài trong namespace its-monitoring.
-% 	•	Prometheus – metrics (scrape từ pods + node exporter)
-% 	•	Loki – collector logs
-% 	•	Grafana – dashboard hợp nhất
-% 	•	Alertmanager – cảnh báo nội bộ (email/SMS/Zalo OA)
-% 	•	OpenTelemetry Collector – gửi trace từ Java/Go đến Tempo/Jaeger
-% 	•	Node Exporter – metrics phần cứng của mỗi server
-
-% ⸻
-
-% TÓM TẮT (TL;DR)
-
-% Cloud	On-Premise
-% Autoscaling theo tài nguyên không giới hạn	Scale bị giới hạn bởi số server vật lý
-% Managed Databases	Tự quản lý DB HA (Patroni/Mongo Replica Set)
-% Load Balancer do Cloud cung cấp	HAProxy/NGINX hoặc thiết bị phần cứng
-% Observability Cloud Services	Tự triển khai Prometheus + Loki + Grafana
-% Storage quản lý bởi cloud	SAN/NAS + CSI Driver
-
-
-% ⸻
-
-% Nếu bạn muốn, mình có thể viết thêm 3.3.4 CI/CD Pipeline (On-Premise) hoặc 3.4 Runtime View, hoặc vẽ lại Hình 3.10 theo style Draw.io đẹp chuẩn doanh nghiệp.
-
-% Bạn muốn tiếp tục phần nào?
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{4.5cm}|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{Cloud}\rule{0pt}{1.6em} & \textbf{On-Premise} \\
+\hline
+Autoscaling theo tài nguyên không giới hạn & Scale bị giới hạn bởi số server vật lý \\
+\hline
+Managed Databases & Tự quản lý DB HA (Patroni/Mongo Replica Set) \\
+\hline
+Load Balancer do Cloud cung cấp & HAProxy/NGINX hoặc thiết bị phần cứng \\
+\hline
+Observability Cloud Services & Tự triển khai Prometheus + Loki + Grafana \\
+\hline
+Storage quản lý bởi cloud & SAN/NAS + CSI Driver \\
+\hline
+\end{tabularx}
+\caption{So sánh Cloud và On-Premise}
+\label{tab:cloud-vs-onprem}
+\end{table}
+\renewcommand{\arraystretch}{1.0}

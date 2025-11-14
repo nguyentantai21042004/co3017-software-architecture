@@ -1,32 +1,90 @@
+\subsection{Góc nhìn Hành vi}
 
-% ### 3.4 Behavioral View (Sequence Diagrams)
-% *[Template: 3-4 pages]*
+\indentpar \indentpar Góc nhìn Hành vi mô tả cách các thành phần kiến trúc (từ Mục~4.2 và Mục~4.3) tương tác với nhau theo thời gian để thực hiện các kịch bản nghiệp vụ (use cases) cụ thể. Góc nhìn này sử dụng Sơ đồ Tuần tự (Sequence Diagrams) để làm rõ luồng thông điệp và sự cộng tác giữa các microservice.
 
-% #### 3.4.1 Key Scenarios
-% ```markdown
-% [Create sequence diagrams for:]
+\indentpar \indentpar Góc nhìn này rất quan trọng để xác thực rằng kiến trúc đã chọn có thể đáp ứng các yêu cầu chức năng (FRs) và phi chức năng (ACs) phức tạp, đặc biệt là \textbf{AC3: Performance} (thông qua các luồng đồng bộ/bất đồng bộ) và Độ tin cậy.
 
-% 1. User Registration and Onboarding
-% 2. Adaptive Content Delivery
-% 3. Real-time Feedback Generation
-% 4. Assessment Submission and Scoring
-% 5. Instructor Report Generation
+\subsubsection{Các Kịch bản Chính}
 
-% [Use PlantUML or Mermaid format]
-% ```
+\indentpar \indentpar Dưới đây là các sơ đồ tuần tự cho 5 kịch bản quan trọng nhất của hệ thống ITS.
 
-% #### Example Template:
-% ```mermaid
-% sequenceDiagram
-%     participant S as Student
-%     participant G as API Gateway
-%     participant A as Auth Service
-%     participant U as User Service
-    
-%     S->>G: POST /register
-%     G->>A: Validate request
-%     A->>U: Create user
-%     U-->>A: User created
-%     A-->>G: JWT token
-%     G-->>S: 201 Created + token
-% ```
+\noindent \textbf{1. Đăng ký Người dùng và Nhập môn (User Registration and Onboarding)}
+
+\indentpar \indentpar Luồng này (tương ứng với UC-01) mô tả cách một người dùng mới (Learner) tạo tài khoản. Nó sử dụng một mô hình bất đồng bộ (event-driven) để tách rời việc tạo thông tin xác thực (AuthN) khỏi việc tạo hồ sơ người dùng (PII). Điều này tuân thủ ADR-6 (Auth Service riêng biệt) và ADR-7 (Tách PII).
+
+\indentpar \indentpar \textbf{Các thành phần tham gia:} Client, API Gateway, Auth Service (Java), User Management Service (Java), RabbitMQ.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/user_registration_sequence.png}
+\caption{Luồng Đăng ký Người dùng và Nhập môn}
+\label{fig:user-registration-flow}
+\end{figure}
+
+\noindent \textbf{2. Cung cấp Nội dung Thích ứng (Adaptive Content Delivery)}
+
+\indentpar \indentpar Luồng này (tương ứng với UC-08) xảy ra khi người học yêu cầu bài học tiếp theo. Đây là một luồng đồng bộ (synchronous) phức tạp, đòi hỏi sự tương tác nhanh giữa Adaptive Engine và Learner Model Service (cả hai đều bằng Go, theo ADR-1) để tính toán và trả về nội dung phù hợp ngay lập tức.
+
+\indentpar \indentpar \textbf{Các thành phần tham gia:} Learner, Client, API Gateway, Adaptive Engine, Learner Model Service, Content Service.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/adaptive_content_delivery_sequence.png}
+\caption{Luồng Cung cấp Nội dung Thích ứng}
+\label{fig:adaptive-content-flow}
+\end{figure}
+
+\noindent \textbf{3. Tạo Phản hồi Tức thì (Real-time Feedback Generation)}
+
+\indentpar \indentpar Kịch bản này (một phần của UC-10) là luồng đồng bộ nhanh, tập trung vào việc cung cấp gợi ý (hints) ngay lập tức cho người học mà không cần nộp bài. Điều này yêu cầu hiệu năng cực cao (\textbf{AC3:} $< 500$ms), là lý do Scoring \& Feedback Service được viết bằng Go (ADR-1).
+
+\indentpar \indentpar \textbf{Các thành phần tham gia:} Learner, Client, API Gateway, Scoring \& Feedback Service.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/real_time_feedback_sequence.png}
+\caption{Luồng Tạo Phản hồi Tức thì}
+\label{fig:realtime-feedback-flow}
+\end{figure}
+
+\noindent \textbf{4. Nộp và Chấm điểm Bài tập (Assessment Submission and Scoring)}
+
+\indentpar \indentpar Đây là luồng (UC-10) quan trọng nhất, thể hiện rõ kiến trúc hybrid (lai) của hệ thống để đáp ứng \textbf{AC3: Performance}.
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Phần Đồng bộ (Sync):} Phản hồi điểm số cơ bản về client ngay lập tức ($< 500$ms).
+    \item \textbf{Phần Bất đồng bộ (Async):} Publish sự kiện \texttt{SubmissionCompleted} lên RabbitMQ để Learner Model Service cập nhật kỹ năng (skill mastery) trong nền, tránh block luồng request.
+\end{itemize}
+
+\indentpar \indentpar \textbf{Các thành phần tham gia:} Learner, Client, API Gateway, Scoring Service, RabbitMQ, Learner Model Service.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/assessment_submission_and_scoring_sequence.png}
+\caption{Luồng Nộp và Chấm điểm Bài tập (Hybrid Sync/Async)}
+\label{fig:submission-scoring-flow}
+\end{figure}
+
+\noindent \textbf{5. Tạo Báo cáo Giảng viên (Instructor Report Generation)}
+
+\indentpar \indentpar Luồng này (tương ứng với UC-13/14) là một kịch bản ``đọc'' (read) phức tạp, đòi hỏi tổng hợp (orchestration) dữ liệu từ nhiều microservice khác nhau. Chúng ta giả định Content Service (Java, theo ADR-1) là dịch vụ thực hiện việc tổng hợp này, vì nó đòi hỏi logic nghiệp vụ phức tạp và không nhạy cảm về độ trễ như các luồng AI.
+
+\indentpar \indentpar \textbf{Các thành phần tham gia:} Instructor, Client, API Gateway, Content Service (Orchestrator), User Management Service, Learner Model Service.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/instructor_report_generation_sequence.png}
+\caption{Luồng Tạo Báo cáo Giảng viên}
+\label{fig:instructor-report-flow}
+\end{figure}
+
+\subsubsection{Phân tích Luồng Đồng bộ và Bất đồng bộ}
+
+\indentpar \indentpar Dựa trên 5 kịch bản trên, có thể thấy hệ thống ITS sử dụng kết hợp cả hai mô hình giao tiếp:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Luồng Đồng bộ (Synchronous):} Được sử dụng cho các tương tác yêu cầu phản hồi tức thì, như cung cấp nội dung thích ứng (Kịch bản 2), tạo phản hồi tức thì (Kịch bản 3), và phần chấm điểm nhanh (Kịch bản 4). Các luồng này đảm bảo \textbf{AC3: Performance} với latency $< 500$ms.
+    \item \textbf{Luồng Bất đồng bộ (Asynchronous):} Được sử dụng cho các tác vụ không yêu cầu phản hồi tức thì, như tạo hồ sơ người dùng sau đăng ký (Kịch bản 1) và cập nhật skill mastery sau khi nộp bài (Kịch bản 4). Các luồng này giảm tải cho hệ thống và cải thiện trải nghiệm người dùng.
+\end{itemize}
+
+\indentpar \indentpar Sự kết hợp này thể hiện rõ kiến trúc \textbf{Hybrid Microservices + Event-Driven} đã được lựa chọn ở Mục~3.2, cho phép hệ thống đạt được cả hiệu năng cao và khả năng mở rộng tốt.
