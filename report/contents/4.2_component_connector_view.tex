@@ -20,11 +20,11 @@ Phần này đặc biệt quan trọng vì nó hiện thực hóa các quyết �
 
 \subsubsection{Các Mẫu Tích hợp}
 
-\indentpar \indentpar Phần này mô tả các mẫu kết nối (connector patterns) giữa các thành phần---yếu tố cốt lõi để hệ thống hoạt động trơn tru, mở rộng, và bền vững.
+\indentpar \indentpar Sau khi hệ thống được phân tách thành nhiều module và microservice độc lập, cần mô tả rõ cách các thành phần này giao tiếp với nhau thông qua các kiểu mẫu kết nối (connector patterns). Đây là nền tảng giúp toàn bộ hệ thống phối hợp nhịp nhàng, vận hành ổn định và mở rộng bền vững theo thời gian.
 
 \noindent\textbf{a. Giao tiếp Đồng bộ (Synchronous Communication)}
 
-Sử dụng cho các tương tác yêu cầu-phản hồi (request-response) ngay lập tức, nơi client phải chờ kết quả.
+Sử dụng cho các tương tác yêu cầu-phản hồi (request-response) \textbf{ngay lập tức, nơi client phải chờ kết quả}.
 
 \begin{figure}[H]
 \centering
@@ -34,7 +34,7 @@ Sử dụng cho các tương tác yêu cầu-phản hồi (request-response) nga
 \end{figure}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item Giao thức: REST qua HTTPS (cho giao tiếp Client-to-Gateway và các nghiệp vụ Java-to-Java); gRPC (cho giao tiếp nội bộ hiệu năng cao, đặc biệt giữa các service Go)
+    \item Giao thức: REST qua HTTPS (cho giao tiếp Client-to-Gateway và các nghiệp vụ Java-to-Java); gRPC (cho giao tiếp nội bộ hiệu nâng cao, đặc biệt giữa các service Go)
     \item Định dạng: JSON
     \item Bảo mật: JWT Bearer tokens trong header \texttt{Authorization} (theo ADR-6)
 \end{itemize}
@@ -51,14 +51,14 @@ Sử dụng để tách rời (decouple) các service, xử lý các tác vụ n
     \end{figure}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item Message Broker: RabbitMQ (sử dụng khả năng định tuyến AMQP linh hoạt cho các Domain Events, thay vì Kafka)
+    \item Message Broker: RabbitMQ (sử dụng khả năng định tuyến AMQP linh hoạt cho các Domain Events)
     \item Định dạng: JSON
-    \item Mô hình (Patterns): Publish/Subscribe sử dụng Domain Events. Khi một nghiệp vụ quan trọng xảy ra (ví dụ: nộp bài), service gốc sẽ phát ra một sự kiện miền. Các service khác (consumers) lắng nghe sự kiện này mà không cần biết về service gốc
+    \item Mô hình (Patterns): Publish/Subscribe sử dụng Domain Events. Khi một nghiệp vụ quan trọng xảy ra (ví dụ: nộp bài), service gốc sẽ phát ra một sự kiện miền. Các service khác (consumers) lắng nghe sự kiện này mà không cần biết về service gốc, nơi đã publish một sự kiện
 \end{itemize}
 
 \subsubsection{Luồng Dữ liệu}
 
-\indentpar \indentpar Phần này minh họa các kịch bản thực thi quan trọng (scenarios), mô tả cách dữ liệu di chuyển qua hệ thống để hoàn thành các use case.
+\indentpar \indentpar Để hiểu rõ cách hệ thống vận hành trong thực tế, cần xem xét các luồng tương tác giữa các thành phần khi một nghiệp vụ được thực thi. Các mô tả này được thể hiện thông qua hai sequence diagram, giúp làm rõ cách dữ liệu được truyền tải và xử lý xuyên suốt các use case quan trọng
 
 \noindent\textbf{Luồng 1: Học tập Thích ứng (UC-08: Adaptive Learning Flow)}
 
