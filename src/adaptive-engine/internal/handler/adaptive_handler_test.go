@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"adaptive-engine-service/internal/model"
+	"adaptive-engine/internal/model"
 	"bytes"
 	"encoding/json"
 	"errors"

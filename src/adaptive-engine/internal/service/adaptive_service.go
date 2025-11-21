@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"adaptive-engine-service/internal/model"
+	"adaptive-engine/internal/model"
 )
 
 const (

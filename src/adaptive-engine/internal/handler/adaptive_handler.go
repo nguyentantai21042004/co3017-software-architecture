@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	"adaptive-engine-service/internal/model"
-	"adaptive-engine-service/internal/service"
+	"adaptive-engine/internal/model"
+	"adaptive-engine/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,6 +37,6 @@ func (h *AdaptiveHandler) NextLesson(c *gin.Context) {
 func (h *AdaptiveHandler) Health(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "healthy",
-		"service": "adaptive-engine-service",
+		"service": "adaptive-engine",
 	})
 }

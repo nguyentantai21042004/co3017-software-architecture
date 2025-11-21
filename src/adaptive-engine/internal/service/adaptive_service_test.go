@@ -1,7 +1,7 @@
 package service
 
 import (
-	"adaptive-engine-service/internal/model"
+	"adaptive-engine/internal/model"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"

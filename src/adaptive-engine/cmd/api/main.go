@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"adaptive-engine-service/internal/handler"
-	"adaptive-engine-service/internal/service"
+	"adaptive-engine/internal/handler"
+	"adaptive-engine/internal/service"
 
-	_ "adaptive-engine-service/docs"
+	_ "adaptive-engine/docs"
 
 	"github.com/caarlos0/env/v9"
 	"github.com/gin-gonic/gin"
