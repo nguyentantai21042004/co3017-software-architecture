@@ -58,7 +58,8 @@ func main() {
 
 	// Initialize layers
 	submissionRepo := repository.NewSubmissionRepository(db)
-	scoringService := service.NewScoringService(submissionRepo, eventPublisher)
+	contentClient := service.NewHttpContentClient("http://localhost:8081/api/content")
+	scoringService := service.NewScoringService(submissionRepo, eventPublisher, contentClient)
 	scoringHandler := handler.NewScoringHandler(scoringService)
 
 	// Setup Gin router

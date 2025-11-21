@@ -1,11 +1,8 @@
 package service
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"scoring/internal/model"
 	"scoring/internal/publisher"
 	"scoring/internal/repository"
@@ -17,14 +14,16 @@ type ScoringService interface {
 }
 
 type scoringService struct {
-	repo      repository.SubmissionRepository
-	publisher publisher.EventPublisher
+	repo          repository.SubmissionRepository
+	publisher     publisher.EventPublisher
+	contentClient ContentClient
 }
 
-func NewScoringService(repo repository.SubmissionRepository, pub publisher.EventPublisher) ScoringService {
+func NewScoringService(repo repository.SubmissionRepository, pub publisher.EventPublisher, client ContentClient) ScoringService {
 	return &scoringService{
-		repo:      repo,
-		publisher: pub,
+		repo:          repo,
+		publisher:     pub,
+		contentClient: client,
 	}
 }
 
@@ -48,7 +47,7 @@ func (s *scoringService) SubmitAnswer(req *model.SubmitRequest) (*model.SubmitRe
 		req.UserID, req.QuestionID, req.Answer)
 
 	// Step 1: Fetch correct answer from Content Service
-	correctAnswer, skillTag, err := s.fetchCorrectAnswer(req.QuestionID)
+	correctAnswer, skillTag, err := s.contentClient.FetchQuestion(req.QuestionID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch question: %w", err)
 	}
@@ -105,41 +104,4 @@ func (s *scoringService) SubmitAnswer(req *model.SubmitRequest) (*model.SubmitRe
 		Score:    score,
 		Feedback: feedback,
 	}, nil
-}
-
-// fetchCorrectAnswer calls Content Service to get the correct answer
-func (s *scoringService) fetchCorrectAnswer(questionID int64) (string, string, error) {
-	url := fmt.Sprintf("http://localhost:8081/api/content/%d", questionID)
-
-	log.Printf("🔍 Fetching question from Content Service: %s", url)
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", "", fmt.Errorf("failed to call content service: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return "", "", fmt.Errorf("content service returned status: %d", resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", "", fmt.Errorf("failed to read response body: %w", err)
-	}
-
-	var contentResp ContentServiceResponse
-	err = json.Unmarshal(body, &contentResp)
-	if err != nil {
-		return "", "", fmt.Errorf("failed to parse response: %w", err)
-	}
-
-	if !contentResp.Success {
-		return "", "", fmt.Errorf("content service error: %s", contentResp.Message)
-	}
-
-	log.Printf("✅ Got correct answer: %s, skill: %s",
-		contentResp.Data.CorrectAnswer, contentResp.Data.SkillTag)
-
-	return contentResp.Data.CorrectAnswer, contentResp.Data.SkillTag, nil
 }
