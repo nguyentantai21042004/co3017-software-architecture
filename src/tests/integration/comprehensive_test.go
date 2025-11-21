@@ -11,7 +11,7 @@ import (
 
 // TestFullLearningProgression tests complete progression from 0% to high mastery
 func TestFullLearningProgression(t *testing.T) {
-	userID := "test-user-progression"
+	userID := fmt.Sprintf("test-user-progression-%d", time.Now().UnixNano())
 	skill := SkillMath
 
 	fmt.Printf("\n🧪 Test: Full Learning Progression (0%% → High Mastery)\n")
@@ -82,7 +82,7 @@ func TestFullLearningProgression(t *testing.T) {
 
 // TestMixedCorrectIncorrectAnswers tests mastery changes with mixed results
 func TestMixedCorrectIncorrectAnswers(t *testing.T) {
-	userID := "test-user-mixed"
+	userID := fmt.Sprintf("test-user-mixed-%d", time.Now().UnixNano())
 	skill := SkillMath
 
 	fmt.Printf("\n🧪 Test: Mixed Correct/Incorrect Answers\n")
@@ -152,7 +152,7 @@ func TestMixedCorrectIncorrectAnswers(t *testing.T) {
 
 // TestMultipleSkills tests learning across different skills
 func TestMultipleSkills(t *testing.T) {
-	userID := "test-user-multiskill"
+	userID := fmt.Sprintf("test-user-multiskill-%d", time.Now().UnixNano())
 
 	fmt.Printf("\n🧪 Test: Multiple Skills Learning\n")
 	fmt.Printf("User: %s\n\n", userID)
@@ -216,7 +216,7 @@ func TestMultipleSkills(t *testing.T) {
 
 // TestBoundaryMasteryScores tests edge cases at mastery boundaries
 func TestBoundaryMasteryScores(t *testing.T) {
-	userID := "test-user-boundary"
+	userID := fmt.Sprintf("test-user-boundary-%d", time.Now().UnixNano())
 	skill := SkillMath
 
 	fmt.Printf("\n🧪 Test: Boundary Mastery Scores\n")
@@ -280,7 +280,7 @@ func TestBoundaryMasteryScores(t *testing.T) {
 
 // TestRapidSubmissions tests system behavior with rapid consecutive submissions
 func TestRapidSubmissions(t *testing.T) {
-	userID := "test-user-rapid"
+	userID := fmt.Sprintf("test-user-rapid-%d", time.Now().UnixNano())
 	skill := SkillScience
 
 	fmt.Printf("\n🧪 Test: Rapid Consecutive Submissions\n")
