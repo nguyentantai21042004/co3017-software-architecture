@@ -12,9 +12,9 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🛑 Stopping All Microservices${NC}"
-echo "=============================="
-echo ""
+printf "${BLUE}🛑 Stopping All Microservices${NC}\n"
+printf "==============================\n"
+printf "\n"
 
 # Get the src directory (parent of scripts directory)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -29,7 +29,7 @@ stop_service() {
         local pid=$(cat "$pid_file")
         
         if ps -p $pid > /dev/null 2>&1; then
-            echo -e "${YELLOW}Stopping $service_name (PID: $pid)...${NC}"
+            printf "${YELLOW}Stopping $service_name (PID: $pid)...${NC}\n"
             kill $pid 2>/dev/null || true
             
             # Wait for process to stop
@@ -41,20 +41,20 @@ stop_service() {
             
             # Force kill if still running
             if ps -p $pid > /dev/null 2>&1; then
-                echo -e "${YELLOW}Force stopping $service_name...${NC}"
+                printf "${YELLOW}Force stopping $service_name...${NC}\n"
                 kill -9 $pid 2>/dev/null || true
             fi
             
-            echo -e "${GREEN}✓${NC} $service_name stopped"
+            printf "${GREEN}✓${NC} $service_name stopped\n"
         else
-            echo -e "${YELLOW}⚠${NC}  $service_name is not running (PID $pid not found)"
+            printf "${YELLOW}⚠${NC}  $service_name is not running (PID $pid not found)\n"
         fi
         
         rm -f "$pid_file"
     else
-        echo -e "${YELLOW}⚠${NC}  No PID file found for $service_name"
+        printf "${YELLOW}⚠${NC}  No PID file found for $service_name\n"
     fi
-    echo ""
+    printf "\n"
 }
 
 # Stop all services
@@ -64,16 +64,16 @@ stop_service "Learner Model Service" "learner-model"
 stop_service "Adaptive Engine" "adaptive-engine"
 
 # Also try to kill by port (backup method)
-echo "🔍 Checking for any remaining processes on service ports..."
+printf "🔍 Checking for any remaining processes on service ports...\n"
 
 for port in 8081 8082 8083 8084; do
     pid=$(lsof -ti:$port 2>/dev/null || true)
     if [ ! -z "$pid" ]; then
-        echo -e "${YELLOW}Found process on port $port (PID: $pid), killing...${NC}"
+        printf "${YELLOW}Found process on port $port (PID: $pid), killing...${NC}\n"
         kill -9 $pid 2>/dev/null || true
     fi
 done
 
-echo "=============================="
-echo -e "${GREEN}✅ All services stopped!${NC}"
-echo ""
+printf "==============================\n"
+printf "${GREEN}✅ All services stopped!${NC}\n"
+printf "\n"

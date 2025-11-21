@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+*.log
+*.pid
+
 ### STS ###
 .apt_generated
 .classpath
@@ -39,5 +42,3 @@ out/
 .DS_Store
 .AppleDouble
 .LSOverride
-
-*.log
