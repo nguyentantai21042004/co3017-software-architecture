@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"smap-project/internal/model"
-	"smap-project/pkg/paginator"
+	"learner-model-service/internal/model"
+	"learner-model-service/pkg/paginator"
 )
 
 //go:generate mockery --name Repository

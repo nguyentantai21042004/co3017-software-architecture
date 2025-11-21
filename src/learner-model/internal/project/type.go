@@ -3,8 +3,8 @@ package project
 import (
 	"time"
 
-	"smap-project/internal/model"
-	"smap-project/pkg/paginator"
+	"learner-model-service/internal/model"
+	"learner-model-service/pkg/paginator"
 )
 
 // CreateInput represents input for creating a new project

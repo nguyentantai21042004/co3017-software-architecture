@@ -1,7 +1,7 @@
 package http
 
 import (
-	"smap-project/internal/middleware"
+	"learner-model-service/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )

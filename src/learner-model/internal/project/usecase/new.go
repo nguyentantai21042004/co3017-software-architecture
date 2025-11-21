@@ -3,9 +3,9 @@ package usecase
 import (
 	"time"
 
-	"smap-project/internal/project"
-	"smap-project/internal/project/repository"
-	pkgLog "smap-project/pkg/log"
+	"learner-model-service/internal/project"
+	"learner-model-service/internal/project/repository"
+	pkgLog "learner-model-service/pkg/log"
 )
 
 type usecase struct {

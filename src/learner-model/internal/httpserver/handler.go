@@ -1,16 +1,16 @@
 package httpserver
 
 import (
-	"smap-project/internal/middleware"
-	projecthttp "smap-project/internal/project/delivery/http"
-	projectrepository "smap-project/internal/project/repository/postgre"
-	projectusecase "smap-project/internal/project/usecase"
-	"smap-project/pkg/i18n"
-	"smap-project/pkg/scope"
+	"learner-model-service/internal/middleware"
+	projecthttp "learner-model-service/internal/project/delivery/http"
+	projectrepository "learner-model-service/internal/project/repository/postgre"
+	projectusecase "learner-model-service/internal/project/usecase"
+	"learner-model-service/pkg/i18n"
+	"learner-model-service/pkg/scope"
 
 	// Import this to execute the init function in docs.go which setups the Swagger docs.
 	// Uncomment after running: make swagger
-	_ "smap-project/docs"
+	_ "learner-model-service/docs"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"

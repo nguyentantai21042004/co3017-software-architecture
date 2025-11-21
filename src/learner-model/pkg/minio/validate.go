@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"smap-project/config"
+	"learner-model-service/config"
 )
 
 // validateConfig validates the MinIO configuration

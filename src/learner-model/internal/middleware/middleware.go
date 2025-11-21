@@ -3,8 +3,8 @@ package middleware
 import (
 	"strings"
 
-	"smap-project/pkg/response"
-	"smap-project/pkg/scope"
+	"learner-model-service/pkg/response"
+	"learner-model-service/pkg/scope"
 
 	"github.com/gin-gonic/gin"
 )

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"smap-project/config"
+	"learner-model-service/config"
 
 	_ "github.com/lib/pq" // PostgreSQL driver
 )

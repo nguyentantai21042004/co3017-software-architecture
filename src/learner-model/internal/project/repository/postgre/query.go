@@ -3,10 +3,10 @@ package postgres
 import (
 	"context"
 
-	"smap-project/internal/project/repository"
-	"smap-project/internal/sqlboiler"
-	"smap-project/pkg/paginator"
-	postgresPkg "smap-project/pkg/postgre"
+	"learner-model-service/internal/project/repository"
+	"learner-model-service/internal/sqlboiler"
+	"learner-model-service/pkg/paginator"
+	postgresPkg "learner-model-service/pkg/postgre"
 
 	"github.com/aarondl/sqlboiler/v4/queries/qm"
 )

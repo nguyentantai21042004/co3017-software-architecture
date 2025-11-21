@@ -3,7 +3,7 @@ package project
 import (
 	"context"
 
-	"smap-project/internal/model"
+	"learner-model-service/internal/model"
 )
 
 //go:generate mockery --name UseCase

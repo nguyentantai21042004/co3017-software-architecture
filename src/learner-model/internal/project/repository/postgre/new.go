@@ -3,8 +3,8 @@ package postgres
 import (
 	"database/sql"
 
-	"smap-project/internal/project/repository"
-	"smap-project/pkg/log"
+	"learner-model-service/internal/project/repository"
+	"learner-model-service/pkg/log"
 )
 
 type implRepository struct {

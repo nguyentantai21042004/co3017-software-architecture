@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"smap-project/internal/model"
-	"smap-project/pkg/paginator"
+	"learner-model-service/internal/model"
+	"learner-model-service/pkg/paginator"
 )
 
 type CreateOptions struct {

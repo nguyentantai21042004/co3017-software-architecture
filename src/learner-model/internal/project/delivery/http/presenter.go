@@ -3,8 +3,8 @@ package http
 import (
 	"time"
 
-	"smap-project/internal/model"
-	"smap-project/pkg/paginator"
+	"learner-model-service/internal/model"
+	"learner-model-service/pkg/paginator"
 )
 
 // ProjectResponse represents the HTTP response for a single project

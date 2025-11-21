@@ -3,9 +3,9 @@ package http
 import (
 	"net/http"
 
-	"smap-project/internal/project"
-	"smap-project/pkg/response"
-	"smap-project/pkg/scope"
+	"learner-model-service/internal/project"
+	"learner-model-service/pkg/response"
+	"learner-model-service/pkg/scope"
 
 	"github.com/gin-gonic/gin"
 )

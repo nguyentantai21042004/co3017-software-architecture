@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"smap-project/pkg/locale"
+	"learner-model-service/pkg/locale"
 
 	"github.com/gin-gonic/gin"
 )

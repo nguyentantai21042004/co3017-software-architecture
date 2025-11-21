@@ -1,8 +1,8 @@
 package http
 
 import (
-	"smap-project/internal/project"
-	pkgLog "smap-project/pkg/log"
+	"learner-model-service/internal/project"
+	pkgLog "learner-model-service/pkg/log"
 
 	"github.com/gin-gonic/gin"
 )

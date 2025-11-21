@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"smap-project/config"
-	miniopkg "smap-project/pkg/minio"
+	"learner-model-service/config"
+	miniopkg "learner-model-service/pkg/minio"
 )
 
 const (
