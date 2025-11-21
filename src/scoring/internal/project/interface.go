@@ -3,7 +3,7 @@ package project
 import (
 	"context"
 
-	"scoring-serviceinternal/model"
+	"scoring/internal/model"
 )
 
 //go:generate mockery --name UseCase

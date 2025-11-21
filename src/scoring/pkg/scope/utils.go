@@ -3,7 +3,7 @@ package scope
 import (
 	"context"
 
-	"scoring-serviceinternal/model"
+	"scoring/internal/model"
 )
 
 type PayloadCtxKey struct{}

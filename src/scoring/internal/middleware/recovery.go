@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"scoring-servicepkg/discord"
-	"scoring-servicepkg/log"
-	"scoring-servicepkg/response"
+	"scoring/pkg/discord"
+	"scoring/pkg/log"
+	"scoring/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

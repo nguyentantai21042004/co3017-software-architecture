@@ -1,7 +1,7 @@
 package http
 
 import (
-	"adaptive-engine/internal/middleware"
+	"adaptive-engine-service/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )

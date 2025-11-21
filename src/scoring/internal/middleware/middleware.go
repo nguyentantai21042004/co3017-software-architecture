@@ -3,8 +3,8 @@ package middleware
 import (
 	"strings"
 
-	"scoring-servicepkg/response"
-	"scoring-servicepkg/scope"
+	"scoring/pkg/response"
+	"scoring/pkg/scope"
 
 	"github.com/gin-gonic/gin"
 )

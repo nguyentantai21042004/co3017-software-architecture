@@ -3,7 +3,7 @@ package project
 import (
 	"context"
 
-	"adaptive-engine/internal/model"
+	"adaptive-engine-service/internal/model"
 )
 
 //go:generate mockery --name UseCase

@@ -14,11 +14,17 @@ import (
 	"learner-model-service/internal/repository"
 	"learner-model-service/internal/service"
 
+	_ "learner-model-service/docs"
+
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
+	_ = godotenv.Load()
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("❌ Failed to load config: %v", err)
@@ -59,6 +65,9 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/health", learnerHandler.Health)
+
+	// Swagger
+	router.GET("/learner-model/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	internal := router.Group("/internal/learner")
 	{

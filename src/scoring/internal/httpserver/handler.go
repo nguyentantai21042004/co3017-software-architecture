@@ -1,12 +1,12 @@
 package httpserver
 
 import (
-	"scoring-serviceinternal/middleware"
-	projecthttp "scoring-serviceinternal/project/delivery/http"
-	projectrepository "scoring-serviceinternal/project/repository/postgre"
-	projectusecase "scoring-serviceinternal/project/usecase"
-	"scoring-servicepkg/i18n"
-	"scoring-servicepkg/scope"
+	"scoring/internal/middleware"
+	projecthttp "scoring/internal/project/delivery/http"
+	projectrepository "scoring/internal/project/repository/postgre"
+	projectusecase "scoring/internal/project/usecase"
+	"scoring/pkg/i18n"
+	"scoring/pkg/scope"
 
 	// Import this to execute the init function in docs.go which setups the Swagger docs.
 	// Uncomment after running: make swagger

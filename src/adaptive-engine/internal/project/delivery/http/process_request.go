@@ -3,7 +3,7 @@ package http
 import (
 	"time"
 
-	"adaptive-engine/internal/project"
+	"adaptive-engine-service/internal/project"
 	"adaptive-engine/pkg/paginator"
 )
 

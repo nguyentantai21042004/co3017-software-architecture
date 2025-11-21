@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"runtime"
 
-	"scoring-servicepkg/discord"
-	"scoring-servicepkg/errors"
+	"scoring/pkg/discord"
+	"scoring/pkg/errors"
 
 	"github.com/gin-gonic/gin"
 )

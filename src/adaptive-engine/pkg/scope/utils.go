@@ -3,7 +3,7 @@ package scope
 import (
 	"context"
 
-	"adaptive-engine/internal/model"
+	"adaptive-engine-service/internal/model"
 )
 
 type PayloadCtxKey struct{}

@@ -3,8 +3,8 @@ package postgres
 import (
 	"context"
 
-	"adaptive-engine/internal/project/repository"
-	"adaptive-engine/internal/sqlboiler"
+	"adaptive-engine-service/internal/project/repository"
+	"adaptive-engine-service/internal/sqlboiler"
 	"adaptive-engine/pkg/paginator"
 	postgresPkg "adaptive-engine/pkg/postgre"
 

@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 
-	"adaptive-engine/internal/model"
+	"adaptive-engine-service/internal/model"
 )
 
 // NewScope creates a new scope.

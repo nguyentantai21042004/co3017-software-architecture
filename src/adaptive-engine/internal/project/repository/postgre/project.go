@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 
-	"adaptive-engine/internal/model"
-	"adaptive-engine/internal/project/repository"
-	"adaptive-engine/internal/sqlboiler"
+	"adaptive-engine-service/internal/model"
+	"adaptive-engine-service/internal/project/repository"
+	"adaptive-engine-service/internal/sqlboiler"
 	"adaptive-engine/pkg/paginator"
 	postgresPkg "adaptive-engine/pkg/postgre"
 

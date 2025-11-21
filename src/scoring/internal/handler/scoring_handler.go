@@ -2,8 +2,8 @@ package handler
 
 import (
 	"net/http"
-	"scoring-serviceinternal/model"
-	"scoring-serviceinternal/service"
+	"scoring/internal/model"
+	"scoring/internal/service"
 
 	"github.com/gin-gonic/gin"
 )

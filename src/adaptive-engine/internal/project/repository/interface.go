@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"adaptive-engine/internal/model"
+	"adaptive-engine-service/internal/model"
 	"adaptive-engine/pkg/paginator"
 )
 

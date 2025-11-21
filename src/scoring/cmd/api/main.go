@@ -4,14 +4,19 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"scoring-serviceinternal/handler"
-	"scoring-serviceinternal/publisher"
-	"scoring-serviceinternal/repository"
-	"scoring-serviceinternal/service"
 	"scoring/config"
+	"scoring/internal/handler"
+	"scoring/internal/publisher"
+	"scoring/internal/repository"
+	"scoring/internal/service"
+
+	_ "scoring/docs"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @title Scoring Service API
@@ -20,6 +25,9 @@ import (
 // @host localhost:8082
 // @BasePath /api
 func main() {
+	// Load .env file
+	_ = godotenv.Load()
+
 	// Load configuration
 	cfg, err := config.Load()
 	if err != nil {
@@ -62,6 +70,9 @@ func main() {
 
 	// Health check
 	router.GET("/health", scoringHandler.Health)
+
+	// Swagger
+	router.GET("/scoring/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// API routes
 	api := router.Group("/api/scoring")

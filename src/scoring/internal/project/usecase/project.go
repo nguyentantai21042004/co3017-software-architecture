@@ -3,9 +3,9 @@ package usecase
 import (
 	"context"
 
-	"scoring-serviceinternal/model"
-	"scoring-serviceinternal/project"
-	"scoring-serviceinternal/project/repository"
+	"scoring/internal/model"
+	"scoring/internal/project"
+	"scoring/internal/project/repository"
 )
 
 func (uc *usecase) Detail(ctx context.Context, sc model.Scope, id string) (project.ProjectOutput, error) {

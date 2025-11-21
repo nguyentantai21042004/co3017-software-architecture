@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	"scoring-servicepkg/discord"
+	"scoring/pkg/discord"
 
 	"github.com/gin-gonic/gin"
 )

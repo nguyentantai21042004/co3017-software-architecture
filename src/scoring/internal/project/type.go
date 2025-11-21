@@ -3,8 +3,8 @@ package project
 import (
 	"time"
 
-	"scoring-serviceinternal/model"
-	"scoring-servicepkg/paginator"
+	"scoring/internal/model"
+	"scoring/pkg/paginator"
 )
 
 // CreateInput represents input for creating a new project

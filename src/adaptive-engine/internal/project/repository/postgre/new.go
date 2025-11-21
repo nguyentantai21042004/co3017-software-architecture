@@ -3,7 +3,7 @@ package postgres
 import (
 	"database/sql"
 
-	"adaptive-engine/internal/project/repository"
+	"adaptive-engine-service/internal/project/repository"
 	"adaptive-engine/pkg/log"
 )
 

@@ -42,7 +42,7 @@ public class JpaMetadataTagRepository implements MetadataTagRepository {
 
     @Override
     public List<MetadataTag> findAllByIds(List<Integer> tagIds) {
-        List<MetadataTagEntity> entities = jpaRepository.findByIdIn(tagIds);
+        List<MetadataTagEntity> entities = jpaRepository.findByTagIdIn(tagIds);
         return entities.stream()
                 .map(mapper::toDomain)
                 .collect(Collectors.toList());

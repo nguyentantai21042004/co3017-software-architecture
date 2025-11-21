@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"scoring-servicepkg/locale"
+	"scoring/pkg/locale"
 
 	"github.com/gin-gonic/gin"
 )

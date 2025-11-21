@@ -3,7 +3,7 @@ package http
 import (
 	"net/http"
 
-	"adaptive-engine/internal/project"
+	"adaptive-engine-service/internal/project"
 	"adaptive-engine/pkg/response"
 	"adaptive-engine/pkg/scope"
 

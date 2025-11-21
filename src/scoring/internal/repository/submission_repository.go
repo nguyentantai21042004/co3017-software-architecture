@@ -2,7 +2,7 @@ package repository
 
 import (
 	"database/sql"
-	"scoring-serviceinternal/model"
+	"scoring/internal/model"
 	"time"
 )
 

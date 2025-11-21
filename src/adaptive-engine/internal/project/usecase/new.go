@@ -3,8 +3,8 @@ package usecase
 import (
 	"time"
 
-	"adaptive-engine/internal/project"
-	"adaptive-engine/internal/project/repository"
+	"adaptive-engine-service/internal/project"
+	"adaptive-engine-service/internal/project/repository"
 	pkgLog "adaptive-engine/pkg/log"
 )
 

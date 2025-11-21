@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	miniopkg "scoring-servicepkg/minio"
+	miniopkg "scoring/pkg/minio"
 )
 
 const (

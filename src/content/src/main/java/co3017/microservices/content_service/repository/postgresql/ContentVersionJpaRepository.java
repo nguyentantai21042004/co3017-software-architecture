@@ -26,5 +26,5 @@ public interface ContentVersionJpaRepository extends JpaRepository<ContentVersio
     @Query("UPDATE ContentVersionEntity v SET v.isActive = false WHERE v.unitId = :unitId")
     void deactivateAllVersionsByUnitId(@Param("unitId") UUID unitId);
     
-    List<ContentVersionEntity> findByIdIn(List<Long> versionIds);
+    List<ContentVersionEntity> findByVersionIdIn(List<Long> versionIds);
 }

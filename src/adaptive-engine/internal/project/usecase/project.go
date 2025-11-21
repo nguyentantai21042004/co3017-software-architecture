@@ -3,9 +3,9 @@ package usecase
 import (
 	"context"
 
-	"adaptive-engine/internal/model"
-	"adaptive-engine/internal/project"
-	"adaptive-engine/internal/project/repository"
+	"adaptive-engine-service/internal/model"
+	"adaptive-engine-service/internal/project"
+	"adaptive-engine-service/internal/project/repository"
 )
 
 func (uc *usecase) Detail(ctx context.Context, sc model.Scope, id string) (project.ProjectOutput, error) {

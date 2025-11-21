@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 
-	"scoring-serviceinternal/model"
+	"scoring/internal/model"
 )
 
 // NewScope creates a new scope.

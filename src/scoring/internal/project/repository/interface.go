@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"scoring-serviceinternal/model"
-	"scoring-servicepkg/paginator"
+	"scoring/internal/model"
+	"scoring/pkg/paginator"
 )
 
 //go:generate mockery --name Repository

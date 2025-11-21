@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	pkgLog "scoring-servicepkg/log"
-	pkgScope "scoring-servicepkg/scope"
+	pkgLog "scoring/pkg/log"
+	pkgScope "scoring/pkg/scope"
 )
 
 type Middleware struct {

@@ -1,7 +1,7 @@
 package httpserver
 
 import (
-	"scoring-servicepkg/response"
+	"scoring/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

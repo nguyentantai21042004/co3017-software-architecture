@@ -3,8 +3,8 @@ package postgres
 import (
 	"database/sql"
 
-	"scoring-serviceinternal/project/repository"
-	"scoring-servicepkg/log"
+	"scoring/internal/project/repository"
+	"scoring/pkg/log"
 )
 
 type implRepository struct {

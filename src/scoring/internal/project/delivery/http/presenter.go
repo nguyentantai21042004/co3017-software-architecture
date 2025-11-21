@@ -3,8 +3,8 @@ package http
 import (
 	"time"
 
-	"scoring-serviceinternal/model"
-	"scoring-servicepkg/paginator"
+	"scoring/internal/model"
+	"scoring/pkg/paginator"
 )
 
 // ProjectResponse represents the HTTP response for a single project

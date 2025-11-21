@@ -6,9 +6,9 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"scoring-serviceinternal/model"
-	"scoring-serviceinternal/publisher"
-	"scoring-serviceinternal/repository"
+	"scoring/internal/model"
+	"scoring/internal/publisher"
+	"scoring/internal/repository"
 	"time"
 )
 

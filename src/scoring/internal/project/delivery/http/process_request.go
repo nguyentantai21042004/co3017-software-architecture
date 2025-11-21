@@ -3,8 +3,8 @@ package http
 import (
 	"time"
 
-	"scoring-serviceinternal/project"
-	"scoring-servicepkg/paginator"
+	"scoring/internal/project"
+	"scoring/pkg/paginator"
 )
 
 // CreateProjectRequest represents the HTTP request for creating a project

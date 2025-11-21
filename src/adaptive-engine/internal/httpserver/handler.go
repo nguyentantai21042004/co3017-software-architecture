@@ -1,10 +1,10 @@
 package httpserver
 
 import (
-	"adaptive-engine/internal/middleware"
-	projecthttp "adaptive-engine/internal/project/delivery/http"
-	projectrepository "adaptive-engine/internal/project/repository/postgre"
-	projectusecase "adaptive-engine/internal/project/usecase"
+	"adaptive-engine-service/internal/middleware"
+	projecthttp "adaptive-engine-service/internal/project/delivery/http"
+	projectrepository "adaptive-engine-service/internal/project/repository/postgre"
+	projectusecase "adaptive-engine-service/internal/project/usecase"
 	"adaptive-engine/pkg/i18n"
 	"adaptive-engine/pkg/scope"
 

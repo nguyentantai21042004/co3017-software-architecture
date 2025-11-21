@@ -43,7 +43,7 @@ public class JpaContentVersionRepository implements ContentVersionRepository {
 
     @Override
     public List<ContentVersion> findAllByIds(List<Long> versionIds) {
-        List<ContentVersionEntity> entities = jpaRepository.findByIdIn(versionIds);
+        List<ContentVersionEntity> entities = jpaRepository.findByVersionIdIn(versionIds);
         return entities.stream()
                 .map(mapper::toDomain)
                 .collect(Collectors.toList());

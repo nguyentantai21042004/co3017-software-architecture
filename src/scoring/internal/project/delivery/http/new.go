@@ -1,8 +1,8 @@
 package http
 
 import (
-	"scoring-serviceinternal/project"
-	pkgLog "scoring-servicepkg/log"
+	"scoring/internal/project"
+	pkgLog "scoring/pkg/log"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"scoring-serviceinternal/model"
-	"scoring-servicepkg/paginator"
+	"scoring/internal/model"
+	"scoring/pkg/paginator"
 )
 
 type CreateOptions struct {

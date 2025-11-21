@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"scoring-servicepkg/log"
+	"scoring/pkg/log"
 )
 
 // DiscordWebhook contains webhook information for Discord API.

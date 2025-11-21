@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"adaptive-engine/internal/sqlboiler"
+	"adaptive-engine-service/internal/sqlboiler"
 
 	"github.com/aarondl/null/v8"
 	"github.com/aarondl/sqlboiler/v4/types"

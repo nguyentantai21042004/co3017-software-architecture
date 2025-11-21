@@ -12,11 +12,12 @@ import java.util.Optional;
  * JPA Repository Interface cho MetadataTagEntity
  */
 @Repository
-public interface MetadataTagJpaRepository extends JpaRepository<MetadataTagEntity, Integer>, JpaSpecificationExecutor<MetadataTagEntity> {
-    
+public interface MetadataTagJpaRepository
+        extends JpaRepository<MetadataTagEntity, Integer>, JpaSpecificationExecutor<MetadataTagEntity> {
+
     boolean existsByTagName(String tagName);
-    
+
     Optional<MetadataTagEntity> findByTagName(String tagName);
-    
-    List<MetadataTagEntity> findByIdIn(List<Integer> tagIds);
+
+    List<MetadataTagEntity> findByTagIdIn(List<Integer> tagIds);
 }

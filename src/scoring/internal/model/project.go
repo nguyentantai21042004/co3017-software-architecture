@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"scoring-serviceinternal/sqlboiler"
+	"scoring/internal/sqlboiler"
 
 	"github.com/aarondl/null/v8"
 	"github.com/aarondl/sqlboiler/v4/types"

@@ -3,7 +3,7 @@ package project
 import (
 	"time"
 
-	"adaptive-engine/internal/model"
+	"adaptive-engine-service/internal/model"
 	"adaptive-engine/pkg/paginator"
 )
 

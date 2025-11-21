@@ -1,7 +1,7 @@
 package http
 
 import (
-	"adaptive-engine/internal/project"
+	"adaptive-engine-service/internal/project"
 	pkgLog "adaptive-engine/pkg/log"
 
 	"github.com/gin-gonic/gin"

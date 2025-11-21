@@ -3,10 +3,10 @@ package postgres
 import (
 	"context"
 
-	"scoring-serviceinternal/project/repository"
-	"scoring-serviceinternal/sqlboiler"
-	"scoring-servicepkg/paginator"
-	postgresPkg "scoring-servicepkg/postgre"
+	"scoring/internal/project/repository"
+	"scoring/internal/sqlboiler"
+	"scoring/pkg/paginator"
+	postgresPkg "scoring/pkg/postgre"
 
 	"github.com/aarondl/sqlboiler/v4/queries/qm"
 )

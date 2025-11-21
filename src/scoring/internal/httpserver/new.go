@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"errors"
 
-	"scoring-servicepkg/discord"
-	"scoring-servicepkg/encrypter"
-	"scoring-servicepkg/log"
+	"scoring/pkg/discord"
+	"scoring/pkg/encrypter"
+	"scoring/pkg/log"
 
 	"github.com/gin-gonic/gin"
 )

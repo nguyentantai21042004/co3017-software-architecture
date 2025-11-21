@@ -3,9 +3,9 @@ package http
 import (
 	"net/http"
 
-	"scoring-serviceinternal/project"
-	"scoring-servicepkg/response"
-	"scoring-servicepkg/scope"
+	"scoring/internal/project"
+	"scoring/pkg/response"
+	"scoring/pkg/scope"
 
 	"github.com/gin-gonic/gin"
 )

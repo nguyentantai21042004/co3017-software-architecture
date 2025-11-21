@@ -1,7 +1,7 @@
 package http
 
 import (
-	"scoring-serviceinternal/middleware"
+	"scoring/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
