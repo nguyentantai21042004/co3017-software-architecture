@@ -2,7 +2,7 @@
 
 Complete implementation of an adaptive learning system using microservices architecture.
 
-## 🎯 System Overview
+## System Overview
 
 The ITS provides personalized learning paths by:
 1. **Content Service** - Manages questions and learning materials
@@ -10,7 +10,7 @@ The ITS provides personalized learning paths by:
 3. **Learner Model Service** - Tracks student mastery levels
 4. **Adaptive Engine** - Recommends personalized content
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────┐
@@ -25,16 +25,16 @@ The ITS provides personalized learning paths by:
          │                      ▲
          │                      │
          ▼                ┌─────┴─────┐
-┌─────────────────┐      │ RabbitMQ  │
-│ Content Service │      └─────▲─────┘
-│   (Port 8081)   │            │
-└─────────────────┘      ┌─────┴────────┐
-                         │    Scoring   │
-                         │  (Port 8082) │
-                         └──────────────┘
+┌─────────────────┐       │ RabbitMQ  │
+│ Content Service │       └─────▲─────┘
+│   (Port 8081)   │             │
+└─────────────────┘       ┌─────┴────────┐
+                          │    Scoring   │
+                          │  (Port 8082) │
+                          └──────────────┘
 ```
 
-## 📊 Services & Databases
+## Services & Databases
 
 | Service | Port | Database | Technology | Purpose |
 |---------|------|----------|------------|---------|
@@ -43,7 +43,7 @@ The ITS provides personalized learning paths by:
 | Learner Model | 8083 | learner_db | Golang/Gin | Mastery tracking |
 | Adaptive Engine | 8084 | None | Golang/Gin | Learning orchestration |
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -86,7 +86,7 @@ curl http://localhost:8083/health           # Learner Model
 curl http://localhost:8084/health           # Adaptive Engine
 ```
 
-## 🧪 Testing
+## Testing
 
 ### Quick Test (End-to-End Flow)
 
@@ -115,7 +115,7 @@ Import `ITS_Microservices.postman_collection.json` for complete API testing.
 
 See [TESTING_GUIDE.md](./TESTING_GUIDE.md) for detailed testing instructions.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -143,7 +143,7 @@ src/
 └── ITS_Microservices.postman_collection.json
 ```
 
-## 🎓 Key Features
+## Key Features
 
 ### 1. Adaptive Learning
 - Tracks student mastery per skill
@@ -161,7 +161,7 @@ src/
 - Scalable architecture
 - Service isolation
 
-## 🔧 Configuration
+## Configuration
 
 Each service has its own `.env` file:
 
@@ -181,7 +181,7 @@ POSTGRES_DB=scoring_db  # or learner_db
 RABBITMQ_URL=amqp://admintest:adminTest2025@localhost:5672/
 ```
 
-## 📚 Documentation
+## Documentation
 
 - [Content Service README](./content/README.md)
 - [Scoring Service README](./scoring/README.md)
@@ -189,7 +189,7 @@ RABBITMQ_URL=amqp://admintest:adminTest2025@localhost:5672/
 - [Adaptive Engine README](./adaptive-engine/README.md)
 - [Complete Testing Guide](./TESTING_GUIDE.md)
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Services Won't Start
 
@@ -216,7 +216,7 @@ open http://localhost:15672
 # Login: admintest / adminTest2025
 ```
 
-## 🎯 Demo Scenario
+## Demo Scenario
 
 **Adaptive Learning in Action:**
 
@@ -228,7 +228,7 @@ open http://localhost:15672
    - Recommends easier remedial content
 4. **Result**: User gets personalized learning path
 
-## 📖 Architecture Decisions
+## Architecture Decisions
 
 - **Microservices**: For independent scalability
 - **Event-Driven**: Async processing via RabbitMQ
@@ -236,11 +236,11 @@ open http://localhost:15672
 - **RESTful APIs**: Simple HTTP communication
 - **Stateless Adaptive Engine**: No database, pure orchestration
 
-## 👥 Team
+## Team
 
 CO3017 - Software Architecture Project
 HCMUT - 2025
 
-## 📝 License
+## License
 
 Educational Project - HCMUT

@@ -2,7 +2,7 @@
 
 This guide walks you through testing the entire Intelligent Tutoring System end-to-end.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Initialize Databases
 
@@ -49,7 +49,7 @@ go run cmd/api/main.go
 
 ---
 
-## 🧪 End-to-End Test Scenario
+## End-to-End Test Scenario
 
 ### Scenario: User Struggles → Gets Remedial Content
 
@@ -76,7 +76,7 @@ curl "http://localhost:8083/internal/learner/user_01/mastery?skill=math_algebra"
 }
 ```
 
-✅ **Verification:** Mastery is 10 (low)
+**Verification:** Mastery is 10 (low)
 
 ---
 
@@ -100,7 +100,7 @@ curl http://localhost:8081/api/content/1
 }
 ```
 
-✅ **Verification:** This is a hard question (difficulty=3)
+**Verification:** This is a hard question (difficulty=3)
 
 ---
 
@@ -126,11 +126,11 @@ curl -X POST http://localhost:8082/api/scoring/submit \
 ```
 
 **What Happens Behind the Scenes:**
-1. ✅ Scoring Service scores answer: score = 0
-2. ✅ Saves to scoring_db
-3. ✅ Publishes event to RabbitMQ
-4. ✅ Learner Model Service consumes event
-5. ✅ Updates mastery: (10 + 0) / 2 = 5
+1. Scoring Service scores answer: score = 0
+2. Saves to scoring_db
+3. Publishes event to RabbitMQ
+4. Learner Model Service consumes event
+5. Updates mastery: (10 + 0) / 2 = 5
 
 ---
 
@@ -150,7 +150,7 @@ curl "http://localhost:8083/internal/learner/user_01/mastery?skill=math_algebra"
 }
 ```
 
-✅ **Verification:** Mastery decreased from 10 → 5
+**Verification:** Mastery decreased from 10 → 5
 
 ---
 
@@ -175,7 +175,7 @@ curl -X POST http://localhost:8084/api/adaptive/next-lesson \
 }
 ```
 
-✅ **Verification:** 
+**Verification:** 
 - Mastery 5 < 50 → Recommends remedial content
 - Returns Question ID 2 (easy remedial question)
 
@@ -201,11 +201,11 @@ curl http://localhost:8081/api/content/2
 }
 ```
 
-✅ **Verification:** This is an easy remedial question!
+**Verification:** This is an easy remedial question!
 
 ---
 
-## 🎉 Success!
+## Success!
 
 The complete adaptive flow works:
 1. User answers hard question incorrectly
@@ -215,7 +215,7 @@ The complete adaptive flow works:
 
 ---
 
-## 📋 Quick Test Commands
+## Quick Test Commands
 
 ### Test All Health Endpoints
 
@@ -279,7 +279,7 @@ curl -X POST http://localhost:8084/api/adaptive/next-lesson \
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### RabbitMQ Not Connected
 
@@ -308,7 +308,7 @@ lsof -i :8084
 
 ---
 
-## 📦 Service Ports Summary
+## Service Ports Summary
 
 | Service | Port | Database | Purpose |
 |---------|------|----------|---------|
@@ -319,7 +319,7 @@ lsof -i :8084
 
 ---
 
-## 🎯 Expected Flow Diagram
+## Expected Flow Diagram
 
 ```
 User answers wrong
