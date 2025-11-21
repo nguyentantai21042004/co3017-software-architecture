@@ -1,23 +1,22 @@
-package repository
+package postgre
 
 import (
 	"database/sql"
 	"scoring/internal/model"
+	"scoring/internal/scoring/repository"
 	"time"
 )
-
-type SubmissionRepository interface {
-	Create(submission *model.Submission) error
-}
 
 type submissionRepository struct {
 	db *sql.DB
 }
 
-func NewSubmissionRepository(db *sql.DB) SubmissionRepository {
+// New creates a new submission repository
+func New(db *sql.DB) repository.Repository {
 	return &submissionRepository{db: db}
 }
 
+// Create inserts a new submission into the database
 func (r *submissionRepository) Create(submission *model.Submission) error {
 	query := `
 		INSERT INTO submissions (user_id, question_id, submitted_answer, score_awarded, is_passed, created_at)
@@ -37,5 +36,9 @@ func (r *submissionRepository) Create(submission *model.Submission) error {
 		submission.CreatedAt,
 	).Scan(&submission.ID)
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -16,6 +16,9 @@ type Config struct {
 
 	// Message Queue Configuration
 	RabbitMQ RabbitMQConfig
+
+	// External Services
+	ContentServiceURL string `env:"CONTENT_SERVICE_URL" envDefault:"http://localhost:8081/api/content"`
 }
 
 // JWTConfig is the configuration for the JWT,

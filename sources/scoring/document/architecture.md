@@ -1,650 +1,405 @@
-# SMAP API Project Architecture
+# Scoring Service Architecture
 
 ## Overview
 
-The SMAP API project is built using **Clean Architecture** (also known as Hexagonal Architecture) with a **Module-First** approach. Each module is an independent unit that contains all business logic for a specific feature.
+The **Scoring Service** handles answer submission, automatic scoring, feedback generation, and event publishing in the Intelligent Tutoring System. It follows **Module-First** architecture with clean separation of concerns.
 
----
+## Architecture Style
 
-## Architecture Principles
+**Module-First (Feature-Based) Architecture** with:
+- **Clean Architecture** principles
+- **Hexagonal Architecture** (Ports & Adapters)
+- **Dependency Injection**
+- **Interface-based design**
 
-### 1. Module-First Approach
-
-**Module-First** is a code organization method where each feature is organized into a complete and independent module. Each module contains:
-
-- **Domain Logic**: Core business logic
-- **Use Cases**: Business processing use cases
-- **Repository Interface**: Defines how to access data
-- **Delivery Layer**: How the module is exposed to the outside (HTTP, gRPC, etc.)
-- **Error Handling**: Module-specific error handling
-
-### 2. Clean Architecture Layers
-
-The project follows Clean Architecture with the following layers:
-
-```
-Delivery Layer (HTTP/gRPC)       - Interface with external world
-Use Case Layer                    - Business Logic
-Repository Interface              - Contract for data access
-Repository Implementation         - Data access implementation
-Domain Model                      - Core entities
-```
-
----
-
-## Directory Structure
-
-```
-project/
-├── cmd/                          # Application entry points
-│   └── api/
-│       ├── main.go              # Main entry point
-│       └── Dockerfile
-│
-├── config/                       # Configuration management
-│   ├── config.go                # Config loader
-│   ├── postgre/                 # PostgreSQL config
-│   └── minio/                   # MinIO config
-│
-├── internal/                     # Internal packages (not exported)
-│   ├── httpserver/              # HTTP server setup
-│   │   ├── handler.go           # Route mapping & dependency injection
-│   │   ├── httpserver.go        # Server implementation
-│   │   └── new.go               # Constructor
-│   │
-│   ├── middleware/              # HTTP middlewares
-│   │   ├── auth.go              # Authentication
-│   │   ├── cors.go              # CORS handling
-│   │   ├── errors.go            # Error handling
-│   │   └── recovery.go          # Panic recovery
-│   │
-│   ├── model/                   # Domain models (shared)
-│   │   ├── project.go           # Project domain model
-│   │   ├── role.go              # Role domain model
-│   │   └── scope.go             # Scope (user context)
-│   │
-│   ├── project/                 # PROJECT MODULE (Module-First example)
-│   │   ├── delivery/            # Delivery layer
-│   │   │   └── http/            # HTTP delivery
-│   │   │       ├── handler.go   # HTTP handlers
-│   │   │       ├── routes.go    # Route definitions
-│   │   │       ├── presenter.go # Response formatting
-│   │   │       ├── process_request.go # Request DTOs
-│   │   │       ├── error.go     # HTTP-specific errors
-│   │   │       └── new.go       # Handler constructor
-│   │   │
-│   │   ├── repository/          # Repository layer
-│   │   │   ├── interface.go    # Repository interface
-│   │   │   ├── option.go        # Repository options
-│   │   │   ├── errors.go        # Repository errors
-│   │   │   └── postgre/         # PostgreSQL implementation
-│   │   │       ├── new.go       # Repository constructor
-│   │   │       ├── project.go   # CRUD operations
-│   │   │       └── query.go     # SQL queries
-│   │   │
-│   │   ├── usecase/             # Use case layer
-│   │   │   ├── new.go           # UseCase constructor
-│   │   │   └── project.go       # Business logic
-│   │   │
-│   │   ├── interface.go         # UseCase interface
-│   │   ├── type.go              # Input/Output types
-│   │   └── error.go             # Module-specific errors
-│   │
-│   └── sqlboiler/               # Generated database models
-│
-├── pkg/                          # Shared packages (can be exported)
-│   ├── discord/                 # Discord integration
-│   ├── email/                   # Email service
-│   ├── encrypter/               # Encryption utilities
-│   ├── errors/                  # Error types
-│   ├── i18n/                    # Internationalization
-│   ├── log/                     # Logging
-│   ├── minio/                   # MinIO client
-│   ├── paginator/               # Pagination
-│   ├── postgre/                 # PostgreSQL utilities
-│   ├── rabbitmq/                # RabbitMQ client
-│   ├── response/                # HTTP response helpers
-│   ├── scope/                   # Scope management
-│   └── util/                    # Utilities
-│
-├── migration/                    # Database migrations
-│   └── 01_add_project.sql
-│
-├── document/                     # Documentation
-│   ├── api.md
-│   ├── overview.md
-│   └── architecture.md          # This file
-│
-├── scripts/                      # Build scripts
-├── go.mod
-├── go.sum
-└── README.md
-```
-
----
-
-## Module Structure (Module-First)
-
-Each module in the project follows this structure:
+## Module Structure
 
 ```
 internal/
-└── {module-name}/              # Module name (e.g., project, user, order)
-    ├── delivery/               # Delivery Layer - How module is exposed
-    │   └── http/               # HTTP delivery (can have gRPC, CLI, etc.)
-    │       ├── handler.go      # HTTP handlers (endpoints)
-    │       ├── routes.go       # Route definitions
-    │       ├── presenter.go    # Response DTOs & formatting
-    │       ├── process_request.go # Request DTOs & validation
-    │       ├── error.go        # HTTP-specific errors
+└── scoring/                    # MODULE (feature-based)
+    ├── delivery/               # Delivery Layer (Adapters)
+    │   └── http/
+    │       ├── handler.go      # HTTP handlers
+    │       ├── routes.go       # Route mapping
+    │       ├── presenter.go    # Response transformation
+    │       ├── process_request.go  # Request transformation
+    │       ├── errors.go       # HTTP error messages
     │       └── new.go          # Handler constructor
-    │
-    ├── repository/             # Repository Layer
-    │   ├── interface.go        # Repository interface (contract)
-    │   ├── option.go           # Repository options (filters, etc.)
-    │   ├── errors.go           # Repository-specific errors
-    │   └── postgre/            # PostgreSQL implementation
-    │       ├── new.go          # Repository constructor
-    │       ├── {entity}.go     # CRUD operations
-    │       └── query.go        # SQL queries
-    │
-    ├── usecase/                # Use Case Layer
+    ├── usecase/                # Use Case Layer (Business Logic)
+    │   ├── scoring.go          # Core business logic
     │   ├── new.go              # UseCase constructor
-    │   └── {entity}.go         # Business logic implementation
-    │
-    ├── interface.go            # UseCase interface (contract)
-    ├── type.go                 # Input/Output types, DTOs
-    └── error.go                # Module-specific errors
+    │   └── errors.go           # UseCase error messages
+    ├── repository/             # Repository Layer (Data Access)
+    │   ├── interface.go        # Repository interface
+    │   ├── errors.go           # Repository errors
+    │   └── postgre/
+    │       └── submission.go   # PostgreSQL implementation
+    ├── interface.go            # Module UseCase interface
+    ├── type.go                 # Input/Output types
+    └── error.go                # Module-level errors
 ```
 
-### Example: Project Module
+## Layer Responsibilities
 
-The `project` module is a complete example of Module-First:
+### 1. Delivery Layer (`delivery/http/`)
 
-```
-internal/project/
-├── delivery/http/
-│   ├── handler.go          # List, Get, Detail, Create, Update, Delete
-│   ├── routes.go           # MapProjectRoutes()
-│   ├── presenter.go        # ToProjectResponse(), ToProjectListResponse()
-│   ├── process_request.go  # CreateProjectRequest, UpdateProjectRequest
-│   └── new.go              # New() - create Handler
-│
-├── repository/
-│   ├── interface.go        # Repository interface with methods
-│   ├── option.go           # ListOptions, GetOptions, CreateOptions, etc.
-│   ├── errors.go           # ErrNotFound, etc.
-│   └── postgre/
-│       ├── new.go          # New() - create Repository
-│       ├── project.go      # Implement methods from interface
-│       └── query.go        # SQL queries
-│
-├── usecase/
-│   ├── new.go              # New() - create UseCase
-│   └── project.go          # Implement methods from UseCase interface
-│
-├── interface.go            # UseCase interface
-├── type.go                 # CreateInput, UpdateInput, ProjectOutput, etc.
-└── error.go                # ErrProjectNotFound, ErrUnauthorized, etc.
-```
+**Purpose**: Handle HTTP requests/responses, validation, and transformation.
 
----
+**Files**:
+- `handler.go`: HTTP request handlers
+- `routes.go`: Route mapping
+- `presenter.go`: Convert domain output to HTTP response
+- `process_request.go`: Convert HTTP request to domain input
+- `errors.go`: HTTP-specific error messages
 
-## Request Processing Flow
+**Rules**:
+- ✅ Parse and validate HTTP requests
+- ✅ Call UseCase layer
+- ✅ Transform responses using `pkg/response`
+- ✅ Use structured logging with context
+- ❌ NO business logic
+- ❌ NO direct database access
+- ❌ NO external HTTP calls
 
-### 1. Request Flow
-
-```
-HTTP Request
-    |
-[Middleware] - Authentication, CORS, Recovery
-    |
-[Handler] - Parse request, validate input
-    |
-[UseCase] - Business logic, validation
-    |
-[Repository] - Database operations
-    |
-[UseCase] - Transform data
-    |
-[Handler] - Format response
-    |
-HTTP Response
-```
-
-### 2. Specific Example: Create Project
-
+**Example**:
 ```go
-// 1. HTTP Request to POST /project/projects
-// 2. Middleware authenticates JWT token
-// 3. Handler receives request
-func (h handler) Create(c *gin.Context) {
-    // 4. Parse request body into CreateProjectRequest
-    var req CreateProjectRequest
-    c.ShouldBindJSON(&req)
-    
-    // 5. Convert request DTO to UseCase Input
-    input := req.ToCreateInput()
-    
-    // 6. Call UseCase
-    output, err := h.uc.Create(ctx, sc, input)
-    
-    // 7. Convert UseCase Output to HTTP Response
-    resp := ToProjectResponse(output.Project)
-    response.OK(c, resp)
-}
+func (h *handler) SubmitAnswer(c *gin.Context) {
+    ctx := c.Request.Context()
+    var req SubmitRequest
 
-// 8. UseCase processes business logic
-func (uc *usecase) Create(ctx context.Context, sc model.Scope, ip project.CreateInput) {
-    // Validate business rules
-    if !model.IsValidProjectStatus(ip.Status) {
-        return project.ErrInvalidStatus
+    if err := c.ShouldBindJSON(&req); err != nil {
+        h.l.Errorf(ctx, "scoring.delivery.http.handler.SubmitAnswer: %s | error=%v",
+            ErrMsgBindRequestFailed, err)
+        response.Error(c, errors.NewHTTPError(http.StatusBadRequest, ErrMsgBindRequestFailed), nil)
+        return
     }
-    
-    // Create domain model
-    p := model.Project{...}
-    
-    // Call Repository
-    created, err := uc.repo.Create(ctx, sc, repository.CreateOptions{Project: p})
-    
-    return project.ProjectOutput{Project: created}
-}
 
-// 9. Repository performs database operations
-func (r *implRepository) Create(ctx context.Context, sc model.Scope, opts CreateOptions) {
-    // Convert domain model to DB model
-    dbProject := opts.Project.ToDBProject()
-    
-    // Execute SQL
-    err := dbProject.Insert(ctx, r.db, boil.Infer())
-    
-    // Convert DB model to domain model
-    return NewProjectFromDB(dbProject)
+    input := req.ToSubmitInput()
+    output, err := h.uc.SubmitAnswer(ctx, input)
+    if err != nil {
+        response.Error(c, errors.NewHTTPError(http.StatusInternalServerError, ErrMsgSubmitAnswerFailed), nil)
+        return
+    }
+
+    response.OK(c, ToSubmitResponse(output))
 }
 ```
 
----
+### 2. UseCase Layer (`usecase/`)
 
-## Dependency Injection Flow
+**Purpose**: Implement business logic, orchestrate data flow.
 
-### 1. Initialize Dependencies (main.go)
+**Files**:
+- `scoring.go`: Core scoring business logic
+- `new.go`: UseCase constructor with dependencies
+- `errors.go`: UseCase error messages and context keys
 
+**Rules**:
+- ✅ Implement business logic
+- ✅ Call `pkg/curl` for external services
+- ✅ Call repository for database operations
+- ✅ Publish events via EventPublisher
+- ✅ Use structured logging with detailed context
+- ❌ NO HTTP-specific code
+- ❌ NO direct SQL queries
+
+**Example**:
 ```go
-// 1. Load config
-cfg := config.Load()
+func (uc *usecase) SubmitAnswer(ctx context.Context, input scoring.SubmitInput) (scoring.SubmitOutput, error) {
+    uc.l.Infof(ctx, "scoring.usecase.SubmitAnswer: starting | user_id=%s | question_id=%d",
+        input.UserID, input.QuestionID)
 
-// 2. Initialize logger
-logger := log.Init(...)
+    // Fetch question from Content Service
+    questionResp, err := uc.contentClient.GetQuestion(ctx, input.QuestionID)
+    if err != nil {
+        uc.l.Errorf(ctx, "scoring.usecase.SubmitAnswer: %s | error=%v",
+            ErrMsgFetchQuestionFailed, err)
+        return scoring.SubmitOutput{}, fmt.Errorf("%s: %w", ErrMsgFetchQuestionFailed, err)
+    }
 
-// 3. Initialize database
-postgresDB := postgre.Connect(...)
+    // Score the answer
+    isCorrect := input.Answer == questionResp.Data.CorrectAnswer
+    score := 0
+    if isCorrect {
+        score = 100
+    }
 
-// 4. Initialize HTTP server with dependencies
-httpServer := httpserver.New(logger, httpserver.Config{
-    PostgresDB: postgresDB,
-    JwtSecretKey: cfg.JWT.SecretKey,
-    // ...
-})
-```
+    // Save submission
+    submission := &model.Submission{
+        UserID:          input.UserID,
+        QuestionID:      input.QuestionID,
+        SubmittedAnswer: input.Answer,
+        ScoreAwarded:    score,
+        IsPassed:        score >= 50,
+    }
 
-### 2. Map Handlers (handler.go)
+    if err := uc.repo.Create(submission); err != nil {
+        return scoring.SubmitOutput{}, err
+    }
 
-```go
-func (srv HTTPServer) mapHandlers() error {
-    // 1. Initialize Repository (data layer)
-    projectRepo := projectrepository.New(srv.postgresDB, srv.l)
-    
-    // 2. Initialize UseCase (business layer)
-    projectUC := projectusecase.New(srv.l, projectRepo)
-    
-    // 3. Initialize Handler (delivery layer)
-    projectHandler := projecthttp.New(srv.l, projectUC)
-    
-    // 4. Map routes
-    api := srv.gin.Group(apiPrefix)
-    projecthttp.MapProjectRoutes(api.Group("/projects"), projectHandler, mw)
-    
-    return nil
+    // Publish event (async)
+    go uc.publishSubmissionEvent(input.UserID, questionResp.Data.SkillTag, score)
+
+    return scoring.SubmitOutput{
+        Correct:  isCorrect,
+        Score:    score,
+        Feedback: generateFeedback(isCorrect),
+    }, nil
 }
 ```
 
-### Dependency Graph
+### 3. Repository Layer (`repository/`)
 
-```
-Handler
-  └── UseCase
-        └── Repository
-              └── Database
-```
+**Purpose**: Data access abstraction for database operations.
 
----
+**Files**:
+- `interface.go`: Repository interface
+- `errors.go`: Repository-specific errors
+- `postgre/submission.go`: PostgreSQL implementation
 
-## Creating a New Module
+**Rules**:
+- ✅ ONLY database operations
+- ✅ Implement repository interface
+- ✅ Handle database errors
+- ❌ NO business logic
+- ❌ NO HTTP calls to external services
+- ❌ NO event publishing
 
-### Step 1: Create Directory Structure
-
-```bash
-mkdir -p internal/{module-name}/{delivery/http,repository/postgre,usecase}
-```
-
-### Step 2: Define Domain Model
-
-Create file `internal/model/{entity}.go`:
-
+**Example**:
 ```go
-package model
+type Repository interface {
+    Create(submission *model.Submission) error
+}
 
-type Entity struct {
-    ID        string
-    Name      string
-    CreatedAt time.Time
-    // ...
+type submissionRepository struct {
+    db *sql.DB
+}
+
+func New(db *sql.DB) repository.Repository {
+    return &submissionRepository{db: db}
+}
+
+func (r *submissionRepository) Create(submission *model.Submission) error {
+    query := `
+        INSERT INTO submissions (user_id, question_id, submitted_answer, score_awarded, is_passed, created_at)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id
+    `
+    submission.CreatedAt = time.Now()
+    return r.db.QueryRow(query, submission.UserID, submission.QuestionID,
+        submission.SubmittedAnswer, submission.ScoreAwarded, submission.IsPassed,
+        submission.CreatedAt).Scan(&submission.ID)
 }
 ```
 
-### Step 3: Create Module Structure
+## External Service Communication
 
-#### 3.1. Error Definitions (`error.go`)
+### pkg/curl Package
+
+All HTTP calls to external services (Content Service, Learner Service) are handled via `pkg/curl`:
+
+```
+pkg/
+└── curl/
+    ├── client.go              # Base HTTP client
+    ├── errors.go              # Error types
+    ├── error_messages.go      # Error messages & context keys
+    ├── types.go               # Request/Response types
+    ├── content_service.go     # Content Service client
+    ├── content_service_test.go
+    └── interfaces.go          # Client interfaces (for mocking)
+```
+
+**Rules**:
+- ✅ UseCase layer calls `pkg/curl` clients
+- ✅ Repository layer is ONLY for database
+- ✅ Detailed error messages with context
+- ✅ Timeout handling
+- ✅ Unit tests with mocked HTTP responses
+
+## Error Handling
+
+### Error Message Convention
+
+Define error constants at the point of error:
 
 ```go
-package {module}
+// usecase/errors.go
+const (
+    ErrMsgFetchQuestionFailed     = "failed to fetch question from content service"
+    ErrMsgSaveSubmissionFailed    = "failed to save submission to database"
+    ErrMsgPublishEventFailed      = "failed to publish submission event"
+)
 
-import "errors"
-
-var (
-    ErrEntityNotFound = errors.New("entity not found")
-    ErrInvalidInput   = errors.New("invalid input")
+const (
+    ErrCtxUserID       = "user_id"
+    ErrCtxQuestionID   = "question_id"
+    ErrCtxScore        = "score"
 )
 ```
 
-#### 3.2. Types (`type.go`)
+### Error Logging Pattern
 
 ```go
-package {module}
+uc.l.Errorf(ctx, "scoring.usecase.SubmitAnswer: %s | %s=%s | %s=%d | error=%v",
+    ErrMsgFetchQuestionFailed, ErrCtxUserID, input.UserID, 
+    ErrCtxQuestionID, input.QuestionID, err)
+```
 
-type CreateInput struct {
-    Name string
+## Logging Convention
+
+### Logger Initialization
+
+```go
+// main.go
+logger := pkglog.Init(pkglog.ZapConfig{
+    Level:    cfg.Logger.Level,
+    Mode:     cfg.Logger.Mode,
+    Encoding: cfg.Logger.Encoding,
+})
+```
+
+### Logging Pattern
+
+```go
+// Info logs
+uc.l.Infof(ctx, "scoring.usecase.SubmitAnswer: starting | user_id=%s | question_id=%d",
+    input.UserID, input.QuestionID)
+
+// Error logs
+uc.l.Errorf(ctx, "scoring.usecase.SubmitAnswer: %s | user_id=%s | error=%v",
+    ErrMsgFetchQuestionFailed, input.UserID, err)
+```
+
+**Rules**:
+- ✅ All logs use initialized logger from `main.go`
+- ✅ Pass `context.Context` to all log calls
+- ✅ Use structured logging format: `module.layer.function: message | key=value`
+- ❌ NO standard `log` package
+
+## Response Format
+
+All HTTP responses follow `pkg/response.Resp`:
+
+```go
+type Resp struct {
+    ErrorCode int         `json:"error_code"`
+    Message   string      `json:"message"`
+    Data      interface{} `json:"data,omitempty"`
+}
+```
+
+**Success**:
+```go
+response.OK(c, SubmitResponse{
+    Correct:  true,
+    Score:    100,
+    Feedback: "Correct! Well done.",
+})
+```
+
+**Error**:
+```go
+httpErr := errors.NewHTTPError(http.StatusBadRequest, ErrMsgBindRequestFailed)
+response.Error(c, httpErr, nil)
+```
+
+## Dependency Flow
+
+```
+main.go
+  ↓
+  ├─→ config.Load()
+  ├─→ pkglog.Init()
+  ├─→ Database Connection
+  ├─→ RabbitMQ Publisher
+  ├─→ pkg/curl Clients
+  ↓
+  ├─→ repository/postgre.New(db)
+  ├─→ usecase.New(logger, repo, publisher, contentClient)
+  ├─→ delivery/http.New(logger, usecase)
+  ↓
+  └─→ Gin Router + Routes
+```
+
+## Testing Strategy
+
+### Unit Tests
+
+```
+internal/scoring/
+├── delivery/http/
+│   └── handler_test.go        # Mock usecase
+├── usecase/
+│   └── scoring_test.go        # Mock repo + clients
+└── repository/postgre/
+    └── submission_test.go     # Mock DB or use testcontainers
+
+pkg/curl/
+├── content_service_test.go    # Mock HTTP server
+└── learner_service_test.go    # Mock HTTP server
+```
+
+### Test Commands
+
+```bash
+make test              # Run all tests
+make test-coverage     # Generate coverage report
+make test-short        # Run short tests
+```
+
+## Key Principles
+
+1. **Module-First**: Organize by feature/domain, not by technical layer
+2. **Separation of Concerns**: Each layer has clear responsibilities
+3. **Dependency Inversion**: Depend on interfaces, not implementations
+4. **External Service Separation**: Use `pkg/curl` for HTTP calls, not repository
+5. **Detailed Error Handling**: Define errors at point of occurrence
+6. **Structured Logging**: Use Zap logger with context throughout
+7. **Testability**: Use interfaces and dependency injection for easy mocking
+8. **Consistency**: Follow established patterns across all modules
+
+## Anti-Patterns to Avoid
+
+❌ **Layer-First Architecture**:
+```
+internal/
+├── handler/        # BAD: Groups by layer
+├── service/
+└── repository/
+```
+
+❌ **HTTP Calls in Repository Layer**:
+```go
+// BAD: Repository should ONLY access database
+func (r *repo) FetchQuestion(id int64) (*Question, error) {
+    resp, _ := http.Get("http://content-service/questions/" + id)
     // ...
 }
-
-type UpdateInput struct {
-    ID   string
-    Name *string
-    // ...
-}
-
-type EntityOutput struct {
-    Entity model.Entity
-}
 ```
 
-#### 3.3. UseCase Interface (`interface.go`)
-
+❌ **Generic Error Messages**:
 ```go
-package {module}
+// BAD: Too generic
+return fmt.Errorf("error fetching data")
 
-//go:generate mockery --name UseCase
-type UseCase interface {
-    Create(ctx context.Context, sc model.Scope, ip CreateInput) (EntityOutput, error)
-    Update(ctx context.Context, sc model.Scope, ip UpdateInput) (EntityOutput, error)
-    // ...
-}
+// GOOD: Specific with context
+return fmt.Errorf("%s: %w | user_id=%s | question_id=%d", 
+    ErrMsgFetchQuestionFailed, err, userID, questionID)
 ```
 
-#### 3.4. Repository Interface (`repository/interface.go`)
-
+❌ **Using Standard log Package**:
 ```go
-package repository
+// BAD
+log.Printf("Error: %v", err)
 
-//go:generate mockery --name Repository
-type Repository interface {
-    Create(ctx context.Context, sc model.Scope, opts CreateOptions) (model.Entity, error)
-    Update(ctx context.Context, sc model.Scope, opts UpdateOptions) (model.Entity, error)
-    // ...
-}
+// GOOD
+uc.l.Errorf(ctx, "scoring.usecase.SubmitAnswer: %s | error=%v", 
+    ErrMsgFetchQuestionFailed, err)
 ```
 
-#### 3.5. Repository Implementation (`repository/postgre/{entity}.go`)
-
-```go
-package postgres
-
-func (r *implRepository) Create(ctx context.Context, sc model.Scope, opts CreateOptions) (model.Entity, error) {
-    // Implement database operations
-}
-```
-
-#### 3.6. UseCase Implementation (`usecase/{entity}.go`)
-
-```go
-package usecase
-
-func (uc *usecase) Create(ctx context.Context, sc model.Scope, ip {module}.CreateInput) ({module}.EntityOutput, error) {
-    // Business logic
-    entity := model.Entity{...}
-    
-    created, err := uc.repo.Create(ctx, sc, repository.CreateOptions{Entity: entity})
-    if err != nil {
-        return {module}.EntityOutput{}, err
-    }
-    
-    return {module}.EntityOutput{Entity: created}, nil
-}
-```
-
-#### 3.7. HTTP Handler (`delivery/http/handler.go`)
-
-```go
-package http
-
-func (h handler) Create(c *gin.Context) {
-    ctx := c.Request.Context()
-    sc, _ := scope.GetScopeFromContext(ctx)
-    
-    var req CreateEntityRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        response.Error(c, err, nil)
-        return
-    }
-    
-    input := req.ToCreateInput()
-    output, err := h.uc.Create(ctx, sc, input)
-    if err != nil {
-        response.Error(c, err, nil)
-        return
-    }
-    
-    resp := ToEntityResponse(output.Entity)
-    response.OK(c, resp)
-}
-```
-
-#### 3.8. Routes (`delivery/http/routes.go`)
-
-```go
-package http
-
-func MapEntityRoutes(r *gin.RouterGroup, h Handler, mw middleware.Middleware) {
-    r.GET("", mw.Auth(), h.List)
-    r.GET("/:id", mw.Auth(), h.Detail)
-    r.POST("", mw.Auth(), h.Create)
-    r.PUT("/:id", mw.Auth(), h.Update)
-    r.DELETE("/:id", mw.Auth(), h.Delete)
-}
-```
-
-### Step 4: Register Module in HTTP Server
-
-In `internal/httpserver/handler.go`:
-
-```go
-func (srv HTTPServer) mapHandlers() error {
-    // ... existing code ...
-    
-    // Initialize new module
-    entityRepo := entityrepository.New(srv.postgresDB, srv.l)
-    entityUC := entityusecase.New(srv.l, entityRepo)
-    entityHandler := entityhttp.New(srv.l, entityUC)
-    
-    // Map routes
-    entityhttp.MapEntityRoutes(api.Group("/entities"), entityHandler, mw)
-    
-    return nil
-}
-```
-
----
-
-## Principles & Best Practices
-
-### 1. Dependency Rule
-
-**Dependencies flow in one direction only:**
-
-```
-Delivery → UseCase → Repository → Database
-```
-
-**NEVER:**
-- Repository imports UseCase
-- UseCase imports Delivery
-- Database imports Repository
-
-### 2. Interface Segregation
-
-- Each layer only knows about the interface of the layer below it
-- UseCase doesn't know about Repository implementation
-- Handler doesn't know about UseCase implementation
-
-### 3. Error Handling
-
-- **Domain Errors**: Defined in `{module}/error.go`
-- **Repository Errors**: Defined in `{module}/repository/errors.go`
-- **HTTP Errors**: Defined in `{module}/delivery/http/error.go`
-
-### 4. Type Safety
-
-- Use separate types for Input/Output at each layer
-- Never pass domain models directly through HTTP
-- Convert between layers: `Request → Input → Domain → Output → Response`
-
-### 5. Scope & Context
-
-- Always pass `context.Context` through all layers
-- Use `model.Scope` to pass user/tenant information
-- Don't store state in structs (stateless)
-
-### 6. Testing
-
-- Mock interfaces to test each layer independently
-- Use `//go:generate mockery` to generate mocks
-- Test UseCase with mock Repository
-- Test Handler with mock UseCase
-
----
-
-## Module Communication
-
-### 1. Within Same Service
-
-Modules can communicate with each other through UseCase:
-
-```go
-// Module A needs data from Module B
-type UseCaseA struct {
-    repoA RepositoryA
-    ucB   moduleB.UseCase  // Inject UseCase of module B
-}
-
-func (uc *UseCaseA) SomeMethod() {
-    // Call UseCase of module B
-    data, err := uc.ucB.GetSomething(ctx, sc, input)
-}
-```
-
-### 2. Cross-Service Communication
-
-Use message queue (RabbitMQ) or HTTP client for communication between services.
-
----
-
-## Database & Migrations
-
-### 1. Migrations
-
-- Migrations are stored in `migration/`
-- Name format: `{number}_{description}.sql`
-- Example: `01_add_project.sql`, `02_add_user.sql`
-
-### 2. SQLBoiler
-
-- Models are generated from database schema
-- Run `make sqlboiler` after changing schema
-- Generated models are in `internal/sqlboiler/`
-
-### 3. Domain Model vs DB Model
-
-- **DB Model** (`sqlboiler.*`): Direct mapping to database
-- **Domain Model** (`model.*`): Business entities, independent of database
-- Always convert between the two model types in Repository layer
-
----
-
-## Configuration Management
-
-### 1. Config Structure
-
-Config is defined in `config/config.go` and loaded from environment variables.
-
-### 2. Environment Variables
-
-Use `.env` file (template: `template.env`) to manage config.
-
----
-
-## Logging
-
-### 1. Logger Interface
-
-Use `pkg/log.Logger` interface for logging.
-
-### 2. Log Levels
-
-- `Error`: Errors that need handling
-- `Warn`: Warnings
-- `Info`: Important information
-- `Debug`: Debug information
-
-### 3. Context Logging
-
-Always pass `context.Context` to logger to trace requests.
-
----
-
-## Summary
-
-### Module-First Approach
-
-1. **Each module is an independent unit** containing all logic for a feature
-2. **Module has clear structure**: Delivery → UseCase → Repository
-3. **Module can be tested independently** thanks to dependency injection
-4. **Module is easy to extend** when adding new features
-
-### Clean Architecture Benefits
-
-1. **Separation of Concerns**: Each layer has its own responsibility
-2. **Testability**: Easy to test each layer independently
-3. **Maintainability**: Code is easy to read and maintain
-4. **Flexibility**: Easy to change implementation without affecting other layers
-
-### When Creating a New Module
-
-1. Create directory structure according to template
-2. Define interfaces first
-3. Implement from bottom up: Repository → UseCase → Handler
-4. Register module in HTTP server
-5. Write tests for each layer
-
----
-
-**This document will be updated when there are changes to architecture or new best practices.**
+## References
+
+- [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)
+- [Go Project Layout](https://github.com/golang-standards/project-layout)

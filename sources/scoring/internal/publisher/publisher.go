@@ -3,9 +3,9 @@ package publisher
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"log"
 	"time"
+
+	"scoring/pkg/log"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -18,20 +18,25 @@ type EventPublisher interface {
 type rabbitmqPublisher struct {
 	conn    *amqp.Connection
 	channel *amqp.Channel
+	l       log.Logger
 }
 
-func NewRabbitMQPublisher(url string) (EventPublisher, error) {
+func NewRabbitMQPublisher(url string, logger log.Logger) (EventPublisher, error) {
+	ctx := context.Background()
+
 	// Connect to RabbitMQ
 	conn, err := amqp.Dial(url)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to RabbitMQ: %w", err)
+		logger.Errorf(ctx, "publisher.NewRabbitMQPublisher: failed to connect to RabbitMQ | error=%v", err)
+		return nil, err
 	}
 
 	// Create a channel
 	ch, err := conn.Channel()
 	if err != nil {
 		conn.Close()
-		return nil, fmt.Errorf("failed to open channel: %w", err)
+		logger.Errorf(ctx, "publisher.NewRabbitMQPublisher: failed to open channel | error=%v", err)
+		return nil, err
 	}
 
 	// Declare exchange
@@ -47,22 +52,27 @@ func NewRabbitMQPublisher(url string) (EventPublisher, error) {
 	if err != nil {
 		ch.Close()
 		conn.Close()
-		return nil, fmt.Errorf("failed to declare exchange: %w", err)
+		logger.Errorf(ctx, "publisher.NewRabbitMQPublisher: failed to declare exchange | error=%v", err)
+		return nil, err
 	}
 
-	log.Println("✅ RabbitMQ Publisher connected and exchange declared")
+	logger.Infof(ctx, "publisher.NewRabbitMQPublisher: RabbitMQ Publisher connected and exchange declared")
 
 	return &rabbitmqPublisher{
 		conn:    conn,
 		channel: ch,
+		l:       logger,
 	}, nil
 }
 
 func (p *rabbitmqPublisher) PublishSubmissionEvent(event interface{}) error {
+	ctx := context.Background()
+
 	// Marshal event to JSON
 	body, err := json.Marshal(event)
 	if err != nil {
-		return fmt.Errorf("failed to marshal event: %w", err)
+		p.l.Errorf(ctx, "publisher.rabbitmqPublisher.PublishSubmissionEvent: failed to marshal event | error=%v", err)
+		return err
 	}
 
 	// Publish with context timeout
@@ -83,10 +93,11 @@ func (p *rabbitmqPublisher) PublishSubmissionEvent(event interface{}) error {
 	)
 
 	if err != nil {
-		return fmt.Errorf("failed to publish event: %w", err)
+		p.l.Errorf(ctx, "publisher.rabbitmqPublisher.PublishSubmissionEvent: failed to publish event | error=%v", err)
+		return err
 	}
 
-	log.Printf("📤 Published event: %s", string(body))
+	p.l.Infof(ctx, "publisher.rabbitmqPublisher.PublishSubmissionEvent: Published event | event=%s", string(body))
 	return nil
 }
 

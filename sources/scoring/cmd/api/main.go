@@ -1,75 +1,81 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
-	"log"
+
 	"scoring/config"
-	"scoring/internal/handler"
 	"scoring/internal/publisher"
-	"scoring/internal/repository"
-	"scoring/internal/service"
+	scoringhttp "scoring/internal/scoring/delivery/http"
+	scoringrepo "scoring/internal/scoring/repository/postgre"
+	scoringusecase "scoring/internal/scoring/usecase"
+	"scoring/pkg/curl"
+	pkglog "scoring/pkg/log"
 
 	_ "scoring/docs"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title Scoring Service API
-// @description ITS Scoring Service - Handles answer submissions and scoring
-// @version 1.0
-// @host localhost:8082
-// @BasePath /api
+// @title       Scoring Service API
+// @description Scoring Service API documentation.
+// @version     1
+// @host        localhost:8082
+// @schemes     http
+// @BasePath    /api/scoring
 func main() {
-	// Load .env file
-	_ = godotenv.Load()
+	ctx := context.Background()
 
-	// Load configuration
 	cfg, err := config.Load()
 	if err != nil {
-		log.Fatalf("❌ Failed to load config: %v", err)
+		panic(fmt.Sprintf("Failed to load config: %v", err))
 	}
 
-	// Connect to PostgreSQL
+	// Logger
+	log := pkglog.Init(pkglog.ZapConfig{
+		Level:    cfg.Logger.Level,
+		Mode:     cfg.Logger.Mode,
+		Encoding: cfg.Logger.Encoding,
+	})
+
+	// Database
 	db, err := connectDB(cfg.Postgres)
 	if err != nil {
-		log.Fatalf("❌ Failed to connect to database: %v", err)
+		log.Fatalf(ctx, "cmd.api.main: Failed to connect to database | error=%v", err)
 	}
 	defer db.Close()
 
-	log.Printf("✅ Connected to database: %s:%d/%s",
+	log.Infof(ctx, "cmd.api.main: Connected to database | host=%s | port=%d | db=%s",
 		cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.DBName)
 
 	// Initialize RabbitMQ Publisher
-	rabbitMQURL := cfg.RabbitMQ.URL
-	if rabbitMQURL == "" {
-		log.Fatal("❌ RABBITMQ_URL is not set")
-	}
-
-	eventPublisher, err := publisher.NewRabbitMQPublisher(rabbitMQURL)
+	eventPublisher, err := publisher.NewRabbitMQPublisher(cfg.RabbitMQ.URL, log)
 	if err != nil {
-		log.Fatalf("❌ Failed to connect to RabbitMQ: %v", err)
+		log.Fatalf(ctx, "cmd.api.main: Failed to connect to RabbitMQ | error=%v", err)
 	}
 	defer eventPublisher.Close()
 
-	// Initialize layers
-	submissionRepo := repository.NewSubmissionRepository(db)
-	contentClient := service.NewHttpContentClient("http://localhost:8081/api/content")
-	scoringService := service.NewScoringService(submissionRepo, eventPublisher, contentClient)
-	scoringHandler := handler.NewScoringHandler(scoringService)
+	log.Infof(ctx, "cmd.api.main: Connected to RabbitMQ | url=%s", cfg.RabbitMQ.URL)
 
-	// Setup Gin router
+	// HTTP Client for Content Service
+	contentClient := curl.NewContentServiceClient(cfg.ContentServiceURL)
+
+	// Initialize layers (Module-First approach)
+	submissionRepo := scoringrepo.New(db)
+	scoringUC := scoringusecase.New(log, submissionRepo, eventPublisher, contentClient)
+	scoringHandler := scoringhttp.New(log, scoringUC)
+
 	if cfg.HTTPServer.Mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
 	router := gin.Default()
 
-	// Health check
+	// Health check (global)
 	router.GET("/health", scoringHandler.Health)
 
 	// Swagger
@@ -77,17 +83,13 @@ func main() {
 
 	// API routes
 	api := router.Group("/api/scoring")
-	{
-		api.POST("/submit", scoringHandler.SubmitAnswer)
-	}
+	scoringhttp.MapScoringRoutes(api, scoringHandler)
 
-	// Start server
 	addr := fmt.Sprintf("%s:%d", cfg.HTTPServer.Host, cfg.HTTPServer.Port)
-	log.Printf("🚀 Scoring Service starting on %s", addr)
-	log.Printf("📍 POST http://localhost:%d/api/scoring-servicesubmit", cfg.HTTPServer.Port)
+	log.Infof(ctx, "cmd.api.main: Scoring Service starting on %s", addr)
 
 	if err := router.Run(addr); err != nil {
-		log.Fatalf("❌ Failed to start server: %v", err)
+		log.Fatalf(ctx, "cmd.api.main: Failed to start server | error=%v", err)
 	}
 }
 
@@ -96,16 +98,12 @@ func connectDB(cfg config.PostgresConfig) (*sql.DB, error) {
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode,
 	)
-
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}
-
-	// Test connection
 	if err := db.Ping(); err != nil {
 		return nil, err
 	}
-
 	return db, nil
 }

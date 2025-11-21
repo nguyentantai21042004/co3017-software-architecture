@@ -25,6 +25,19 @@ run-consumer:
 	@echo "Running the consumer"
 	@go run cmd/consumer/main.go
 
+test:
+	@echo "Running all tests..."
+	@go test -v -race ./...
+
+test-coverage:
+	@echo "Running tests and generating coverage report..."
+	@go test -v -race -coverprofile=coverage.out ./...
+	@go tool cover -html=coverage.out
+
+test-short:
+	@echo "Running short tests..."
+	@go test -v -short ./...
+
 build-docker-compose:
 	@echo "make models first"
 	@make models
@@ -117,6 +130,7 @@ help:
 	@echo "  REGISTRY=docker.io/username make consumer-push"
 
 .PHONY: models swagger run-api run-consumer build-docker-compose \
+        test test-coverage test-short \
         docker-build docker-build-amd64 docker-build-multi \
         docker-run docker-clean docker-push \
         consumer-build consumer-build-amd64 consumer-build-multi \
