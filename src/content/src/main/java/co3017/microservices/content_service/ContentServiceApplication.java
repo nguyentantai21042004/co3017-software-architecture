@@ -7,7 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Main Application Class
  * Config cho Spring Boot application với Clean Architecture
  */
-@SpringBootApplication(scanBasePackages = "co3017.microservices.content_service")
+@SpringBootApplication(scanBasePackages = {
+		"co3017.microservices.content_service",
+		"co3017.microservices.content"
+})
 public class ContentServiceApplication {
 
 	public static void main(String[] args) {
