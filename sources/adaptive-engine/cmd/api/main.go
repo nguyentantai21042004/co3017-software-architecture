@@ -1,60 +1,77 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log"
 
-	"adaptive-engine/internal/handler"
-	"adaptive-engine/internal/service"
+	"adaptive-engine/config"
+	adaptivehttp "adaptive-engine/internal/adaptive/delivery/http"
+	adaptiveusecase "adaptive-engine/internal/adaptive/usecase"
+	"adaptive-engine/pkg/curl"
+	pkglog "adaptive-engine/pkg/log"
 
 	_ "adaptive-engine/docs"
 
-	"github.com/caarlos0/env/v9"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-type Config struct {
-	Port              int    `env:"APP_PORT" envDefault:"8084"`
-	Mode              string `env:"API_MODE" envDefault:"debug"`
-	LearnerServiceURL string `env:"LEARNER_SERVICE_URL" envDefault:"http://localhost:8083"`
-	ContentServiceURL string `env:"CONTENT_SERVICE_URL" envDefault:"http://localhost:8081"`
-}
-
+// @title       Adaptive Engine API
+// @description Adaptive Engine API documentation.
+// @version     1
+// @host        localhost:8084
+// @schemes     http
+// @BasePath    /api/adaptive
 func main() {
-	_ = godotenv.Load()
-	var cfg Config
-	if err := env.Parse(&cfg); err != nil {
-		log.Fatalf("❌ Failed to load config: %v", err)
+	ctx := context.Background()
+
+	cfg, err := config.Load()
+	if err != nil {
+		panic(fmt.Sprintf("Failed to load config: %v", err))
 	}
 
-	log.Printf("✅ Config loaded: Learner=%s, Content=%s", cfg.LearnerServiceURL, cfg.ContentServiceURL)
+	// Logger
+	log := pkglog.Init(pkglog.ZapConfig{
+		Level:    cfg.LoggerLevel,
+		Mode:     cfg.LoggerMode,
+		Encoding: cfg.LoggerEncoding,
+	})
 
-	adaptiveService := service.NewAdaptiveService(cfg.LearnerServiceURL, cfg.ContentServiceURL)
-	adaptiveHandler := handler.NewAdaptiveHandler(adaptiveService)
+	// HTTP clients for external services
+	lrCl := curl.NewLearnerServiceClient(cfg.LearnerServiceURL)
+	ctCl := curl.NewContentServiceClient(cfg.ContentServiceURL)
+
+	log.Infof(ctx, "cmd.api.main: Config loaded successfully")
+
+	// Use case
+	uc := adaptiveusecase.New(log, lrCl, ctCl)
+
+	// HTTP handler
+	h := adaptivehttp.New(log, uc)
 
 	if cfg.Mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	router := gin.Default()
-	router.GET("/health", adaptiveHandler.Health)
+	r := gin.Default()
 
 	// Swagger
-	router.GET("/adaptive-engine/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/adaptive-engine/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	api := router.Group("/api/adaptive")
-	{
-		api.POST("/next-lesson", adaptiveHandler.NextLesson)
-	}
+	// API routes
+	api := r.Group("/api/adaptive")
+	adaptivehttp.MapAdaptiveRoutes(api, h)
+
+	// Health endpoint
+	api.GET("/health", func(c *gin.Context) {
+		h.Health(c)
+	})
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
-	log.Printf("🚀 Adaptive Engine starting on %s", addr)
-	log.Printf("📍 POST http://localhost:%d/api/adaptive/next-lesson", cfg.Port)
+	log.Infof(ctx, "cmd.api.main: Adaptive Engine starting on %s", addr)
 
-	if err := router.Run(addr); err != nil {
-		log.Fatalf("❌ Failed to start server: %v", err)
+	if err := r.Run(addr); err != nil {
+		log.Fatalf(ctx, "cmd.api.main: Failed to start server: %v", err)
 	}
 }
