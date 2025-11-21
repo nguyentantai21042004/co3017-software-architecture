@@ -128,10 +128,10 @@ CONTENT_SERVICE_URL=http://localhost:8081
 ## Logs
 
 ```
-🧠 Adaptive Engine: user=user_01, skill=math_algebra
-📊 Current mastery: 5
-🔄 Recommending REMEDIAL (score=5 < 50)
-📚 Recommended question ID: 2 (type: remedial)
+Adaptive Engine: user=user_01, skill=math_algebra
+Current mastery: 5
+Recommending REMEDIAL (score=5 < 50)
+Recommended question ID: 2 (type: remedial)
 ```
 
 ## All Services Summary
