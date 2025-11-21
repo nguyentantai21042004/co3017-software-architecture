@@ -1,8 +1,10 @@
 # Scoring Service (Golang)
 
 **Port:** 8082
-**Database:** scoring_db  
-**Technology:** Go 1.25.4, Gin, PostgreSQL, RabbitMQ
+**Database:** scoring_db
+**Technology:** Go 1.25.4, Gin, PostgreSQL, RabbitMQ, SQLBoiler
+
+**Database ORM:** Uses [SQLBoiler](https://github.com/aarondl/sqlboiler) for type-safe, efficient database operations. See [SQLBOILER_MIGRATION.md](./SQLBOILER_MIGRATION.md) for details.
 
 ## Overview
 
