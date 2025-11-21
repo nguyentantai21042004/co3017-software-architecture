@@ -3,11 +3,11 @@ package minio
 import (
 	"context"
 	"fmt"
+	"scoring/config"
 	"sync"
 	"time"
 
-	"smap-project/config"
-	miniopkg "smap-project/pkg/minio"
+	miniopkg "scoring-servicepkg/minio"
 )
 
 const (

@@ -6,9 +6,9 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"scoring-service/internal/model"
-	"scoring-service/internal/publisher"
-	"scoring-service/internal/repository"
+	"scoring-serviceinternal/model"
+	"scoring-serviceinternal/publisher"
+	"scoring-serviceinternal/repository"
 	"time"
 )
 
@@ -30,11 +30,11 @@ func NewScoringService(repo repository.SubmissionRepository, pub publisher.Event
 
 // Question struct to parse Content Service response
 type QuestionData struct {
-	ID            int64    `json:"id"`
-	Content       string   `json:"content"`
-	CorrectAnswer string   `json:"correct_answer"`
-	SkillTag      string   `json:"skill_tag"`
-	IsRemedial    bool     `json:"is_remedial"`
+	ID            int64  `json:"id"`
+	Content       string `json:"content"`
+	CorrectAnswer string `json:"correct_answer"`
+	SkillTag      string `json:"skill_tag"`
+	IsRemedial    bool   `json:"is_remedial"`
 }
 
 type ContentServiceResponse struct {

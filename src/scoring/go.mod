@@ -1,4 +1,4 @@
-module scoring-service
+module scoring
 
 go 1.25.4
 

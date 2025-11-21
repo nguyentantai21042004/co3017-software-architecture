@@ -4,10 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"scoring/config"
 	"sync"
 	"time"
-
-	"smap-project/config"
 
 	_ "github.com/lib/pq" // PostgreSQL driver
 )

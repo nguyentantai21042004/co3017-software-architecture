@@ -1,8 +1,8 @@
 package http
 
 import (
-	"smap-project/internal/project"
-	pkgLog "smap-project/pkg/log"
+	"scoring-serviceinternal/project"
+	pkgLog "scoring-servicepkg/log"
 
 	"github.com/gin-gonic/gin"
 )

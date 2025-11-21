@@ -1,10 +1,9 @@
 package minio
 
 import (
+	"scoring/config"
 	"strings"
 	"time"
-
-	"smap-project/config"
 )
 
 // validateConfig validates the MinIO configuration

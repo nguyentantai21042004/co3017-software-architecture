@@ -2,8 +2,8 @@ package handler
 
 import (
 	"net/http"
-	"scoring-service/internal/model"
-	"scoring-service/internal/service"
+	"scoring-serviceinternal/model"
+	"scoring-serviceinternal/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +16,7 @@ func NewScoringHandler(service service.ScoringService) *ScoringHandler {
 	return &ScoringHandler{service: service}
 }
 
-// SubmitAnswer handles POST /api/scoring/submit
+// SubmitAnswer handles POST /api/scoring-servicesubmit
 // @Summary Submit an answer for scoring
 // @Description Submit a user's answer to a question and get immediate feedback
 // @Tags scoring
@@ -26,7 +26,7 @@ func NewScoringHandler(service service.ScoringService) *ScoringHandler {
 // @Success 200 {object} model.SubmitResponse
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/scoring/submit [post]
+// @Router /api/scoring-servicesubmit [post]
 func (h *ScoringHandler) SubmitAnswer(c *gin.Context) {
 	var req model.SubmitRequest
 
@@ -52,6 +52,6 @@ func (h *ScoringHandler) SubmitAnswer(c *gin.Context) {
 func (h *ScoringHandler) Health(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "healthy",
-		"service": "scoring-service",
+		"service": "scoring",
 	})
 }

@@ -1,7 +1,7 @@
 package http
 
 import (
-	"smap-project/internal/middleware"
+	"scoring-serviceinternal/middleware"
 
 	"github.com/gin-gonic/gin"
 )

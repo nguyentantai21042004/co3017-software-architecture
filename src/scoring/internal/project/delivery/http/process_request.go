@@ -3,8 +3,8 @@ package http
 import (
 	"time"
 
-	"smap-project/internal/project"
-	"smap-project/pkg/paginator"
+	"scoring-serviceinternal/project"
+	"scoring-servicepkg/paginator"
 )
 
 // CreateProjectRequest represents the HTTP request for creating a project

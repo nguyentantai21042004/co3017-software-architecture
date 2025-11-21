@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"scoring-service/config"
-	"scoring-service/internal/handler"
-	"scoring-service/internal/publisher"
-	"scoring-service/internal/repository"
-	"scoring-service/internal/service"
+	"scoring-serviceinternal/handler"
+	"scoring-serviceinternal/publisher"
+	"scoring-serviceinternal/repository"
+	"scoring-serviceinternal/service"
+	"scoring/config"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -72,7 +72,7 @@ func main() {
 	// Start server
 	addr := fmt.Sprintf("%s:%d", cfg.HTTPServer.Host, cfg.HTTPServer.Port)
 	log.Printf("🚀 Scoring Service starting on %s", addr)
-	log.Printf("📍 POST http://localhost:%d/api/scoring/submit", cfg.HTTPServer.Port)
+	log.Printf("📍 POST http://localhost:%d/api/scoring-servicesubmit", cfg.HTTPServer.Port)
 
 	if err := router.Run(addr); err != nil {
 		log.Fatalf("❌ Failed to start server: %v", err)

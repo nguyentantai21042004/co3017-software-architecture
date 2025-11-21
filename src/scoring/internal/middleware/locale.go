@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"smap-project/pkg/locale"
+	"scoring-servicepkg/locale"
 
 	"github.com/gin-gonic/gin"
 )

@@ -3,9 +3,9 @@ package http
 import (
 	"net/http"
 
-	"smap-project/internal/project"
-	"smap-project/pkg/response"
-	"smap-project/pkg/scope"
+	"scoring-serviceinternal/project"
+	"scoring-servicepkg/response"
+	"scoring-servicepkg/scope"
 
 	"github.com/gin-gonic/gin"
 )
