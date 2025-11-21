@@ -1,129 +1,99 @@
 package main
 
 import (
-	"context"
+	"database/sql"
 	"fmt"
-	"os"
-	"os/signal"
-	"smap-project/config"
-	"smap-project/config/postgre"
-	"smap-project/internal/httpserver"
-	"smap-project/pkg/discord"
-	"smap-project/pkg/encrypter"
-	"smap-project/pkg/log"
-	"syscall"
+	"log"
+	"scoring-service/config"
+	"scoring-service/internal/handler"
+	"scoring-service/internal/publisher"
+	"scoring-service/internal/repository"
+	"scoring-service/internal/service"
+
+	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 )
 
-// @title       Smap API
-// @description SMAP Project Service API documentation.
-// @version     1
-// @host        localhost:8080
-// @schemes     http
-// @BasePath    /project
+// @title Scoring Service API
+// @description ITS Scoring Service - Handles answer submissions and scoring
+// @version 1.0
+// @host localhost:8082
+// @BasePath /api
 func main() {
 	// Load configuration
 	cfg, err := config.Load()
 	if err != nil {
-		fmt.Println("Failed to load config: ", err)
-		return
+		log.Fatalf("❌ Failed to load config: %v", err)
 	}
 
-	// Initialize logger
-	logger := log.Init(log.ZapConfig{
-		Level:    cfg.Logger.Level,
-		Mode:     cfg.Logger.Mode,
-		Encoding: cfg.Logger.Encoding,
-	})
-
-	// Register graceful shutdown
-	registerGracefulShutdown(logger)
-
-	// Initialize encrypter
-	encrypterInstance := encrypter.New(cfg.Encrypter.Key)
-
-	// Initialize PostgreSQL
-	ctx := context.Background()
-	postgresDB, err := postgre.Connect(ctx, cfg.Postgres)
+	// Connect to PostgreSQL
+	db, err := connectDB(cfg.Postgres)
 	if err != nil {
-		logger.Error(ctx, "Failed to connect to PostgreSQL: ", err)
-		return
+		log.Fatalf("❌ Failed to connect to database: %v", err)
 	}
-	defer postgre.Disconnect(ctx, postgresDB)
-	logger.Infof(ctx, "PostgreSQL connected successfully to %s:%d/%s", cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.DBName)
+	defer db.Close()
 
-	// // Initialize MinIO
-	// minioClient, err := minio.Connect(ctx, cfg.MinIO)
-	// if err != nil {
-	// 	logger.Error(ctx, "Failed to connect to MinIO: ", err)
-	// 	return
-	// }
-	// defer minio.Disconnect(ctx)
-	// logger.Infof(ctx, "MinIO connected successfully to %s", cfg.MinIO.Endpoint)
+	log.Printf("✅ Connected to database: %s:%d/%s",
+		cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.DBName)
 
-	// // Initialize RabbitMQ
-	// amqpConn, err := rabbitmq.Dial(cfg.RabbitMQ.URL, true)
-	// if err != nil {
-	// 	logger.Error(ctx, "Failed to connect to RabbitMQ: ", err)
-	// 	return
-	// }
-	// defer amqpConn.Close()
+	// Initialize RabbitMQ Publisher
+	rabbitMQURL := cfg.RabbitMQ.URL
+	if rabbitMQURL == "" {
+		log.Fatal("❌ RABBITMQ_URL is not set")
+	}
 
-	// Initialize Discord
-	discordClient, err := discord.New(logger, &discord.DiscordWebhook{
-		ID:    cfg.Discord.WebhookID,
-		Token: cfg.Discord.WebhookToken,
-	})
+	eventPublisher, err := publisher.NewRabbitMQPublisher(rabbitMQURL)
 	if err != nil {
-		logger.Error(ctx, "Failed to initialize Discord: ", err)
-		return
+		log.Fatalf("❌ Failed to connect to RabbitMQ: %v", err)
+	}
+	defer eventPublisher.Close()
+
+	// Initialize layers
+	submissionRepo := repository.NewSubmissionRepository(db)
+	scoringService := service.NewScoringService(submissionRepo, eventPublisher)
+	scoringHandler := handler.NewScoringHandler(scoringService)
+
+	// Setup Gin router
+	if cfg.HTTPServer.Mode == "release" {
+		gin.SetMode(gin.ReleaseMode)
 	}
 
-	// Initialize HTTP server
-	httpServer, err := httpserver.New(logger, httpserver.Config{
-		// Server Configuration
-		Logger: logger,
-		Host:   cfg.HTTPServer.Host,
-		Port:   cfg.HTTPServer.Port,
-		Mode:   cfg.HTTPServer.Mode,
+	router := gin.Default()
 
-		// Database Configuration
-		PostgresDB: postgresDB,
+	// Health check
+	router.GET("/health", scoringHandler.Health)
 
-		// // Storage Configuration
-		// MinIO: minioClient,
-
-		// // Message Queue Configuration
-		// AmqpConn: amqpConn,
-
-		// Authentication & Security Configuration
-		JwtSecretKey: cfg.JWT.SecretKey,
-		Encrypter:    encrypterInstance,
-		InternalKey:  cfg.InternalConfig.InternalKey,
-
-		// Monitoring & Notification Configuration
-		Discord: discordClient,
-	})
-	if err != nil {
-		logger.Error(ctx, "Failed to initialize HTTP server: ", err)
-		return
+	// API routes
+	api := router.Group("/api/scoring")
+	{
+		api.POST("/submit", scoringHandler.SubmitAnswer)
 	}
 
-	if err := httpServer.Run(); err != nil {
-		logger.Error(ctx, "Failed to run server: ", err)
-		return
+	// Start server
+	addr := fmt.Sprintf("%s:%d", cfg.HTTPServer.Host, cfg.HTTPServer.Port)
+	log.Printf("🚀 Scoring Service starting on %s", addr)
+	log.Printf("📍 POST http://localhost:%d/api/scoring/submit", cfg.HTTPServer.Port)
+
+	if err := router.Run(addr); err != nil {
+		log.Fatalf("❌ Failed to start server: %v", err)
 	}
 }
 
-// registerGracefulShutdown registers a signal handler for graceful shutdown.
-func registerGracefulShutdown(logger log.Logger) {
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+func connectDB(cfg config.PostgresConfig) (*sql.DB, error) {
+	connStr := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode,
+	)
 
-	go func() {
-		<-sigChan
-		logger.Info(context.Background(), "Shutting down gracefully...")
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, err
+	}
 
-		logger.Info(context.Background(), "Cleanup completed")
-		os.Exit(0)
-	}()
+	// Test connection
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }

@@ -1,4 +1,4 @@
-module smap-project
+module learner-model-service
 
 go 1.25.4
 

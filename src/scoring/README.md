@@ -1,94 +1,62 @@
-# SMAP Project Service
+# Scoring Service (Golang)
 
-> Project management service for the SMAP platform
-
-[![Go Version](https://img.shields.io/badge/Go-1.23+-00ADD8?style=flat&logo=go)](https://golang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?style=flat&logo=postgresql)](https://www.postgresql.org/)
-[![Docker](https://img.shields.io/badge/Docker-Optimized-2496ED?style=flat&logo=docker)](https://www.docker.com/)
-
----
+**Port:** 8082
+**Database:** scoring_db  
+**Technology:** Go 1.25.4, Gin, PostgreSQL, RabbitMQ
 
 ## Overview
 
-**SMAP Project Service** manages project-related operations for the SMAP platform. It provides CRUD operations for projects including brand tracking, competitor analysis, and keyword management.
+Scoring Service handles answer submissions and publishes events to RabbitMQ.
 
-### Key Features
-
-- **Project Management**: Create, read, update, and delete projects
-- **Brand Tracking**: Track brand names and keywords
-- **Competitor Analysis**: Monitor competitor names and their associated keywords
-- **Date Range Management**: Project timeline management with validation
-- **Status Tracking**: Draft, Active, Completed, Archived, Cancelled
-- **User Isolation**: Users can only access their own projects
-- **Soft Delete**: Data retention for audit purposes
-
----
-
-## API Endpoints
-
-### Base URL
-```
-http://localhost:8080/project
-```
-
-### Project Endpoints
-
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/projects` | List all user's projects | Yes |
-| GET | `/projects/page` | Get projects with pagination | Yes |
-| GET | `/projects/:id` | Get project details | Yes |
-| POST | `/projects` | Create new project | Yes |
-| PUT | `/projects/:id` | Update project | Yes |
-| DELETE | `/projects/:id` | Delete project (soft delete) | Yes |
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Go 1.23+
-- PostgreSQL 15+
-- Make
-
-### Quick Start
+## Setup
 
 ```bash
-# Install dependencies
-go mod download
+# 1. Initialize database
+psql -U postgres -h localhost -p 5432 -f ../init-scripts/02-init-scoring-db.sql
 
-# Run migrations
-make migrate-up
+# 2. Install dependencies
+go mod tidy
 
-# Generate SQLBoiler models
-make sqlboiler
-
-# Run the service
-make run-api
+# 3. Run service
+go run cmd/api/main.go
 ```
 
-### API Examples
+Service starts on **http://localhost:8082**
 
-**Create Project:**
+## API
+
+### POST /api/scoring/submit
+
 ```bash
-curl -X POST http://localhost:8080/project/projects \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+curl -X POST http://localhost:8082/api/scoring/submit \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Q1 2025 Campaign",
-    "status": "draft",
-    "from_date": "2025-01-01T00:00:00Z",
-    "to_date": "2025-03-31T23:59:59Z",
-    "brand_name": "MyBrand",
-    "brand_keywords": ["mybrand", "my brand"],
-    "competitor_names": ["Competitor A"],
-    "competitor_keywords_map": {
-      "Competitor A": ["competitor-a", "comp-a"]
-    }
+    "user_id": "user_01",
+    "question_id": 1,
+    "answer": "A"
   }'
 ```
 
----
+**Response:**
+```json
+{
+  "correct": true,
+  "score": 100,
+  "feedback": "Chính xác!"
+}
+```
 
-**Built for SMAP Graduation Project**
+## Testing
+
+```bash
+# Test wrong answer (triggers remedial)
+curl -X POST http://localhost:8082/api/scoring/submit \
+  -H "Content-Type: application/json" \
+  -d '{"user_id": "user_01", "question_id": 1, "answer": "C"}'
+```
+
+## Dependencies
+
+1. Content Service (8081) - Must be running
+2. PostgreSQL (scoring_db)
+3. RabbitMQ (5672)
