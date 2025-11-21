@@ -1,0 +1,242 @@
+{
+	"info": {
+		"name": "ITS Microservices - Complete Flow",
+		"description": "End-to-end testing of Intelligent Tutoring System microservices",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Health Checks",
+			"item": [
+				{
+					"name": "Content Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/actuator/health",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8081",
+							"path": ["actuator", "health"]
+						}
+					}
+				},
+				{
+					"name": "Scoring Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8082/health",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8082",
+							"path": ["health"]
+						}
+					}
+				},
+				{
+					"name": "Learner Model Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/health",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8083",
+							"path": ["health"]
+						}
+					}
+				},
+				{
+					"name": "Adaptive Engine Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8084/health",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8084",
+							"path": ["health"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Content Service",
+			"item": [
+				{
+					"name": "Get Question by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/content/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8081",
+							"path": ["api", "content", "1"]
+						}
+					}
+				},
+				{
+					"name": "Recommend Remedial Question",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/content/recommend?skill=math_algebra&type=remedial",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8081",
+							"path": ["api", "content", "recommend"],
+							"query": [
+								{"key": "skill", "value": "math_algebra"},
+								{"key": "type", "value": "remedial"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Recommend Standard Question",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/content/recommend?skill=math_algebra&type=standard",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8081",
+							"path": ["api", "content", "recommend"],
+							"query": [
+								{"key": "skill", "value": "math_algebra"},
+								{"key": "type", "value": "standard"}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Scoring Service",
+			"item": [
+				{
+					"name": "Submit Wrong Answer (user_01)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"user_01\",\n  \"question_id\": 1,\n  \"answer\": \"C\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8082/api/scoring/submit",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8082",
+							"path": ["api", "scoring", "submit"]
+						}
+					}
+				},
+				{
+					"name": "Submit Correct Answer (user_02)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"user_02\",\n  \"question_id\": 3,\n  \"answer\": \"B\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8082/api/scoring/submit",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8082",
+							"path": ["api", "scoring", "submit"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Learner Model Service",
+			"item": [
+				{
+					"name": "Get Mastery - user_01 (Low)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/internal/learner/user_01/mastery?skill=math_algebra",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8083",
+							"path": ["internal", "learner", "user_01", "mastery"],
+							"query": [{"key": "skill", "value": "math_algebra"}]
+						}
+					}
+				},
+				{
+					"name": "Get Mastery - user_02 (High)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/internal/learner/user_02/mastery?skill=math_algebra",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8083",
+							"path": ["internal", "learner", "user_02", "mastery"],
+							"query": [{"key": "skill", "value": "math_algebra"}]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "5. Adaptive Engine",
+			"item": [
+				{
+					"name": "Next Lesson - user_01 (Should Get Remedial)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"user_01\",\n  \"current_skill\": \"math_algebra\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8084/api/adaptive/next-lesson",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8084",
+							"path": ["api", "adaptive", "next-lesson"]
+						}
+					}
+				},
+				{
+					"name": "Next Lesson - user_02 (Should Get Standard)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"user_02\",\n  \"current_skill\": \"math_algebra\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8084/api/adaptive/next-lesson",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8084",
+							"path": ["api", "adaptive", "next-lesson"]
+						}
+					}
+				}
+			]
+		}
+	]
+}
