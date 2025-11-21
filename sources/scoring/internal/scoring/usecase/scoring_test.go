@@ -19,8 +19,8 @@ type MockRepository struct {
 	mock.Mock
 }
 
-func (m *MockRepository) Create(submission *model.Submission) error {
-	args := m.Called(submission)
+func (m *MockRepository) Create(ctx context.Context, submission *model.Submission) error {
+	args := m.Called(ctx, submission)
 	return args.Error(0)
 }
 
@@ -128,7 +128,7 @@ func TestSubmitAnswer_CorrectAnswer(t *testing.T) {
 	mockContentClient.On("GetQuestion", mock.Anything, int64(1)).Return(contentResp, nil)
 
 	// Mock repository
-	mockRepo.On("Create", mock.MatchedBy(func(s *model.Submission) bool {
+	mockRepo.On("Create", mock.Anything, mock.MatchedBy(func(s *model.Submission) bool {
 		return s.UserID == "user123" && s.QuestionID == 1 && s.ScoreAwarded == 100
 	})).Return(nil)
 
@@ -184,7 +184,7 @@ func TestSubmitAnswer_IncorrectAnswer(t *testing.T) {
 	}
 	mockContentClient.On("GetQuestion", mock.Anything, int64(1)).Return(contentResp, nil)
 
-	mockRepo.On("Create", mock.MatchedBy(func(s *model.Submission) bool {
+	mockRepo.On("Create", mock.Anything, mock.MatchedBy(func(s *model.Submission) bool {
 		return s.UserID == "user123" && s.ScoreAwarded == 0 && !s.IsPassed
 	})).Return(nil)
 
@@ -265,7 +265,7 @@ func TestSubmitAnswer_SaveSubmissionError(t *testing.T) {
 	mockContentClient.On("GetQuestion", mock.Anything, int64(1)).Return(contentResp, nil)
 
 	expectedErr := errors.New("database error")
-	mockRepo.On("Create", mock.Anything).Return(expectedErr)
+	mockRepo.On("Create", mock.Anything, mock.Anything).Return(expectedErr)
 
 	uc := New(mockLogger, mockRepo, mockPublisher, mockContentClient)
 

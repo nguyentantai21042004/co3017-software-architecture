@@ -1,9 +1,12 @@
 package repository
 
-import "scoring/internal/model"
+import (
+	"context"
+	"scoring/internal/model"
+)
 
 // Repository defines the interface for submission repository
 type Repository interface {
-	Create(submission *model.Submission) error
+	Create(ctx context.Context, submission *model.Submission) error
 	// Add more methods as needed
 }

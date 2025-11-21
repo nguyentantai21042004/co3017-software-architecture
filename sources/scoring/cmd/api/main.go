@@ -65,7 +65,7 @@ func main() {
 	contentClient := curl.NewContentServiceClient(cfg.ContentServiceURL)
 
 	// Initialize layers (Module-First approach)
-	submissionRepo := scoringrepo.New(db)
+	submissionRepo := scoringrepo.New(db, log)
 	scoringUC := scoringusecase.New(log, submissionRepo, eventPublisher, contentClient)
 	scoringHandler := scoringhttp.New(log, scoringUC)
 

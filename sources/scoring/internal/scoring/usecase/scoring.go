@@ -52,7 +52,7 @@ func (uc *usecase) SubmitAnswer(ctx context.Context, input scoring.SubmitInput) 
 		IsPassed:        isPassed,
 	}
 
-	err = uc.repo.Create(submission)
+	err = uc.repo.Create(ctx, submission)
 	if err != nil {
 		uc.l.Errorf(ctx, "scoring.usecase.SubmitAnswer: %s | %s=%s | %s=%d | error=%v",
 			ErrMsgSaveSubmissionFailed, ErrCtxUserID, input.UserID, ErrCtxQuestionID, input.QuestionID, err)

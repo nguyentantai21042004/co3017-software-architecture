@@ -3,12 +3,13 @@ package repository
 import "errors"
 
 var (
-	// ErrNotFound is returned when a record is not found
-	ErrNotFound = errors.New("record not found")
+	ErrNotFound        = errors.New("submission not found")
+	ErrDatabaseFailure = errors.New("database operation failed")
+)
 
-	// ErrDuplicateEntry is returned when trying to create a duplicate entry
-	ErrDuplicateEntry = errors.New("duplicate entry")
-
-	// ErrDatabaseConnection is returned when database connection fails
-	ErrDatabaseConnection = errors.New("database connection failed")
+// Error messages for detailed logging
+const (
+	ErrMsgDatabaseQueryFailed = "database query failed"
+	ErrMsgDatabaseWriteFailed = "database write operation failed"
+	ErrMsgRecordNotFound      = "record not found in database"
 )
