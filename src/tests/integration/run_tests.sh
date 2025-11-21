@@ -5,9 +5,9 @@
 
 set -e
 
-echo "🧪 Integration Test Runner"
-echo "=========================="
-echo ""
+printf "🧪 Integration Test Runner\n"
+printf "==========================\n"
+printf "\n"
 
 # Colors
 RED='\033[0;31m'
@@ -21,16 +21,16 @@ check_service() {
     local name=$2
     
     if curl -s -f -o /dev/null "$url/health" 2>/dev/null; then
-        echo -e "${GREEN}✓${NC} $name is running"
+        printf "${GREEN}✓${NC} $name is running\n"
         return 0
     else
-        echo -e "${RED}✗${NC} $name is NOT running at $url"
+        printf "${RED}✗${NC} $name is NOT running at $url\n"
         return 1
     fi
 }
 
 # Check all services
-echo "Checking services..."
+printf "Checking services...\n"
 all_running=true
 
 check_service "http://localhost:8081" "Content Service" || all_running=false
@@ -38,41 +38,38 @@ check_service "http://localhost:8082" "Scoring Service" || all_running=false
 check_service "http://localhost:8083" "Learner Model Service" || all_running=false
 check_service "http://localhost:8084" "Adaptive Engine" || all_running=false
 
-echo ""
+printf "\n"
 
 if [ "$all_running" = false ]; then
-    echo -e "${RED}ERROR: Not all services are running!${NC}"
-    echo ""
-    echo "Please start all services before running integration tests:"
-    echo "  1. Content Service:      cd src/content && mvn spring-boot:run"
-    echo "  2. Scoring Service:      cd src/scoring && go run cmd/api/main.go"
-    echo "  3. Learner Model:        cd src/learner-model && go run cmd/api/main.go"
-    echo "  4. Adaptive Engine:      cd src/adaptive-engine && go run cmd/api/main.go"
-    echo ""
+    printf "${RED}ERROR: Not all services are running!${NC}\n"
+    printf "\n"
+    printf "Please start all services before running integration tests:\n"
+    printf "  cd src && ./scripts/start_services.sh\n"
+    printf "\n"
     exit 1
 fi
 
 # Check PostgreSQL
-echo "Checking PostgreSQL..."
+printf "Checking PostgreSQL...\n"
 if pg_isready -h localhost -p 5432 >/dev/null 2>&1; then
-    echo -e "${GREEN}✓${NC} PostgreSQL is running"
+    printf "${GREEN}✓${NC} PostgreSQL is running\n"
 else
-    echo -e "${YELLOW}⚠${NC}  Cannot verify PostgreSQL (pg_isready not found or DB not running)"
+    printf "${YELLOW}⚠${NC}  Cannot verify PostgreSQL (pg_isready not found or DB not running)\n"
 fi
 
 # Check RabbitMQ
-echo "Checking RabbitMQ..."
+printf "Checking RabbitMQ...\n"
 if curl -s -f -o /dev/null "http://localhost:15672" 2>/dev/null; then
-    echo -e "${GREEN}✓${NC} RabbitMQ is running"
+    printf "${GREEN}✓${NC} RabbitMQ is running\n"
 else
-    echo -e "${YELLOW}⚠${NC}  Cannot verify RabbitMQ (management UI not accessible)"
+    printf "${YELLOW}⚠${NC}  Cannot verify RabbitMQ (management UI not accessible)\n"
 fi
 
-echo ""
-echo "=========================="
-echo "Running Integration Tests"
-echo "=========================="
-echo ""
+printf "\n"
+printf "==========================\n"
+printf "Running Integration Tests\n"
+printf "==========================\n"
+printf "\n"
 
 # Run tests
 cd "$(dirname "$0")"
@@ -87,11 +84,12 @@ fi
 
 exit_code=$?
 
-echo ""
+printf "\n"
 if [ $exit_code -eq 0 ]; then
-    echo -e "${GREEN}✅ All tests passed!${NC}"
+    printf "${GREEN}✅ All tests passed!${NC}\n"
 else
-    echo -e "${RED}❌ Some tests failed!${NC}"
+    printf "${RED}❌ Some tests failed!${NC}\n"
 fi
 
 exit $exit_code
+
