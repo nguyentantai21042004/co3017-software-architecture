@@ -134,4 +134,19 @@ help:
         docker-build docker-build-amd64 docker-build-multi \
         docker-run docker-clean docker-push \
         consumer-build consumer-build-amd64 consumer-build-multi \
-        consumer-run consumer-clean consumer-push help
+        consumer-run consumer-clean consumer-push helpswagger
+
+.PHONY: run-consumer
+run-consumer:
+	go run cmd/consumer/main.go
+
+.PHONY: build-api
+build-api:
+	go build -o bin/api cmd/api/main.go
+
+.PHONY: build-consumer
+build-consumer:
+	go build -o bin/consumer cmd/consumer/main.go
+
+.PHONY: build-all
+build-all: build-api build-consumer

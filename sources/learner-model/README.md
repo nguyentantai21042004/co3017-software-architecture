@@ -1,14 +1,19 @@
 # Learner Model Service (Golang)
 
-**Port:** 8083
+**Architecture:** Microservices (API + Consumer)
 **Database:** learner_db
 **Technology:** Go 1.25.4, Gin, PostgreSQL, RabbitMQ, SQLBoiler
 
 ## Overview
 
-Learner Model Service tracks user skill mastery levels. It consumes events from Scoring Service via RabbitMQ and provides APIs for Adaptive Engine to query mastery scores.
+Learner Model Service tracks user skill mastery levels. It consists of TWO separate services:
+
+1. **API Service** (Port 8083): REST API for querying mastery scores
+2. **Consumer Service**: Event processor for real-time mastery updates
 
 **Database ORM:** Uses [SQLBoiler](https://github.com/aarondl/sqlboiler) for type-safe, efficient database operations. See [SQLBOILER_MIGRATION.md](./SQLBOILER_MIGRATION.md) for details.
+
+**Consumer Documentation:** See [CONSUMER_SERVICE.md](./CONSUMER_SERVICE.md) for detailed consumer architecture and deployment.
 
 ## Setup
 

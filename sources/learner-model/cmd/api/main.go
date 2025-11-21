@@ -4,12 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"os"
-	"os/signal"
-	"syscall"
 
 	"learner-model-service/config"
-	"learner-model-service/internal/consumer"
 	learnerhttp "learner-model-service/internal/learner/delivery/http"
 	learnerrepo "learner-model-service/internal/learner/repository/postgre"
 	learnerusecase "learner-model-service/internal/learner/usecase"
@@ -63,23 +59,6 @@ func main() {
 	// Initialize HTTP handler
 	learnerHandler := learnerhttp.New(log, learnerUC)
 
-	// RabbitMQ Consumer
-	rabbitMQURL := cfg.RabbitMQ.URL
-	if rabbitMQURL == "" {
-		log.Fatalf(ctx, "cmd.api.main: RABBITMQ_URL is not set")
-	}
-
-	eventConsumer, err := consumer.NewRabbitMQConsumer(rabbitMQURL, learnerUC, log)
-	if err != nil {
-		log.Fatalf(ctx, "cmd.api.main: Failed to connect to RabbitMQ | error=%v", err)
-	}
-	defer eventConsumer.Close()
-
-	err = eventConsumer.Start()
-	if err != nil {
-		log.Fatalf(ctx, "cmd.api.main: Failed to start consumer | error=%v", err)
-	}
-
 	if cfg.HTTPServer.Mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -96,10 +75,8 @@ func main() {
 	internal := router.Group("/internal/learner")
 	learnerhttp.MapLearnerRoutes(internal, learnerHandler)
 
-	go handleShutdown(eventConsumer, db, log)
-
 	addr := fmt.Sprintf("%s:%d", cfg.HTTPServer.Host, cfg.HTTPServer.Port)
-	log.Infof(ctx, "cmd.api.main: Learner Model Service starting on %s", addr)
+	log.Infof(ctx, "cmd.api.main: Learner Model API Service starting on %s", addr)
 
 	if err := router.Run(addr); err != nil {
 		log.Fatalf(ctx, "cmd.api.main: Failed to start server | error=%v", err)
@@ -119,20 +96,4 @@ func connectDB(cfg config.PostgresConfig) (*sql.DB, error) {
 		return nil, err
 	}
 	return db, nil
-}
-
-func handleShutdown(eventConsumer consumer.EventConsumer, db *sql.DB, log pkglog.Logger) {
-	ctx := context.Background()
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
-	<-sigChan
-	log.Infof(ctx, "cmd.api.main: Shutting down gracefully...")
-	if eventConsumer != nil {
-		eventConsumer.Close()
-	}
-	if db != nil {
-		db.Close()
-	}
-	log.Infof(ctx, "cmd.api.main: Cleanup completed")
-	os.Exit(0)
 }

@@ -9,3 +9,5 @@ docs
 *.log
 *.pid
 *.out
+
+bin/
