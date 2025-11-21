@@ -14,19 +14,8 @@ type Config struct {
 	// Database Configuration
 	Postgres PostgresConfig
 
-	// // Storage Configuration
-	// MinIO MinIOConfig
-
-	// // Message Queue Configuration
-	// RabbitMQ RabbitMQConfig
-
-	// Authentication & Security Configuration
-	JWT            JWTConfig
-	Encrypter      EncrypterConfig
-	InternalConfig InternalConfig
-
-	// Monitoring & Notification Configuration
-	Discord DiscordConfig
+	// Message Queue Configuration
+	RabbitMQ RabbitMQConfig
 }
 
 // JWTConfig is the configuration for the JWT,

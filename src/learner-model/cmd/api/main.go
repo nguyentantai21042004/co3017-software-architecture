@@ -1,129 +1,106 @@
 package main
 
 import (
-	"context"
+	"database/sql"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
-	"smap-project/config"
-	"smap-project/config/postgre"
-	"smap-project/internal/httpserver"
-	"smap-project/pkg/discord"
-	"smap-project/pkg/encrypter"
-	"smap-project/pkg/log"
 	"syscall"
+
+	"learner-model-service/config"
+	"learner-model-service/internal/consumer"
+	"learner-model-service/internal/handler"
+	"learner-model-service/internal/repository"
+	"learner-model-service/internal/service"
+
+	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 )
 
-// @title       Smap API
-// @description SMAP Project Service API documentation.
-// @version     1
-// @host        localhost:8080
-// @schemes     http
-// @BasePath    /project
 func main() {
-	// Load configuration
 	cfg, err := config.Load()
 	if err != nil {
-		fmt.Println("Failed to load config: ", err)
-		return
+		log.Fatalf("❌ Failed to load config: %v", err)
 	}
 
-	// Initialize logger
-	logger := log.Init(log.ZapConfig{
-		Level:    cfg.Logger.Level,
-		Mode:     cfg.Logger.Mode,
-		Encoding: cfg.Logger.Encoding,
-	})
-
-	// Register graceful shutdown
-	registerGracefulShutdown(logger)
-
-	// Initialize encrypter
-	encrypterInstance := encrypter.New(cfg.Encrypter.Key)
-
-	// Initialize PostgreSQL
-	ctx := context.Background()
-	postgresDB, err := postgre.Connect(ctx, cfg.Postgres)
+	db, err := connectDB(cfg.Postgres)
 	if err != nil {
-		logger.Error(ctx, "Failed to connect to PostgreSQL: ", err)
-		return
+		log.Fatalf("❌ Failed to connect to database: %v", err)
 	}
-	defer postgre.Disconnect(ctx, postgresDB)
-	logger.Infof(ctx, "PostgreSQL connected successfully to %s:%d/%s", cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.DBName)
+	defer db.Close()
 
-	// // Initialize MinIO
-	// minioClient, err := minio.Connect(ctx, cfg.MinIO)
-	// if err != nil {
-	// 	logger.Error(ctx, "Failed to connect to MinIO: ", err)
-	// 	return
-	// }
-	// defer minio.Disconnect(ctx)
-	// logger.Infof(ctx, "MinIO connected successfully to %s", cfg.MinIO.Endpoint)
+	log.Printf("✅ Connected to database: %s:%d/%s",
+		cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.DBName)
 
-	// // Initialize RabbitMQ
-	// amqpConn, err := rabbitmq.Dial(cfg.RabbitMQ.URL, true)
-	// if err != nil {
-	// 	logger.Error(ctx, "Failed to connect to RabbitMQ: ", err)
-	// 	return
-	// }
-	// defer amqpConn.Close()
+	masteryRepo := repository.NewMasteryRepository(db)
+	learnerService := service.NewLearnerService(masteryRepo)
+	learnerHandler := handler.NewLearnerHandler(learnerService)
 
-	// Initialize Discord
-	discordClient, err := discord.New(logger, &discord.DiscordWebhook{
-		ID:    cfg.Discord.WebhookID,
-		Token: cfg.Discord.WebhookToken,
-	})
+	rabbitMQURL := cfg.RabbitMQ.URL
+	if rabbitMQURL == "" {
+		log.Fatal("❌ RABBITMQ_URL is not set")
+	}
+
+	eventConsumer, err := consumer.NewRabbitMQConsumer(rabbitMQURL, learnerService)
 	if err != nil {
-		logger.Error(ctx, "Failed to initialize Discord: ", err)
-		return
+		log.Fatalf("❌ Failed to connect to RabbitMQ: %v", err)
 	}
+	defer eventConsumer.Close()
 
-	// Initialize HTTP server
-	httpServer, err := httpserver.New(logger, httpserver.Config{
-		// Server Configuration
-		Logger: logger,
-		Host:   cfg.HTTPServer.Host,
-		Port:   cfg.HTTPServer.Port,
-		Mode:   cfg.HTTPServer.Mode,
-
-		// Database Configuration
-		PostgresDB: postgresDB,
-
-		// // Storage Configuration
-		// MinIO: minioClient,
-
-		// // Message Queue Configuration
-		// AmqpConn: amqpConn,
-
-		// Authentication & Security Configuration
-		JwtSecretKey: cfg.JWT.SecretKey,
-		Encrypter:    encrypterInstance,
-		InternalKey:  cfg.InternalConfig.InternalKey,
-
-		// Monitoring & Notification Configuration
-		Discord: discordClient,
-	})
+	err = eventConsumer.Start()
 	if err != nil {
-		logger.Error(ctx, "Failed to initialize HTTP server: ", err)
-		return
+		log.Fatalf("❌ Failed to start consumer: %v", err)
 	}
 
-	if err := httpServer.Run(); err != nil {
-		logger.Error(ctx, "Failed to run server: ", err)
-		return
+	if cfg.HTTPServer.Mode == "release" {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
+	router := gin.Default()
+	router.GET("/health", learnerHandler.Health)
+
+	internal := router.Group("/internal/learner")
+	{
+		internal.GET("/:user_id/mastery", learnerHandler.GetMastery)
+	}
+
+	go handleShutdown(eventConsumer, db)
+
+	addr := fmt.Sprintf("%s:%d", cfg.HTTPServer.Host, cfg.HTTPServer.Port)
+	log.Printf("🚀 Learner Model Service starting on %s", addr)
+
+	if err := router.Run(addr); err != nil {
+		log.Fatalf("❌ Failed to start server: %v", err)
 	}
 }
 
-// registerGracefulShutdown registers a signal handler for graceful shutdown.
-func registerGracefulShutdown(logger log.Logger) {
+func connectDB(cfg config.PostgresConfig) (*sql.DB, error) {
+	connStr := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode,
+	)
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, err
+	}
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+	return db, nil
+}
+
+func handleShutdown(eventConsumer consumer.EventConsumer, db *sql.DB) {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
-
-	go func() {
-		<-sigChan
-		logger.Info(context.Background(), "Shutting down gracefully...")
-
-		logger.Info(context.Background(), "Cleanup completed")
-		os.Exit(0)
-	}()
+	<-sigChan
+	log.Println("🛑 Shutting down gracefully...")
+	if eventConsumer != nil {
+		eventConsumer.Close()
+	}
+	if db != nil {
+		db.Close()
+	}
+	log.Println("✅ Cleanup completed")
+	os.Exit(0)
 }

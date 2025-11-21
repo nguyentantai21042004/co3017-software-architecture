@@ -1,94 +1,129 @@
-# SMAP Project Service
+# Learner Model Service (Golang)
 
-> Project management service for the SMAP platform
-
-[![Go Version](https://img.shields.io/badge/Go-1.23+-00ADD8?style=flat&logo=go)](https://golang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?style=flat&logo=postgresql)](https://www.postgresql.org/)
-[![Docker](https://img.shields.io/badge/Docker-Optimized-2496ED?style=flat&logo=docker)](https://www.docker.com/)
-
----
+**Port:** 8083
+**Database:** learner_db
+**Technology:** Go 1.25.4, Gin, PostgreSQL, RabbitMQ
 
 ## Overview
 
-**SMAP Project Service** manages project-related operations for the SMAP platform. It provides CRUD operations for projects including brand tracking, competitor analysis, and keyword management.
+Learner Model Service tracks user skill mastery levels. It consumes events from Scoring Service via RabbitMQ and provides APIs for Adaptive Engine to query mastery scores.
 
-### Key Features
+## Setup
 
-- **Project Management**: Create, read, update, and delete projects
-- **Brand Tracking**: Track brand names and keywords
-- **Competitor Analysis**: Monitor competitor names and their associated keywords
-- **Date Range Management**: Project timeline management with validation
-- **Status Tracking**: Draft, Active, Completed, Archived, Cancelled
-- **User Isolation**: Users can only access their own projects
-- **Soft Delete**: Data retention for audit purposes
+```bash
+# 1. Initialize database
+psql -U postgres -h localhost -p 5432 -f ../init-scripts/03-init-learner-db.sql
 
----
+# 2. Install dependencies
+go mod tidy
+
+# 3. Run service
+go run cmd/api/main.go
+```
+
+Service starts on **http://localhost:8083**
+
+## How It Works
+
+### 1. Consumes RabbitMQ Events
+
+Listens to queue `learner.updates` for `SubmissionCompleted` events:
+
+```json
+{
+  "event": "SubmissionCompleted",
+  "user_id": "user_01",
+  "skill_tag": "math_algebra",
+  "score_obtained": 0,
+  "timestamp": "2025-11-21T..."
+}
+```
+
+### 2. Updates Mastery Score
+
+Formula: `NewScore = (OldScore + ScoreObtained) / 2`
+
+Example:
+- Old mastery: 10
+- Score obtained: 0 (wrong answer)
+- New mastery: (10 + 0) / 2 = 5
+
+### 3. Provides API for Adaptive Engine
+
+```bash
+GET /internal/learner/{user_id}/mastery?skill={skill}
+```
 
 ## API Endpoints
 
-### Base URL
-```
-http://localhost:8080/project
-```
+### GET /internal/learner/:user_id/mastery
 
-### Project Endpoints
-
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/projects` | List all user's projects | Yes |
-| GET | `/projects/page` | Get projects with pagination | Yes |
-| GET | `/projects/:id` | Get project details | Yes |
-| POST | `/projects` | Create new project | Yes |
-| PUT | `/projects/:id` | Update project | Yes |
-| DELETE | `/projects/:id` | Delete project (soft delete) | Yes |
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Go 1.23+
-- PostgreSQL 15+
-- Make
-
-### Quick Start
+Query user's mastery for a skill.
 
 ```bash
-# Install dependencies
-go mod download
-
-# Run migrations
-make migrate-up
-
-# Generate SQLBoiler models
-make sqlboiler
-
-# Run the service
-make run-api
+curl "http://localhost:8083/internal/learner/user_01/mastery?skill=math_algebra"
 ```
 
-### API Examples
+**Response:**
+```json
+{
+  "user_id": "user_01",
+  "skill_tag": "math_algebra",
+  "mastery_score": 5,
+  "last_updated": "2025-11-21T..."
+}
+```
 
-**Create Project:**
+### GET /health
+
+Health check endpoint.
+
+## Testing Flow
+
+### Test 1: Verify Initial State
+
 ```bash
-curl -X POST http://localhost:8080/project/projects \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+curl "http://localhost:8083/internal/learner/user_01/mastery?skill=math_algebra"
+# Expected: mastery_score=10 (from seed data)
+```
+
+### Test 2: Submit Wrong Answer (via Scoring Service)
+
+```bash
+# This will trigger RabbitMQ event
+curl -X POST http://localhost:8082/api/scoring/submit \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "Q1 2025 Campaign",
-    "status": "draft",
-    "from_date": "2025-01-01T00:00:00Z",
-    "to_date": "2025-03-31T23:59:59Z",
-    "brand_name": "MyBrand",
-    "brand_keywords": ["mybrand", "my brand"],
-    "competitor_names": ["Competitor A"],
-    "competitor_keywords_map": {
-      "Competitor A": ["competitor-a", "comp-a"]
-    }
-  }'
+  -d '{"user_id": "user_01", "question_id": 1, "answer": "C"}'
 ```
 
----
+### Test 3: Verify Updated Mastery
 
-**Built for SMAP Graduation Project**
+```bash
+curl "http://localhost:8083/internal/learner/user_01/mastery?skill=math_algebra"
+# Expected: mastery_score=5 (updated from 10)
+```
+
+## Logs
+
+The service logs all event processing:
+
+```
+🎧 Listening for events on queue: learner.updates
+📥 Received message: {"event":"SubmissionCompleted",...}
+🧮 Calculating new mastery for user: user_01, skill: math_algebra
+📊 Mastery update: user_01 [math_algebra] - Old: 10, Obtained: 0, New: 5
+✅ Updated mastery: user=user_01, skill=math_algebra, new_score=5
+```
+
+## Dependencies
+
+1. PostgreSQL (learner_db) - Must be running
+2. RabbitMQ (5672) - Must be running to receive events
+3. Scoring Service (8082) - Publishes events this service consumes
+
+## Next Steps
+
+1. ✅ Content Service (Port 8081) - Done
+2. ✅ Scoring Service (Port 8082) - Done
+3. ✅ Learner Model Service (Port 8083) - **YOU ARE HERE**
+4. ⏭️ Adaptive Engine (Port 8084) - Orchestrate learning flow
