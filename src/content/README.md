@@ -1,448 +1,193 @@
-# CO3017 Content Service - Clean Architecture Implementation
+# Content Service (Java/Spring Boot)
 
-## 📋 Tổng quan
+**Port:** 8081
+**Database:** content_db
+**Technology:** Java 17, Spring Boot 3.5.6, PostgreSQL
 
-Microservice quản lý nội dung, tài liệu và dữ liệu cho môn CO3017 - HCMUT.
+## Overview
 
-Dự án được xây dựng theo **Clean Architecture** pattern với **Spring Boot 3.5.6**, **Java 17**, và **Maven**.
+Content Service manages learning questions and provides content recommendation APIs for the Adaptive Engine.
 
-## 🏗️ Kiến trúc Clean Architecture
+## Database Setup
 
-### 🎯 Nguyên tắc Clean Architecture
-
-1. **Dependency Rule**: Dependencies chỉ trỏ vào trong (inward)
-2. **Domain Independence**: Core business logic không phụ thuộc framework
-3. **Testability**: Dễ dàng test từng layer độc lập
-4. **Flexibility**: Dễ thay đổi implementation mà không ảnh hưởng core logic
-
-### 📐 Layer Structure
-
-```
-┌─────────────────────────────────────┐
-│         Domain Layer                │  ← Core Business Logic
-│   (Content, Document entities)      │
-└─────────────────────────────────────┘
-           ↑
-┌─────────────────────────────────────┐
-│      Application Layer              │  ← Use Cases & Business Rules
-│  (ContentUseCase, DocumentUseCase) │
-└─────────────────────────────────────┘
-           ↑
-┌──────────────────┬──────────────────┐
-│  Adapter Layer   │ Infrastructure   │  ← External Communication
-│  (REST API)      │  (Database)      │
-└──────────────────┴──────────────────┘
-```
-
-## 📁 Cấu trúc Project
-
-```
-src/main/java/co3017/microservices/content_service/
-├── models/                    ← Domain Entities (Pure Business Logic)
-│   ├── Content.java
-│   └── Document.java
-├── usecase/                   ← Application Layer
-│   ├── ContentUseCase.java    ← Interface cho Content domain
-│   ├── DocumentUseCase.java   ← Interface cho Document domain
-│   ├── service/               ← Use Case Implementations
-│   │   ├── ContentService.java
-│   │   └── DocumentService.java
-│   └── types/                 ← Command Objects
-│       ├── CreateContentCommand.java
-│       └── CreateDocumentCommand.java
-├── repository/                ← Repository Layer
-│   ├── ContentRepository.java ← Repository Interface
-│   ├── DocumentRepository.java ← Repository Interface
-│   └── postgresql/            ← Database Implementation
-│       ├── entity/            ← JPA Entities
-│       │   ├── ContentEntity.java
-│       │   └── DocumentEntity.java
-│       ├── mapper/            ← Domain ↔ Entity Mapping
-│       │   ├── ContentMapper.java
-│       │   └── DocumentMapper.java
-│       ├── JpaContentRepository.java
-│       ├── JpaDocumentRepository.java
-│       ├── SpringDataContentRepository.java
-│       └── SpringDataDocumentRepository.java
-├── adapter/http/              ← Presentation Layer
-│   ├── ContentController.java ← REST Controller
-│   ├── DocumentController.java ← REST Controller
-│   ├── dto/                   ← Data Transfer Objects
-│   │   ├── ApiResponse.java   ← Standardized Response Format
-│   │   ├── CreateContentRequest.java
-│   │   ├── ContentResponse.java
-│   │   ├── CreateDocumentRequest.java
-│   │   └── DocumentResponse.java
-│   └── response/              ← Response Builders
-│       ├── CommandBuilder.java
-│       ├── ContentResponseBuilder.java
-│       └── DocumentResponseBuilder.java
-└── config/                    ← Configuration
-    ├── ContentServiceApplication.java
-    └── CorsConfig.java        ← CORS Configuration
-```
-
-## 🔄 Luồng Request Flow
-
-### 1️⃣ HTTP Request Flow
-
-```
-Client Request → Controller → UseCase → Repository → Database
-     ↓              ↓           ↓          ↓
-Response ← ResponseBuilder ← Domain ← Entity ← Database
-```
-
-### 2️⃣ Chi tiết từng bước
-
-1. **HTTP Request** đến `ContentController`
-2. **Controller** nhận DTO, validate input
-3. **CommandBuilder** chuyển DTO → Command
-4. **UseCase Interface** định nghĩa contract
-5. **UseCase Service** thực thi business logic
-6. **Repository Interface** định nghĩa data contract
-7. **JPA Repository** implement database operations
-8. **Entity** ↔ **Domain** mapping qua Mapper
-9. **ResponseBuilder** chuyển Domain → Response DTO
-10. **ApiResponse** wrap kết quả với format chuẩn
-
-### 3️⃣ Ví dụ: Tạo Content
-
-```java
-// 1. Controller nhận request
-@PostMapping
-public ResponseEntity<ApiResponse<ContentResponse>> createContent(@RequestBody CreateContentRequest request) {
-    // 2. Chuyển DTO → Command
-    Content content = contentUseCase.createContent(CommandBuilder.toCreateContentCommand(request));
-    // 3. Chuyển Domain → Response
-    ContentResponse response = ContentResponseBuilder.toResponse(content);
-    return ResponseEntity.ok(ApiResponse.success(response));
-}
-
-// 4. UseCase thực thi business logic
-public Content createContent(CreateContentCommand command) {
-    // Business validation
-    if (command.getTitle().isEmpty()) {
-        throw new IllegalArgumentException("Title không được để trống");
-    }
-    // Tạo domain entity
-    Content content = new Content(command.getTitle(), command.getBody());
-    // Lưu qua repository
-    return contentRepository.save(content);
-}
-```
-
-## 🎯 Domains
-
-### 1️⃣ Content Domain
-**Chức năng**: Quản lý nội dung và tài liệu
-- **Endpoints**: `/api/contents`
-- **Features**: Create, Get by ID/Title, List all
-- **Business Rules**: Title unique, content validation
-
-### 2️⃣ Document Domain
-**Chức năng**: Quản lý tài liệu và file
-- **Endpoints**: `/api/documents`
-- **Features**: Create, Get by ID, Search by title, List all
-- **Business Rules**: Title unique, file size > 0, format validation
-
-## 🚀 Hướng dẫn Chạy Source
-
-### Prerequisites
-- **Java 17+**
-- **Maven 3.6+**
-- **PostgreSQL**
-- **IDE**: IntelliJ IDEA, VS Code, hoặc Eclipse
-
-### 1️⃣ Setup Database
+Run the initialization script first:
 
 ```bash
-# Tạo database
-createdb co3017
-
-# Tạo tables (vì dùng ddl-auto: validate)
-psql -U postgres -d co3017 -c "
-CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
-);
-
-CREATE TABLE tests (
-    id BIGSERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL UNIQUE,
-    description TEXT,
-    duration INTEGER NOT NULL,
-    max_score INTEGER NOT NULL,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
-);
-"
+psql -U postgres -h localhost -p 5432 -f ../init-scripts/01-init-content-db.sql
 ```
 
-### 2️⃣ Chạy Application
+This creates:
+- Database: `content_db`
+- Table: `questions` (5 sample questions)
 
-#### Cách 1: Maven Command Line
+## Running the Service
+
+### Option 1: Maven
+
 ```bash
-# Clone project
-git clone <repository-url>
-cd co3017-content-service
-
-# Run application
+# From this directory
+mvn clean install
 mvn spring-boot:run
 ```
 
-#### Cách 2: IDE (Khuyến nghị)
-1. **IntelliJ IDEA**:
-   - Open project folder
-   - Tìm `ContentServiceApplication.java`
-   - Click chuột phải → **Run 'ContentServiceApplication'**
+### Option 2: IDE
 
-2. **VS Code**:
-   - Cài extension "Spring Boot Extension Pack"
-   - Open project
-   - Nhấn F5 hoặc click "Run" ở file `ContentServiceApplication.java`
+Run `ContentServiceApplication.java`
 
-3. **Eclipse**:
-   - Import as Maven project
-   - Right-click project → **Run As** → **Spring Boot App**
+### Verify
 
-### 3️⃣ Kiểm tra Application
+Service starts on **http://localhost:8081**
+
+## API Endpoints
+
+### 1. Get Question by ID
 
 ```bash
-# Application sẽ chạy tại: http://localhost:9000
+GET http://localhost:8081/api/content/{id}
 
-# Test API
-curl http://localhost:9000/api/contents
-curl http://localhost:9000/api/documents
-
-# Test CORS
-curl -H "Origin: http://localhost:3000" -X GET http://localhost:9000/api/contents
+# Example
+curl http://localhost:8081/api/content/1
 ```
 
-## 🔌 API Examples
-
-### Content APIs
-
-```bash
-# Get all contents
-GET http://localhost:9000/api/contents
-
-# Get content by ID
-GET http://localhost:9000/api/contents/1
-
-# Get content by title
-GET http://localhost:9000/api/contents/title/math-content
-
-# Create content
-POST http://localhost:9000/api/contents
-Content-Type: application/json
-
-{
-  "title": "Math Content",
-  "body": "This is math content body"
-}
-```
-
-### Document APIs
-
-```bash
-# Get all documents
-GET http://localhost:9000/api/documents
-
-# Get document by ID
-GET http://localhost:9000/api/documents/1
-
-# Search documents by title
-GET http://localhost:9000/api/documents/search?title=math
-
-# Create document
-POST http://localhost:9000/api/documents
-Content-Type: application/json
-
-{
-  "title": "Math Document",
-  "description": "Basic mathematics document",
-  "fileSize": 1024,
-  "format": "pdf"
-}
-```
-
-### Response Format
-
-Tất cả API trả về format chuẩn:
-
+**Response:**
 ```json
 {
-  "errorCode": 0,
+  "success": true,
   "message": "Success",
   "data": {
     "id": 1,
-    "title": "Math Content",
-    "body": "This is math content body"
+    "content": "Bài toán khó: Giải phương trình bậc hai x² + 5x + 6 = 0",
+    "options": ["A. x = -2 và x = -3", "B. x = 2 và x = 3", ...],
+    "correct_answer": "A",
+    "skill_tag": "math_algebra",
+    "difficulty_level": 3,
+    "is_remedial": false
   }
 }
 ```
 
-## 🛠️ Development Guide
-
-### Thêm Domain Mới
-
-1. **Tạo Domain Entity**:
-```java
-// models/Article.java
-public class Article {
-    private Long id;
-    private String title;
-    private String content;
-    
-    // Business methods
-    public boolean isLongContent() { return content.length() > 1000; }
-}
-```
-
-2. **Tạo UseCase Interface**:
-```java
-// usecase/ArticleUseCase.java
-public interface ArticleUseCase {
-    Article createArticle(CreateArticleCommand command);
-    Optional<Article> getArticleById(Long id);
-    List<Article> getAllArticles();
-}
-```
-
-3. **Tạo UseCase Service**:
-```java
-// usecase/service/ArticleService.java
-@Service
-public class ArticleService implements ArticleUseCase {
-    private final ArticleRepository articleRepository;
-    // Implementation...
-}
-```
-
-4. **Tạo Repository Interface**:
-```java
-// repository/ArticleRepository.java
-public interface ArticleRepository {
-    Article save(Article article);
-    Optional<Article> findById(Long id);
-    List<Article> findAll();
-}
-```
-
-5. **Tạo JPA Implementation**:
-```java
-// repository/postgresql/JpaArticleRepository.java
-@Repository
-public class JpaArticleRepository implements ArticleRepository {
-    // JPA implementation...
-}
-```
-
-6. **Tạo Controller**:
-```java
-// adapter/http/ArticleController.java
-@RestController
-@RequestMapping("/api/articles")
-public class ArticleController {
-    // REST endpoints...
-}
-```
-
-### Testing Strategy
-
-```java
-// Test UseCase (Unit Test)
-@Test
-public void shouldCreateContentWithValidTitle() {
-    // Given
-    CreateContentCommand command = new CreateContentCommand("Math Content", "This is content body");
-    
-    // When
-    Content content = contentService.createContent(command);
-    
-    // Then
-    assertThat(content.getTitle()).isEqualTo("Math Content");
-    assertThat(content.getBody()).isEqualTo("This is content body");
-}
-
-// Test Controller (Integration Test)
-@SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.properties")
-class ContentControllerTest {
-    @Test
-    public void shouldCreateContent() {
-        // Test HTTP request/response
-    }
-}
-```
-
-## 🏭 Production Considerations
-
-### Security
-- Thay đổi CORS config từ `*` thành specific origins
-- Thêm authentication/authorization
-- Validate input data
-- Rate limiting
-
-### Performance
-- Database connection pooling
-- Caching (Redis)
-- Pagination cho list APIs
-- Database indexing
-
-### Monitoring
-- Health check endpoints
-- Metrics collection
-- Logging configuration
-- Error tracking
-
-## 📚 Tech Stack
-
-- **Framework**: Spring Boot 3.5.6
-- **Language**: Java 17
-- **Build Tool**: Maven
-- **Database**: PostgreSQL
-- **ORM**: Spring Data JPA / Hibernate
-- **Architecture**: Clean Architecture
-- **CORS**: Enabled for all origins (development)
-- **Utilities**: Lombok
-- **gRPC**: Spring gRPC 0.11.0 (prepared)
-
-## 📚 Documentation
-
-- [Spring Boot Reference](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
-- [Clean Architecture by Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Spring Data JPA](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/)
-
-## 🧪 Testing
+### 2. Recommend Question ⭐ (Core API for Adaptive Engine)
 
 ```bash
-# Run all tests
-mvn test
+GET http://localhost:8081/api/content/recommend?skill={skill}&type={type}
 
-# Run specific test class
-mvn test -Dtest=ContentServiceTest
+# Example 1: Get remedial question for algebra
+curl "http://localhost:8081/api/content/recommend?skill=math_algebra&type=remedial"
 
-# Run with coverage
-mvn test jacoco:report
+# Example 2: Get standard question
+curl "http://localhost:8081/api/content/recommend?skill=math_algebra&type=standard"
 ```
 
-## 📦 Build
+**Parameters:**
+- `skill` (required): "math_algebra", "math_geometry", etc.
+- `type` (optional, default="standard"): "remedial" or "standard"
+- `random` (optional, default=false): Return random question
+
+**Response (Remedial):**
+```json
+{
+  "success": true,
+  "message": "Recommended remedial question for skill: math_algebra",
+  "data": {
+    "id": 2,
+    "content": "Bài ôn tập: Nhắc lại quy tắc chuyển vế...",
+    "is_remedial": true,
+    "difficulty_level": 1
+  }
+}
+```
+
+### 3. Get All Questions for a Skill
 
 ```bash
-# Clean build
-mvn clean package
-
-# Skip tests
-mvn clean package -DskipTests
-
-# Run JAR
-java -jar target/content-service-0.0.1-SNAPSHOT.jar
+curl http://localhost:8081/api/content/skill/math_algebra
 ```
 
-Build output: `target/content-service-0.0.1-SNAPSHOT.jar`
+### 4. Get Questions by Skill and Difficulty
 
-**Happy Coding! 🚀**
+```bash
+curl http://localhost:8081/api/content/skill/math_algebra/difficulty/3
+```
+
+## Sample Data (5 Questions)
+
+| ID | Skill | Type | Difficulty | Purpose |
+|----|-------|------|------------|---------|
+| 1 | math_algebra | Standard | 3 (Hard) | Main test question |
+| **2** | **math_algebra** | **Remedial** | **1 (Easy)** | **Adaptive recommendation** |
+| 3 | math_algebra | Standard | 2 (Medium) | Normal progression |
+| 4 | math_geometry | Remedial | 1 (Easy) | Geometry review |
+| 5 | math_geometry | Standard | 3 (Hard) | Challenge |
+
+## Adaptive Engine Integration
+
+```go
+// Adaptive Engine calls this endpoint
+if masteryScore < 50 {
+    // Student struggling -> recommend remedial
+    url = "http://localhost:8081/api/content/recommend?skill=math_algebra&type=remedial"
+} else {
+    // Student doing well -> standard content
+    url = "http://localhost:8081/api/content/recommend?skill=math_algebra&type=standard"
+}
+```
+
+## Testing
+
+```bash
+# Test 1: Get remedial question
+curl "http://localhost:8081/api/content/recommend?skill=math_algebra&type=remedial"
+# Expected: Returns Question ID 2 (is_remedial=true)
+
+# Test 2: Get standard question
+curl "http://localhost:8081/api/content/recommend?skill=math_algebra&type=standard"
+# Expected: Returns Question ID 1 or 3 (is_remedial=false)
+
+# Test 3: Get question by ID
+curl http://localhost:8081/api/content/1
+# Expected: Returns hard algebra question
+```
+
+## Troubleshooting
+
+### Database Connection Error
+
+```bash
+# Check if database exists
+psql -U postgres -h localhost -p 5432 -c "\l" | grep content_db
+
+# If not, run init script
+psql -U postgres -h localhost -p 5432 -f ../init-scripts/01-init-content-db.sql
+```
+
+### No Questions Found
+
+```bash
+# Check question count
+psql -U postgres -h localhost -p 5432 -d content_db -c "SELECT COUNT(*) FROM questions;"
+# Expected: 5
+
+# If 0, re-run init script
+```
+
+## Configuration
+
+Edit `src/main/resources/application.yml`:
+
+```yaml
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/content_db
+    username: postgres
+    password: postgres
+```
+
+## Next Steps
+
+1. ✅ Content Service (Port 8081) - **YOU ARE HERE**
+2. ⏭️ Scoring Service (Port 8082) - Submit answers
+3. ⏭️ Learner Model Service (Port 8083) - Track mastery
+4. ⏭️ Adaptive Engine (Port 8084) - Orchestrate learning

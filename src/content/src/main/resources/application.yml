@@ -1,31 +1,33 @@
+server:
+  port: 8081
+
 spring:
   application:
-    name: "Content Service"
-  
+    name: content-service
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/co3017
+    url: jdbc:postgresql://localhost:5432/content_db
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: validate  # Don't auto-create tables, use our SQL scripts
     show-sql: true
     properties:
       hibernate:
-        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    open-in-view: false
 
   jackson:
     property-naming-strategy: SNAKE_CASE
     default-property-inclusion: NON_NULL
 
-server:
-  port: 9100
-
 logging:
   level:
-    co3017.microservices.content_service: DEBUG
+    co3017.microservices: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
