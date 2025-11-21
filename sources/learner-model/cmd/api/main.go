@@ -1,62 +1,83 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"learner-model-service/config"
 	"learner-model-service/internal/consumer"
-	"learner-model-service/internal/handler"
-	"learner-model-service/internal/repository"
-	"learner-model-service/internal/service"
+	learnerhttp "learner-model-service/internal/learner/delivery/http"
+	learnerrepo "learner-model-service/internal/learner/repository/postgre"
+	learnerusecase "learner-model-service/internal/learner/usecase"
+	pkglog "learner-model-service/pkg/log"
 
 	_ "learner-model-service/docs"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title       Learner Model Service API
+// @description Learner Model Service API documentation.
+// @version     1
+// @host        localhost:8083
+// @schemes     http
+// @BasePath    /internal/learner
 func main() {
-	_ = godotenv.Load()
+	ctx := context.Background()
+
 	cfg, err := config.Load()
 	if err != nil {
-		log.Fatalf("❌ Failed to load config: %v", err)
+		panic(fmt.Sprintf("Failed to load config: %v", err))
 	}
 
+	// Logger
+	log := pkglog.Init(pkglog.ZapConfig{
+		Level:    cfg.LoggerLevel,
+		Mode:     cfg.LoggerMode,
+		Encoding: cfg.LoggerEncoding,
+	})
+
+	// Database connection
 	db, err := connectDB(cfg.Postgres)
 	if err != nil {
-		log.Fatalf("❌ Failed to connect to database: %v", err)
+		log.Fatalf(ctx, "cmd.api.main: Failed to connect to database | error=%v", err)
 	}
 	defer db.Close()
 
-	log.Printf("✅ Connected to database: %s:%d/%s",
+	log.Infof(ctx, "cmd.api.main: Connected to database | host=%s | port=%d | db=%s",
 		cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.DBName)
 
-	masteryRepo := repository.NewMasteryRepository(db)
-	learnerService := service.NewLearnerService(masteryRepo)
-	learnerHandler := handler.NewLearnerHandler(learnerService)
+	// Initialize repository
+	learnerRepo := learnerrepo.New(db, log)
 
+	// Initialize use case
+	learnerUC := learnerusecase.New(log, learnerRepo)
+
+	// Initialize HTTP handler
+	learnerHandler := learnerhttp.New(log, learnerUC)
+
+	// RabbitMQ Consumer
 	rabbitMQURL := cfg.RabbitMQ.URL
 	if rabbitMQURL == "" {
-		log.Fatal("❌ RABBITMQ_URL is not set")
+		log.Fatalf(ctx, "cmd.api.main: RABBITMQ_URL is not set")
 	}
 
-	eventConsumer, err := consumer.NewRabbitMQConsumer(rabbitMQURL, learnerService)
+	eventConsumer, err := consumer.NewRabbitMQConsumer(rabbitMQURL, learnerUC, log)
 	if err != nil {
-		log.Fatalf("❌ Failed to connect to RabbitMQ: %v", err)
+		log.Fatalf(ctx, "cmd.api.main: Failed to connect to RabbitMQ | error=%v", err)
 	}
 	defer eventConsumer.Close()
 
 	err = eventConsumer.Start()
 	if err != nil {
-		log.Fatalf("❌ Failed to start consumer: %v", err)
+		log.Fatalf(ctx, "cmd.api.main: Failed to start consumer | error=%v", err)
 	}
 
 	if cfg.HTTPServer.Mode == "release" {
@@ -64,23 +85,26 @@ func main() {
 	}
 
 	router := gin.Default()
-	router.GET("/health", learnerHandler.Health)
 
 	// Swagger
 	router.GET("/learner-model/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	// API routes
 	internal := router.Group("/internal/learner")
-	{
-		internal.GET("/:user_id/mastery", learnerHandler.GetMastery)
-	}
+	learnerhttp.MapLearnerRoutes(internal, learnerHandler)
 
-	go handleShutdown(eventConsumer, db)
+	// Health endpoint
+	internal.GET("/health", func(c *gin.Context) {
+		learnerHandler.Health(c)
+	})
+
+	go handleShutdown(eventConsumer, db, log)
 
 	addr := fmt.Sprintf("%s:%d", cfg.HTTPServer.Host, cfg.HTTPServer.Port)
-	log.Printf("🚀 Learner Model Service starting on %s", addr)
+	log.Infof(ctx, "cmd.api.main: Learner Model Service starting on %s", addr)
 
 	if err := router.Run(addr); err != nil {
-		log.Fatalf("❌ Failed to start server: %v", err)
+		log.Fatalf(ctx, "cmd.api.main: Failed to start server | error=%v", err)
 	}
 }
 
@@ -99,17 +123,18 @@ func connectDB(cfg config.PostgresConfig) (*sql.DB, error) {
 	return db, nil
 }
 
-func handleShutdown(eventConsumer consumer.EventConsumer, db *sql.DB) {
+func handleShutdown(eventConsumer consumer.EventConsumer, db *sql.DB, log pkglog.Logger) {
+	ctx := context.Background()
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 	<-sigChan
-	log.Println("🛑 Shutting down gracefully...")
+	log.Infof(ctx, "cmd.api.main: Shutting down gracefully...")
 	if eventConsumer != nil {
 		eventConsumer.Close()
 	}
 	if db != nil {
 		db.Close()
 	}
-	log.Println("✅ Cleanup completed")
+	log.Infof(ctx, "cmd.api.main: Cleanup completed")
 	os.Exit(0)
 }
