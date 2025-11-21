@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: "Content Service"
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/co3017
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: NON_NULL
+
+server:
+  port: 9100
+
+logging:
+  level:
+    co3017.microservices.content_service: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG

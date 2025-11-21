@@ -1,0 +1,272 @@
+{
+    "info": {
+        "name": "Content Version API Collection (Snake Case)",
+        "description": "Collection for Content Version CRUD operations with snake_case JSON",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [{
+            "name": "Create Content Version",
+            "request": {
+                "method": "POST",
+                "header": [{
+                    "key": "Content-Type",
+                    "value": "application/json"
+                }],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"unit_id\": \"550e8400-e29b-41d4-a716-446655440001\",\n  \"version_number\": \"1.0.0\",\n  \"content_data\": {\n    \"title\": \"Giới thiệu về Java\",\n    \"content\": \"Java là một ngôn ngữ lập trình hướng đối tượng...\",\n    \"estimated_time\": 30,\n    \"sections\": [\n      {\n        \"title\": \"Khái niệm cơ bản\",\n        \"content\": \"Java là gì?\"\n      }\n    ]\n  },\n  \"is_active\": true\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/content-versions",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Video Content Version",
+            "request": {
+                "method": "POST",
+                "header": [{
+                    "key": "Content-Type",
+                    "value": "application/json"
+                }],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"unit_id\": \"550e8400-e29b-41d4-a716-446655440002\",\n  \"version_number\": \"1.0.0\",\n  \"content_data\": {\n    \"title\": \"Video hướng dẫn Java cơ bản\",\n    \"video_url\": \"https://example.com/java-basic.mp4\",\n    \"duration\": 1800,\n    \"thumbnail_url\": \"https://example.com/thumb.jpg\",\n    \"quality\": \"HD\",\n    \"subtitles\": [\"vi\", \"en\"]\n  },\n  \"is_active\": true\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/content-versions",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Quiz Content Version",
+            "request": {
+                "method": "POST",
+                "header": [{
+                    "key": "Content-Type",
+                    "value": "application/json"
+                }],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"unit_id\": \"550e8400-e29b-41d4-a716-446655440003\",\n  \"version_number\": \"1.0.0\",\n  \"content_data\": {\n    \"title\": \"Quiz về Java cơ bản\",\n    \"questions\": [\n      {\n        \"id\": 1,\n        \"question\": \"Java là gì?\",\n        \"options\": [\"Ngôn ngữ lập trình\", \"Hệ điều hành\", \"Database\"],\n        \"correct_answer\": 0,\n        \"points\": 10,\n        \"explanation\": \"Java là một ngôn ngữ lập trình hướng đối tượng\"\n      }\n    ],\n    \"time_limit\": 900,\n    \"passing_score\": 70,\n    \"max_attempts\": 3\n  },\n  \"is_active\": true\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/content-versions",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Content Version Detail",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/content-versions/{{version_id}}",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions", "{{version_id}}"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "List Content Versions",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/content-versions?page=0&size=20&sort_by=created_at&sort_direction=desc",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions"],
+                    "query": [{
+                            "key": "page",
+                            "value": "0"
+                        },
+                        {
+                            "key": "size",
+                            "value": "20"
+                        },
+                        {
+                            "key": "sort_by",
+                            "value": "created_at"
+                        },
+                        {
+                            "key": "sort_direction",
+                            "value": "desc"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "List Content Versions by Unit",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/content-versions?unit_id=550e8400-e29b-41d4-a716-446655440001&page=0&size=20",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions"],
+                    "query": [{
+                            "key": "unit_id",
+                            "value": "550e8400-e29b-41d4-a716-446655440001"
+                        },
+                        {
+                            "key": "page",
+                            "value": "0"
+                        },
+                        {
+                            "key": "size",
+                            "value": "20"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "List Active Content Versions",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/content-versions?is_active=true&page=0&size=20",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions"],
+                    "query": [{
+                            "key": "is_active",
+                            "value": "true"
+                        },
+                        {
+                            "key": "page",
+                            "value": "0"
+                        },
+                        {
+                            "key": "size",
+                            "value": "20"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get All Versions by Unit ID",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/content-versions/unit/{{unit_id}}",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions", "unit", "{{unit_id}}"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Active Version by Unit ID",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/content-versions/unit/{{unit_id}}/active",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions", "unit", "{{unit_id}}", "active"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Update Content Version",
+            "request": {
+                "method": "PUT",
+                "header": [{
+                    "key": "Content-Type",
+                    "value": "application/json"
+                }],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"version_number\": \"1.1.0\",\n  \"content_data\": {\n    \"title\": \"Giới thiệu về Java - Updated\",\n    \"content\": \"Java là một ngôn ngữ lập trình hướng đối tượng rất mạnh mẽ...\",\n    \"estimated_time\": 45,\n    \"sections\": [\n      {\n        \"title\": \"Khái niệm cơ bản\",\n        \"content\": \"Java là gì?\"\n      },\n      {\n        \"title\": \"Lịch sử Java\",\n        \"content\": \"Java được phát triển bởi Sun Microsystems...\"\n      }\n    ]\n  },\n  \"is_active\": true\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/content-versions/{{version_id}}",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions", "{{version_id}}"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Set Active Version",
+            "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/content-versions/{{version_id}}/activate?unit_id={{unit_id}}",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions", "{{version_id}}", "activate"],
+                    "query": [{
+                        "key": "unit_id",
+                        "value": "{{unit_id}}"
+                    }]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Delete Content Versions",
+            "request": {
+                "method": "DELETE",
+                "header": [{
+                    "key": "Content-Type",
+                    "value": "application/json"
+                }],
+                "body": {
+                    "mode": "raw",
+                    "raw": "[\n  1,\n  2,\n  3\n]"
+                },
+                "url": {
+                    "raw": "{{base_url}}/content-versions",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Check Content Version Exists",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/content-versions/exists/{{version_id}}",
+                    "host": ["{{base_url}}"],
+                    "path": ["content-versions", "exists", "{{version_id}}"]
+                }
+            },
+            "response": []
+        }
+    ],
+    "variable": [{
+            "key": "base_url",
+            "value": "http://localhost:8080"
+        },
+        {
+            "key": "version_id",
+            "value": "1"
+        },
+        {
+            "key": "unit_id",
+            "value": "550e8400-e29b-41d4-a716-446655440001"
+        }
+    ]
+}
