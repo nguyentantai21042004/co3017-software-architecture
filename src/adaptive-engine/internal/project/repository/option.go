@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"smap-project/internal/model"
-	"smap-project/pkg/paginator"
+	"adaptive-engine/internal/model"
+	"adaptive-engine/pkg/paginator"
 )
 
 type CreateOptions struct {

@@ -1,7 +1,7 @@
 package http
 
 import (
-	"smap-project/internal/middleware"
+	"adaptive-engine/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )

@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"smap-project/config"
-	miniopkg "smap-project/pkg/minio"
+	"adaptive-engine/config"
+	miniopkg "adaptive-engine/pkg/minio"
 )
 
 const (

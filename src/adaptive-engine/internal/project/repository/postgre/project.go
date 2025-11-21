@@ -4,11 +4,11 @@ import (
 	"context"
 	"database/sql"
 
-	"smap-project/internal/model"
-	"smap-project/internal/project/repository"
-	"smap-project/internal/sqlboiler"
-	"smap-project/pkg/paginator"
-	postgresPkg "smap-project/pkg/postgre"
+	"adaptive-engine/internal/model"
+	"adaptive-engine/internal/project/repository"
+	"adaptive-engine/internal/sqlboiler"
+	"adaptive-engine/pkg/paginator"
+	postgresPkg "adaptive-engine/pkg/postgre"
 
 	"github.com/aarondl/sqlboiler/v4/boil"
 	"github.com/aarondl/sqlboiler/v4/queries/qm"

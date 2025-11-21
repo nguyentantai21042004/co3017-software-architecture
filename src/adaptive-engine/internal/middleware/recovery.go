@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"smap-project/pkg/discord"
-	"smap-project/pkg/log"
-	"smap-project/pkg/response"
+	"adaptive-engine/pkg/discord"
+	"adaptive-engine/pkg/log"
+	"adaptive-engine/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

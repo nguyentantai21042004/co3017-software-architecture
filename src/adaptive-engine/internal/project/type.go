@@ -3,8 +3,8 @@ package project
 import (
 	"time"
 
-	"smap-project/internal/model"
-	"smap-project/pkg/paginator"
+	"adaptive-engine/internal/model"
+	"adaptive-engine/pkg/paginator"
 )
 
 // CreateInput represents input for creating a new project

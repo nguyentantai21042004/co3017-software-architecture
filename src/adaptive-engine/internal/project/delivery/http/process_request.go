@@ -3,8 +3,8 @@ package http
 import (
 	"time"
 
-	"smap-project/internal/project"
-	"smap-project/pkg/paginator"
+	"adaptive-engine/internal/project"
+	"adaptive-engine/pkg/paginator"
 )
 
 // CreateProjectRequest represents the HTTP request for creating a project

@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"errors"
 
-	"smap-project/pkg/discord"
-	"smap-project/pkg/encrypter"
-	"smap-project/pkg/log"
+	"adaptive-engine/pkg/discord"
+	"adaptive-engine/pkg/encrypter"
+	"adaptive-engine/pkg/log"
 
 	"github.com/gin-gonic/gin"
 )

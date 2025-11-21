@@ -1,8 +1,8 @@
 package http
 
 import (
-	"smap-project/internal/project"
-	pkgLog "smap-project/pkg/log"
+	"adaptive-engine/internal/project"
+	pkgLog "adaptive-engine/pkg/log"
 
 	"github.com/gin-gonic/gin"
 )

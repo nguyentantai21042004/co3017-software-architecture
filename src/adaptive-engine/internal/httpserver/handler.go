@@ -1,16 +1,16 @@
 package httpserver
 
 import (
-	"smap-project/internal/middleware"
-	projecthttp "smap-project/internal/project/delivery/http"
-	projectrepository "smap-project/internal/project/repository/postgre"
-	projectusecase "smap-project/internal/project/usecase"
-	"smap-project/pkg/i18n"
-	"smap-project/pkg/scope"
+	"adaptive-engine/internal/middleware"
+	projecthttp "adaptive-engine/internal/project/delivery/http"
+	projectrepository "adaptive-engine/internal/project/repository/postgre"
+	projectusecase "adaptive-engine/internal/project/usecase"
+	"adaptive-engine/pkg/i18n"
+	"adaptive-engine/pkg/scope"
 
 	// Import this to execute the init function in docs.go which setups the Swagger docs.
 	// Uncomment after running: make swagger
-	_ "smap-project/docs"
+	_ "adaptive-engine/docs"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"

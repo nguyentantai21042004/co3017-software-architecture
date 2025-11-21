@@ -1,94 +1,144 @@
-# SMAP Project Service
+# Adaptive Engine (Golang)
 
-> Project management service for the SMAP platform
-
-[![Go Version](https://img.shields.io/badge/Go-1.23+-00ADD8?style=flat&logo=go)](https://golang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?style=flat&logo=postgresql)](https://www.postgresql.org/)
-[![Docker](https://img.shields.io/badge/Docker-Optimized-2496ED?style=flat&logo=docker)](https://www.docker.com/)
-
----
+**Port:** 8084
+**Database:** None (Stateless)
+**Technology:** Go 1.25.4, Gin
 
 ## Overview
 
-**SMAP Project Service** manages project-related operations for the SMAP platform. It provides CRUD operations for projects including brand tracking, competitor analysis, and keyword management.
+Adaptive Engine is the "brain" of the ITS system. It orchestrates calls to Learner Model and Content services to recommend personalized learning paths.
 
-### Key Features
-
-- **Project Management**: Create, read, update, and delete projects
-- **Brand Tracking**: Track brand names and keywords
-- **Competitor Analysis**: Monitor competitor names and their associated keywords
-- **Date Range Management**: Project timeline management with validation
-- **Status Tracking**: Draft, Active, Completed, Archived, Cancelled
-- **User Isolation**: Users can only access their own projects
-- **Soft Delete**: Data retention for audit purposes
-
----
-
-## API Endpoints
-
-### Base URL
-```
-http://localhost:8080/project
-```
-
-### Project Endpoints
-
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/projects` | List all user's projects | Yes |
-| GET | `/projects/page` | Get projects with pagination | Yes |
-| GET | `/projects/:id` | Get project details | Yes |
-| POST | `/projects` | Create new project | Yes |
-| PUT | `/projects/:id` | Update project | Yes |
-| DELETE | `/projects/:id` | Delete project (soft delete) | Yes |
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Go 1.23+
-- PostgreSQL 15+
-- Make
-
-### Quick Start
+## Setup
 
 ```bash
 # Install dependencies
-go mod download
+go mod tidy
 
-# Run migrations
-make migrate-up
-
-# Generate SQLBoiler models
-make sqlboiler
-
-# Run the service
-make run-api
+# Run service
+go run cmd/api/main.go
 ```
 
-### API Examples
+Service starts on **http://localhost:8084**
 
-**Create Project:**
+## How It Works
+
+### Adaptive Logic Flow
+
+```
+1. Client requests next lesson
+   ↓
+2. Adaptive Engine calls Learner Model Service
+   → Get user's mastery score
+   ↓
+3. Apply Adaptive Rule:
+   - If mastery < 50 → Recommend "remedial" content
+   - If mastery >= 50 → Recommend "standard" content
+   ↓
+4. Adaptive Engine calls Content Service
+   → Get recommended question based on type
+   ↓
+5. Return recommendation to client
+```
+
+## API Endpoint
+
+### POST /api/adaptive/next-lesson
+
+Get personalized next lesson recommendation.
+
+**Request:**
 ```bash
-curl -X POST http://localhost:8080/project/projects \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+curl -X POST http://localhost:8084/api/adaptive/next-lesson \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Q1 2025 Campaign",
-    "status": "draft",
-    "from_date": "2025-01-01T00:00:00Z",
-    "to_date": "2025-03-31T23:59:59Z",
-    "brand_name": "MyBrand",
-    "brand_keywords": ["mybrand", "my brand"],
-    "competitor_names": ["Competitor A"],
-    "competitor_keywords_map": {
-      "Competitor A": ["competitor-a", "comp-a"]
-    }
+    "user_id": "user_01",
+    "current_skill": "math_algebra"
   }'
 ```
 
----
+**Response (Low Mastery - Remedial):**
+```json
+{
+  "next_lesson_id": 2,
+  "reason": "Your mastery is 5%. Let's review the basics.",
+  "mastery_score": 5,
+  "content_type": "remedial"
+}
+```
 
-**Built for SMAP Graduation Project**
+**Response (High Mastery - Standard):**
+```json
+{
+  "next_lesson_id": 1,
+  "reason": "Great! Your mastery is 80%. Continue with the next challenge.",
+  "mastery_score": 80,
+  "content_type": "standard"
+}
+```
+
+## Complete Test Scenario
+
+### Scenario: User Struggles → Gets Remedial Content
+
+**Initial State:**
+- user_01 has algebra mastery = 10 (low)
+
+**Step 1: Submit Wrong Answer**
+```bash
+curl -X POST http://localhost:8082/api/scoring/submit \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "user_01",
+    "question_id": 1,
+    "answer": "C"
+  }'
+```
+Result: Score = 0, RabbitMQ event → Mastery updated to 5
+
+**Step 2: Request Next Lesson**
+```bash
+curl -X POST http://localhost:8084/api/adaptive/next-lesson \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "user_01",
+    "current_skill": "math_algebra"
+  }'
+```
+
+**Result:** Adaptive Engine detects mastery=5 < 50, recommends Question ID 2 (remedial)
+
+## Dependencies
+
+The Adaptive Engine needs:
+1. **Learner Model Service** (8083) - To query mastery scores
+2. **Content Service** (8081) - To get recommended questions
+
+Both services must be running.
+
+## Configuration
+
+Edit `.env`:
+
+```env
+APP_PORT=8084
+LEARNER_SERVICE_URL=http://localhost:8083
+CONTENT_SERVICE_URL=http://localhost:8081
+```
+
+## Logs
+
+```
+🧠 Adaptive Engine: user=user_01, skill=math_algebra
+📊 Current mastery: 5
+🔄 Recommending REMEDIAL (score=5 < 50)
+📚 Recommended question ID: 2 (type: remedial)
+```
+
+## All Services Summary
+
+| Service | Port | Purpose |
+|---------|------|---------|
+| Content | 8081 | Manage questions |
+| Scoring | 8082 | Score answers, publish events |
+| Learner Model | 8083 | Track mastery, consume events |
+| **Adaptive Engine** | **8084** | **Orchestrate adaptive learning** |

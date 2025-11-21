@@ -1,4 +1,4 @@
-module smap-project
+module adaptive-engine-service
 
 go 1.25.4
 

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"smap-project/config"
+	"adaptive-engine/config"
 
 	_ "github.com/lib/pq" // PostgreSQL driver
 )

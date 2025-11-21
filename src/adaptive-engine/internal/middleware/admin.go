@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"smap-project/pkg/response"
-	"smap-project/pkg/scope"
+	"adaptive-engine/pkg/response"
+	"adaptive-engine/pkg/scope"
 
 	"github.com/gin-gonic/gin"
 )

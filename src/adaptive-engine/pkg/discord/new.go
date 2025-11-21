@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"smap-project/pkg/log"
+	"adaptive-engine/pkg/log"
 )
 
 // DiscordWebhook contains webhook information for Discord API.
