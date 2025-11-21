@@ -39,9 +39,9 @@ func main() {
 
 	// Logger
 	log := pkglog.Init(pkglog.ZapConfig{
-		Level:    cfg.LoggerLevel,
-		Mode:     cfg.LoggerMode,
-		Encoding: cfg.LoggerEncoding,
+		Level:    cfg.Logger.Level,
+		Mode:     cfg.Logger.Mode,
+		Encoding: cfg.Logger.Encoding,
 	})
 
 	// Database connection
@@ -86,17 +86,15 @@ func main() {
 
 	router := gin.Default()
 
+	// Health check (global)
+	router.GET("/health", learnerHandler.Health)
+
 	// Swagger
 	router.GET("/learner-model/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// API routes
 	internal := router.Group("/internal/learner")
 	learnerhttp.MapLearnerRoutes(internal, learnerHandler)
-
-	// Health endpoint
-	internal.GET("/health", func(c *gin.Context) {
-		learnerHandler.Health(c)
-	})
 
 	go handleShutdown(eventConsumer, db, log)
 

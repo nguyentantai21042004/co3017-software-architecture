@@ -3,6 +3,8 @@ package http
 import (
 	"learner-model-service/internal/learner"
 	"learner-model-service/pkg/log"
+
+	"github.com/gin-gonic/gin"
 )
 
 type handler struct {
@@ -20,6 +22,7 @@ func New(l log.Logger, uc learner.UseCase) Handler {
 
 // Handler defines the HTTP handler interface for learner module
 type Handler interface {
-	GetMastery(c any)
-	Health(c any)
+	GetMastery(c *gin.Context)
+	UpdateMasteryFromEvent(c *gin.Context)
+	Health(c *gin.Context)
 }

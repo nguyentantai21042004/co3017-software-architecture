@@ -3,69 +3,75 @@ package postgre
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"time"
 
 	"learner-model-service/internal/learner/repository"
 	"learner-model-service/internal/model"
+	"learner-model-service/internal/sqlboiler"
+
+	"github.com/aarondl/null/v8"
+	"github.com/aarondl/sqlboiler/v4/boil"
+	"github.com/friendsofgo/errors"
 )
 
-// GetByUserAndSkill retrieves mastery for a user and skill
+// GetByUserAndSkill retrieves mastery for a user and skill using SQLBoiler
 func (r *implRepository) GetByUserAndSkill(ctx context.Context, userID, skillTag string) (*model.SkillMastery, error) {
-	query := `
-		SELECT user_id, skill_tag, current_score, last_updated
-		FROM skill_mastery
-		WHERE user_id = $1 AND skill_tag = $2
-	`
-
-	var mastery model.SkillMastery
-	err := r.db.QueryRowContext(ctx, query, userID, skillTag).Scan(
-		&mastery.UserID,
-		&mastery.SkillTag,
-		&mastery.CurrentScore,
-		&mastery.LastUpdated,
-	)
-
-	if err == sql.ErrNoRows {
-		return nil, repository.ErrNotFound
-	}
-
+	// Use SQLBoiler to find the record
+	boilerMastery, err := sqlboiler.FindSkillMastery(ctx, r.db, userID, skillTag)
 	if err != nil {
-		r.l.Errorf(ctx, "learner.repository.GetByUserAndSkill: failed | user_id=%s | skill_tag=%s | error=%v",
-			userID, skillTag, err)
-		return nil, fmt.Errorf("%w: %v", repository.ErrDatabaseFailure, err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, repository.ErrNotFound
+		}
+		r.l.Errorf(ctx, "learner.repository.postgre.GetByUserAndSkill: %s | user_id=%s | skill_tag=%s | error=%v",
+			repository.ErrMsgDatabaseQueryFailed, userID, skillTag, err)
+		return nil, repository.ErrDatabaseFailure
 	}
 
-	return &mastery, nil
+	// Convert SQLBoiler model to domain model
+	domainMastery := &model.SkillMastery{
+		UserID:       boilerMastery.UserID,
+		SkillTag:     boilerMastery.SkillTag,
+		CurrentScore: int(boilerMastery.CurrentScore.Int), // Convert null.Int to int
+		LastUpdated:  boilerMastery.LastUpdated.Time,      // Convert null.Time to time.Time
+	}
+
+	r.l.Infof(ctx, "learner.repository.postgre.GetByUserAndSkill: success | user_id=%s | skill_tag=%s | score=%d",
+		userID, skillTag, domainMastery.CurrentScore)
+
+	return domainMastery, nil
 }
 
-// CreateOrUpdate creates or updates mastery record
+// CreateOrUpdate creates or updates mastery record using SQLBoiler
 func (r *implRepository) CreateOrUpdate(ctx context.Context, mastery *model.SkillMastery) error {
-	query := `
-		INSERT INTO skill_mastery (user_id, skill_tag, current_score, last_updated)
-		VALUES ($1, $2, $3, $4)
-		ON CONFLICT (user_id, skill_tag)
-		DO UPDATE SET
-			current_score = EXCLUDED.current_score,
-			last_updated = EXCLUDED.last_updated
-	`
+	// Convert domain model to SQLBoiler model
+	boilerMastery := &sqlboiler.SkillMastery{
+		UserID:       mastery.UserID,
+		SkillTag:     mastery.SkillTag,
+		CurrentScore: null.IntFrom(mastery.CurrentScore), // Convert int to null.Int
+		LastUpdated:  null.TimeFrom(time.Now()),          // Set current time
+	}
 
-	mastery.LastUpdated = time.Now()
-
-	_, err := r.db.ExecContext(
+	// Use SQLBoiler's Upsert (INSERT ... ON CONFLICT ... DO UPDATE)
+	err := boilerMastery.Upsert(
 		ctx,
-		query,
-		mastery.UserID,
-		mastery.SkillTag,
-		mastery.CurrentScore,
-		mastery.LastUpdated,
+		r.db,
+		true,         // updateOnConflict
+		nil,          // conflictColumns (nil means use primary key)
+		boil.Infer(), // updateColumns
+		boil.Infer(), // insertColumns
 	)
 
 	if err != nil {
-		r.l.Errorf(ctx, "learner.repository.CreateOrUpdate: failed | user_id=%s | skill_tag=%s | score=%d | error=%v",
-			mastery.UserID, mastery.SkillTag, mastery.CurrentScore, err)
-		return fmt.Errorf("%w: %v", repository.ErrDatabaseFailure, err)
+		r.l.Errorf(ctx, "learner.repository.postgre.CreateOrUpdate: %s | user_id=%s | skill_tag=%s | score=%d | error=%v",
+			repository.ErrMsgDatabaseWriteFailed, mastery.UserID, mastery.SkillTag, mastery.CurrentScore, err)
+		return repository.ErrDatabaseFailure
 	}
+
+	r.l.Infof(ctx, "learner.repository.postgre.CreateOrUpdate: success | user_id=%s | skill_tag=%s | score=%d",
+		mastery.UserID, mastery.SkillTag, mastery.CurrentScore)
+
+	// Update the domain model with the timestamp from DB
+	mastery.LastUpdated = boilerMastery.LastUpdated.Time
 
 	return nil
 }
