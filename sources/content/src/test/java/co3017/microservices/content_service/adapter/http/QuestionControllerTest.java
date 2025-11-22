@@ -46,13 +46,14 @@ class QuestionControllerTest {
     void setUp() {
         now = LocalDateTime.now();
         testQuestion = new Question(
-            1,
-            "What is 2 + 2?",
-            "easy",
-            "math_arithmetic",
-            now,
-            now
-        );
+                1,
+                "What is 2 + 2?",
+                Arrays.asList("3", "4", "5"),
+                1,
+                "math_arithmetic",
+                "4",
+                false,
+                now);
     }
 
     // CREATE QUESTION TESTS
@@ -61,24 +62,26 @@ class QuestionControllerTest {
     void createQuestion_Success() throws Exception {
         // Arrange
         CreateQuestionRequest request = new CreateQuestionRequest(
-            "What is 2 + 2?",
-            "easy",
-            "math_arithmetic"
-        );
+                "What is 2 + 2?",
+                Arrays.asList("3", "4", "5"),
+                1,
+                "math_arithmetic",
+                "4",
+                false);
         when(questionUseCase.createQuestion(any(CreateQuestionCommand.class)))
-            .thenReturn(testQuestion);
+                .thenReturn(testQuestion);
 
         // Act & Assert
         mockMvc.perform(post("/api/questions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.error_code").value(0))
-            .andExpect(jsonPath("$.message").value("Question created successfully"))
-            .andExpect(jsonPath("$.data.id").value(1))
-            .andExpect(jsonPath("$.data.content").value("What is 2 + 2?"))
-            .andExpect(jsonPath("$.data.difficulty").value("easy"))
-            .andExpect(jsonPath("$.data.skill_tag").value("math_arithmetic"));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.error_code").value(0))
+                .andExpect(jsonPath("$.message").value("Question created successfully"))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.content").value("What is 2 + 2?"))
+                .andExpect(jsonPath("$.data.difficulty").value(1))
+                .andExpect(jsonPath("$.data.skill_tag").value("math_arithmetic"));
 
         verify(questionUseCase, times(1)).createQuestion(any(CreateQuestionCommand.class));
     }
@@ -86,17 +89,17 @@ class QuestionControllerTest {
     @Test
     void createQuestion_InvalidData_BadRequest() throws Exception {
         // Arrange
-        CreateQuestionRequest request = new CreateQuestionRequest("", "", "");
+        CreateQuestionRequest request = new CreateQuestionRequest("", Arrays.asList(), null, "", "", null);
         when(questionUseCase.createQuestion(any(CreateQuestionCommand.class)))
-            .thenThrow(new IllegalArgumentException("Invalid question data: all fields are required"));
+                .thenThrow(new IllegalArgumentException("Invalid question data: all fields are required"));
 
         // Act & Assert
         mockMvc.perform(post("/api/questions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error_code").value(400))
-            .andExpect(jsonPath("$.message").value("Invalid question data: all fields are required"));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error_code").value(400))
+                .andExpect(jsonPath("$.message").value("Invalid question data: all fields are required"));
     }
 
     // UPDATE QUESTION TESTS
@@ -105,31 +108,34 @@ class QuestionControllerTest {
     void updateQuestion_Success() throws Exception {
         // Arrange
         UpdateQuestionRequest request = new UpdateQuestionRequest(
-            "What is 3 + 3?",
-            "medium",
-            "math_advanced"
-        );
+                "What is 3 + 3?",
+                Arrays.asList("5", "6", "7"),
+                2,
+                "math_advanced",
+                "6",
+                false);
         Question updatedQuestion = new Question(
-            1,
-            "What is 3 + 3?",
-            "medium",
-            "math_advanced",
-            now,
-            LocalDateTime.now()
-        );
+                1,
+                "What is 3 + 3?",
+                Arrays.asList("5", "6", "7"),
+                2,
+                "math_advanced",
+                "6",
+                false,
+                now);
         when(questionUseCase.updateQuestion(any(UpdateQuestionCommand.class)))
-            .thenReturn(updatedQuestion);
+                .thenReturn(updatedQuestion);
 
         // Act & Assert
         mockMvc.perform(put("/api/questions/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.error_code").value(0))
-            .andExpect(jsonPath("$.message").value("Question updated successfully"))
-            .andExpect(jsonPath("$.data.id").value(1))
-            .andExpect(jsonPath("$.data.content").value("What is 3 + 3?"))
-            .andExpect(jsonPath("$.data.difficulty").value("medium"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error_code").value(0))
+                .andExpect(jsonPath("$.message").value("Question updated successfully"))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.content").value("What is 3 + 3?"))
+                .andExpect(jsonPath("$.data.difficulty").value(2));
 
         verify(questionUseCase, times(1)).updateQuestion(any(UpdateQuestionCommand.class));
     }
@@ -138,20 +144,22 @@ class QuestionControllerTest {
     void updateQuestion_NotFound() throws Exception {
         // Arrange
         UpdateQuestionRequest request = new UpdateQuestionRequest(
-            "New content",
-            "easy",
-            "math"
-        );
+                "New content",
+                Arrays.asList(),
+                1,
+                "math",
+                "4",
+                false);
         when(questionUseCase.updateQuestion(any(UpdateQuestionCommand.class)))
-            .thenThrow(new IllegalArgumentException("Question not found with id: 999"));
+                .thenThrow(new IllegalArgumentException("Question not found with id: 999"));
 
         // Act & Assert
         mockMvc.perform(put("/api/questions/999")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.error_code").value(404))
-            .andExpect(jsonPath("$.message").value("Question not found with id: 999"));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error_code").value(404))
+                .andExpect(jsonPath("$.message").value("Question not found with id: 999"));
     }
 
     // GET QUESTION BY ID TESTS
@@ -163,12 +171,12 @@ class QuestionControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/api/questions/1"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.error_code").value(0))
-            .andExpect(jsonPath("$.data.id").value(1))
-            .andExpect(jsonPath("$.data.content").value("What is 2 + 2?"))
-            .andExpect(jsonPath("$.data.difficulty").value("easy"))
-            .andExpect(jsonPath("$.data.skill_tag").value("math_arithmetic"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error_code").value(0))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.content").value("What is 2 + 2?"))
+                .andExpect(jsonPath("$.data.difficulty").value(1))
+                .andExpect(jsonPath("$.data.skill_tag").value("math_arithmetic"));
 
         verify(questionUseCase, times(1)).getQuestionById(1);
     }
@@ -180,9 +188,9 @@ class QuestionControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/api/questions/999"))
-            .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.error_code").value(404))
-            .andExpect(jsonPath("$.message").value("Question not found with id: 999"));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error_code").value(404))
+                .andExpect(jsonPath("$.message").value("Question not found with id: 999"));
 
         verify(questionUseCase, times(1)).getQuestionById(999);
     }
@@ -194,16 +202,16 @@ class QuestionControllerTest {
         // Arrange
         List<Question> questions = Arrays.asList(testQuestion);
         when(questionUseCase.getAllQuestions(any(QuestionQuery.class)))
-            .thenReturn(questions);
+                .thenReturn(questions);
 
         // Act & Assert
         mockMvc.perform(get("/api/questions"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.error_code").value(0))
-            .andExpect(jsonPath("$.data").isArray())
-            .andExpect(jsonPath("$.data.length()").value(1))
-            .andExpect(jsonPath("$.data[0].id").value(1))
-            .andExpect(jsonPath("$.data[0].content").value("What is 2 + 2?"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error_code").value(0))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].id").value(1))
+                .andExpect(jsonPath("$.data[0].content").value("What is 2 + 2?"));
 
         verify(questionUseCase, times(1)).getAllQuestions(any(QuestionQuery.class));
     }
@@ -213,15 +221,15 @@ class QuestionControllerTest {
         // Arrange
         List<Question> questions = Arrays.asList(testQuestion);
         when(questionUseCase.getAllQuestions(any(QuestionQuery.class)))
-            .thenReturn(questions);
+                .thenReturn(questions);
 
         // Act & Assert
         mockMvc.perform(get("/api/questions")
-                .param("difficulty", "easy"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.error_code").value(0))
-            .andExpect(jsonPath("$.data").isArray())
-            .andExpect(jsonPath("$.data.length()").value(1));
+                .param("difficulty", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error_code").value(0))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(1));
 
         verify(questionUseCase, times(1)).getAllQuestions(any(QuestionQuery.class));
     }
@@ -231,15 +239,15 @@ class QuestionControllerTest {
         // Arrange
         List<Question> questions = Arrays.asList(testQuestion);
         when(questionUseCase.getAllQuestions(any(QuestionQuery.class)))
-            .thenReturn(questions);
+                .thenReturn(questions);
 
         // Act & Assert
         mockMvc.perform(get("/api/questions")
                 .param("skillTag", "math_arithmetic"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.error_code").value(0))
-            .andExpect(jsonPath("$.data").isArray())
-            .andExpect(jsonPath("$.data.length()").value(1));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error_code").value(0))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(1));
 
         verify(questionUseCase, times(1)).getAllQuestions(any(QuestionQuery.class));
     }
@@ -249,16 +257,16 @@ class QuestionControllerTest {
         // Arrange
         List<Question> questions = Arrays.asList(testQuestion);
         when(questionUseCase.getAllQuestions(any(QuestionQuery.class)))
-            .thenReturn(questions);
+                .thenReturn(questions);
 
         // Act & Assert
         mockMvc.perform(get("/api/questions")
-                .param("difficulty", "easy")
+                .param("difficulty", "1")
                 .param("skillTag", "math_arithmetic"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.error_code").value(0))
-            .andExpect(jsonPath("$.data").isArray())
-            .andExpect(jsonPath("$.data.length()").value(1));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error_code").value(0))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(1));
 
         verify(questionUseCase, times(1)).getAllQuestions(any(QuestionQuery.class));
     }
@@ -267,14 +275,14 @@ class QuestionControllerTest {
     void getAllQuestions_EmptyResult() throws Exception {
         // Arrange
         when(questionUseCase.getAllQuestions(any(QuestionQuery.class)))
-            .thenReturn(Arrays.asList());
+                .thenReturn(Arrays.asList());
 
         // Act & Assert
         mockMvc.perform(get("/api/questions"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.error_code").value(0))
-            .andExpect(jsonPath("$.data").isArray())
-            .andExpect(jsonPath("$.data.length()").value(0));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error_code").value(0))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(0));
     }
 
     // DELETE QUESTION TESTS
@@ -286,9 +294,9 @@ class QuestionControllerTest {
 
         // Act & Assert
         mockMvc.perform(delete("/api/questions/1"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.error_code").value(0))
-            .andExpect(jsonPath("$.message").value("Question deleted successfully"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error_code").value(0))
+                .andExpect(jsonPath("$.message").value("Question deleted successfully"));
 
         verify(questionUseCase, times(1)).deleteQuestion(1);
     }
@@ -297,13 +305,13 @@ class QuestionControllerTest {
     void deleteQuestion_NotFound() throws Exception {
         // Arrange
         doThrow(new IllegalArgumentException("Question not found with id: 999"))
-            .when(questionUseCase).deleteQuestion(999);
+                .when(questionUseCase).deleteQuestion(999);
 
         // Act & Assert
         mockMvc.perform(delete("/api/questions/999"))
-            .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.error_code").value(404))
-            .andExpect(jsonPath("$.message").value("Question not found with id: 999"));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error_code").value(404))
+                .andExpect(jsonPath("$.message").value("Question not found with id: 999"));
 
         verify(questionUseCase, times(1)).deleteQuestion(999);
     }

@@ -39,6 +39,7 @@ class QuestionServiceTest {
         testQuestion = new Question(
                 1,
                 "What is 2 + 2?",
+                Arrays.asList("3", "4", "5"),
                 1, // difficultyLevel (Integer)
                 "math_arithmetic",
                 "4", // correctAnswer
@@ -53,6 +54,7 @@ class QuestionServiceTest {
         // Arrange
         CreateQuestionCommand command = new CreateQuestionCommand(
                 "What is 2 + 2?",
+                Arrays.asList("3", "4", "5"),
                 1, // difficultyLevel
                 "math_arithmetic",
                 "4", // correctAnswer
@@ -76,7 +78,7 @@ class QuestionServiceTest {
     @Test
     void createQuestion_InvalidData_ThrowsException() {
         // Arrange
-        CreateQuestionCommand command = new CreateQuestionCommand("", null, "", "", null);
+        CreateQuestionCommand command = new CreateQuestionCommand("", Arrays.asList(), null, "", "", null);
 
         // Act & Assert
         IllegalArgumentException exception = assertThrows(
@@ -89,7 +91,7 @@ class QuestionServiceTest {
     @Test
     void createQuestion_NullContent_ThrowsException() {
         // Arrange
-        CreateQuestionCommand command = new CreateQuestionCommand(null, 1, "math", "4", false);
+        CreateQuestionCommand command = new CreateQuestionCommand(null, Arrays.asList(), 1, "math", "4", false);
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> questionService.createQuestion(command));
@@ -104,6 +106,7 @@ class QuestionServiceTest {
         UpdateQuestionCommand command = new UpdateQuestionCommand(
                 1,
                 "What is 3 + 3?",
+                Arrays.asList("5", "6", "7"),
                 2, // difficultyLevel
                 "math_advanced",
                 "6", // correctAnswer
@@ -112,6 +115,7 @@ class QuestionServiceTest {
         Question updatedQuestion = new Question(
                 1,
                 "What is 3 + 3?",
+                Arrays.asList("5", "6", "7"),
                 2,
                 "math_advanced",
                 "6",
@@ -137,7 +141,8 @@ class QuestionServiceTest {
     @Test
     void updateQuestion_PartialUpdate_ContentOnly() {
         // Arrange
-        UpdateQuestionCommand command = new UpdateQuestionCommand(1, "New content", null, null, null, null);
+        UpdateQuestionCommand command = new UpdateQuestionCommand(1, "New content", Arrays.asList(), null, null, null,
+                null);
         when(questionRepository.findById(1)).thenReturn(Optional.of(testQuestion));
         when(questionRepository.update(any(Question.class))).thenReturn(testQuestion);
 
@@ -153,7 +158,8 @@ class QuestionServiceTest {
     @Test
     void updateQuestion_QuestionNotFound_ThrowsException() {
         // Arrange
-        UpdateQuestionCommand command = new UpdateQuestionCommand(999, "New content", 1, "math", "4", false);
+        UpdateQuestionCommand command = new UpdateQuestionCommand(999, "New content", Arrays.asList(), 1, "math", "4",
+                false);
         when(questionRepository.findById(999)).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -168,7 +174,7 @@ class QuestionServiceTest {
     @Test
     void updateQuestion_InvalidData_ThrowsException() {
         // Arrange
-        UpdateQuestionCommand command = new UpdateQuestionCommand(1, "", null, "", "", null);
+        UpdateQuestionCommand command = new UpdateQuestionCommand(1, "", Arrays.asList(), null, "", "", null);
         when(questionRepository.findById(1)).thenReturn(Optional.of(testQuestion));
 
         // Act & Assert
