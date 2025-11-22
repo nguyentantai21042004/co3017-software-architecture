@@ -1,0 +1,89 @@
+basePath: /api/scoring
+definitions:
+  http.SubmitRequest:
+    properties:
+      answer:
+        type: string
+      question_id:
+        type: integer
+      user_id:
+        type: string
+    type: object
+  http.SubmitResponse:
+    properties:
+      correct:
+        type: boolean
+      feedback:
+        type: string
+      score:
+        type: integer
+    type: object
+  response.Resp:
+    properties:
+      data: {}
+      error_code:
+        type: integer
+      errors: {}
+      message:
+        type: string
+    type: object
+host: localhost:8082
+info:
+  contact: {}
+  description: Scoring Service API documentation.
+  title: Scoring Service API
+  version: "1"
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Show the service health and status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Resp'
+      summary: Health check
+      tags:
+      - Health
+  /scoring/submit:
+    post:
+      consumes:
+      - application/json
+      description: Submit a user's answer to a question and get immediate feedback
+      parameters:
+      - description: Submit Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/http.SubmitRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Resp'
+            - properties:
+                data:
+                  $ref: '#/definitions/http.SubmitResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Resp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Resp'
+      summary: Submit an answer for scoring
+      tags:
+      - scoring
+schemes:
+- http
+swagger: "2.0"

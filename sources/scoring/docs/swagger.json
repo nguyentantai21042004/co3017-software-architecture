@@ -1,0 +1,140 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Scoring Service API documentation.",
+        "title": "Scoring Service API",
+        "contact": {},
+        "version": "1"
+    },
+    "host": "localhost:8082",
+    "basePath": "/api/scoring",
+    "paths": {
+        "/health": {
+            "get": {
+                "description": "Show the service health and status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Resp"
+                        }
+                    }
+                }
+            }
+        },
+        "/scoring/submit": {
+            "post": {
+                "description": "Submit a user's answer to a question and get immediate feedback",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scoring"
+                ],
+                "summary": "Submit an answer for scoring",
+                "parameters": [
+                    {
+                        "description": "Submit Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/http.SubmitRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Resp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/http.SubmitResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Resp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Resp"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "http.SubmitRequest": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "question_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "http.SubmitResponse": {
+            "type": "object",
+            "properties": {
+                "correct": {
+                    "type": "boolean"
+                },
+                "feedback": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.Resp": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error_code": {
+                    "type": "integer"
+                },
+                "errors": {},
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
