@@ -28,6 +28,13 @@ type NextLessonResponse struct {
 	ContentType  string `json:"content_type"`
 }
 
+// AdaptiveEngineResponse wraps the actual response data
+type AdaptiveEngineResponse struct {
+	ErrorCode int                `json:"error_code"`
+	Message   string             `json:"message"`
+	Data      NextLessonResponse `json:"data"`
+}
+
 type SubmitAnswerRequest struct {
 	UserID     string `json:"user_id"`
 	QuestionID int64  `json:"question_id"`
@@ -40,6 +47,13 @@ type SubmitAnswerResponse struct {
 	Feedback string `json:"feedback"`
 }
 
+// SubmitAnswerResponseWrapper wraps the actual response data
+type SubmitAnswerResponseWrapper struct {
+	ErrorCode int                  `json:"error_code"`
+	Message   string               `json:"message"`
+	Data      SubmitAnswerResponse `json:"data"`
+}
+
 type MasteryResponse struct {
 	UserID       string `json:"user_id"`
 	SkillTag     string `json:"skill_tag"`
@@ -48,9 +62,9 @@ type MasteryResponse struct {
 }
 
 type QuestionResponse struct {
-	Success bool         `json:"success"`
-	Message string       `json:"message"`
-	Data    QuestionData `json:"data"`
+	ErrorCode int          `json:"error_code"`
+	Message   string       `json:"message"`
+	Data      QuestionData `json:"data"`
 }
 
 type QuestionData struct {
@@ -90,12 +104,16 @@ func GetNextLesson(userID, skill string) (*NextLessonResponse, error) {
 		return nil, fmt.Errorf("adaptive engine returned %d: %s", resp.StatusCode, string(bodyBytes))
 	}
 
-	var result NextLessonResponse
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var wrapper AdaptiveEngineResponse
+	if err := json.NewDecoder(resp.Body).Decode(&wrapper); err != nil {
 		return nil, err
 	}
 
-	return &result, nil
+	if wrapper.ErrorCode != 0 {
+		return nil, fmt.Errorf("adaptive engine error: %s", wrapper.Message)
+	}
+
+	return &wrapper.Data, nil
 }
 
 // SubmitAnswer calls Scoring Service to submit an answer
@@ -126,12 +144,16 @@ func SubmitAnswer(userID string, questionID int64, answer string) (*SubmitAnswer
 		return nil, fmt.Errorf("scoring service returned %d: %s", resp.StatusCode, string(bodyBytes))
 	}
 
-	var result SubmitAnswerResponse
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var wrapper SubmitAnswerResponseWrapper
+	if err := json.NewDecoder(resp.Body).Decode(&wrapper); err != nil {
 		return nil, err
 	}
 
-	return &result, nil
+	if wrapper.ErrorCode != 0 {
+		return nil, fmt.Errorf("scoring service error: %s", wrapper.Message)
+	}
+
+	return &wrapper.Data, nil
 }
 
 // GetMastery calls Learner Model to get current mastery score
@@ -177,7 +199,7 @@ func GetQuestion(questionID int64) (*QuestionData, error) {
 		return nil, err
 	}
 
-	if !result.Success {
+	if result.ErrorCode != 0 {
 		return nil, fmt.Errorf("content service error: %s", result.Message)
 	}
 
@@ -219,6 +241,6 @@ func WaitForMasteryUpdate(userID, skill string, expectedScore int, timeout time.
 func CleanupUserMastery(userID, skill string) error {
 	// This would require a DELETE endpoint in Learner Model Service
 	// For now, we'll just log that cleanup is needed
-	fmt.Printf("⚠️  Manual cleanup needed: DELETE mastery for user=%s, skill=%s\n", userID, skill)
+	fmt.Printf("Manual cleanup needed: DELETE mastery for user=%s, skill=%s\n", userID, skill)
 	return nil
 }

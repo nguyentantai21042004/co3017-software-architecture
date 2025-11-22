@@ -5,7 +5,7 @@
 
 set -e
 
-printf "🧪 Integration Test Runner\n"
+printf "Integration Test Runner\n"
 printf "==========================\n"
 printf "\n"
 
@@ -19,12 +19,12 @@ NC='\033[0m' # No Color
 check_service() {
     local url=$1
     local name=$2
-    
+
     if curl -s -f -o /dev/null "$url/health" 2>/dev/null; then
-        printf "${GREEN}✓${NC} $name is running\n"
+        printf "${GREEN}${NC} $name is running\n"
         return 0
     else
-        printf "${RED}✗${NC} $name is NOT running at $url\n"
+        printf "${RED}${NC} $name is NOT running at $url\n"
         return 1
     fi
 }
@@ -36,7 +36,7 @@ all_running=true
 check_service "http://localhost:8081" "Content Service" || all_running=false
 check_service "http://localhost:8082" "Scoring Service" || all_running=false
 check_service "http://localhost:8083" "Learner Model Service" || all_running=false
-check_service "http://localhost:8084" "Adaptive Engine" || all_running=false
+check_service "http://localhost:8084/api/adaptive" "Adaptive Engine" || all_running=false
 
 printf "\n"
 
@@ -52,20 +52,28 @@ fi
 # Check PostgreSQL
 printf "Checking PostgreSQL...\n"
 if pg_isready -h localhost -p 5432 >/dev/null 2>&1; then
-    printf "${GREEN}✓${NC} PostgreSQL is running\n"
+    printf "${GREEN}PostgreSQL is running${NC}\n"
 else
-    printf "${YELLOW}⚠${NC}  Cannot verify PostgreSQL (pg_isready not found or DB not running)\n"
+    printf "${YELLOW}Cannot verify PostgreSQL (pg_isready not found or DB not running)${NC}\n"
 fi
 
 # Check RabbitMQ
 printf "Checking RabbitMQ...\n"
 if curl -s -f -o /dev/null "http://localhost:15672" 2>/dev/null; then
-    printf "${GREEN}✓${NC} RabbitMQ is running\n"
+    printf "${GREEN}RabbitMQ is running${NC}\n"
 else
-    printf "${YELLOW}⚠${NC}  Cannot verify RabbitMQ (management UI not accessible)\n"
+    printf "${YELLOW}Cannot verify RabbitMQ (management UI not accessible)${NC}\n"
 fi
 
 printf "\n"
+printf "==========================\n"
+printf "Cleaning Test Data\n"
+printf "==========================\n"
+printf "\n"
+
+# Clean up old test data
+./cleanup_test_data.sh
+
 printf "==========================\n"
 printf "Running Integration Tests\n"
 printf "==========================\n"
@@ -86,9 +94,9 @@ exit_code=$?
 
 printf "\n"
 if [ $exit_code -eq 0 ]; then
-    printf "${GREEN}✅ All tests passed!${NC}\n"
+    printf "${GREEN}All tests passed!${NC}\n"
 else
-    printf "${RED}❌ Some tests failed!${NC}\n"
+    printf "${RED}Some tests failed!${NC}\n"
 fi
 
 exit $exit_code
