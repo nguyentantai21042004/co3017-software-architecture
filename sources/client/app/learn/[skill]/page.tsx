@@ -14,6 +14,21 @@ import { delay } from "@/lib/utils"
 import { MasteryCircle } from "@/components/learning/mastery-circle"
 import confetti from "canvas-confetti"
 
+/**
+ * Parse option string format "A. Answer text" into {key, text}
+ * Handles both formats:
+ * - "A. Answer text" -> {key: "A", text: "Answer text"}
+ * - "Answer text only" -> {key: "Answer text only", text: "Answer text only"}
+ */
+function parseOption(optionStr: string): { key: string; text: string } {
+  const match = optionStr.match(/^([A-Z])\.\s*(.+)$/)
+  if (match) {
+    return { key: match[1], text: match[2] }
+  }
+  // Fallback for options without prefix
+  return { key: optionStr, text: optionStr }
+}
+
 export default function LearningSessionPage() {
   const router = useRouter()
   const params = useParams()
@@ -78,13 +93,31 @@ export default function LearningSessionPage() {
     }
   }
 
+  const parseOption = (opt: string) => {
+    // Matches "A. Content" or "1. Content"
+    const match = opt.match(/^([A-Z0-9]+)\.\s*(.+)$/)
+    if (match) {
+      return { key: match[1], text: match[2] }
+    }
+    // Fallback if format doesn't match (e.g. just "A")
+    return { key: opt, text: opt }
+  }
+
   const handleSubmit = async () => {
     if (!userAnswer || !question) return
 
     setSubmitting(true)
     try {
       // Step 4: Submit Answer
-      const finalAnswer = userAnswer.trim()
+      // If it's a multiple choice question (has options), we need to parse the key (e.g. "A")
+      // If it's open text, we just trim the input
+      let finalAnswer = userAnswer.trim()
+
+      if (question.options && question.options.length > 0) {
+        const parsed = parseOption(userAnswer)
+        finalAnswer = parsed.key
+      }
+
       const response = await api.submitAnswer(userId!, question.id, finalAnswer)
       const result = response.data.data
 
@@ -201,30 +234,37 @@ export default function LearningSessionPage() {
                 <div className="mb-8">
                   {question.options && question.options.length > 0 ? (
                     <div className="grid gap-3">
-                      {question.options.map((opt: string) => (
-                        <button
-                          key={opt}
-                          onClick={() => !showFeedback && setUserAnswer(opt)}
-                          disabled={showFeedback || submitting}
-                          className={`
-                            w-full p-4 rounded-lg border-2 text-left transition-all font-medium text-lg
-                            ${userAnswer === opt
-                              ? "border-primary bg-primary/5 ring-1 ring-primary"
-                              : "border-muted hover:border-primary/50 hover:bg-muted/30"
-                            }
-                            ${showFeedback && userAnswer === opt && feedback?.correct ? "border-green-500 bg-green-50 text-green-700" : ""}
-                            ${showFeedback && userAnswer === opt && !feedback?.correct ? "border-red-500 bg-red-50 text-red-700" : ""}
-                            disabled:cursor-not-allowed
-                          `}
-                        >
-                          <span className="mr-3 font-bold text-muted-foreground">{opt}.</span>
-                          {opt === "A"
-                            ? "The correct answer usually"
-                            : opt === "B"
-                              ? "A distractor option"
-                              : `Option ${opt}`}
-                        </button>
-                      ))}
+                      {question.options.map((opt: string) => {
+                        const { key, text } = parseOption(opt)
+                        const isSelected = userAnswer === key
+                        return (
+                          <button
+                            key={opt}
+                            onClick={() => !showFeedback && setUserAnswer(key)}
+                            disabled={showFeedback || submitting}
+                            className={`
+                              w-full p-4 rounded-lg border-2 text-left transition-all font-medium text-lg flex items-center
+                              ${isSelected
+                                ? "border-primary bg-primary/5 ring-1 ring-primary"
+                                : "border-muted hover:border-primary/50 hover:bg-muted/30"
+                              }
+                              ${showFeedback && isSelected && feedback?.correct ? "border-green-500 bg-green-50 text-green-700" : ""}
+                              ${showFeedback && isSelected && !feedback?.correct ? "border-red-500 bg-red-50 text-red-700" : ""}
+                              disabled:cursor-not-allowed
+                            `}
+                          >
+                            <div className={`
+                              h-8 w-8 rounded-full flex items-center justify-center mr-4 font-bold shrink-0 border
+                              ${isSelected ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-muted-foreground border-transparent"}
+                              ${showFeedback && isSelected && feedback?.correct ? "bg-green-600 text-white border-green-600" : ""}
+                              ${showFeedback && isSelected && !feedback?.correct ? "bg-red-600 text-white border-red-600" : ""}
+                            `}>
+                              {key}
+                            </div>
+                            <span>{text}</span>
+                          </button>
+                        )
+                      })}
                     </div>
                   ) : (
                     <div className="space-y-4">
