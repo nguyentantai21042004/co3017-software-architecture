@@ -2,10 +2,6 @@
 vendor/
 .go-version
 
-# Environment variables
-
-docs
-
 *.log
 *.pid
 *.out
