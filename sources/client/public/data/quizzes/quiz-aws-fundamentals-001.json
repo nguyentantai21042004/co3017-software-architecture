@@ -1,0 +1,128 @@
+{
+  "quizId": "quiz-aws-fundamentals-001",
+  "title": "Bài kiểm tra kiến thức cơ bản về AWS",
+  "description": "Bài kiểm tra này đánh giá hiểu biết cơ bản về các dịch vụ, khái niệm và best practices trên nền tảng Amazon Web Services (AWS).",
+  "timeLimitInSeconds": 1800,
+  "questions": [
+    {
+      "questionId": "q-aws-01",
+      "text": "Dịch vụ nào sau đây của AWS cung cấp khả năng lưu trữ object?",
+      "questionType": "mcq",
+      "tags": ["Storage", "Core Services"],
+      "options": [
+        {
+          "value": "Amazon S3",
+          "text": "Amazon S3 (Simple Storage Service)"
+        },
+        {
+          "value": "Amazon EBS",
+          "text": "Amazon EBS (Elastic Block Store)"
+        },
+        {
+          "value": "Amazon EFS",
+          "text": "Amazon EFS (Elastic File System)"
+        },
+        {
+          "value": "AWS Storage Gateway",
+          "text": "AWS Storage Gateway"
+        }
+      ]
+    },
+    {
+      "questionId": "q-aws-02",
+      "text": "Dịch vụ máy chủ ảo có thể mở rộng trên AWS được gọi là gì?",
+      "questionType": "mcq",
+      "tags": ["Compute", "Core Services"],
+      "options": [
+        {
+          "value": "Amazon EC2",
+          "text": "Amazon EC2 (Elastic Compute Cloud)"
+        },
+        {
+          "value": "AWS Lambda",
+          "text": "AWS Lambda"
+        },
+        {
+          "value": "Amazon Lightsail",
+          "text": "Amazon Lightsail"
+        },
+        {
+          "value": "AWS Fargate",
+          "text": "AWS Fargate"
+        }
+      ]
+    },
+    {
+      "questionId": "q-aws-03",
+      "text": "Dịch vụ cơ sở dữ liệu quan hệ được quản lý hoàn toàn (managed) của AWS là gì?",
+      "questionType": "mcq",
+      "tags": ["Database", "Core Services"],
+      "options": [
+        {
+          "value": "Amazon RDS",
+          "text": "Amazon RDS (Relational Database Service)"
+        },
+        {
+          "value": "Amazon DynamoDB",
+          "text": "Amazon DynamoDB"
+        },
+        {
+          "value": "Amazon Redshift",
+          "text": "Amazon Redshift"
+        },
+        {
+          "value": "Amazon Aurora",
+          "text": "Amazon Aurora"
+        }
+      ]
+    },
+    {
+      "questionId": "q-aws-04",
+      "text": "Mô hình định giá nào của AWS cho phép bạn trả tiền cho các dịch vụ tính toán theo giây?",
+      "questionType": "mcq",
+      "tags": ["Billing & Pricing", "Cloud Concepts"],
+      "options": [
+        {
+          "value": "Pay-as-you-go",
+          "text": "Pay-as-you-go (Trả theo nhu cầu)"
+        },
+        {
+          "value": "All Upfront",
+          "text": "All Upfront (Thanh toán toàn bộ trước)"
+        },
+        {
+          "value": "Partial Upfront",
+          "text": "Partial Upfront (Thanh toán một phần trước)"
+        },
+        {
+          "value": "No Upfront",
+          "text": "No Upfront (Không thanh toán trước)"
+        }
+      ]
+    },
+    {
+      "questionId": "q-aws-05",
+      "text": "Dịch vụ mạng nội dung (CDN) toàn cầu của AWS có tên là gì?",
+      "questionType": "mcq",
+      "tags": ["Networking & Content Delivery", "Core Services"],
+      "options": [
+        {
+          "value": "Amazon CloudFront",
+          "text": "Amazon CloudFront"
+        },
+        {
+          "value": "AWS Global Accelerator",
+          "text": "AWS Global Accelerator"
+        },
+        {
+          "value": "Amazon Route 53",
+          "text": "Amazon Route 53"
+        },
+        {
+          "value": "AWS Direct Connect",
+          "text": "AWS Direct Connect"
+        }
+      ]
+    }
+  ]
+}
