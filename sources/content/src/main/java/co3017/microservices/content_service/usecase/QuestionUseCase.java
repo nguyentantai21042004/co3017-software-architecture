@@ -50,19 +50,27 @@ public interface QuestionUseCase {
 
     /**
      * Recommend a question based on skill and type
-     * 
+     *
      * @param skillTag the skill tag
      * @param type     the type (standard/remedial)
+     * @param userId   optional user ID to exclude already answered questions
      * @return the recommended question
      * @throws IllegalArgumentException if no question found
      */
-    Question recommendQuestion(String skillTag, String type);
+    Question recommendQuestion(String skillTag, String type, String userId);
 
     /**
      * Delete a question by ID
-     * 
+     *
      * @param id the question ID
      * @throws IllegalArgumentException if question not found
      */
     void deleteQuestion(Integer id);
+
+    /**
+     * Get all available skills (distinct skill tags)
+     *
+     * @return list of distinct skill tags
+     */
+    List<String> getAvailableSkills();
 }

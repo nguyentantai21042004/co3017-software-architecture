@@ -123,15 +123,25 @@ public class QuestionController {
     @GetMapping("/recommend")
     public ResponseEntity<ApiResponse<QuestionResponse>> recommendQuestion(
             @RequestParam String skill,
-            @RequestParam String type) {
+            @RequestParam String type,
+            @RequestParam(required = false) String userId) {
         try {
-            Question question = questionUseCase.recommendQuestion(skill, type);
+            Question question = questionUseCase.recommendQuestion(skill, type, userId);
             return ResponseEntity.ok(ApiResponse.success(QuestionResponse.fromDomain(question)));
         } catch (IllegalArgumentException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.notFound(e.getMessage()));
         }
+    }
+
+    /**
+     * Get all available skills
+     */
+    @GetMapping("/skills")
+    public ResponseEntity<ApiResponse<List<String>>> getAvailableSkills() {
+        List<String> skills = questionUseCase.getAvailableSkills();
+        return ResponseEntity.ok(ApiResponse.success(skills));
     }
 
     /**

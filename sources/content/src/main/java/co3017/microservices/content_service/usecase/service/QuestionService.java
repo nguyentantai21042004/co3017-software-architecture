@@ -6,11 +6,16 @@ import co3017.microservices.content_service.usecase.QuestionUseCase;
 import co3017.microservices.content_service.usecase.types.CreateQuestionCommand;
 import co3017.microservices.content_service.usecase.types.QuestionQuery;
 import co3017.microservices.content_service.usecase.types.UpdateQuestionCommand;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Question Use Case Implementation
@@ -22,9 +27,16 @@ import java.util.Optional;
 public class QuestionService implements QuestionUseCase {
 
     private final QuestionRepository questionRepository;
+    private final RestTemplate restTemplate;
+    private final Random random;
+
+    @Value("${services.scoring.url:http://localhost:8082}")
+    private String scoringServiceUrl;
 
     public QuestionService(QuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
+        this.restTemplate = new RestTemplate();
+        this.random = new Random();
     }
 
     @Override
@@ -111,7 +123,7 @@ public class QuestionService implements QuestionUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public Question recommendQuestion(String skillTag, String type) {
+    public Question recommendQuestion(String skillTag, String type, String userId) {
         boolean isRemedial = "remedial".equalsIgnoreCase(type);
         List<Question> questions = questionRepository.findBySkillTagAndIsRemedial(skillTag, isRemedial);
 
@@ -119,7 +131,49 @@ public class QuestionService implements QuestionUseCase {
             throw new IllegalArgumentException("No questions found for skill: " + skillTag + " and type: " + type);
         }
 
-        // Return the first one for now (could be randomized)
-        return questions.get(0);
+        // If userId is provided, exclude already answered questions
+        if (userId != null && !userId.isEmpty()) {
+            Set<Integer> answeredQuestionIds = getAnsweredQuestionIds(userId, skillTag);
+            questions = questions.stream()
+                    .filter(q -> !answeredQuestionIds.contains(q.getId()))
+                    .collect(Collectors.toList());
+
+            if (questions.isEmpty()) {
+                throw new IllegalArgumentException("No unanswered questions found for skill: " + skillTag + " and type: " + type);
+            }
+        }
+
+        // Return a random question from the available ones
+        return questions.get(random.nextInt(questions.size()));
+    }
+
+    /**
+     * Fetch answered question IDs from Scoring Service
+     */
+    private Set<Integer> getAnsweredQuestionIds(String userId, String skillTag) {
+        try {
+            String url = scoringServiceUrl + "/api/scoring/answered-questions?user_id=" + userId + "&skill=" + skillTag;
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
+
+            if (response.getBody() != null && response.getBody().get("data") != null) {
+                @SuppressWarnings("unchecked")
+                List<Integer> questionIds = (List<Integer>) response.getBody().get("data");
+                return new HashSet<>(questionIds);
+            }
+        } catch (Exception e) {
+            // If Scoring Service is unavailable, log and continue without filtering
+            System.err.println("Failed to fetch answered questions from Scoring Service: " + e.getMessage());
+        }
+        return new HashSet<>();
+    }
+
+    @Override
+    public List<String> getAvailableSkills() {
+        return questionRepository.findDistinctSkillTags();
     }
 }

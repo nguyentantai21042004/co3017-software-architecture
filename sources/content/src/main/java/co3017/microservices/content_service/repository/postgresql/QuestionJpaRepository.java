@@ -2,6 +2,7 @@ package co3017.microservices.content_service.repository.postgresql;
 
 import co3017.microservices.content_service.repository.postgresql.entity.QuestionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,4 +34,10 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionEntity, Int
      * Find questions by skill tag and remedial status
      */
     List<QuestionEntity> findBySkillTagAndIsRemedial(String skillTag, Boolean isRemedial);
+
+    /**
+     * Find all distinct skill tags
+     */
+    @Query("SELECT DISTINCT q.skillTag FROM QuestionEntity q ORDER BY q.skillTag")
+    List<String> findDistinctSkillTags();
 }

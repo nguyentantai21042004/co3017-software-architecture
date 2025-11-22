@@ -90,4 +90,9 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     public boolean existsById(Integer id) {
         return jpaRepository.existsById(id);
     }
+
+    @Override
+    public List<String> findDistinctSkillTags() {
+        return jpaRepository.findDistinctSkillTags();
+    }
 }

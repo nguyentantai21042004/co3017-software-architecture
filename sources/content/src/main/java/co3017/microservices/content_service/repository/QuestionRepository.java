@@ -86,9 +86,16 @@ public interface QuestionRepository {
 
     /**
      * Check if a question exists by ID
-     * 
+     *
      * @param id the question ID
      * @return true if exists, false otherwise
      */
     boolean existsById(Integer id);
+
+    /**
+     * Get all distinct skill tags
+     *
+     * @return list of distinct skill tags
+     */
+    List<String> findDistinctSkillTags();
 }
