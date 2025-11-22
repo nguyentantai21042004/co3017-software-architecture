@@ -203,18 +203,24 @@ type MasteryResponse struct {
 	MasteryScore int `json:"mastery_score"`
 }
 
+type MasteryResponseWrapper struct {
+	ErrorCode int              `json:"error_code"`
+	Message   string           `json:"message"`
+	Data      MasteryResponse  `json:"data"`
+}
+
 func getMastery(userID, skill string) (*MasteryResponse, error) {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:8083/internal/learner/%s/mastery?skill=%s", userID, skill))
+	resp, err := http.Get(fmt.Sprintf("http://localhost:8080/internal/learner/%s/mastery?skill=%s", userID, skill))
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	body, _ := io.ReadAll(resp.Body)
-	var mastery MasteryResponse
-	if err := json.Unmarshal(body, &mastery); err != nil {
+	var wrapper MasteryResponseWrapper
+	if err := json.Unmarshal(body, &wrapper); err != nil {
 		return nil, err
 	}
 
-	return &mastery, nil
+	return &wrapper.Data, nil
 }

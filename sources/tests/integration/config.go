@@ -6,7 +6,7 @@ import "time"
 const (
 	ContentServiceURL = "http://localhost:8081"
 	ScoringServiceURL = "http://localhost:8082"
-	LearnerModelURL   = "http://localhost:8083"
+	LearnerModelURL   = "http://localhost:8080"
 	AdaptiveEngineURL = "http://localhost:8084"
 )
 

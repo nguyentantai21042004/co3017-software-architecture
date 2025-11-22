@@ -33,8 +33,8 @@ check_service() {
 
 check_service "http://localhost:8081" "Content Service" || all_running=false
 check_service "http://localhost:8082" "Scoring Service" || all_running=false
-check_service "http://localhost:8083" "Learner Model" || all_running=false
-check_service "http://localhost:8084" "Adaptive Engine" || all_running=false
+check_service "http://localhost:8080" "Learner Model" || all_running=false
+check_service "http://localhost:8084/api/adaptive" "Adaptive Engine" || all_running=false
 
 printf "\n"
 

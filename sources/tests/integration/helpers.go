@@ -156,6 +156,13 @@ func SubmitAnswer(userID string, questionID int64, answer string) (*SubmitAnswer
 	return &wrapper.Data, nil
 }
 
+// MasteryResponseWrapper wraps the actual mastery response data
+type MasteryResponseWrapper struct {
+	ErrorCode int              `json:"error_code"`
+	Message   string           `json:"message"`
+	Data      MasteryResponse  `json:"data"`
+}
+
 // GetMastery calls Learner Model to get current mastery score
 func GetMastery(userID, skill string) (*MasteryResponse, error) {
 	url := fmt.Sprintf("%s/internal/learner/%s/mastery?skill=%s", LearnerModelURL, userID, skill)
@@ -171,12 +178,16 @@ func GetMastery(userID, skill string) (*MasteryResponse, error) {
 		return nil, fmt.Errorf("learner model returned %d: %s", resp.StatusCode, string(bodyBytes))
 	}
 
-	var result MasteryResponse
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var wrapper MasteryResponseWrapper
+	if err := json.NewDecoder(resp.Body).Decode(&wrapper); err != nil {
 		return nil, err
 	}
 
-	return &result, nil
+	if wrapper.ErrorCode != 0 {
+		return nil, fmt.Errorf("learner model error: %s", wrapper.Message)
+	}
+
+	return &wrapper.Data, nil
 }
 
 // GetQuestion calls Content Service to get question details
