@@ -69,5 +69,12 @@ func (c *LearnerServiceClient) GetMastery(ctx context.Context, userID, skillTag 
 			ErrCtxURL, url, ErrCtxResponseBody, string(body), err)
 	}
 
+	// Check for error_code in response
+	if masteryResp.ErrorCode != 0 {
+		return nil, fmt.Errorf("%s: %w | %s=%s | %s=%d | %s=%s",
+			ErrMsgUnexpectedStatusCode, ErrServiceUnavailable, ErrCtxServiceName, "learner-service",
+			ErrCtxErrorCode, masteryResp.ErrorCode, ErrCtxMessage, masteryResp.Message)
+	}
+
 	return &masteryResp, nil
 }

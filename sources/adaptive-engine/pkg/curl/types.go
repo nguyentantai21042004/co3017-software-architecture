@@ -1,11 +1,18 @@
 package curl
 
-// MasteryResponse represents the response from Learner Service
-type MasteryResponse struct {
+// MasteryData represents the actual mastery data
+type MasteryData struct {
 	UserID       string `json:"user_id"`
 	SkillTag     string `json:"skill_tag"`
 	MasteryScore int    `json:"mastery_score"`
 	LastUpdated  string `json:"last_updated"`
+}
+
+// MasteryResponse represents the wrapped response from Learner Service
+type MasteryResponse struct {
+	ErrorCode int         `json:"error_code"`
+	Message   string      `json:"message"`
+	Data      MasteryData `json:"data"`
 }
 
 // ContentResponse represents the response from Content Service

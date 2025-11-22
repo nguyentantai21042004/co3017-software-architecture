@@ -25,20 +25,20 @@ func (uc *usecase) RecommendNextLesson(ctx context.Context, input adaptive.Recom
 	}
 
 	uc.l.Infof(ctx, "adaptive.usecase.RecommendNextLesson: mastery fetched | %s=%s | %s=%s | mastery_score=%d",
-		ErrCtxUserID, input.UserID, ErrCtxSkillTag, input.CurrentSkill, masteryResp.MasteryScore)
+		ErrCtxUserID, input.UserID, ErrCtxSkillTag, input.CurrentSkill, masteryResp.Data.MasteryScore)
 
 	// Determine content type based on mastery score
 	var contentType, reason string
-	if masteryResp.MasteryScore < MASTERY_THRESHOLD {
+	if masteryResp.Data.MasteryScore < MASTERY_THRESHOLD {
 		contentType = "remedial"
-		reason = fmt.Sprintf("Your mastery is %d%%. Let's review the basics.", masteryResp.MasteryScore)
+		reason = fmt.Sprintf("Your mastery is %d%%. Let's review the basics.", masteryResp.Data.MasteryScore)
 		uc.l.Infof(ctx, "adaptive.usecase.RecommendNextLesson: recommending REMEDIAL | %s=%s | score=%d < threshold=%d",
-			ErrCtxUserID, input.UserID, masteryResp.MasteryScore, MASTERY_THRESHOLD)
+			ErrCtxUserID, input.UserID, masteryResp.Data.MasteryScore, MASTERY_THRESHOLD)
 	} else {
 		contentType = "standard"
-		reason = fmt.Sprintf("Great! Your mastery is %d%%. Continue with the next challenge.", masteryResp.MasteryScore)
+		reason = fmt.Sprintf("Great! Your mastery is %d%%. Continue with the next challenge.", masteryResp.Data.MasteryScore)
 		uc.l.Infof(ctx, "adaptive.usecase.RecommendNextLesson: recommending STANDARD | %s=%s | score=%d >= threshold=%d",
-			ErrCtxUserID, input.UserID, masteryResp.MasteryScore, MASTERY_THRESHOLD)
+			ErrCtxUserID, input.UserID, masteryResp.Data.MasteryScore, MASTERY_THRESHOLD)
 	}
 
 	// Fetch content from content service using curl client
@@ -56,7 +56,7 @@ func (uc *usecase) RecommendNextLesson(ctx context.Context, input adaptive.Recom
 	return adaptive.RecommendOutput{
 		NextLessonID: int(contentResp.Data.ID),
 		Reason:       reason,
-		MasteryScore: masteryResp.MasteryScore,
+		MasteryScore: masteryResp.Data.MasteryScore,
 		ContentType:  contentType,
 	}, nil
 }

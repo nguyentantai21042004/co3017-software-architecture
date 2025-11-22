@@ -25,4 +25,6 @@ const (
 	ErrCtxUserID       = "user_id"
 	ErrCtxSkillTag     = "skill_tag"
 	ErrCtxContentType  = "content_type"
+	ErrCtxErrorCode    = "error_code"
+	ErrCtxMessage      = "message"
 )
