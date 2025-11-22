@@ -1,0 +1,86 @@
+basePath: /internal/learner
+definitions:
+  http.MasteryResponse:
+    properties:
+      last_updated:
+        type: string
+      mastery_score:
+        type: integer
+      skill_tag:
+        type: string
+      user_id:
+        type: string
+    type: object
+  response.Resp:
+    properties:
+      data: {}
+      error_code:
+        type: integer
+      errors: {}
+      message:
+        type: string
+    type: object
+host: localhost:8083
+info:
+  contact: {}
+  description: Learner Model Service API documentation.
+  title: Learner Model Service API
+  version: "1"
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Show the service health and status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Resp'
+      summary: Health check
+      tags:
+      - Health
+  /learner/{user_id}/mastery:
+    get:
+      consumes:
+      - application/json
+      description: Get the mastery level for a specific skill of a user
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Skill Tag
+        in: query
+        name: skill
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Resp'
+            - properties:
+                data:
+                  $ref: '#/definitions/http.MasteryResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Resp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Resp'
+      summary: Get mastery level
+      tags:
+      - learner
+schemes:
+- http
+swagger: "2.0"
