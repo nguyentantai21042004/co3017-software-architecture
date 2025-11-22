@@ -41,6 +41,7 @@ public class QuestionController {
         try {
             CreateQuestionCommand command = new CreateQuestionCommand(
                     request.getContent(),
+                    request.getOptions(),
                     request.getDifficultyLevel(),
                     request.getSkillTag(),
                     request.getCorrectAnswer(),
@@ -69,6 +70,7 @@ public class QuestionController {
             UpdateQuestionCommand command = new UpdateQuestionCommand(
                     id,
                     request.getContent(),
+                    request.getOptions(),
                     request.getDifficultyLevel(),
                     request.getSkillTag(),
                     request.getCorrectAnswer(),

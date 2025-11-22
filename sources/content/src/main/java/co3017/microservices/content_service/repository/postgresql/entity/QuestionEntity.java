@@ -26,6 +26,9 @@ public class QuestionEntity {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "options", columnDefinition = "jsonb")
+    private String options;
+
     @Column(name = "difficulty_level", nullable = false)
     private Integer difficultyLevel;
 

@@ -32,6 +32,7 @@ public class QuestionService implements QuestionUseCase {
         // Create domain model
         Question question = new Question(
                 command.getContent(),
+                command.getOptions(),
                 command.getDifficultyLevel(),
                 command.getSkillTag(),
                 command.getCorrectAnswer(),

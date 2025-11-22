@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Response DTO for question data
@@ -18,6 +19,7 @@ public class QuestionResponse {
 
     private Integer id;
     private String content;
+    private List<String> options;
     private Integer difficultyLevel;
     private String skillTag;
     private String correctAnswer;
@@ -31,6 +33,7 @@ public class QuestionResponse {
         return new QuestionResponse(
                 question.getId(),
                 question.getContent(),
+                question.getOptions(),
                 question.getDifficultyLevel(),
                 question.getSkillTag(),
                 question.getCorrectAnswer(),

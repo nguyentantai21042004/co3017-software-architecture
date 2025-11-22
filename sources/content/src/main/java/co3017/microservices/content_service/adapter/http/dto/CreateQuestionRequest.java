@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * Request DTO for creating a question
  * HTTP layer - handles incoming JSON
@@ -16,6 +18,8 @@ public class CreateQuestionRequest {
 
     @NotBlank(message = "Content is required")
     private String content;
+
+    private List<String> options;
 
     private Integer difficultyLevel;
 

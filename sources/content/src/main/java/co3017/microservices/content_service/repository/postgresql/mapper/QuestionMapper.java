@@ -26,6 +26,7 @@ public class QuestionMapper {
         QuestionEntity entity = new QuestionEntity();
         entity.setId(question.getId());
         entity.setContent(question.getContent());
+        entity.setOptions(JsonbHelper.toJson(question.getOptions()));
         entity.setDifficultyLevel(question.getDifficultyLevel());
         entity.setSkillTag(question.getSkillTag());
         entity.setCorrectAnswer(question.getCorrectAnswer());
@@ -49,6 +50,7 @@ public class QuestionMapper {
         return new Question(
                 entity.getId(),
                 entity.getContent(),
+                JsonbHelper.fromJson(entity.getOptions()),
                 entity.getDifficultyLevel(),
                 entity.getSkillTag(),
                 entity.getCorrectAnswer(),

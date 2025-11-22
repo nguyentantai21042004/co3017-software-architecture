@@ -1,6 +1,7 @@
 package co3017.microservices.content_service.models;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -11,6 +12,7 @@ import java.util.Objects;
 public class Question {
     private Integer id;
     private String content;
+    private List<String> options;
     private Integer difficultyLevel;
     private String skillTag;
     private String correctAnswer;
@@ -18,9 +20,10 @@ public class Question {
     private LocalDateTime createdAt;
 
     // Constructor for creating new questions (no ID)
-    public Question(String content, Integer difficultyLevel, String skillTag, String correctAnswer,
+    public Question(String content, List<String> options, Integer difficultyLevel, String skillTag, String correctAnswer,
             Boolean isRemedial) {
         this.content = content;
+        this.options = options;
         this.difficultyLevel = difficultyLevel;
         this.skillTag = skillTag;
         this.correctAnswer = correctAnswer;
@@ -29,11 +32,12 @@ public class Question {
     }
 
     // Constructor for existing questions (with ID)
-    public Question(Integer id, String content, Integer difficultyLevel, String skillTag, String correctAnswer,
+    public Question(Integer id, String content, List<String> options, Integer difficultyLevel, String skillTag, String correctAnswer,
             Boolean isRemedial,
             LocalDateTime createdAt) {
         this.id = id;
         this.content = content;
+        this.options = options;
         this.difficultyLevel = difficultyLevel;
         this.skillTag = skillTag;
         this.correctAnswer = correctAnswer;
@@ -121,6 +125,10 @@ public class Question {
 
     public String getContent() {
         return content;
+    }
+
+    public List<String> getOptions() {
+        return options;
     }
 
     public Integer getDifficultyLevel() {

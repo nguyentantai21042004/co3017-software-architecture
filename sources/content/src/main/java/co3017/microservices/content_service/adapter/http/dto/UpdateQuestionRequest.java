@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * Request DTO for updating a question
  * HTTP layer - handles incoming JSON
@@ -15,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class UpdateQuestionRequest {
 
     private String content;
+    private List<String> options;
     private Integer difficultyLevel;
     private String skillTag;
     private String correctAnswer;
