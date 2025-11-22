@@ -19,8 +19,8 @@ func TestContentServiceClient_GetQuestion_Success(t *testing.T) {
 		assert.Equal(t, "GET", r.Method)
 
 		resp := ContentQuestionResponse{
-			Success: true,
-			Message: "Success",
+			ErrorCode: 0,
+			Message:   "Success",
 			Data: struct {
 				ID            int64  `json:"id"`
 				Content       string `json:"content"`
@@ -48,7 +48,7 @@ func TestContentServiceClient_GetQuestion_Success(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.NotNil(t, result)
-	assert.True(t, result.Success)
+	assert.Equal(t, 0, result.ErrorCode)
 	assert.Equal(t, "Success", result.Message)
 	assert.Equal(t, int64(1), result.Data.ID)
 	assert.Equal(t, "4", result.Data.CorrectAnswer)

@@ -66,7 +66,7 @@ func (c *ContentServiceClient) GetQuestion(ctx context.Context, questionID int64
 			ErrCtxURL, url, ErrCtxResponseBody, string(body), err)
 	}
 
-	if !contentResp.Success {
+	if contentResp.ErrorCode != 0 {
 		return nil, fmt.Errorf("content service error: %s | %s=%s | %s=%d",
 			contentResp.Message, ErrCtxServiceName, "content-service", ErrCtxQuestionID, questionID)
 	}

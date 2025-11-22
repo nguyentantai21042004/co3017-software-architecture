@@ -109,8 +109,8 @@ func TestSubmitAnswer_CorrectAnswer(t *testing.T) {
 
 	// Mock content service response
 	contentResp := &curl.ContentQuestionResponse{
-		Success: true,
-		Message: "Success",
+		ErrorCode: 0,
+		Message:   "Success",
 		Data: struct {
 			ID            int64  `json:"id"`
 			Content       string `json:"content"`
@@ -167,8 +167,8 @@ func TestSubmitAnswer_IncorrectAnswer(t *testing.T) {
 	mockLogger.On("Errorf", mock.Anything, mock.Anything, mock.Anything).Return()
 
 	contentResp := &curl.ContentQuestionResponse{
-		Success: true,
-		Message: "Success",
+		ErrorCode: 0,
+		Message:   "Success",
 		Data: struct {
 			ID            int64  `json:"id"`
 			Content       string `json:"content"`
@@ -248,8 +248,8 @@ func TestSubmitAnswer_SaveSubmissionError(t *testing.T) {
 	mockLogger.On("Errorf", mock.Anything, mock.Anything, mock.Anything).Return()
 
 	contentResp := &curl.ContentQuestionResponse{
-		Success: true,
-		Message: "Success",
+		ErrorCode: 0,
+		Message:   "Success",
 		Data: struct {
 			ID            int64  `json:"id"`
 			Content       string `json:"content"`
