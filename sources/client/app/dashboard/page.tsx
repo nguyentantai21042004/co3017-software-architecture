@@ -1,27 +1,46 @@
 "use client"
 
+import dynamic from "next/dynamic"
+
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useStore } from "@/store/useStore"
 import { api } from "@/services/api"
-import { toast, Toaster } from "react-hot-toast"
+import { toast } from "react-hot-toast"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { Calculator, FlaskConical, History, LogOut, Loader2, PlayCircle } from "lucide-react"
+import { Calculator, FlaskConical, History, LogOut, Loader2, PlayCircle, Code2, BookOpen } from "lucide-react"
 import { getMasteryColor } from "@/lib/utils"
 import { motion } from "framer-motion"
 
-const skills = [
-  { id: "math", name: "Mathematics", icon: Calculator, description: "Algebra, Geometry, and Calculus" },
-  { id: "science", name: "Science", icon: FlaskConical, description: "Physics, Chemistry, and Biology" },
-  { id: "history", name: "History", icon: History, description: "World History and Civilizations" },
-]
+
+const Toaster = dynamic(() => import("react-hot-toast").then((mod) => mod.Toaster), { ssr: false })
+
+// Skill metadata mapping for icons and display names
+const SKILL_METADATA: Record<string, { name: string; icon: any; description: string }> = {
+  math: { name: "Mathematics", icon: Calculator, description: "Algebra, Geometry, and Calculus" },
+  science: { name: "Science", icon: FlaskConical, description: "Physics, Chemistry, and Biology" },
+  devops: { name: "DevOps", icon: Code2, description: "CI/CD, Docker, IaC, and Cloud" },
+  history: { name: "History", icon: History, description: "World History and Civilizations" },
+  math_algebra: { name: "Algebra", icon: Calculator, description: "Equations and mathematical structures" },
+  math_geometry: { name: "Geometry", icon: Calculator, description: "Shapes, sizes, and spatial relationships" },
+}
+
+// Default skill metadata for unknown skills
+const DEFAULT_SKILL_METADATA = { icon: BookOpen, description: "General knowledge" }
 
 export default function DashboardPage() {
   const router = useRouter()
   const { userId, setUserId, masteryData, setMastery } = useStore()
   const [loading, setLoading] = useState(true)
+  const [skills, setSkills] = useState<Array<{ id: string; name: string; icon: any; description: string }>>([])
+  const [mounted, setMounted] = useState(false)
+
+  // Set mounted flag to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     // Check auth
@@ -41,17 +60,41 @@ export default function DashboardPage() {
 
       try {
         setLoading(true)
-        // Fetch mastery for all skills parallel
-        await Promise.all(
-          skills.map(async (skill) => {
-            const response = await api.getMastery(uid, skill.id)
-            if (response.data.error_code === 0) {
-              setMastery(skill.id, response.data.data.mastery_score)
+
+        // Fetch available skills from backend
+        const skillsResponse = await api.getAvailableSkills()
+        if (skillsResponse.data.error_code === 0) {
+          const skillTags = skillsResponse.data.data as string[]
+
+          // Map skill tags to metadata
+          const skillsWithMetadata = skillTags.map((tag) => {
+            const metadata = SKILL_METADATA[tag] || {
+              name: tag.charAt(0).toUpperCase() + tag.slice(1).replace(/_/g, " "),
+              ...DEFAULT_SKILL_METADATA,
             }
-          }),
-        )
+            return {
+              id: tag,
+              name: metadata.name,
+              icon: metadata.icon,
+              description: metadata.description,
+            }
+          })
+
+          setSkills(skillsWithMetadata)
+
+          // Fetch mastery for all skills in parallel
+          await Promise.all(
+            skillsWithMetadata.map(async (skill) => {
+              const response = await api.getMastery(uid, skill.id)
+              if (response.data.error_code === 0) {
+                setMastery(skill.id, response.data.data.mastery_score)
+              }
+            })
+          )
+        }
       } catch (error) {
-        toast.error("Failed to load mastery data")
+        toast.error("Failed to load skills and mastery data")
+        console.error(error)
       } finally {
         setLoading(false)
       }
@@ -70,16 +113,17 @@ export default function DashboardPage() {
     router.push(`/learn/${skillId}`)
   }
 
-  if (!userId && loading)
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    )
+  // Show loading spinner while checking auth and fetching data
+  // The outer wrapper remains consistent between server and client
 
   return (
     <div className="min-h-screen bg-background">
       <Toaster position="top-right" />
+      {loading && (
+        <div className="flex items-center justify-center h-screen fixed inset-0 z-50 bg-background">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      )}
 
       {/* Header */}
       <header className="border-b bg-card">
@@ -91,10 +135,12 @@ export default function DashboardPage() {
             <h1 className="text-xl font-bold">My Learning Dashboard</h1>
           </div>
           <div className="flex items-center gap-4">
-            <div className="hidden md:flex flex-col items-end">
-              <span className="text-sm font-medium">Student ID</span>
-              <span className="text-xs text-muted-foreground font-mono">{userId}</span>
-            </div>
+            {mounted && (
+              <div className="hidden md:flex flex-col items-end">
+                <span className="text-sm font-medium">Student ID</span>
+                <span className="text-xs text-muted-foreground font-mono">{userId}</span>
+              </div>
+            )}
             <Button variant="outline" size="sm" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-2" />
               Logout
@@ -113,9 +159,13 @@ export default function DashboardPage() {
 
         {loading ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-[250px] rounded-xl border bg-card/50 animate-pulse" />
             ))}
+          </div>
+        ) : skills.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No skills available. Please add questions to the database.</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

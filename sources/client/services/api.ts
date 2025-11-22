@@ -87,6 +87,11 @@ const mockSubmit = (isCorrect: boolean) => ({
 
 // API Functions
 export const api = {
+  // Get all available skills from database
+  getAvailableSkills: async () => {
+    return apiClient.get(`${API_URLS.content}/api/content/skills`)
+  },
+
   getMastery: async (userId: string, skill: string) => {
     if (USE_MOCK_DATA) {
       await delay(500)
