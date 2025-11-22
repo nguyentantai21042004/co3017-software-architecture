@@ -43,35 +43,42 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     @Override
     public Optional<Question> findById(Integer id) {
         return jpaRepository.findById(id)
-            .map(mapper::toDomain);
+                .map(mapper::toDomain);
     }
 
     @Override
     public List<Question> findAll() {
         return jpaRepository.findAll().stream()
-            .map(mapper::toDomain)
-            .collect(Collectors.toList());
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Question> findByDifficulty(String difficulty) {
-        return jpaRepository.findByDifficulty(difficulty).stream()
-            .map(mapper::toDomain)
-            .collect(Collectors.toList());
+    public List<Question> findByDifficultyLevel(Integer difficultyLevel) {
+        return jpaRepository.findByDifficultyLevel(difficultyLevel).stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Question> findBySkillTag(String skillTag) {
         return jpaRepository.findBySkillTag(skillTag).stream()
-            .map(mapper::toDomain)
-            .collect(Collectors.toList());
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Question> findByDifficultyAndSkillTag(String difficulty, String skillTag) {
-        return jpaRepository.findByDifficultyAndSkillTag(difficulty, skillTag).stream()
-            .map(mapper::toDomain)
-            .collect(Collectors.toList());
+    public List<Question> findByDifficultyLevelAndSkillTag(Integer difficultyLevel, String skillTag) {
+        return jpaRepository.findByDifficultyLevelAndSkillTag(difficultyLevel, skillTag).stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Question> findBySkillTagAndIsRemedial(String skillTag, Boolean isRemedial) {
+        return jpaRepository.findBySkillTagAndIsRemedial(skillTag, isRemedial).stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override

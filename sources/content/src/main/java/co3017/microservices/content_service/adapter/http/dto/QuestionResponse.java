@@ -18,22 +18,23 @@ public class QuestionResponse {
 
     private Integer id;
     private String content;
-    private String difficulty;
+    private Integer difficultyLevel;
     private String skillTag;
+    private String correctAnswer;
+    private Boolean isRemedial;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
     /**
      * Create response from domain model
      */
     public static QuestionResponse fromDomain(Question question) {
         return new QuestionResponse(
-            question.getId(),
-            question.getContent(),
-            question.getDifficulty(),
-            question.getSkillTag(),
-            question.getCreatedAt(),
-            question.getUpdatedAt()
-        );
+                question.getId(),
+                question.getContent(),
+                question.getDifficultyLevel(),
+                question.getSkillTag(),
+                question.getCorrectAnswer(),
+                question.getIsRemedial(),
+                question.getCreatedAt());
     }
 }

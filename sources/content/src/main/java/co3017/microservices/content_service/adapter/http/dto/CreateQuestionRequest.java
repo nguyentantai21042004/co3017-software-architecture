@@ -17,9 +17,13 @@ public class CreateQuestionRequest {
     @NotBlank(message = "Content is required")
     private String content;
 
-    @NotBlank(message = "Difficulty is required")
-    private String difficulty;
+    private Integer difficultyLevel;
 
     @NotBlank(message = "Skill tag is required")
     private String skillTag;
+
+    @NotBlank(message = "Correct answer is required")
+    private String correctAnswer;
+
+    private Boolean isRemedial;
 }

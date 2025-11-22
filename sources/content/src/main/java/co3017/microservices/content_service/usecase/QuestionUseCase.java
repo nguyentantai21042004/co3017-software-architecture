@@ -17,6 +17,7 @@ public interface QuestionUseCase {
 
     /**
      * Create a new question
+     * 
      * @param command the creation command with question data
      * @return the created question with generated ID
      */
@@ -24,6 +25,7 @@ public interface QuestionUseCase {
 
     /**
      * Update an existing question
+     * 
      * @param command the update command with question data
      * @return the updated question
      * @throws IllegalArgumentException if question not found
@@ -32,6 +34,7 @@ public interface QuestionUseCase {
 
     /**
      * Get a question by ID
+     * 
      * @param id the question ID
      * @return Optional containing the question if found
      */
@@ -39,13 +42,25 @@ public interface QuestionUseCase {
 
     /**
      * Get all questions with optional filtering
+     * 
      * @param query the query parameters for filtering
      * @return list of questions matching the criteria
      */
     List<Question> getAllQuestions(QuestionQuery query);
 
     /**
+     * Recommend a question based on skill and type
+     * 
+     * @param skillTag the skill tag
+     * @param type     the type (standard/remedial)
+     * @return the recommended question
+     * @throws IllegalArgumentException if no question found
+     */
+    Question recommendQuestion(String skillTag, String type);
+
+    /**
      * Delete a question by ID
+     * 
      * @param id the question ID
      * @throws IllegalArgumentException if question not found
      */

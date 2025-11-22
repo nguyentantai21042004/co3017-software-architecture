@@ -17,7 +17,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionEntity, Int
     /**
      * Find questions by difficulty level
      */
-    List<QuestionEntity> findByDifficulty(String difficulty);
+    List<QuestionEntity> findByDifficultyLevel(Integer difficultyLevel);
 
     /**
      * Find questions by skill tag
@@ -25,7 +25,12 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionEntity, Int
     List<QuestionEntity> findBySkillTag(String skillTag);
 
     /**
-     * Find questions by both difficulty and skill tag
+     * Find questions by both difficulty level and skill tag
      */
-    List<QuestionEntity> findByDifficultyAndSkillTag(String difficulty, String skillTag);
+    List<QuestionEntity> findByDifficultyLevelAndSkillTag(Integer difficultyLevel, String skillTag);
+
+    /**
+     * Find questions by skill tag and remedial status
+     */
+    List<QuestionEntity> findBySkillTagAndIsRemedial(String skillTag, Boolean isRemedial);
 }

@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 public class UpdateQuestionRequest {
 
     private String content;
-    private String difficulty;
+    private Integer difficultyLevel;
     private String skillTag;
+    private String correctAnswer;
+    private Boolean isRemedial;
 }

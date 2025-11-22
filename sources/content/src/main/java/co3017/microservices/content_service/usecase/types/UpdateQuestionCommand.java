@@ -7,14 +7,19 @@ package co3017.microservices.content_service.usecase.types;
 public class UpdateQuestionCommand {
     private final Integer id;
     private final String content;
-    private final String difficulty;
+    private final Integer difficultyLevel;
     private final String skillTag;
+    private final String correctAnswer;
+    private final Boolean isRemedial;
 
-    public UpdateQuestionCommand(Integer id, String content, String difficulty, String skillTag) {
+    public UpdateQuestionCommand(Integer id, String content, Integer difficultyLevel, String skillTag,
+            String correctAnswer, Boolean isRemedial) {
         this.id = id;
         this.content = content;
-        this.difficulty = difficulty;
+        this.difficultyLevel = difficultyLevel;
         this.skillTag = skillTag;
+        this.correctAnswer = correctAnswer;
+        this.isRemedial = isRemedial;
     }
 
     public Integer getId() {
@@ -25,11 +30,19 @@ public class UpdateQuestionCommand {
         return content;
     }
 
-    public String getDifficulty() {
-        return difficulty;
+    public Integer getDifficultyLevel() {
+        return difficultyLevel;
     }
 
     public String getSkillTag() {
         return skillTag;
+    }
+
+    public String getCorrectAnswer() {
+        return correctAnswer;
+    }
+
+    public Boolean getIsRemedial() {
+        return isRemedial;
     }
 }

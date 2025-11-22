@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * Depends on use case interface, not implementation
  */
 @RestController
-@RequestMapping("/api/questions")
+@RequestMapping("/api/content")
 public class QuestionController {
 
     private final QuestionUseCase questionUseCase;
@@ -40,21 +40,21 @@ public class QuestionController {
             @Valid @RequestBody CreateQuestionRequest request) {
         try {
             CreateQuestionCommand command = new CreateQuestionCommand(
-                request.getContent(),
-                request.getDifficulty(),
-                request.getSkillTag()
-            );
-
+                    request.getContent(),
+                    request.getDifficultyLevel(),
+                    request.getSkillTag(),
+                    request.getCorrectAnswer(),
+                    request.getIsRemedial());
             Question question = questionUseCase.createQuestion(command);
             QuestionResponse response = QuestionResponse.fromDomain(question);
 
             return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Question created successfully", response));
+                    .status(HttpStatus.CREATED)
+                    .body(ApiResponse.success("Question created successfully", response));
         } catch (IllegalArgumentException e) {
             return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.badRequest(e.getMessage()));
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.badRequest(e.getMessage()));
         }
     }
 
@@ -67,20 +67,20 @@ public class QuestionController {
             @Valid @RequestBody UpdateQuestionRequest request) {
         try {
             UpdateQuestionCommand command = new UpdateQuestionCommand(
-                id,
-                request.getContent(),
-                request.getDifficulty(),
-                request.getSkillTag()
-            );
-
+                    id,
+                    request.getContent(),
+                    request.getDifficultyLevel(),
+                    request.getSkillTag(),
+                    request.getCorrectAnswer(),
+                    request.getIsRemedial());
             Question question = questionUseCase.updateQuestion(command);
             QuestionResponse response = QuestionResponse.fromDomain(question);
 
             return ResponseEntity.ok(ApiResponse.success("Question updated successfully", response));
         } catch (IllegalArgumentException e) {
             return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.notFound(e.getMessage()));
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.notFound(e.getMessage()));
         }
     }
 
@@ -90,11 +90,11 @@ public class QuestionController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<QuestionResponse>> getQuestionById(@PathVariable Integer id) {
         return questionUseCase.getQuestionById(id)
-            .map(question -> ResponseEntity.ok(
-                ApiResponse.success(QuestionResponse.fromDomain(question))))
-            .orElse(ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.notFound("Question not found with id: " + id)));
+                .map(question -> ResponseEntity.ok(
+                        ApiResponse.success(QuestionResponse.fromDomain(question))))
+                .orElse(ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.notFound("Question not found with id: " + id)));
     }
 
     /**
@@ -102,17 +102,34 @@ public class QuestionController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<List<QuestionResponse>>> getAllQuestions(
-            @RequestParam(required = false) String difficulty,
+            @RequestParam(required = false) Integer difficultyLevel,
             @RequestParam(required = false) String skillTag) {
 
-        QuestionQuery query = new QuestionQuery(difficulty, skillTag);
+        QuestionQuery query = new QuestionQuery(difficultyLevel, skillTag);
         List<Question> questions = questionUseCase.getAllQuestions(query);
 
         List<QuestionResponse> responses = questions.stream()
-            .map(QuestionResponse::fromDomain)
-            .collect(Collectors.toList());
+                .map(QuestionResponse::fromDomain)
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(ApiResponse.success(responses));
+    }
+
+    /**
+     * Recommend a question
+     */
+    @GetMapping("/recommend")
+    public ResponseEntity<ApiResponse<QuestionResponse>> recommendQuestion(
+            @RequestParam String skill,
+            @RequestParam String type) {
+        try {
+            Question question = questionUseCase.recommendQuestion(skill, type);
+            return ResponseEntity.ok(ApiResponse.success(QuestionResponse.fromDomain(question)));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.notFound(e.getMessage()));
+        }
     }
 
     /**
@@ -125,8 +142,8 @@ public class QuestionController {
             return ResponseEntity.ok(ApiResponse.success("Question deleted successfully", null));
         } catch (IllegalArgumentException e) {
             return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.notFound(e.getMessage()));
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.notFound(e.getMessage()));
         }
     }
 }

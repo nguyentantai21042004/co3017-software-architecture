@@ -37,13 +37,13 @@ class QuestionServiceTest {
     void setUp() {
         now = LocalDateTime.now();
         testQuestion = new Question(
-            1,
-            "What is 2 + 2?",
-            "easy",
-            "math_arithmetic",
-            now,
-            now
-        );
+                1,
+                "What is 2 + 2?",
+                1, // difficultyLevel (Integer)
+                "math_arithmetic",
+                "4", // correctAnswer
+                false, // isRemedial
+                now);
     }
 
     // CREATE QUESTION TESTS
@@ -52,9 +52,11 @@ class QuestionServiceTest {
     void createQuestion_Success() {
         // Arrange
         CreateQuestionCommand command = new CreateQuestionCommand(
-            "What is 2 + 2?",
-            "easy",
-            "math_arithmetic"
+                "What is 2 + 2?",
+                1, // difficultyLevel
+                "math_arithmetic",
+                "4", // correctAnswer
+                false // isRemedial
         );
         when(questionRepository.save(any(Question.class))).thenReturn(testQuestion);
 
@@ -64,21 +66,22 @@ class QuestionServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals("What is 2 + 2?", result.getContent());
-        assertEquals("easy", result.getDifficulty());
+        assertEquals(1, result.getDifficultyLevel());
         assertEquals("math_arithmetic", result.getSkillTag());
+        assertEquals("4", result.getCorrectAnswer());
+        assertEquals(false, result.getIsRemedial());
         verify(questionRepository, times(1)).save(any(Question.class));
     }
 
     @Test
     void createQuestion_InvalidData_ThrowsException() {
         // Arrange
-        CreateQuestionCommand command = new CreateQuestionCommand("", "", "");
+        CreateQuestionCommand command = new CreateQuestionCommand("", null, "", "", null);
 
         // Act & Assert
         IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> questionService.createQuestion(command)
-        );
+                IllegalArgumentException.class,
+                () -> questionService.createQuestion(command));
         assertEquals("Invalid question data: all fields are required", exception.getMessage());
         verify(questionRepository, never()).save(any(Question.class));
     }
@@ -86,7 +89,7 @@ class QuestionServiceTest {
     @Test
     void createQuestion_NullContent_ThrowsException() {
         // Arrange
-        CreateQuestionCommand command = new CreateQuestionCommand(null, "easy", "math");
+        CreateQuestionCommand command = new CreateQuestionCommand(null, 1, "math", "4", false);
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> questionService.createQuestion(command));
@@ -99,19 +102,21 @@ class QuestionServiceTest {
     void updateQuestion_Success_AllFields() {
         // Arrange
         UpdateQuestionCommand command = new UpdateQuestionCommand(
-            1,
-            "What is 3 + 3?",
-            "medium",
-            "math_advanced"
+                1,
+                "What is 3 + 3?",
+                2, // difficultyLevel
+                "math_advanced",
+                "6", // correctAnswer
+                true // isRemedial
         );
         Question updatedQuestion = new Question(
-            1,
-            "What is 3 + 3?",
-            "medium",
-            "math_advanced",
-            now,
-            LocalDateTime.now()
-        );
+                1,
+                "What is 3 + 3?",
+                2,
+                "math_advanced",
+                "6",
+                true,
+                now);
         when(questionRepository.findById(1)).thenReturn(Optional.of(testQuestion));
         when(questionRepository.update(any(Question.class))).thenReturn(updatedQuestion);
 
@@ -121,8 +126,10 @@ class QuestionServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals("What is 3 + 3?", result.getContent());
-        assertEquals("medium", result.getDifficulty());
+        assertEquals(2, result.getDifficultyLevel());
         assertEquals("math_advanced", result.getSkillTag());
+        assertEquals("6", result.getCorrectAnswer());
+        assertEquals(true, result.getIsRemedial());
         verify(questionRepository, times(1)).findById(1);
         verify(questionRepository, times(1)).update(any(Question.class));
     }
@@ -130,7 +137,7 @@ class QuestionServiceTest {
     @Test
     void updateQuestion_PartialUpdate_ContentOnly() {
         // Arrange
-        UpdateQuestionCommand command = new UpdateQuestionCommand(1, "New content", null, null);
+        UpdateQuestionCommand command = new UpdateQuestionCommand(1, "New content", null, null, null, null);
         when(questionRepository.findById(1)).thenReturn(Optional.of(testQuestion));
         when(questionRepository.update(any(Question.class))).thenReturn(testQuestion);
 
@@ -146,14 +153,13 @@ class QuestionServiceTest {
     @Test
     void updateQuestion_QuestionNotFound_ThrowsException() {
         // Arrange
-        UpdateQuestionCommand command = new UpdateQuestionCommand(999, "New content", "easy", "math");
+        UpdateQuestionCommand command = new UpdateQuestionCommand(999, "New content", 1, "math", "4", false);
         when(questionRepository.findById(999)).thenReturn(Optional.empty());
 
         // Act & Assert
         IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> questionService.updateQuestion(command)
-        );
+                IllegalArgumentException.class,
+                () -> questionService.updateQuestion(command));
         assertEquals("Question not found with id: 999", exception.getMessage());
         verify(questionRepository, times(1)).findById(999);
         verify(questionRepository, never()).update(any(Question.class));
@@ -162,7 +168,7 @@ class QuestionServiceTest {
     @Test
     void updateQuestion_InvalidData_ThrowsException() {
         // Arrange
-        UpdateQuestionCommand command = new UpdateQuestionCommand(1, "", "", "");
+        UpdateQuestionCommand command = new UpdateQuestionCommand(1, "", null, "", "", null);
         when(questionRepository.findById(1)).thenReturn(Optional.of(testQuestion));
 
         // Act & Assert
@@ -216,17 +222,17 @@ class QuestionServiceTest {
         assertNotNull(result);
         assertEquals(2, result.size());
         verify(questionRepository, times(1)).findAll();
-        verify(questionRepository, never()).findByDifficulty(any());
+        verify(questionRepository, never()).findByDifficultyLevel(any());
         verify(questionRepository, never()).findBySkillTag(any());
-        verify(questionRepository, never()).findByDifficultyAndSkillTag(any(), any());
+        verify(questionRepository, never()).findByDifficultyLevelAndSkillTag(any(), any());
     }
 
     @Test
-    void getAllQuestions_FilterByDifficulty() {
+    void getAllQuestions_FilterByDifficultyLevel() {
         // Arrange
         List<Question> questions = Arrays.asList(testQuestion);
-        QuestionQuery query = new QuestionQuery("easy", null);
-        when(questionRepository.findByDifficulty("easy")).thenReturn(questions);
+        QuestionQuery query = new QuestionQuery(1, null);
+        when(questionRepository.findByDifficultyLevel(1)).thenReturn(questions);
 
         // Act
         List<Question> result = questionService.getAllQuestions(query);
@@ -234,7 +240,7 @@ class QuestionServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(questionRepository, times(1)).findByDifficulty("easy");
+        verify(questionRepository, times(1)).findByDifficultyLevel(1);
         verify(questionRepository, never()).findAll();
     }
 
@@ -256,11 +262,11 @@ class QuestionServiceTest {
     }
 
     @Test
-    void getAllQuestions_FilterByBothDifficultyAndSkillTag() {
+    void getAllQuestions_FilterByBothDifficultyLevelAndSkillTag() {
         // Arrange
         List<Question> questions = Arrays.asList(testQuestion);
-        QuestionQuery query = new QuestionQuery("easy", "math_arithmetic");
-        when(questionRepository.findByDifficultyAndSkillTag("easy", "math_arithmetic")).thenReturn(questions);
+        QuestionQuery query = new QuestionQuery(1, "math_arithmetic");
+        when(questionRepository.findByDifficultyLevelAndSkillTag(1, "math_arithmetic")).thenReturn(questions);
 
         // Act
         List<Question> result = questionService.getAllQuestions(query);
@@ -268,7 +274,7 @@ class QuestionServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(questionRepository, times(1)).findByDifficultyAndSkillTag("easy", "math_arithmetic");
+        verify(questionRepository, times(1)).findByDifficultyLevelAndSkillTag(1, "math_arithmetic");
         verify(questionRepository, never()).findAll();
     }
 
@@ -310,9 +316,8 @@ class QuestionServiceTest {
 
         // Act & Assert
         IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> questionService.deleteQuestion(999)
-        );
+                IllegalArgumentException.class,
+                () -> questionService.deleteQuestion(999));
         assertEquals("Question not found with id: 999", exception.getMessage());
         verify(questionRepository, times(1)).existsById(999);
         verify(questionRepository, never()).deleteById(any());

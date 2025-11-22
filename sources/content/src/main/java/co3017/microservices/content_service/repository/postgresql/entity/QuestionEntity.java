@@ -26,26 +26,23 @@ public class QuestionEntity {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "difficulty", nullable = false, length = 50)
-    private String difficulty;
+    @Column(name = "difficulty_level", nullable = false)
+    private Integer difficultyLevel;
 
     @Column(name = "skill_tag", nullable = false, length = 100)
     private String skillTag;
 
+    @Column(name = "correct_answer", nullable = false)
+    private String correctAnswer;
+
+    @Column(name = "is_remedial", nullable = false)
+    private Boolean isRemedial = false;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
     }
 }

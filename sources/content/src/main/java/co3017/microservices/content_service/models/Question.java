@@ -11,29 +11,34 @@ import java.util.Objects;
 public class Question {
     private Integer id;
     private String content;
-    private String difficulty;
+    private Integer difficultyLevel;
     private String skillTag;
+    private String correctAnswer;
+    private Boolean isRemedial;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
     // Constructor for creating new questions (no ID)
-    public Question(String content, String difficulty, String skillTag) {
+    public Question(String content, Integer difficultyLevel, String skillTag, String correctAnswer,
+            Boolean isRemedial) {
         this.content = content;
-        this.difficulty = difficulty;
+        this.difficultyLevel = difficultyLevel;
         this.skillTag = skillTag;
+        this.correctAnswer = correctAnswer;
+        this.isRemedial = isRemedial != null ? isRemedial : false;
         this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
     // Constructor for existing questions (with ID)
-    public Question(Integer id, String content, String difficulty, String skillTag,
-                   LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Question(Integer id, String content, Integer difficultyLevel, String skillTag, String correctAnswer,
+            Boolean isRemedial,
+            LocalDateTime createdAt) {
         this.id = id;
         this.content = content;
-        this.difficulty = difficulty;
+        this.difficultyLevel = difficultyLevel;
         this.skillTag = skillTag;
+        this.correctAnswer = correctAnswer;
+        this.isRemedial = isRemedial != null ? isRemedial : false;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     // Business logic methods
@@ -43,30 +48,29 @@ public class Question {
      */
     public boolean isValid() {
         return content != null && !content.trim().isEmpty() &&
-               difficulty != null && !difficulty.trim().isEmpty() &&
-               skillTag != null && !skillTag.trim().isEmpty();
+                difficultyLevel != null &&
+                skillTag != null && !skillTag.trim().isEmpty() &&
+                correctAnswer != null && !correctAnswer.trim().isEmpty();
     }
 
     /**
-     * Updates the question content and marks as updated
+     * Updates the question content
      */
     public void updateContent(String newContent) {
         if (newContent == null || newContent.trim().isEmpty()) {
             throw new IllegalArgumentException("Content cannot be empty");
         }
         this.content = newContent;
-        this.updatedAt = LocalDateTime.now();
     }
 
     /**
      * Updates the difficulty level
      */
-    public void updateDifficulty(String newDifficulty) {
-        if (newDifficulty == null || newDifficulty.trim().isEmpty()) {
-            throw new IllegalArgumentException("Difficulty cannot be empty");
+    public void updateDifficultyLevel(Integer newDifficultyLevel) {
+        if (newDifficultyLevel == null) {
+            throw new IllegalArgumentException("Difficulty level cannot be empty");
         }
-        this.difficulty = newDifficulty;
-        this.updatedAt = LocalDateTime.now();
+        this.difficultyLevel = newDifficultyLevel;
     }
 
     /**
@@ -77,14 +81,30 @@ public class Question {
             throw new IllegalArgumentException("Skill tag cannot be empty");
         }
         this.skillTag = newSkillTag;
-        this.updatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * Updates the correct answer
+     */
+    public void updateCorrectAnswer(String newCorrectAnswer) {
+        if (newCorrectAnswer == null || newCorrectAnswer.trim().isEmpty()) {
+            throw new IllegalArgumentException("Correct answer cannot be empty");
+        }
+        this.correctAnswer = newCorrectAnswer;
+    }
+
+    /**
+     * Updates the remedial status
+     */
+    public void updateIsRemedial(Boolean isRemedial) {
+        this.isRemedial = isRemedial != null ? isRemedial : false;
     }
 
     /**
      * Checks if the question matches a specific difficulty level
      */
-    public boolean hasDifficulty(String difficulty) {
-        return this.difficulty != null && this.difficulty.equalsIgnoreCase(difficulty);
+    public boolean hasDifficultyLevel(Integer difficultyLevel) {
+        return this.difficultyLevel != null && this.difficultyLevel.equals(difficultyLevel);
     }
 
     /**
@@ -103,28 +123,34 @@ public class Question {
         return content;
     }
 
-    public String getDifficulty() {
-        return difficulty;
+    public Integer getDifficultyLevel() {
+        return difficultyLevel;
     }
 
     public String getSkillTag() {
         return skillTag;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getCorrectAnswer() {
+        return correctAnswer;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public Boolean getIsRemedial() {
+        return isRemedial;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     // No setters for immutability - use business methods instead
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Question question = (Question) o;
         return Objects.equals(id, question.id);
     }
@@ -139,10 +165,11 @@ public class Question {
         return "Question{" +
                 "id=" + id +
                 ", content='" + content + '\'' +
-                ", difficulty='" + difficulty + '\'' +
+                ", difficultyLevel=" + difficultyLevel +
                 ", skillTag='" + skillTag + '\'' +
+                ", correctAnswer='" + correctAnswer + '\'' +
+                ", isRemedial=" + isRemedial +
                 ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

@@ -31,10 +31,11 @@ public class QuestionService implements QuestionUseCase {
     public Question createQuestion(CreateQuestionCommand command) {
         // Create domain model
         Question question = new Question(
-            command.getContent(),
-            command.getDifficulty(),
-            command.getSkillTag()
-        );
+                command.getContent(),
+                command.getDifficultyLevel(),
+                command.getSkillTag(),
+                command.getCorrectAnswer(),
+                command.getIsRemedial());
 
         // Validate using domain logic
         if (!question.isValid()) {
@@ -49,17 +50,23 @@ public class QuestionService implements QuestionUseCase {
     public Question updateQuestion(UpdateQuestionCommand command) {
         // Fetch existing question
         Question question = questionRepository.findById(command.getId())
-            .orElseThrow(() -> new IllegalArgumentException("Question not found with id: " + command.getId()));
+                .orElseThrow(() -> new IllegalArgumentException("Question not found with id: " + command.getId()));
 
         // Update using domain methods
         if (command.getContent() != null) {
             question.updateContent(command.getContent());
         }
-        if (command.getDifficulty() != null) {
-            question.updateDifficulty(command.getDifficulty());
+        if (command.getDifficultyLevel() != null) {
+            question.updateDifficultyLevel(command.getDifficultyLevel());
         }
         if (command.getSkillTag() != null) {
             question.updateSkillTag(command.getSkillTag());
+        }
+        if (command.getCorrectAnswer() != null) {
+            question.updateCorrectAnswer(command.getCorrectAnswer());
+        }
+        if (command.getIsRemedial() != null) {
+            question.updateIsRemedial(command.getIsRemedial());
         }
 
         // Validate and persist
@@ -80,13 +87,12 @@ public class QuestionService implements QuestionUseCase {
     @Transactional(readOnly = true)
     public List<Question> getAllQuestions(QuestionQuery query) {
         // Handle different query scenarios
-        if (query.hasDifficulty() && query.hasSkillTag()) {
-            return questionRepository.findByDifficultyAndSkillTag(
-                query.getDifficulty(),
-                query.getSkillTag()
-            );
-        } else if (query.hasDifficulty()) {
-            return questionRepository.findByDifficulty(query.getDifficulty());
+        if (query.hasDifficultyLevel() && query.hasSkillTag()) {
+            return questionRepository.findByDifficultyLevelAndSkillTag(
+                    query.getDifficultyLevel(),
+                    query.getSkillTag());
+        } else if (query.hasDifficultyLevel()) {
+            return questionRepository.findByDifficultyLevel(query.getDifficultyLevel());
         } else if (query.hasSkillTag()) {
             return questionRepository.findBySkillTag(query.getSkillTag());
         } else {
@@ -100,5 +106,19 @@ public class QuestionService implements QuestionUseCase {
             throw new IllegalArgumentException("Question not found with id: " + id);
         }
         questionRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Question recommendQuestion(String skillTag, String type) {
+        boolean isRemedial = "remedial".equalsIgnoreCase(type);
+        List<Question> questions = questionRepository.findBySkillTagAndIsRemedial(skillTag, isRemedial);
+
+        if (questions.isEmpty()) {
+            throw new IllegalArgumentException("No questions found for skill: " + skillTag + " and type: " + type);
+        }
+
+        // Return the first one for now (could be randomized)
+        return questions.get(0);
     }
 }

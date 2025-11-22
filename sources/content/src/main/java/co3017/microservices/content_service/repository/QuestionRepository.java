@@ -14,6 +14,7 @@ public interface QuestionRepository {
 
     /**
      * Save a new question
+     * 
      * @param question the question to save
      * @return the saved question with generated ID
      */
@@ -21,6 +22,7 @@ public interface QuestionRepository {
 
     /**
      * Update an existing question
+     * 
      * @param question the question to update
      * @return the updated question
      */
@@ -28,6 +30,7 @@ public interface QuestionRepository {
 
     /**
      * Find a question by ID
+     * 
      * @param id the question ID
      * @return Optional containing the question if found
      */
@@ -35,40 +38,55 @@ public interface QuestionRepository {
 
     /**
      * Find all questions
+     * 
      * @return list of all questions
      */
     List<Question> findAll();
 
     /**
-     * Find questions by difficulty
-     * @param difficulty the difficulty level
+     * Find questions by difficulty level
+     * 
+     * @param difficultyLevel the difficulty level
      * @return list of questions with the specified difficulty
      */
-    List<Question> findByDifficulty(String difficulty);
+    List<Question> findByDifficultyLevel(Integer difficultyLevel);
 
     /**
      * Find questions by skill tag
+     * 
      * @param skillTag the skill tag
      * @return list of questions with the specified skill tag
      */
     List<Question> findBySkillTag(String skillTag);
 
     /**
-     * Find questions by both difficulty and skill tag
-     * @param difficulty the difficulty level
-     * @param skillTag the skill tag
+     * Find questions by both difficulty level and skill tag
+     * 
+     * @param difficultyLevel the difficulty level
+     * @param skillTag        the skill tag
      * @return list of questions matching both criteria
      */
-    List<Question> findByDifficultyAndSkillTag(String difficulty, String skillTag);
+    List<Question> findByDifficultyLevelAndSkillTag(Integer difficultyLevel, String skillTag);
+
+    /**
+     * Find questions by skill tag and remedial status
+     * 
+     * @param skillTag   the skill tag
+     * @param isRemedial the remedial status
+     * @return list of questions matching both criteria
+     */
+    List<Question> findBySkillTagAndIsRemedial(String skillTag, Boolean isRemedial);
 
     /**
      * Delete a question by ID
+     * 
      * @param id the question ID
      */
     void deleteById(Integer id);
 
     /**
      * Check if a question exists by ID
+     * 
      * @param id the question ID
      * @return true if exists, false otherwise
      */

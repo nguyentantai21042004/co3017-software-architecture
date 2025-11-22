@@ -14,6 +14,7 @@ public class QuestionMapper {
 
     /**
      * Convert domain model to JPA entity
+     * 
      * @param question the domain model
      * @return the JPA entity
      */
@@ -25,16 +26,18 @@ public class QuestionMapper {
         QuestionEntity entity = new QuestionEntity();
         entity.setId(question.getId());
         entity.setContent(question.getContent());
-        entity.setDifficulty(question.getDifficulty());
+        entity.setDifficultyLevel(question.getDifficultyLevel());
         entity.setSkillTag(question.getSkillTag());
+        entity.setCorrectAnswer(question.getCorrectAnswer());
+        entity.setIsRemedial(question.getIsRemedial());
         entity.setCreatedAt(question.getCreatedAt());
-        entity.setUpdatedAt(question.getUpdatedAt());
 
         return entity;
     }
 
     /**
      * Convert JPA entity to domain model
+     * 
      * @param entity the JPA entity
      * @return the domain model
      */
@@ -44,12 +47,12 @@ public class QuestionMapper {
         }
 
         return new Question(
-            entity.getId(),
-            entity.getContent(),
-            entity.getDifficulty(),
-            entity.getSkillTag(),
-            entity.getCreatedAt(),
-            entity.getUpdatedAt()
-        );
+                entity.getId(),
+                entity.getContent(),
+                entity.getDifficultyLevel(),
+                entity.getSkillTag(),
+                entity.getCorrectAnswer(),
+                entity.getIsRemedial(),
+                entity.getCreatedAt());
     }
 }
