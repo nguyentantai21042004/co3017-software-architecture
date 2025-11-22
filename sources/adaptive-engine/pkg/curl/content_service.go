@@ -25,8 +25,8 @@ func NewContentServiceClient(baseURL string) *ContentServiceClient {
 }
 
 // GetRecommendation fetches content recommendation based on skill and type
-func (c *ContentServiceClient) GetRecommendation(ctx context.Context, skillTag, contentType string) (*ContentResponse, error) {
-	url := fmt.Sprintf("%s/api/content/recommend?skill=%s&type=%s", c.client.GetBaseURL(), skillTag, contentType)
+func (c *ContentServiceClient) GetRecommendation(ctx context.Context, skillTag, contentType, userID string) (*ContentResponse, error) {
+	url := fmt.Sprintf("%s/api/content/recommend?skill=%s&type=%s&userId=%s", c.client.GetBaseURL(), skillTag, contentType, userID)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {

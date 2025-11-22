@@ -42,7 +42,7 @@ func (uc *usecase) RecommendNextLesson(ctx context.Context, input adaptive.Recom
 	}
 
 	// Fetch content from content service using curl client
-	contentResp, err := uc.contentClient.GetRecommendation(ctx, input.CurrentSkill, contentType)
+	contentResp, err := uc.contentClient.GetRecommendation(ctx, input.CurrentSkill, contentType, input.UserID)
 	if err != nil {
 		uc.l.Errorf(ctx, "adaptive.usecase.RecommendNextLesson: %s | %s=%s | %s=%s | %s=%s | error=%v",
 			ErrMsgFetchContentFailed, ErrCtxUserID, input.UserID, ErrCtxSkillTag, input.CurrentSkill,

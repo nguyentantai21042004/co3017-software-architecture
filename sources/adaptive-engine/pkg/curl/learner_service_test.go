@@ -12,10 +12,14 @@ import (
 func TestLearnerServiceClient_GetMastery_Success(t *testing.T) {
 	// Setup mock server
 	expectedMastery := MasteryResponse{
-		UserID:       "user_01",
-		SkillTag:     "math_algebra",
-		MasteryScore: 75,
-		LastUpdated:  "2025-01-01T00:00:00Z",
+		ErrorCode: 0,
+		Message:   "Success",
+		Data: MasteryData{
+			UserID:       "user_01",
+			SkillTag:     "math_algebra",
+			MasteryScore: 75,
+			LastUpdated:  "2025-01-01T00:00:00Z",
+		},
 	}
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -49,14 +53,17 @@ func TestLearnerServiceClient_GetMastery_Success(t *testing.T) {
 	if result == nil {
 		t.Fatal("Expected result, got nil")
 	}
-	if result.UserID != expectedMastery.UserID {
-		t.Errorf("Expected UserID %s, got %s", expectedMastery.UserID, result.UserID)
+	if result.ErrorCode != expectedMastery.ErrorCode {
+		t.Errorf("Expected ErrorCode %d, got %d", expectedMastery.ErrorCode, result.ErrorCode)
 	}
-	if result.SkillTag != expectedMastery.SkillTag {
-		t.Errorf("Expected SkillTag %s, got %s", expectedMastery.SkillTag, result.SkillTag)
+	if result.Data.UserID != expectedMastery.Data.UserID {
+		t.Errorf("Expected UserID %s, got %s", expectedMastery.Data.UserID, result.Data.UserID)
 	}
-	if result.MasteryScore != expectedMastery.MasteryScore {
-		t.Errorf("Expected MasteryScore %d, got %d", expectedMastery.MasteryScore, result.MasteryScore)
+	if result.Data.SkillTag != expectedMastery.Data.SkillTag {
+		t.Errorf("Expected SkillTag %s, got %s", expectedMastery.Data.SkillTag, result.Data.SkillTag)
+	}
+	if result.Data.MasteryScore != expectedMastery.Data.MasteryScore {
+		t.Errorf("Expected MasteryScore %d, got %d", expectedMastery.Data.MasteryScore, result.Data.MasteryScore)
 	}
 }
 

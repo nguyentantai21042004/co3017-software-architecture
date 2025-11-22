@@ -9,5 +9,5 @@ type LearnerServiceClientInterface interface {
 
 // ContentServiceClientInterface defines the interface for content service client
 type ContentServiceClientInterface interface {
-	GetRecommendation(ctx context.Context, skillTag, contentType string) (*ContentResponse, error)
+	GetRecommendation(ctx context.Context, skillTag, contentType, userID string) (*ContentResponse, error)
 }

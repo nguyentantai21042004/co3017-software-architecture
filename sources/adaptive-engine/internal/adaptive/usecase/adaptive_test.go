@@ -39,7 +39,7 @@ type mockContentClient struct {
 	err     error
 }
 
-func (m *mockContentClient) GetRecommendation(ctx context.Context, skillTag, contentType string) (*curl.ContentResponse, error) {
+func (m *mockContentClient) GetRecommendation(ctx context.Context, skillTag, contentType, userID string) (*curl.ContentResponse, error) {
 	return m.content, m.err
 }
 
@@ -48,10 +48,14 @@ func TestUsecase_RecommendNextLesson_Success_Remedial(t *testing.T) {
 	logger := &mockLogger{}
 
 	masteryResp := &curl.MasteryResponse{
-		UserID:       "user_01",
-		SkillTag:     "math_algebra",
-		MasteryScore: 30, // Below threshold
-		LastUpdated:  "2025-01-01T00:00:00Z",
+		ErrorCode: 0,
+		Message:   "Success",
+		Data: curl.MasteryData{
+			UserID:       "user_01",
+			SkillTag:     "math_algebra",
+			MasteryScore: 30, // Below threshold
+			LastUpdated:  "2025-01-01T00:00:00Z",
+		},
 	}
 
 	contentResp := &curl.ContentResponse{
@@ -105,10 +109,14 @@ func TestUsecase_RecommendNextLesson_Success_Standard(t *testing.T) {
 	logger := &mockLogger{}
 
 	masteryResp := &curl.MasteryResponse{
-		UserID:       "user_01",
-		SkillTag:     "math_algebra",
-		MasteryScore: 75, // Above threshold
-		LastUpdated:  "2025-01-01T00:00:00Z",
+		ErrorCode: 0,
+		Message:   "Success",
+		Data: curl.MasteryData{
+			UserID:       "user_01",
+			SkillTag:     "math_algebra",
+			MasteryScore: 75, // Above threshold
+			LastUpdated:  "2025-01-01T00:00:00Z",
+		},
 	}
 
 	contentResp := &curl.ContentResponse{
@@ -188,10 +196,14 @@ func TestUsecase_RecommendNextLesson_FetchContentError(t *testing.T) {
 	logger := &mockLogger{}
 
 	masteryResp := &curl.MasteryResponse{
-		UserID:       "user_01",
-		SkillTag:     "math_algebra",
-		MasteryScore: 30,
-		LastUpdated:  "2025-01-01T00:00:00Z",
+		ErrorCode: 0,
+		Message:   "Success",
+		Data: curl.MasteryData{
+			UserID:       "user_01",
+			SkillTag:     "math_algebra",
+			MasteryScore: 30,
+			LastUpdated:  "2025-01-01T00:00:00Z",
+		},
 	}
 
 	learnerClient := &mockLearnerClient{mastery: masteryResp}

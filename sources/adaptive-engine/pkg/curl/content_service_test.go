@@ -42,6 +42,9 @@ func TestContentServiceClient_GetRecommendation_Success(t *testing.T) {
 		if r.URL.Query().Get("type") != "remedial" {
 			t.Errorf("Expected type=remedial, got %s", r.URL.Query().Get("type"))
 		}
+		if r.URL.Query().Get("userId") != "user_01" {
+			t.Errorf("Expected userId=user_01, got %s", r.URL.Query().Get("userId"))
+		}
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
@@ -52,7 +55,7 @@ func TestContentServiceClient_GetRecommendation_Success(t *testing.T) {
 	client := NewContentServiceClient(server.URL)
 	ctx := context.Background()
 
-	result, err := client.GetRecommendation(ctx, "math_algebra", "remedial")
+	result, err := client.GetRecommendation(ctx, "math_algebra", "remedial", "user_01")
 
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
@@ -77,7 +80,7 @@ func TestContentServiceClient_GetRecommendation_NotFound(t *testing.T) {
 	client := NewContentServiceClient(server.URL)
 	ctx := context.Background()
 
-	result, err := client.GetRecommendation(ctx, "math_algebra", "remedial")
+	result, err := client.GetRecommendation(ctx, "math_algebra", "remedial", "user_01")
 
 	if err == nil {
 		t.Fatal("Expected error, got nil")
@@ -101,7 +104,7 @@ func TestContentServiceClient_GetRecommendation_InvalidResponse(t *testing.T) {
 	client := NewContentServiceClient(server.URL)
 	ctx := context.Background()
 
-	result, err := client.GetRecommendation(ctx, "math_algebra", "remedial")
+	result, err := client.GetRecommendation(ctx, "math_algebra", "remedial", "user_01")
 
 	if err == nil {
 		t.Fatal("Expected error, got nil")
@@ -123,7 +126,7 @@ func TestContentServiceClient_GetRecommendation_ServerError(t *testing.T) {
 	client := NewContentServiceClient(server.URL)
 	ctx := context.Background()
 
-	result, err := client.GetRecommendation(ctx, "math_algebra", "remedial")
+	result, err := client.GetRecommendation(ctx, "math_algebra", "remedial", "user_01")
 
 	if err == nil {
 		t.Fatal("Expected error, got nil")
