@@ -52,7 +52,7 @@ run-api:
 	@echo "Starting Content Service API..."
 	@echo "Swagger UI will be available at: http://localhost:$(PORT)/content/swagger/index.html"
 	@echo "API will be available at: http://localhost:$(PORT)"
-	@mvn spring-boot:run
+	@mvn spring-boot:run -Dmaven.test.skip=true
 
 # Generate Swagger/OpenAPI documentation
 swagger:

@@ -1,0 +1,347 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "OpenAPI definition",
+        "version": "v0"
+    },
+    "servers": [{
+        "url": "http://localhost:8081",
+        "description": "Generated server url"
+    }],
+    "paths": {
+        "/api/content/{id}": {
+            "get": {
+                "tags": ["question-controller"],
+                "operationId": "getQuestionById",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseQuestionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": ["question-controller"],
+                "operationId": "updateQuestion",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateQuestionRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseQuestionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["question-controller"],
+                "operationId": "deleteQuestion",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseVoid"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/content": {
+            "get": {
+                "tags": ["question-controller"],
+                "operationId": "getAllQuestions",
+                "parameters": [{
+                    "name": "difficultyLevel",
+                    "in": "query",
+                    "required": false,
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }, {
+                    "name": "skillTag",
+                    "in": "query",
+                    "required": false,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListQuestionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["question-controller"],
+                "operationId": "createQuestion",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateQuestionRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseQuestionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "tags": ["health-controller"],
+                "operationId": "healthCheck",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/content/recommend": {
+            "get": {
+                "tags": ["question-controller"],
+                "operationId": "recommendQuestion",
+                "parameters": [{
+                    "name": "skill",
+                    "in": "query",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }, {
+                    "name": "type",
+                    "in": "query",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseQuestionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "UpdateQuestionRequest": {
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "string"
+                    },
+                    "difficultyLevel": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "skillTag": {
+                        "type": "string"
+                    },
+                    "correctAnswer": {
+                        "type": "string"
+                    },
+                    "isRemedial": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ApiResponseQuestionResponse": {
+                "type": "object",
+                "properties": {
+                    "error_code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/QuestionResponse"
+                    },
+                    "errors": {
+                        "type": "object"
+                    }
+                }
+            },
+            "QuestionResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "string"
+                    },
+                    "difficultyLevel": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "skillTag": {
+                        "type": "string"
+                    },
+                    "correctAnswer": {
+                        "type": "string"
+                    },
+                    "isRemedial": {
+                        "type": "boolean"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "CreateQuestionRequest": {
+                "required": ["content", "correctAnswer", "skillTag"],
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "string"
+                    },
+                    "difficultyLevel": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "skillTag": {
+                        "type": "string"
+                    },
+                    "correctAnswer": {
+                        "type": "string"
+                    },
+                    "isRemedial": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ApiResponseListQuestionResponse": {
+                "type": "object",
+                "properties": {
+                    "error_code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/QuestionResponse"
+                        }
+                    },
+                    "errors": {
+                        "type": "object"
+                    }
+                }
+            },
+            "ApiResponseVoid": {
+                "type": "object",
+                "properties": {
+                    "error_code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "object"
+                    },
+                    "errors": {
+                        "type": "object"
+                    }
+                }
+            }
+        }
+    }
+}
