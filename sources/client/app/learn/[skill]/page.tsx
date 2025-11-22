@@ -84,7 +84,8 @@ export default function LearningSessionPage() {
     setSubmitting(true)
     try {
       // Step 4: Submit Answer
-      const response = await api.submitAnswer(userId!, question.id, userAnswer)
+      const finalAnswer = userAnswer.trim()
+      const response = await api.submitAnswer(userId!, question.id, finalAnswer)
       const result = response.data.data
 
       setFeedback(result)
@@ -196,33 +197,55 @@ export default function LearningSessionPage() {
                 {/* Question Text */}
                 <h2 className="text-xl md:text-2xl font-bold mb-8 leading-relaxed text-balance">{question.content}</h2>
 
-                {/* Answer Options */}
-                <div className="grid gap-3 mb-8">
-                  {question.options?.map((opt: string) => (
-                    <button
-                      key={opt}
-                      onClick={() => !showFeedback && setUserAnswer(opt)}
-                      disabled={showFeedback || submitting}
-                      className={`
-                        w-full p-4 rounded-lg border-2 text-left transition-all font-medium text-lg
-                        ${
-                          userAnswer === opt
-                            ? "border-primary bg-primary/5 ring-1 ring-primary"
-                            : "border-muted hover:border-primary/50 hover:bg-muted/30"
-                        }
-                        ${showFeedback && userAnswer === opt && feedback?.correct ? "border-green-500 bg-green-50 text-green-700" : ""}
-                        ${showFeedback && userAnswer === opt && !feedback?.correct ? "border-red-500 bg-red-50 text-red-700" : ""}
-                        disabled:cursor-not-allowed
-                      `}
-                    >
-                      <span className="mr-3 font-bold text-muted-foreground">{opt}.</span>
-                      {opt === "A"
-                        ? "The correct answer usually"
-                        : opt === "B"
-                          ? "A distractor option"
-                          : `Option ${opt}`}
-                    </button>
-                  ))}
+                {/* Answer Options or Text Input */}
+                <div className="mb-8">
+                  {question.options && question.options.length > 0 ? (
+                    <div className="grid gap-3">
+                      {question.options.map((opt: string) => (
+                        <button
+                          key={opt}
+                          onClick={() => !showFeedback && setUserAnswer(opt)}
+                          disabled={showFeedback || submitting}
+                          className={`
+                            w-full p-4 rounded-lg border-2 text-left transition-all font-medium text-lg
+                            ${userAnswer === opt
+                              ? "border-primary bg-primary/5 ring-1 ring-primary"
+                              : "border-muted hover:border-primary/50 hover:bg-muted/30"
+                            }
+                            ${showFeedback && userAnswer === opt && feedback?.correct ? "border-green-500 bg-green-50 text-green-700" : ""}
+                            ${showFeedback && userAnswer === opt && !feedback?.correct ? "border-red-500 bg-red-50 text-red-700" : ""}
+                            disabled:cursor-not-allowed
+                          `}
+                        >
+                          <span className="mr-3 font-bold text-muted-foreground">{opt}.</span>
+                          {opt === "A"
+                            ? "The correct answer usually"
+                            : opt === "B"
+                              ? "A distractor option"
+                              : `Option ${opt}`}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <label className="block text-sm font-medium text-muted-foreground">
+                        Your Answer:
+                      </label>
+                      <input
+                        type="text"
+                        value={userAnswer || ""}
+                        onChange={(e) => setUserAnswer(e.target.value)}
+                        disabled={showFeedback || submitting}
+                        className="w-full p-4 rounded-lg border-2 border-muted bg-background text-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                        placeholder="Type your answer here..."
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && userAnswer && !submitting) {
+                            handleSubmit()
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Submit Area */}

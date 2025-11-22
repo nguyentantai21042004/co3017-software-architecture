@@ -2,12 +2,12 @@ import axios from "axios"
 import { delay } from "@/lib/utils"
 
 // Mock mode flag - set to true to simulate backend
-const USE_MOCK_DATA = true
+const USE_MOCK_DATA = false
 
 const API_URLS = {
   content: "http://localhost:8081",
   scoring: "http://localhost:8082",
-  learner: "http://localhost:8080",
+  learner: "http://localhost:8083",
   adaptive: "http://localhost:8084/api/adaptive",
 }
 
