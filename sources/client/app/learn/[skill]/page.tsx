@@ -94,10 +94,16 @@ export default function LearningSessionPage() {
   }
 
   const parseOption = (opt: string) => {
-    // Matches "A. Content" or "1. Content"
-    const match = opt.match(/^([A-Z0-9]+)\.\s*(.+)$/)
+    // Matches "A. Content", "1. Content", "a) Content", "A) Content"
+    // Regex explanation:
+    // ^\s*           : Start with optional whitespace
+    // ([A-Z0-9a-z]+) : Capture the key (letters or numbers)
+    // [\.\)]         : Match either a dot or a closing parenthesis
+    // \s*            : Optional whitespace
+    // (.+)$          : Capture the rest as text
+    const match = opt.match(/^\s*([A-Z0-9a-z]+)[\.\)]\s*(.+)$/)
     if (match) {
-      return { key: match[1], text: match[2] }
+      return { key: match[1].toUpperCase(), text: match[2] }
     }
     // Fallback if format doesn't match (e.g. just "A")
     return { key: opt, text: opt }

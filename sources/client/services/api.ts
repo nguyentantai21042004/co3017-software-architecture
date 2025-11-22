@@ -18,6 +18,27 @@ const apiClient = axios.create({
   },
 })
 
+// Add response interceptor for better error handling
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    let message = "An unexpected error occurred"
+    if (error.response) {
+      // Server responded with a status code out of 2xx range
+      message = `Server Error: ${error.response.status} - ${error.response.data?.message || error.message}`
+    } else if (error.request) {
+      // Request was made but no response received
+      message = "Network Error: Unable to reach the server. Please check your connection or if the services are running."
+    } else {
+      // Something happened in setting up the request
+      message = `Request Error: ${error.message}`
+    }
+    console.error("API Error:", message)
+    // Reject with enhanced error object
+    return Promise.reject({ ...error, userMessage: message })
+  }
+)
+
 // Mock Data Generators
 const mockMastery = (skill: string) => ({
   error_code: 0,
