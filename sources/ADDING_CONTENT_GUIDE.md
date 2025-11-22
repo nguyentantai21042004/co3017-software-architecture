@@ -109,17 +109,24 @@ Let's add a **"Cloud Computing"** subject as an example.
 
 Choose a consistent naming scheme:
 
-**Option A: Single Skill Tag**
+**Option A: Single Skill Tag ⭐ RECOMMENDED**
 - `skill_tag = "cloud"`
 - All cloud questions use the same tag
+- **Result:** 1 card on dashboard
+- **Pros:** Clean UI, simple to manage
+- **Cons:** No sub-topic tracking
 
-**Option B: Multiple Skill Tags (Recommended)**
+**Option B: Multiple Skill Tags (Advanced)**
 - `skill_tag = "cloud_aws"`
 - `skill_tag = "cloud_azure"`
 - `skill_tag = "cloud_gcp"`
-- Allows more granular progress tracking
+- **Result:** 3 separate cards on dashboard
+- **Pros:** Granular progress tracking per sub-topic
+- **Cons:** Dashboard clutter with many cards
 
-For this example, we'll use **`"cloud"`**.
+⚠️ **Important:** Choose Option A unless you specifically need sub-topic tracking. Too many cards hurt UX!
+
+For this example, we'll use **`"cloud"`** (Option A).
 
 ### Step 2: Create Questions (SQL File)
 
@@ -229,30 +236,39 @@ npm run dev  # Or restart your Next.js server
 
 ## Full Example: Adding Kubernetes (From Your test_data.json)
 
-### Step 1: SQL File Already Created ✅
+### Problem: Too Many Dashboard Cards! ⚠️
 
-You have `sources/scripts/insert_kubernetes_quiz.sql` ready!
+Your `test_data.json` has questions with 6 different skill tags:
+- `kubernetes_architecture`
+- `kubernetes_workloads`
+- `kubernetes_networking`
+- `kubernetes_configuration`
+- `kubernetes_core_concepts`
+- `kubectl_commands`
 
-### Step 2: Insert into Database
+This would create **6 separate cards** on the dashboard - too cluttered! ❌
+
+### Solution: Consolidate to Single Skill Tag ✅
+
+**Step 1: Insert Questions First**
 
 ```bash
 PGPASSWORD=postgres psql -h localhost -U postgres -d content_db \
     -f sources/scripts/insert_kubernetes_quiz.sql
 ```
 
-Expected output:
-```
-INSERT 0 1
-INSERT 0 1
-...
- id |                        content_preview                         | correct_answer |       skill_tag        | difficulty_level | is_remedial
-----+----------------------------------------------------------------+----------------+------------------------+------------------+-------------
- 90 | Hãy mô tả ngắn gọn nhiệm vụ chính của Kubelet...              | Kubelet là...  | kubernetes_architecture|                2 | t
- 89 | Một lập trình viên triển khai ứng dụng web...                 | Kiểu Service...| kubernetes_networking  |                3 | f
-...
+**Step 2: Consolidate All to "kubernetes"**
+
+Run the consolidation script:
+
+```bash
+PGPASSWORD=postgres psql -h localhost -U postgres -d content_db \
+    -f sources/scripts/consolidate_kubernetes_skill.sql
 ```
 
-### Step 3: Add Frontend Metadata
+This updates all `kubernetes_*` and `kubectl_*` tags to just `"kubernetes"`.
+
+**Step 3: Add Frontend Metadata**
 
 Edit `sources/client/app/dashboard/page.tsx`:
 
@@ -261,42 +277,15 @@ import { Server } from "lucide-react"  // ← Add this import
 
 const SKILL_METADATA: Record<string, { name: string; icon: any; description: string }> = {
   // ... existing skills
-  kubernetes_architecture: {
-    name: "Kubernetes Architecture",
+  kubernetes: {
+    name: "Kubernetes",
     icon: Server,
-    description: "K8s components, Controllers, and Schedulers"
-  },
-  kubernetes_workloads: {
-    name: "Kubernetes Workloads",
-    icon: Server,
-    description: "Deployments, StatefulSets, DaemonSets"
-  },
-  kubernetes_networking: {
-    name: "Kubernetes Networking",
-    icon: Server,
-    description: "Services, Ingress, and Network Policies"
-  },
-  kubernetes_configuration: {
-    name: "Kubernetes Configuration",
-    icon: Server,
-    description: "ConfigMaps, Secrets, and Resource Management"
-  },
-  kubernetes_core_concepts: {
-    name: "Kubernetes Basics",
-    icon: Server,
-    description: "Pods, Nodes, and Core Concepts"
-  },
-  kubectl_commands: {
-    name: "kubectl Commands",
-    icon: Server,
-    description: "kubectl operations and CLI usage"
+    description: "K8s fundamentals, kubectl, and container orchestration"
   },
 }
 ```
 
-**Note:** You have **6 different skill tags** for Kubernetes. They will appear as separate subjects on the dashboard.
-
-**Alternative:** Use a single skill tag like `"kubernetes"` if you want them grouped together.
+**Result:** Clean dashboard with just **1 Kubernetes card** instead of 6! ✅
 
 ### Step 4: Restart Frontend (if modified)
 
@@ -493,6 +482,35 @@ PGPASSWORD=postgres psql -h localhost -U postgres -d content_db \
 ---
 
 ## Troubleshooting
+
+### Problem: Too many cards on dashboard (Dashboard Clutter)
+
+**Symptom:** You have 10+ subjects and the dashboard looks messy with too many cards.
+
+**Cause:** Using granular skill tags like `kubernetes_architecture`, `kubernetes_networking`, etc.
+
+**Solution:** Consolidate related questions under a single skill tag.
+
+**Example - Consolidating Kubernetes:**
+
+```sql
+-- Consolidate all kubernetes-related tags to "kubernetes"
+UPDATE questions
+SET skill_tag = 'kubernetes'
+WHERE skill_tag IN (
+    'kubernetes_architecture',
+    'kubernetes_workloads',
+    'kubernetes_networking',
+    'kubernetes_configuration',
+    'kubernetes_core_concepts',
+    'kubectl_commands'
+);
+
+-- Verify
+SELECT skill_tag, COUNT(*) FROM questions GROUP BY skill_tag;
+```
+
+**Best Practice:** Use 1 skill tag per major subject area. Only split if you need separate progress tracking.
 
 ### Problem: New subject doesn't appear on dashboard
 
