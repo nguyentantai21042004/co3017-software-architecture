@@ -2,91 +2,227 @@
 
 ## Overview
 
-This repository consolidates every artifact produced for the **CO3017 Software Architecture** course at HCMUT. It mixes lecture notes, assignment documents, architectural deliverables, LaTeX sources, and the full Intelligent Tutoring System (ITS) microservices implementation hosted under `src/`. Treat the root as the canonical workspace for both documentation and code.
+This repository contains all artifacts for the **CO3017 Software Architecture** course at HCMUT, including architectural analysis, implementation, and documentation for an **Intelligent Tutoring System (ITS)** built with microservices architecture.
 
-## Repository Map
+## Repository Structure
 
-| Path | Contents | Notes |
-| --- | --- | --- |
-| `assignment/` | Assignment briefs, architectural reports, roadmap, and diagrams used in reviews. | Start here when preparing submissions or presentations. |
-| `claude/`, `gemini/` | AI-generated supporting material (summaries, rubrics, meeting minutes). | Helpful for quick refreshers before critiques. |
-| `references/` | Official course handouts, slides, and the assignment PDF. | Keep immutable; cite these sources in reports. |
-| `report/` | LaTeX project for the final architecture report (all sections plus assets). | Build with `latexmk -pdf main.tex`. |
-| `src/` | Complete ITS microservices codebase plus testing guide and Postman collection. | See the section below for details. |
+```
+co3017-software-architecture/
+├── analysis/              # Architectural Analysis & Research
+│   ├── report/           # Analysis reports (Markdown)
+│   ├── diagrams/         # Architecture diagrams (Mermaid)
+│   ├── assignment.md     # Assignment requirements
+│   └── ...
+│
+├── sources/              # Source Code & Implementation
+│   ├── services/         # Microservices (Content, Scoring, Learner, Adaptive)
+│   ├── client/           # Frontend (Next.js)
+│   ├── infrastructure/   # Docker, scripts, configs
+│   └── tests/            # Integration & system tests
+│
+├── report/               # LaTeX Report
+│   ├── contents/         # LaTeX source files
+│   ├── images/           # Diagrams & screenshots
+│   └── main.tex          # Main LaTeX file
+│
+└── support/              # AI Assistance & References
+    ├── claude/           # Claude AI outputs
+    └── gemini/           # Gemini AI outputs
+```
 
-> Tip: use `find . -maxdepth 2 -type d` if you need a quick textual snapshot of subfolders.
+## Directory Details
 
-## Intelligent Tutoring System (ITS)
+### `analysis/` - Architectural Analysis & Research
 
-The `src/` directory contains a production-ready adaptive learning platform composed of four services:
+Contains all architectural analysis, requirements, and design decisions:
 
-| Service | Tech Stack | Port | Database | Purpose |
-| --- | --- | --- | --- | --- |
-| Content | Java 17, Spring Boot | 8081 | `content_db` | Manages questions, skills, and learning objects. |
-| Scoring | Go 1.25, Gin | 8082 | `scoring_db` | Scores learner submissions and emits events. |
-| Learner Model | Go 1.25, Gin | 8083 | `learner_db` | Maintains per-skill mastery curves. |
-| Adaptive Engine | Go 1.25, Gin | 8084 | Stateless | Orchestrates recommendations using content + mastery data. |
+- **`report/`**: Detailed analysis reports in Markdown format
+  - `1-analyst.md` - Stakeholder analysis & requirements
+  - `2-architecture-characteristics.md` - Architecture characteristics prioritization
+  - `3-architecture-styles.md` - Architecture style comparison
+  - `5-architecture-decisions.md` - Architecture Decision Records (ADRs)
+  - `6-SOLID-principles.md` - SOLID principles application
+  - `7-reflection-report.md` - Project reflection
 
-RabbitMQ bridges the scoring and learner-model services through asynchronous events, enabling eventual consistency without tight coupling.
+- **`diagrams/`**: Architecture diagrams (Mermaid/PlantUML)
+  - Sequence diagrams (use cases, workflows)
+  - Deployment diagrams
+  - Domain model diagrams
+
+- **Other files**: `assignment.md`, `microservices.md`, `roadmap.md`, `system-comparison.md`
+
+### `sources/` - Source Code & Implementation
+
+Complete ITS microservices implementation with Docker support:
+
+- **Services**:
+  - `content-service/` - Java 17 + Spring Boot (Port 8081)
+  - `scoring-service/` - Go 1.23 + Gin (Port 8082)
+  - `learner-model-service/` - Go 1.23 + Gin (Port 8083)
+  - `adaptive-engine/` - Go 1.23 + Gin (Port 8084)
+
+- **Client**: `client/` - Next.js 15 + React 19 (Port 3000)
+
+- **Infrastructure**:
+  - `docker-compose.infra.yml` - Databases, RabbitMQ, MinIO
+  - `docker-compose.yml` - Application services
+  - `scripts/` - Database initialization & utilities
+
+- **Documentation**: See `sources/README.md` for detailed setup instructions
+
+### `report/` - LaTeX Report
+
+Final architecture report in LaTeX format:
+
+- **`contents/`**: LaTeX source files for each section
+- **`images/`**: Diagrams and screenshots for the report
+- **`main.tex`**: Main LaTeX file
+
+**Build report**:
+```bash
+cd report
+latexmk -pdf main.tex
+```
+
+### `support/` - AI Assistance & References
+
+Supporting materials from AI tools:
+- `claude/` - Claude AI generated content
+- `gemini/` - Gemini AI generated content
+
+## Quick Start
 
 ### Prerequisites
 
-- Java 17 or later
-- Go 1.25.4 or later
-- PostgreSQL 15
-- RabbitMQ 3.x with management UI
-- Maven 3.8+
+- **Docker Desktop** 4.0+ (recommended)
+- **Java 17+**, **Go 1.23+**, **Node.js 20+** (for local development)
+- **PostgreSQL 15**, **RabbitMQ 3.x**, **Maven 3.8+**
 
-### Database Initialization
+### Running the System
 
-```
-psql -U postgres -h localhost -p 5432 -f init-scripts/01-init-content-db.sql
-psql -U postgres -h localhost -p 5432 -f init-scripts/02-init-scoring-db.sql
-psql -U postgres -h localhost -p 5432 -f init-scripts/03-init-learner-db.sql
-```
-
-### Running the Services
-
-```
-cd src/content        && mvn spring-boot:run
-cd src/scoring        && go run cmd/api/main.go
-cd src/learner-model  && go run cmd/api/main.go
-cd src/adaptive-engine && go run cmd/api/main.go
+**Option 1: Docker (Recommended)**
+```bash
+cd sources
+make setup          # Build, start infrastructure & services, init DBs
+make health         # Check all services
 ```
 
-Health checks:
-
-```
-curl http://localhost:8081/actuator/health
-curl http://localhost:8082/health
-curl http://localhost:8083/health
-curl http://localhost:8084/health
+**Option 2: Local Development**
+```bash
+cd sources
+make dev            # Start only infrastructure (DB, RabbitMQ, MinIO)
+# Then run each service locally in separate terminals
 ```
 
-For end-to-end verification or regression suites, rely on `src/TESTING_GUIDE.md` and the `ITS_Microservices.postman_collection.json`.
+See `sources/README.md` for detailed instructions.
 
-## Documentation & Study Assets
+## Documentation
 
-- `src/README.md`: In-depth system description, architecture diagrams, troubleshooting guidance, and demo scenario.
-- `src/TESTING_GUIDE.md`: Step-by-step manual and automated testing procedures.
-- `assignment/report/*.md`: Narrative responses for each grading rubric item (characteristics, styles, ADRs, SOLID application, reflection).
-- `assignment/diagrams/*.md` plus `report/images/*.png`: Architectural diagrams (module, component, deployment, sequence, and domain views).
-- `report/latex-formatting-requirements.md`: Publishing checklist before exporting PDFs from LaTeX.
+### Main Documentation
 
-## Working Practices
+- **`sources/README.md`**: Complete system documentation, architecture, setup guide
+- **`analysis/report/`**: Architectural analysis and design decisions
+- **`report/latex-formatting-requirements.md`**: LaTeX formatting guidelines
 
-- Each assignment or sub-deliverable should include its own `README.md` outlining requirements, assumptions, and execution steps.
-- Keep LaTeX templates documented so teammates can rebuild the report on any machine.
-- Store Architecture Decision Records (ADRs) and supporting notes in `references/` or under `assignment/report/5-architecture-decisions.md` for traceability.
-- Organize study material chronologically or by topic to keep weekly sync meetings efficient.
+### Service Documentation
+
+Each service has its own README:
+- `sources/content-service/README.md`
+- `sources/scoring-service/README.md`
+- `sources/learner-model-service/README.md`
+- `sources/adaptive-engine/README.md`
+- `sources/client/README.md`
+
+## System Architecture
+
+The ITS is built as a microservices architecture:
+
+```
+┌─────────────┐
+│   Client    │ (Next.js)
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────┐      ┌────────────────┐
+│ Adaptive Engine │─────▶│ Learner Model  │
+│   (Port 8084)   │      │  (Port 8083)   │
+└────────┬────────┘      └────────────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Content Service │
+│   (Port 8081)   │
+└─────────────────┘
+         │
+         ▼
+┌─────────────────┐      ┌──────────────┐
+│ Scoring Service │─────▶│  RabbitMQ    │
+│   (Port 8082)   │      │  (Port 5672) │
+└─────────────────┘      └──────────────┘
+```
+
+**Key Features**:
+- **Event-Driven**: RabbitMQ for asynchronous communication
+- **Database-per-Service**: Each service has its own database
+- **Containerized**: Full Docker support with docker-compose
+- **Scalable**: Microservices can be scaled independently
+
+## Workflow
+
+### 1. Analysis → `analysis/`
+- Write all analysis in Markdown
+- Create diagrams in `analysis/diagrams/`
+- Document decisions in `analysis/report/`
+
+### 2. Implementation → `sources/`
+- Develop services in `sources/services/`
+- Write technical docs in `sources/document/`
+- Test in `sources/tests/`
+
+### 3. Report → `report/`
+- Convert analysis to LaTeX
+- Build PDF: `latexmk -pdf main.tex`
+
+## Useful Commands
+
+### Docker Management (from `sources/`)
+```bash
+make help          # Show all available commands
+make setup         # Complete setup (build, start, init, check)
+make infra         # Start infrastructure only
+make services      # Start application services only
+make logs          # View all logs
+make health        # Check service health
+make test          # Run end-to-end test
+```
+
+### Database Operations
+```bash
+make db-init       # Initialize databases
+make db-content    # Connect to content database
+make db-backup     # Backup all databases
+```
 
 ## Key Milestones (Semester 251)
 
-- Practical Assignment 1: Week 7 (06 Oct 2025)
-- Practical Assignment 2: Week 8 (13 Oct 2025)
-- Final Assignment Submission: 07 Dec 2025 at 23:59 (hard deadline)
-- Project Presentation: Week 15 (08 Dec 2025)
+- **Practical Assignment 1**: Week 7 (06 Oct 2025)
+- **Practical Assignment 2**: Week 8 (13 Oct 2025)
+- **Final Assignment Submission**: 07 Dec 2025 at 23:59
+- **Project Presentation**: Week 15 (08 Dec 2025)
+
+## Quick Links
+
+- [System Documentation](./sources/README.md)
+- [Architecture Analysis](./analysis/report/)
+- [Docker Setup Guide](./sources/README.md#quick-start)
+- [LaTeX Report](./report/)
+
+## License
+
+This repository is for academic purposes as part of CO3017 Software Architecture course at HCMUT.
 
 ---
 
-This repository serves as the single source of truth for coursework, documentation, and the ITS reference implementation. Keep it tidy and up to date before each studio or review session.
+**Last Updated**: 23 November 2025  
+**Course**: CO3017 - Software Architecture  
+**Institution**: Ho Chi Minh City University of Technology (HCMUT)
