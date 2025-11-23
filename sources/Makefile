@@ -124,8 +124,15 @@ ps: status ## Alias for status
 # Database Operations
 # =============================================================================
 
-db-init: ## Initialize all databases with test data
-	@echo "$(GREEN)Initializing databases...$(NC)"
+db-create: ## Create databases if they don't exist
+	@echo "$(GREEN)Creating databases if they don't exist...$(NC)"
+	@docker-compose $(COMPOSE_INFRA) exec -T postgres psql -U postgres -c "CREATE DATABASE content_db;" postgres 2>/dev/null || echo "  Database 'content_db' already exists or error occurred"
+	@docker-compose $(COMPOSE_INFRA) exec -T postgres psql -U postgres -c "CREATE DATABASE scoring_db;" postgres 2>/dev/null || echo "  Database 'scoring_db' already exists or error occurred"
+	@docker-compose $(COMPOSE_INFRA) exec -T postgres psql -U postgres -c "CREATE DATABASE learner_db;" postgres 2>/dev/null || echo "  Database 'learner_db' already exists or error occurred"
+	@echo "$(GREEN)Database creation check complete!$(NC)"
+
+db-init: db-create ## Initialize all databases with test data
+	@echo "$(GREEN)Initializing databases with test data...$(NC)"
 	@# We execute commands inside the single 'postgres' container, targeting different DBs
 	@docker-compose $(COMPOSE_INFRA) exec -T postgres psql -U postgres -d content_db < scripts/01-init-content-db.sql || true
 	@docker-compose $(COMPOSE_INFRA) exec -T postgres psql -U postgres -d scoring_db < scripts/02-init-scoring-db.sql || true

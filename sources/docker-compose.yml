@@ -1,5 +1,3 @@
-version: '3.9'
-
 # =============================================================================
 # Application Services Docker Compose
 # Microservices and Frontend Client
