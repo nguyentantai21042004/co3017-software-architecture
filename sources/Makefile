@@ -40,7 +40,7 @@ build-no-cache: ## Build application images without cache
 	@echo "$(GREEN)Building application images without cache...$(NC)"
 	docker-compose $(COMPOSE_APP) build --no-cache
 
-infra: ## Start infrastructure only (DBs, Queue, MinIO)
+infra: ## Start infrastructure only (DBs, Queue)
 	@echo "$(GREEN)Starting infrastructure...$(NC)"
 	docker-compose $(COMPOSE_INFRA) up -d
 	@echo "$(GREEN)Infrastructure started!$(NC)"
@@ -117,7 +117,6 @@ health: ## Check health of all services
 	@echo ""
 	@echo "$(YELLOW)Infrastructure:$(NC)"
 	@curl -sf http://localhost:15672 > /dev/null && echo "  $(GREEN)✓ RabbitMQ (15672)$(NC)" || echo "  $(RED)✗ RabbitMQ (15672)$(NC)"
-	@curl -sf http://localhost:9001 > /dev/null && echo "  $(GREEN)✓ MinIO (9001)$(NC)" || echo "  $(RED)✗ MinIO (9001)$(NC)"
 
 ps: status ## Alias for status
 
@@ -163,7 +162,7 @@ scoring: ## Start only Scoring Service and dependencies
 	docker-compose $(COMPOSE_APP) up -d scoring-service
 
 learner: ## Start only Learner Model Service and dependencies
-	docker-compose $(COMPOSE_INFRA) up -d postgres rabbitmq minio
+	docker-compose $(COMPOSE_INFRA) up -d postgres rabbitmq
 	docker-compose $(COMPOSE_APP) up -d learner-model-api learner-model-consumer
 
 adaptive: ## Start only Adaptive Engine and dependencies
@@ -239,7 +238,6 @@ open-urls: ## Open all service URLs in browser
 	@open http://localhost:3000          # Client
 	@open http://localhost:8081/swagger-ui.html # Content API
 	@open http://localhost:15672         # RabbitMQ
-	@open http://localhost:9001          # MinIO
 
 dev: ## Start services for local development
 	@echo "$(GREEN)Starting infrastructure services only...$(NC)"

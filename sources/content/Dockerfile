@@ -10,24 +10,26 @@
 # =============================================================================
 # STAGE 1: BUILDER - Build the Spring Boot application
 # =============================================================================
-FROM eclipse-temurin:17-jdk-alpine AS builder
+FROM eclipse-temurin:17-jdk AS builder
 
 WORKDIR /build
 
-# Copy Maven wrapper and pom.xml first for better caching
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
+# Install Maven
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
+
+# Copy pom.xml first for better caching
+COPY pom.xml ./
 
 # Download dependencies (cached layer if pom.xml unchanged)
 RUN --mount=type=cache,target=/root/.m2 \
-    ./mvnw dependency:go-offline -B || true
+    mvn dependency:go-offline -B || true
 
 # Copy source code
 COPY src/ src/
 
 # Build the application
 RUN --mount=type=cache,target=/root/.m2 \
-    ./mvnw clean package -DskipTests -B
+    mvn clean package -DskipTests -B
 
 # Extract JAR layers for better Docker caching
 RUN mkdir -p target/extracted && \
@@ -36,15 +38,15 @@ RUN mkdir -p target/extracted && \
 # =============================================================================
 # STAGE 2: RUNTIME - Optimized JRE with Spring Boot layers
 # =============================================================================
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-# Install curl for healthcheck
-RUN apk add --no-cache curl
+# Install curl for healthcheck (Debian-based, not Alpine)
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
-RUN addgroup -S spring && adduser -S spring -G spring
+RUN groupadd -r spring && useradd -r -g spring spring
 USER spring:spring
 
 # Copy Spring Boot layers (most stable layers first for better caching)
