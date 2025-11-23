@@ -1,0 +1,47 @@
+# Binaries
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test files
+*_test.go
+coverage.out
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Documentation
+README.md
+document/
+*.md
+
+# Git
+.git/
+.gitignore
+
+# Docker
+.dockerignore
+
+# Vendor (if using vendoring)
+vendor/
+
+# Environment files
+.env
+*.env
+
+# Build artifacts
+*.o
+*.a
+
