@@ -139,3 +139,37 @@ sources/scoring/
 \end{itemize}
 
 Cách tổ chức này giúp code Go gọn gàng, dễ đọc và tuân thủ nguyên tắc "Separation of Concerns" tương tự như Clean Architecture nhưng được điều chỉnh cho phù hợp với đặc thù ngôn ngữ Go.
+
+\subsubsection{Thiết kế Dữ liệu (Data Persistence Design)}
+
+\indentpar \indentpar Tuân thủ nguyên tắc \textbf{Database-per-Service} của kiến trúc Microservices, hệ thống không sử dụng một cơ sở dữ liệu khổng lồ dùng chung. Thay vào đó, mỗi service sở hữu một lược đồ dữ liệu (schema) riêng biệt, tối ưu cho nghiệp vụ của nó.
+
+\noindent\textbf{1. User Management Service (PostgreSQL)}
+\indentpar Quản lý người dùng, vai trò (Roles) và quyền hạn (Permissions). Dữ liệu PII (Thông tin cá nhân) được tách riêng vào bảng \texttt{learner\_profiles} và được mã hóa để đảm bảo tuân thủ bảo mật (ADR-7).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/erd_user_service.png}
+\caption{ERD của User Management Service}
+\label{fig:erd-user-service}
+\end{figure}
+
+\noindent\textbf{2. Content Service (PostgreSQL + JSONB)}
+\indentpar Quản lý cấu trúc khóa học phong phú. Sử dụng tính năng \texttt{JSONB} của PostgreSQL cho bảng \texttt{content\_units} và \texttt{questions} để lưu trữ dữ liệu bán cấu trúc (như danh sách đáp án, nội dung bài học đa phương tiện) một cách linh hoạt mà không cần quá nhiều bảng phụ (ADR-2).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{images/erd_content_service.png}
+\caption{ERD của Content Service}
+\label{fig:erd-content-service}
+\end{figure}
+
+\noindent\textbf{3. Learner Model Service (PostgreSQL)}
+\indentpar Tập trung vào dữ liệu phân tích (Analytics). Bảng \texttt{skill\_mastery} lưu trữ điểm số thông thạo hiện tại, trong khi \texttt{learning\_history} là một nhật ký (log) ghi lại toàn bộ quá trình làm bài của người học, phục vụ cho việc tính toán và truy vết sau này.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/erd_learner_model_service.png}
+\caption{ERD của Learner Model Service}
+\label{fig:erd-learner-model-service}
+\end{figure}
