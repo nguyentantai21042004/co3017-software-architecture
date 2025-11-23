@@ -4,14 +4,14 @@
 # Dockerfile for Learner Model Consumer
 # Service: Event Consumer - Processes scoring events from RabbitMQ
 # Port: None (background worker)
-# Technology: Golang 1.23 + RabbitMQ + PostgreSQL
+# Technology: Golang 1.25.4 + RabbitMQ + PostgreSQL
 # =============================================================================
 
 # =============================================================================
 # STAGE 1: BUILDER
 # Multi-platform build support for efficient compilation
 # =============================================================================
-FROM --platform=$BUILDPLATFORM golang:1.23-alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:1.25.4-alpine AS builder
 
 WORKDIR /build
 

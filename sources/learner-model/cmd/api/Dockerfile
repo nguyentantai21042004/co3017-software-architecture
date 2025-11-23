@@ -4,14 +4,14 @@
 # Dockerfile for Learner Model Service API
 # Service: Learner Model - Student mastery tracking and skill management
 # Port: 8083
-# Technology: Golang 1.23 + Gin + PostgreSQL + MinIO + RabbitMQ
+# Technology: Golang 1.25.4 + Gin + PostgreSQL + MinIO + RabbitMQ
 # =============================================================================
 
 # =============================================================================
 # STAGE 1: BUILDER
 # Multi-platform build support for efficient compilation
 # =============================================================================
-FROM --platform=$BUILDPLATFORM golang:1.23-alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:1.25.4-alpine AS builder
 
 WORKDIR /build
 

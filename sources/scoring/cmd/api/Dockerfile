@@ -4,14 +4,14 @@
 # Dockerfile for Scoring Service
 # Service: Scoring Service - Answer evaluation and event publishing
 # Port: 8082
-# Technology: Golang 1.23 + Gin + PostgreSQL + RabbitMQ
+# Technology: Golang 1.25.4 + Gin + PostgreSQL + RabbitMQ
 # =============================================================================
 
 # =============================================================================
 # STAGE 1: BUILDER
 # Multi-platform build support for efficient compilation
 # =============================================================================
-FROM --platform=$BUILDPLATFORM golang:1.23-alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:1.25.4-alpine AS builder
 
 WORKDIR /build
 

@@ -31,9 +31,6 @@ services:
       LOGGING_LEVEL_CO3017: DEBUG
     ports:
       - "8081:8081"
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       - its-network
     healthcheck:
@@ -70,11 +67,6 @@ services:
       LOG_LEVEL: debug
     ports:
       - "8082:8082"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
     networks:
       - its-network
     healthcheck:
@@ -106,9 +98,6 @@ services:
       LOG_LEVEL: debug
     ports:
       - "8083:8083"
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       - its-network
     healthcheck:
@@ -141,10 +130,6 @@ services:
       # Logging
       LOG_LEVEL: debug
     depends_on:
-      postgres:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
       scoring-service:
         condition: service_started
     networks:
