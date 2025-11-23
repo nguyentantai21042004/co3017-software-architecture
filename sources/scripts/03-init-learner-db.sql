@@ -2,23 +2,16 @@
 -- DATABASE: learner_db
 -- SERVICE: Learner Model Service (Golang) - Port 8083
 -- PURPOSE: Store learner skill mastery scores (AI state)
+-- NOTE: Database is created by init-multiple-postgresql-databases.sh
+-- This script only creates tables and inserts data
 -- =============================================================================
-
--- Drop database if exists (for clean re-initialization)
-DROP DATABASE IF EXISTS learner_db;
-
--- Create database
-CREATE DATABASE learner_db;
-
--- Connect to the new database
-\c learner_db
 
 -- =============================================================================
 -- TABLE: skill_mastery
 -- Stores the current mastery level for each user-skill combination
 -- This is the core of the Adaptive Learning Engine
 -- =============================================================================
-CREATE TABLE skill_mastery (
+CREATE TABLE IF NOT EXISTS skill_mastery (
     user_id VARCHAR(50) NOT NULL,
     skill_tag VARCHAR(100) NOT NULL,       -- Changed from VARCHAR(50) to VARCHAR(100) for consistency
     current_score INTEGER DEFAULT 0,       -- Mastery score (0-100)
@@ -27,13 +20,16 @@ CREATE TABLE skill_mastery (
 );
 
 -- Create index for efficient querying
-CREATE INDEX idx_skill_mastery_user_id ON skill_mastery(user_id);
-CREATE INDEX idx_skill_mastery_skill_tag ON skill_mastery(skill_tag);
-CREATE INDEX idx_skill_mastery_last_updated ON skill_mastery(last_updated DESC);
+CREATE INDEX IF NOT EXISTS idx_skill_mastery_user_id ON skill_mastery(user_id);
+CREATE INDEX IF NOT EXISTS idx_skill_mastery_skill_tag ON skill_mastery(skill_tag);
+CREATE INDEX IF NOT EXISTS idx_skill_mastery_last_updated ON skill_mastery(last_updated DESC);
 
 -- =============================================================================
 -- SEED DATA: Initial learner states for testing
 -- =============================================================================
+
+-- Clear existing data (optional, for clean re-initialization)
+TRUNCATE TABLE skill_mastery RESTART IDENTITY CASCADE;
 
 -- User 'user_01': Low mastery in algebra (to trigger remedial recommendation)
 INSERT INTO skill_mastery (user_id, skill_tag, current_score)

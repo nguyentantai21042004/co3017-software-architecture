@@ -2,22 +2,15 @@
 -- DATABASE: content_db
 -- SERVICE: Content Service (Java/Spring Boot) - Port 8081
 -- PURPOSE: Store questions, skills, and learning content
+-- NOTE: Database is created by init-multiple-postgresql-databases.sh
+-- This script only creates tables and inserts data
 -- =============================================================================
-
--- Drop database if exists (for clean re-initialization)
-DROP DATABASE IF EXISTS content_db;
-
--- Create database
-CREATE DATABASE content_db;
-
--- Connect to the new database
-\c content_db
 
 -- =============================================================================
 -- TABLE: questions
 -- Stores all learning questions with metadata for adaptive learning
 -- =============================================================================
-CREATE TABLE questions (
+CREATE TABLE IF NOT EXISTS questions (
     id BIGSERIAL PRIMARY KEY,              -- Changed from SERIAL to BIGSERIAL for Long compatibility
     content TEXT NOT NULL,
     options JSONB,                         -- Example: ["A. Option1", "B. Option2", "C. Option3", "D. Option4"]
@@ -29,12 +22,15 @@ CREATE TABLE questions (
 );
 
 -- Create index for efficient querying by skill and type
-CREATE INDEX idx_questions_skill_remedial ON questions(skill_tag, is_remedial);
-CREATE INDEX idx_questions_difficulty ON questions(difficulty_level);
+CREATE INDEX IF NOT EXISTS idx_questions_skill_remedial ON questions(skill_tag, is_remedial);
+CREATE INDEX IF NOT EXISTS idx_questions_difficulty ON questions(difficulty_level);
 
 -- =============================================================================
 -- SEED DATA: Sample questions for testing Adaptive Flow
 -- =============================================================================
+
+-- Clear existing data (optional, for clean re-initialization)
+TRUNCATE TABLE questions RESTART IDENTITY CASCADE;
 
 -- Question 1: Hard main question (for testing failure scenario)
 INSERT INTO questions (content, options, correct_answer, skill_tag, difficulty_level, is_remedial)

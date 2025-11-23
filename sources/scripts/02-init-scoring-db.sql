@@ -2,22 +2,15 @@
 -- DATABASE: scoring_db
 -- SERVICE: Scoring Service (Golang) - Port 8082
 -- PURPOSE: Store submission records and scoring results
+-- NOTE: Database is created by init-multiple-postgresql-databases.sh
+-- This script only creates tables and inserts data
 -- =============================================================================
-
--- Drop database if exists (for clean re-initialization)
-DROP DATABASE IF EXISTS scoring_db;
-
--- Create database
-CREATE DATABASE scoring_db;
-
--- Connect to the new database
-\c scoring_db
 
 -- =============================================================================
 -- TABLE: submissions
 -- Stores all user submissions and their scoring results
 -- =============================================================================
-CREATE TABLE submissions (
+CREATE TABLE IF NOT EXISTS submissions (
     id BIGSERIAL PRIMARY KEY,              -- Changed from SERIAL to BIGSERIAL for int64 compatibility
     user_id VARCHAR(50) NOT NULL,
     question_id BIGINT NOT NULL,           -- Changed from INT to BIGINT to match Go int64 type
@@ -28,16 +21,19 @@ CREATE TABLE submissions (
 );
 
 -- Create indexes for efficient querying
-CREATE INDEX idx_submissions_user_id ON submissions(user_id);
-CREATE INDEX idx_submissions_question_id ON submissions(question_id);
-CREATE INDEX idx_submissions_created_at ON submissions(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_submissions_user_id ON submissions(user_id);
+CREATE INDEX IF NOT EXISTS idx_submissions_question_id ON submissions(question_id);
+CREATE INDEX IF NOT EXISTS idx_submissions_created_at ON submissions(created_at DESC);
 
 -- Composite index for user performance tracking
-CREATE INDEX idx_submissions_user_question ON submissions(user_id, question_id);
+CREATE INDEX IF NOT EXISTS idx_submissions_user_question ON submissions(user_id, question_id);
 
 -- =============================================================================
 -- SEED DATA: Sample submissions for testing (Optional)
 -- =============================================================================
+
+-- Clear existing data (optional, for clean re-initialization)
+TRUNCATE TABLE submissions RESTART IDENTITY CASCADE;
 
 -- Example: User 'user_01' made some previous attempts
 INSERT INTO submissions (user_id, question_id, submitted_answer, score_awarded, is_passed)
