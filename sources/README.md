@@ -1,6 +1,6 @@
 # Intelligent Tutoring System (ITS) - Microservices Architecture
 
-Complete implementation of an adaptive learning system using microservices architecture.
+Complete implementation of an adaptive learning system using microservices architecture, fully containerized with Docker.
 
 ## System Overview
 
@@ -9,229 +9,164 @@ The ITS provides personalized learning paths by:
 2. **Scoring Service** - Evaluates answers and publishes events
 3. **Learner Model Service** - Tracks student mastery levels
 4. **Adaptive Engine** - Recommends personalized content
+5. **Client** - Web-based frontend for students
 
 ## Architecture
 
 ```
-┌─────────────┐
-│   Client    │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────────┐      ┌────────────────┐
-│ Adaptive Engine │─────▶│ Learner Model  │
-│   (Port 8084)   │      │  (Port 8083)   │
-└────────┬────────┘      └────────────────┘
-         │                      ▲
-         │                      │
-         ▼                ┌─────┴─────┐
-┌─────────────────┐       │ RabbitMQ  │
-│ Content Service │       └─────▲─────┘
-│   (Port 8081)   │             │
-└─────────────────┘       ┌─────┴────────┐
-                          │    Scoring   │
-                          │  (Port 8082) │
-                          └──────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                         Docker Network                           │
+│                         (its-network)                            │
+│                                                                  │
+│  ┌─────────────┐                                                 │
+│  │   Client    │ :3000                                           │
+│  │  (Next.js)  │                                                 │
+│  └──────┬──────┘                                                 │
+│         │                                                        │
+│         ▼                                                        │
+│  ┌─────────────────┐      ┌────────────────┐                     │
+│  │ Adaptive Engine │─────▶│ Learner Model  │                     │
+│  │    :8084        │      │  API :8083     │                     │
+│  └────────┬────────┘      └────────┬───────┘                     │
+│           │                        │                             │
+│           ▼                        │                             │
+│  ┌─────────────────┐               │                             │
+│  │ Content Service │               │                             │
+│  │    :8081        │               │                             │
+│  └─────────────────┘               │                             │
+│                             ┌──────┴───────┐                     │
+│                             │   RabbitMQ   │                     │
+│                             │    :5672     │                     │
+│                             └──────▲───────┘                     │
+│                                    │                             │
+│                             ┌──────┴────────┐                    │
+│                             │    Scoring    │                    │
+│                             │    :8082      │                    │
+│                             └───────────────┘                    │
+│                                                                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐            │
+│  │ PostgreSQL   │  │ PostgreSQL   │  │ PostgreSQL   │            │
+│  │ Content DB   │  │ Scoring DB   │  │ Learner DB   │            │
+│  │   :5433      │  │   :5434      │  │   :5435      │            │
+│  └──────────────┘  └──────────────┘  └──────────────┘            │
+│                                                                  │
+│  ┌──────────────┐                                                │
+│  │    MinIO     │                                                │
+│  │   :9000      │                                                │
+│  └──────────────┘                                                │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 ## Services & Databases
 
 | Service | Port | Database | Technology | Purpose |
 |---------|------|----------|------------|---------|
-| Content | 8081 | content_db | Java/Spring Boot | Question management |
-| Scoring | 8082 | scoring_db | Golang/Gin | Answer evaluation |
-| Learner Model | 8083 | learner_db | Golang/Gin | Mastery tracking |
-| Adaptive Engine | 8084 | None | Golang/Gin | Learning orchestration |
+| **Content** | 8081 | content_db (5433) | Java 17/Spring Boot | Question management |
+| **Scoring** | 8082 | scoring_db (5434) | Go 1.23/Gin | Answer evaluation |
+| **Learner Model** | 8083 | learner_db (5435) | Go 1.23/Gin | Mastery tracking |
+| **Adaptive Engine** | 8084 | None | Go 1.23/Gin | Learning orchestration |
+| **Client** | 3000 | None | Next.js 15/Node 20 | User Interface |
 
 ## Quick Start
 
 ### Prerequisites
 
-- Java 17+
-- Go 1.25.4+
-- PostgreSQL 15+
-- RabbitMQ 3+
-- Maven 3.8+
+- Docker Desktop 4.0+
+- Make (optional, but recommended)
 
-### 1. Setup Databases
+### 1. Start All Services
+
+We provide a `Makefile` to simplify Docker operations.
 
 ```bash
-psql -U postgres -h localhost -p 5432 -f init-scripts/01-init-content-db.sql
-psql -U postgres -h localhost -p 5432 -f init-scripts/02-init-scoring-db.sql
-psql -U postgres -h localhost -p 5432 -f init-scripts/03-init-learner-db.sql
+# Setup everything (Build, Start, Init DB, Check Health)
+make setup
 ```
 
-### 2. Start Services
+Or using Docker Compose directly:
 
 ```bash
-# Terminal 1 - Content Service
+# Start services
+docker-compose up -d
+
+# Initialize databases (run once)
+make db-init
+```
+
+### 2. Access Applications
+
+- **Frontend**: [http://localhost:3000](http://localhost:3000)
+- **RabbitMQ**: [http://localhost:15672](http://localhost:15672) (user: `admintest`, pass: `adminTest2025`)
+- **MinIO**: [http://localhost:9001](http://localhost:9001) (user: `minioadmin`, pass: `minioadmin123`)
+
+### 3. Verify Services
+
+```bash
+make health
+```
+
+Or manually:
+```bash
+curl http://localhost:8081/health  # Content
+curl http://localhost:8082/health  # Scoring
+curl http://localhost:8083/health  # Learner Model
+curl http://localhost:8084/health  # Adaptive Engine
+```
+
+## Development
+
+### Useful Commands
+
+```bash
+make help           # Show all available commands
+make logs           # View logs from all services
+make status         # Check service status
+make test           # Run end-to-end test scenario
+make clean          # Stop and remove containers
+make rebuild        # Rebuild and restart services
+```
+
+### Local Development (Without Docker)
+
+If you prefer to run services locally while keeping infrastructure in Docker:
+
+```bash
+# Start only infrastructure (Databases, RabbitMQ, MinIO)
+make dev
+
+# Then run each service locally
 cd content && mvn spring-boot:run
-
-# Terminal 2 - Scoring Service
 cd scoring && go run cmd/api/main.go
-
-# Terminal 3 - Learner Model Service
-cd learner-model && go run cmd/api/main.go
-
-# Terminal 4 - Adaptive Engine
-cd adaptive-engine && go run cmd/api/main.go
+# ... etc
 ```
-
-### 3. Verify All Services
-
-```bash
-curl http://localhost:8081/actuator/health  # Content
-curl http://localhost:8082/health           # Scoring
-curl http://localhost:8083/health           # Learner Model
-curl http://localhost:8084/health           # Adaptive Engine
-```
-
-## Testing
-
-### Quick Test (End-to-End Flow)
-
-```bash
-# 1. Check initial mastery (should be 10)
-curl "http://localhost:8083/internal/learner/user_01/mastery?skill=math_algebra"
-
-# 2. Submit wrong answer (mastery will drop to 5)
-curl -X POST http://localhost:8082/api/scoring/submit \
-  -H "Content-Type: application/json" \
-  -d '{"user_id": "user_01", "question_id": 1, "answer": "C"}'
-
-# 3. Request next lesson (should recommend remedial)
-curl -X POST http://localhost:8084/api/adaptive/next-lesson \
-  -H "Content-Type: application/json" \
-  -d '{"user_id": "user_01", "current_skill": "math_algebra"}'
-
-# Expected: Recommends Question ID 2 (remedial content)
-```
-
-### Postman Collection
-
-Import `ITS_Microservices.postman_collection.json` for complete API testing.
-
-### Complete Testing Guide
-
-See [TESTING_GUIDE.md](./TESTING_GUIDE.md) for detailed testing instructions.
 
 ## Project Structure
 
 ```
-src/
-├── init-scripts/           # Database initialization
-│   ├── 01-init-content-db.sql
-│   ├── 02-init-scoring-db.sql
-│   └── 03-init-learner-db.sql
+sources/
+├── docker-compose.yml      # Main Docker composition
+├── Makefile                # Management commands
+├── scripts/                # Database initialization & test scripts
 ├── content/                # Java/Spring Boot Service
-│   ├── src/main/java/...
-│   ├── pom.xml
-│   └── README.md
 ├── scoring/                # Golang Service
-│   ├── cmd/api/main.go
-│   ├── internal/...
-│   └── README.md
 ├── learner-model/          # Golang Service
-│   ├── cmd/api/main.go
-│   ├── internal/...
-│   └── README.md
 ├── adaptive-engine/        # Golang Service
-│   ├── cmd/api/main.go
-│   ├── internal/...
-│   └── README.md
-├── TESTING_GUIDE.md        # Complete testing guide
-└── ITS_Microservices.postman_collection.json
+├── client/                 # Next.js Frontend
+└── README.md               # Project documentation
 ```
 
-## Key Features
+## Testing
 
-### 1. Adaptive Learning
-- Tracks student mastery per skill
-- Recommends remedial content when mastery < 50%
-- Progresses to harder content when mastery >= 50%
+### End-to-End Test
 
-### 2. Event-Driven Architecture
-- Scoring Service publishes submission events
-- Learner Model Service consumes events asynchronously
-- Decoupled services via RabbitMQ
-
-### 3. Microservices Benefits
-- Independent deployment
-- Technology diversity (Java + Go)
-- Scalable architecture
-- Service isolation
-
-## Configuration
-
-Each service has its own `.env` file:
-
-**Content Service** (`content/src/main/resources/application.yml`)
-```yaml
-server:
-  port: 8081
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/content_db
-```
-
-**Golang Services** (`.env` in each service)
-```env
-APP_PORT=8082  # or 8083, 8084
-POSTGRES_DB=scoring_db  # or learner_db
-RABBITMQ_URL=amqp://admintest:adminTest2025@localhost:5672/
-```
-
-## Documentation
-
-- [Content Service README](./content/README.md)
-- [Scoring Service README](./scoring/README.md)
-- [Learner Model Service README](./learner-model/README.md)
-- [Adaptive Engine README](./adaptive-engine/README.md)
-- [Complete Testing Guide](./TESTING_GUIDE.md)
-
-## Troubleshooting
-
-### Services Won't Start
+Run a complete flow test (Check Mastery -> Submit Answer -> Get Recommendation):
 
 ```bash
-# Check if ports are in use
-lsof -i :8081
-lsof -i :8082
-lsof -i :8083
-lsof -i :8084
+make test
 ```
 
-### Database Connection Failed
+### Common Issues
 
-```bash
-# Verify databases exist
-psql -U postgres -h localhost -p 5432 -c "\l" | grep "_db"
-```
-
-### RabbitMQ Not Connected
-
-```bash
-# Check RabbitMQ Management UI
-open http://localhost:15672
-# Login: admintest / adminTest2025
-```
-
-## Demo Scenario
-
-**Adaptive Learning in Action:**
-
-1. **Initial State**: User has low algebra mastery (10%)
-2. **User Action**: Attempts hard question, answers incorrectly
-3. **System Response**: 
-   - Mastery drops to 5%
-   - System detects struggle
-   - Recommends easier remedial content
-4. **Result**: User gets personalized learning path
-
-## Architecture Decisions
-
-- **Microservices**: For independent scalability
-- **Event-Driven**: Async processing via RabbitMQ
-- **Database-per-Service**: Data ownership and isolation
-- **RESTful APIs**: Simple HTTP communication
-- **Stateless Adaptive Engine**: No database, pure orchestration
+1. **Ports in use**: Ensure ports 3000, 8081-8084, 5433-5435, 5672, 9000-9001 are free.
+2. **Database Connection**: Ensure containers are healthy (`make status`).
+3. **Build Failures**: Try `make build-no-cache`.

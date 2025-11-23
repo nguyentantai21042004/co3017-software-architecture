@@ -1,0 +1,96 @@
+version: '3.9'
+
+# =============================================================================
+# Infrastructure Docker Compose
+# Databases, Message Queues, and Object Storage
+# =============================================================================
+
+networks:
+  its-network:
+    driver: bridge
+    name: its-network
+
+volumes:
+  # PostgreSQL Data (Unified)
+  postgres-data:
+  # RabbitMQ Data
+  rabbitmq-data:
+  # MinIO Data
+  minio-data:
+
+services:
+  # ===========================================================================
+  # DATABASE SERVICE (Unified PostgreSQL)
+  # ===========================================================================
+  
+  postgres:
+    image: postgres:15-alpine
+    container_name: its-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      # Custom variable used by the init script
+      POSTGRES_MULTIPLE_DATABASES: content_db,scoring_db,learner_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-multiple-postgresql-databases.sh:/docker-entrypoint-initdb.d/init-multiple-postgresql-databases.sh
+    networks:
+      - its-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===========================================================================
+  # MESSAGE QUEUE SERVICE
+  # ===========================================================================
+  
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: its-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: admintest
+      RABBITMQ_DEFAULT_PASS: adminTest2025
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - its-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ===========================================================================
+  # OBJECT STORAGE SERVICE
+  # ===========================================================================
+  
+  minio:
+    image: minio/minio:latest
+    container_name: its-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console
+    volumes:
+      - minio-data:/data
+    networks:
+      - its-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
