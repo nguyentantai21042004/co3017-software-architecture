@@ -92,7 +92,8 @@ Phân tích kết quả và định hướng lựa chọn:
 \indentpar \indentpar ITS không chuyển sang Microservices ngay lập tức mà từng bước để giảm rủi ro:
 
 \begin{enumerate}[leftmargin=0.7cm]
-    \item \textbf{Phase 1 -- Modular Monolith (MVP):} xây dựng monolith có cấu trúc module, áp dụng Clean Architecture \& DIP (Mục~3.3, ADR-3; Mục~3.4) để thuận lợi tách rời.
+    \item \textbf{Phase 1 -- MVP (Hiện tại):} Xây dựng hệ thống với các service cốt lõi (Content, Scoring, Learner, Adaptive) chạy trên nền tảng Docker Compose. Sử dụng giao tiếp REST để đơn giản hóa việc tích hợp và kiểm thử nhanh logic nghiệp vụ.
+    \item \textbf{Phase 2 -- Modular Monolith \& Optimization:} Tối ưu hóa code nội bộ theo Clean Architecture, chuẩn bị cho việc mở rộng.
     \item \textbf{Phase 2 -- Extract Critical Services (Strangler Fig Pattern):} khi nhu cầu mở rộng xuất hiện (ví dụ ScoringService quá tải), tách module thành microservice riêng và định tuyến qua API Gateway. Strangler Fig Pattern là mô hình di chuyển dần từ hệ thống cũ sang mới, trong đó các chức năng được tách ra từng phần một, đồng thời hệ thống cũ vẫn hoạt động song song cho đến khi hoàn toàn thay thế.
     \item \textbf{Phase 3 -- Full Microservices Ecosystem:} tiếp tục tách các module còn lại khi hệ thống trưởng thành, hướng tới hệ sinh thái microservices tối ưu AC1, AC2, AC5.
 \end{enumerate}

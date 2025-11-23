@@ -7,24 +7,24 @@ Phần này đặc biệt quan trọng vì nó hiện thực hóa các quyết �
 
 \subsubsection{Sơ đồ Kiến trúc Dịch vụ}
 
-\indentpar \indentpar Sơ đồ này mô tả toàn bộ hệ sinh thái dịch vụ (microservices) của ITS trong môi trường Kubernetes, phân nhóm theo mục tiêu kỹ thuật (Java vs Go) và loại giao tiếp (sync vs async). Nó kế thừa trực tiếp cấu trúc từ System Decomposition, nhưng chuyển trọng tâm từ ``module logic'' sang ``kết nối hoạt động''.
+\indentpar \indentpar Sơ đồ này mô tả toàn bộ hệ sinh thái dịch vụ (microservices) của ITS trong môi trường triển khai thực tế (Docker Compose cho MVP), phân nhóm theo mục tiêu kỹ thuật (Java vs Go) và loại giao tiếp (sync vs async).
 
 \vspace{1em}
 
 \begin{figure}[H]
 \centering
 \fbox{\includegraphics[width=0.93\textwidth]{images/service_architecture.png}}
-\caption{Sơ đồ kiến trúc dịch vụ của hệ thống ITS trong môi trường Kubernetes}
+\caption{Sơ đồ kiến trúc dịch vụ của hệ thống ITS}
 \label{fig:service-architecture}
 \end{figure}
 
 \subsubsection{Các Mẫu Tích hợp}
 
-\indentpar \indentpar Sau khi hệ thống được phân tách thành nhiều module và microservice độc lập, cần mô tả rõ cách các thành phần này giao tiếp với nhau thông qua các kiểu mẫu kết nối (connector patterns). Đây là nền tảng giúp toàn bộ hệ thống phối hợp nhịp nhàng, vận hành ổn định và mở rộng bền vững theo thời gian.
+\indentpar \indentpar Sau khi hệ thống được phân tách thành nhiều module và microservice độc lập, cần mô tả rõ cách các thành phần này giao tiếp với nhau. Trong giai đoạn MVP, chúng tôi ưu tiên sự đơn giản và tốc độ phát triển, nhưng vẫn giữ nguyên tắc phân tách rõ ràng.
 
 \noindent\textbf{a. Giao tiếp Đồng bộ (Synchronous Communication)}
 
-Sử dụng cho các tương tác yêu cầu-phản hồi (request-response) \textbf{ngay lập tức, nơi client phải chờ kết quả}.
+Sử dụng cho các tương tác yêu cầu-phản hồi (request-response) \textbf{ngay lập tức}.
 
 \begin{figure}[H]
 \centering
@@ -34,10 +34,21 @@ Sử dụng cho các tương tác yêu cầu-phản hồi (request-response) \te
 \end{figure}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item Giao thức: REST qua HTTPS (cho giao tiếp Client-to-Gateway và các nghiệp vụ Java-to-Java); gRPC (cho giao tiếp nội bộ hiệu nâng cao, đặc biệt giữa các service Go)
-    \item Định dạng: JSON
-    \item Bảo mật: JWT Bearer tokens trong header \texttt{Authorization} (theo ADR-6)
+    \item \textbf{Giao thức}: REST qua HTTP. Tất cả các giao tiếp giữa Client-Service và Service-Service (ví dụ: Adaptive Engine gọi Content Service) đều sử dụng chuẩn RESTful API với định dạng JSON.
+    \item \textbf{Lý do chọn REST cho MVP}: Xem phần Phân tích Đánh đổi bên dưới.
 \end{itemize}
+
+\noindent\textbf{b. Phân tích Đánh đổi: REST vs gRPC}
+
+\indentpar \indentpar Mặc dù gRPC mang lại hiệu năng cao hơn và type-safety tốt hơn (như đã đề cập trong thiết kế ban đầu), chúng tôi quyết định sử dụng \textbf{REST/HTTP} cho phiên bản hiện tại vì các lý do sau:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Tốc độ phát triển}: REST là tiêu chuẩn quen thuộc, giúp đội ngũ phát triển nhanh chóng tích hợp và gỡ lỗi (debug) trực tiếp bằng các công cụ như Postman hay cURL mà không cần tooling phức tạp.
+    \item \textbf{Giảm độ phức tạp}: Loại bỏ nhu cầu quản lý file `.proto` và quy trình code generation trong giai đoạn đầu, giúp tập trung vào logic nghiệp vụ cốt lõi.
+    \item \textbf{Tính tương thích}: JSON/HTTP được hỗ trợ tự nhiên bởi cả Spring Boot (Java), Gin (Go) và Next.js (Frontend), giảm thiểu rủi ro tích hợp.
+\end{itemize}
+
+Tuy nhiên, kiến trúc vẫn được thiết kế để có thể chuyển đổi sang gRPC trong tương lai (Phase 2) khi yêu cầu về hiệu năng và latency trở nên khắt khe hơn, nhờ vào việc đóng gói logic giao tiếp trong các lớp Adapter/Client riêng biệt.
 
 \noindent\textbf{b. Giao tiếp Bất đồng bộ (Asynchronous Communication)}
 

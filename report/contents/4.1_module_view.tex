@@ -14,7 +14,9 @@ Module View đặc biệt quan trọng vì nó thể hiện cách các quyết �
 
 \subsubsection{Phân rã Hệ thống}
 
-\indentpar \indentpar Hệ thống ITS được thiết kế theo phong cách \textbf{Hybrid Microservices + Event-Driven Architecture}. Việc phân rã hệ thống \textbf{(System Decomposition)} dựa trên Bounded Contexts của Domain-Driven Design (DDD), trong đó mỗi service đại diện cho một nhóm nghiệp vụ độc lập (một domain context riêng).
+\indentpar \indentpar Hệ thống ITS được thiết kế theo phong cách \textbf{Hybrid Microservices + Event-Driven Architecture}. Việc phân rã hệ thống \textbf{(System Decomposition)} dựa trên Bounded Contexts của Domain-Driven Design (DDD).
+
+\textbf{Lưu ý về phạm vi MVP:} Trong giai đoạn hiện tại (MVP), chúng tôi tập trung hiện thực các service cốt lõi liên quan trực tiếp đến luồng học tập thích ứng (Content, Scoring, Learner Model, Adaptive Engine). Các service hỗ trợ như \textbf{User Management} và \textbf{Auth Service} được mô tả trong kiến trúc đích (Target Architecture) nhưng chưa được tách thành microservice riêng biệt trong phiên bản code hiện tại; thay vào đó, các chức năng này được giả lập hoặc xử lý đơn giản để ưu tiên kiểm chứng logic nghiệp vụ chính.
 
 \vspace{1em}
 
