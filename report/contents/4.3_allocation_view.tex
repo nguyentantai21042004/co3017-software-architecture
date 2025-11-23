@@ -1,6 +1,9 @@
 \subsection{Góc nhìn Phân bổ}
 
-\indentpar \indentpar Trong kiến trúc On-Premise, hệ thống ITS được triển khai hoàn toàn trên hạ tầng nội bộ (private infrastructure), bao gồm:
+\indentpar \indentpar \textbf{Lưu ý quan trọng:} Góc nhìn này mô tả \textbf{Kiến trúc Đích (Target Architecture - Phase 3)} của hệ thống ITS khi triển khai trên môi trường Production quy mô lớn (On-Premise Kubernetes).
+\indentpar Đối với giai đoạn \textbf{MVP (Phase 1)} hiện tại, hệ thống được triển khai đơn giản hóa bằng \textbf{Docker Compose} trên một máy chủ vật lý duy nhất để phục vụ phát triển và kiểm thử nhanh (xem chi tiết tại Mục~6).
+
+\indentpar \indentpar Trong kiến trúc đích On-Premise, hệ thống ITS được triển khai hoàn toàn trên hạ tầng nội bộ (private infrastructure), bao gồm:
 \begin{itemize}[leftmargin=0.7cm]
     \item Các Server vật lý hoặc Virtual Machines trong trung tâm dữ liệu.
     \item Một Kubernetes Cluster tự quản lý (Self-managed K8s) do đội IT vận hành.

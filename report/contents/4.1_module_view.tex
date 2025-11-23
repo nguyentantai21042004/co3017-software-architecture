@@ -53,7 +53,7 @@ Phân rã này cũng thể hiện rõ \textbf{``Bounded Contexts''} của DDD, c
 \begin{table}[H]
 \centering
 \small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{3.5cm}|>{\centering\arraybackslash}X|}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{3.2cm}|>{\centering\arraybackslash}X|}
 \hline
 \textbf{Tầng} & \textbf{Trách nhiệm} & \textbf{Quy tắc phụ thuộc} & \textbf{Ví dụ cụ thể trong ITS} \\
 \hline
@@ -83,96 +83,59 @@ Infrastructure & Cung cấp chi tiết kỹ thuật: framework, driver, cấu h�
 \begin{verbatim}
 src/main/java/co3017/microservices/content_service/
 |-- adapter/
-|   `-- http/                # REST controllers, DTOs, response builders
-|-- config/                  # Spring Boot entry point, cross-cutting config
-|-- mappers/                 # Domain <-> Persistence transformers
-|-- models/                  # Domain entities & value objects
-|-- repository/              # Ports (interfaces) & Postgres adapters
-|   `-- postgresql/
-|       |-- entity/          # JPA entities
-|       |-- mapper/          # Persistence-specific mappers
-|       |-- specification/   # Query specifications (criteria builders)
-|       `-- springdata...    # Spring Data repositories + adapters
-`-- usecase/                 # Application layer contracts & services
-    |-- service/            # Use case implementations (business orchestration)
-    `-- types/              # Commands, queries, DTOs cho use cases
-
-src/main/resources/          # Infrastructure config (YAML, SQL migrations)
+|   `-- http/                # REST controllers (QuestionController)
+|-- config/                  # Configuration (CorsConfig)
+|-- models/                  # Domain entities (Question)
+|-- repository/              # JPA Repositories (QuestionRepository)
+|-- usecase/                 # Business Logic
+|   |-- QuestionUseCase.java # Interface
+|   `-- QuestionService.java # Implementation
+`-- ContentServiceApplication.java # Entry Point
 \end{verbatim}
 \end{minipage}
 \end{center}
 
 \noindent\textbf{Giải thích cấu trúc}
 \begin{itemize}[leftmargin=1.2em]
-    \item \textbf{Domain Layer} (\texttt{models/}, \texttt{repository/*.java}): chứa Aggregate Root, Value Object (\texttt{Course}, \texttt{ContentUnit}, \texttt{MetadataTag}). Các lớp thuần Java, không phụ thuộc framework; \texttt{repository/} định nghĩa các port như \texttt{CourseRepository}, \texttt{ContentVersionRepository}
-    \item \textbf{Application Layer} (\texttt{usecase/}): gồm interface \texttt{CourseUseCase}, \texttt{ContentUnitUseCase} và implementation \texttt{CourseService}. \texttt{usecase/types/} gom các command/query (\texttt{CreateCourseCommand}, \texttt{CourseSearchCriteria}) và DTO phản hồi (\texttt{CoursePageResult})
-    \item \textbf{Interface Adapters Layer} (\texttt{adapter/http}, \texttt{mappers/}): controller REST (\texttt{CourseController}) và DTO request/response chuyển đổi HTTP payload \(\rightarrow\) \texttt{usecase.types}. Các mapper nối domain với entity persistence, không phụ thuộc annotation đặc thù
-    \item \textbf{Infrastructure Layer} (\texttt{repository/postgresql}, \texttt{config/}, \texttt{resources/}): hiện thực port bằng Spring Data JPA (\texttt{JpaCourseRepository} \(\leftrightarrow\) \texttt{SpringDataCourseRepository}), cấu hình entry point (\texttt{ContentServiceApplication}, \texttt{CorsConfig}), và tài nguyên \texttt{application.yml}, script SQL
+    \item \textbf{Domain Layer} (\texttt{models/}): Chứa các Entity JPA như \texttt{Question}. Đây là trung tâm của nghiệp vụ.
+    \item \textbf{Application Layer} (\texttt{usecase/}): Chứa logic nghiệp vụ cốt lõi. \texttt{QuestionService} thực thi các quy tắc nghiệp vụ và gọi xuống Repository.
+    \item \textbf{Interface Adapters} (\texttt{adapter/http}): Chứa Controller để xử lý HTTP request/response, đóng vai trò là cổng giao tiếp với bên ngoài.
+    \item \textbf{Infrastructure} (\texttt{repository/}, \texttt{config/}): Triển khai các interface lưu trữ (Spring Data JPA) và cấu hình hệ thống.
 \end{itemize}
 
-\noindent\textbf{Tuân thủ Dependency Rule.}
-\begin{itemize}[leftmargin=1.2em]
-    \item \texttt{models/} và \texttt{repository/*.java} (domain) hoàn toàn độc lập, không biết gì về Spring, JPA hay HTTP
-    \item \texttt{usecase/} chỉ phụ thuộc domain interface, điều phối business logic thông qua port mà không quan tâm implementation cụ thể
-    \item \texttt{adapter/} và \texttt{repository/postgresql}, \texttt{config/} hiện thực các interface đó, phụ thuộc ngược vào \texttt{usecase/} nhưng không kéo domain vào vòng phụ thuộc
-\end{itemize}
+\noindent\textbf{b. Service Go (Scoring, Learner Model, Adaptive Engine)}
 
-Cấu trúc này cho phép đội ngũ áp dụng blueprint chung khi dịch sang Go, đảm bảo tính nhất quán về phân tầng và Dependency Rule giữa các ngôn ngữ trong hệ thống polyglot.
+Các service viết bằng Go tuân thủ \textbf{Standard Go Project Layout}, tối ưu cho microservices.
 
-\noindent\textbf{b. Service Go (Learner Model Service)}
-
-\noindent\textbf{Cấu trúc thư mục}
+\noindent\textbf{Cấu trúc thư mục (Ví dụ: Scoring Service)}
 \begin{center}
 \begin{minipage}{0.95\textwidth}
 \begin{verbatim}
-/Users/tantai/Workspaces/smap/smap-api/
-|-- domain/
-|   |-- internal/models/
-|   |-- internal/dbmodels/
-|   |-- internal/auth/ (uc_interface.go, uc_types.go, uc_errors.go, repo_interface.go)
-|   |-- internal/user/ (uc_interface.go, uc_types.go, uc_errors.go, repo_interface.go)
-|   |-- internal/role/ (uc_interface.go, uc_types.go, uc_errors.go, repo_interface.go)
-|   `-- internal/session/ (uc_interface.go, uc_types.go, uc_errors.go, repo_interface.go)
-|-- application/
-|   |-- internal/auth/usecase/
-|   |-- internal/user/usecase/
-|   |-- internal/role/usecase/
-|   |-- internal/session/usecase/
-|   `-- internal/core/smtp/usecase/
-|-- adapters/
-|   |-- internal/httpserver/
-|   |   |-- handler.go
-|   |   |-- httpserver.go
-|   |   `-- new.go
-|   |-- internal/middleware/
-|   |-- internal/auth/delivery/http/
-|   |-- internal/auth/delivery/rabbitmq/
-|   |-- internal/user/delivery/http/
-|   |-- internal/role/delivery/http/
-|   |-- internal/session/repository/mongo/
-|   |-- internal/user/repository/mongo/
-|   `-- internal/role/repository/mongo/
-`-- infrastructure/
-    |-- cmd/api/main.go
-    |-- cmd/consumer/main.go
-    |-- config/
-    |-- internal/appconfig/mongo/
-    |-- internal/appconfig/oauth/
-    |-- internal/consumer/
-    |-- pkg/
-    |   `-- log/, redis/, rabbitmq/, mongo/, email/, discord/
-    |   `-- scope/, otp/, response/, paginator/, errors/, util/, ...
-    `-- deployment/, docker-compose.yml, Jenkinsfile, Makefile
+sources/scoring/
+|-- cmd/
+|   `-- api/                 # Main entry point (main.go)
+|-- internal/
+|   `-- scoring/             # Module chính
+|       |-- delivery/        # HTTP Handlers (Gin)
+|       |-- usecase/         # Business Logic
+|       |-- repository/      # Database Access (GORM)
+|       `-- model/           # Structs & Entities
+|-- pkg/                     # Shared libraries (nếu có)
+`-- go.mod                   # Dependency definitions
 \end{verbatim}
 \end{minipage}
 \end{center}
 
 \noindent\textbf{Giải thích cấu trúc}
 \begin{itemize}[leftmargin=1.2em]
-    \item \textbf{Domain Layer} (\texttt{domain/}): chứa entity thuần (\texttt{internal/models}, \texttt{internal/dbmodels}) và các contract (interface, DTO, error) của từng bounded context \texttt{internal/\{auth,user,role,session\}}. Hoàn toàn không phụ thuộc Gin, Mongo driver hay adapter cụ thể
-    \item \textbf{Application Layer} (\texttt{application/}): triển khai use case (\texttt{internal/\{auth,user,role,session\}/usecase}) và dịch vụ cốt lõi (\texttt{internal/core/smtp/usecase}). Các package này sử dụng interface từ \texttt{domain/}, điều phối giữa nhau (ví dụ \texttt{auth} gọi \texttt{userUC}, \texttt{roleUC}, \texttt{sessionUC}) và phát sự kiện RabbitMQ
-    \item \textbf{Interface Adapters Layer} (\texttt{adapters/}): gồm entry adapter (Gin handler, RabbitMQ producer) và data adapter (Mongo repository). \texttt{internal/httpserver}, \texttt{internal/middleware} định nghĩa router, middleware; \texttt{internal/\{module\}/delivery} ánh xạ request/response, gửi cảnh báo Discord; \texttt{internal/\{module\}/repository/mongo} hiện thực repository interface bằng MongoDB
-    \item \textbf{Infrastructure Layer} (\texttt{infrastructure/}): tập trung file khởi động, cấu hình, wiring và tiện ích dùng chung. \texttt{cmd/api/main.go}, \texttt{cmd/consumer/main.go} load config, khởi tạo logger/encrypter, kết nối Mongo/Redis/RabbitMQ, dựng HTTP server hoặc consumer. \texttt{config/}, \texttt{internal/appconfig/*}, \texttt{pkg/*} cung cấp adapter tái sử dụng (logger Zap, Redis client, Discord webhook, SMTP, i18n, paginator, OTP, response). Các artifact triển khai (deployment, Docker Compose, Jenkinsfile, Makefile) cũng nằm tại đây
+    \item \textbf{cmd/api}: Chứa hàm \texttt{main}, nơi khởi tạo ứng dụng, kết nối DB và đăng ký các route.
+    \item \textbf{internal/}: Chứa mã nguồn riêng tư của service, không thể import từ bên ngoài.
+    \begin{itemize}
+        \item \textbf{model}: Định nghĩa các struct dữ liệu (Entity).
+        \item \textbf{repository}: Tương tác trực tiếp với cơ sở dữ liệu.
+        \item \textbf{usecase}: Chứa logic nghiệp vụ, gọi repository để lấy dữ liệu.
+        \item \textbf{delivery}: Xử lý HTTP request, parse JSON và gọi usecase.
+    \end{itemize}
 \end{itemize}
 
-Cách trình bày này giúp đội ngũ xem kiến trúc Go hiện tại dưới cùng một blueprint với các service khác (Java hoặc Go) mà ADR-1 đề ra, đồng thời duy trì biên rõ ràng để mở rộng hoặc refactor.
+Cách tổ chức này giúp code Go gọn gàng, dễ đọc và tuân thủ nguyên tắc "Separation of Concerns" tương tự như Clean Architecture nhưng được điều chỉnh cho phù hợp với đặc thù ngôn ngữ Go.

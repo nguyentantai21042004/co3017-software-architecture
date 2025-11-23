@@ -8,20 +8,20 @@
 
 \indentpar \indentpar Dưới đây là các sơ đồ tuần tự cho 5 kịch bản quan trọng nhất của hệ thống ITS.
 
-\noindent \textbf{1. Đăng ký Người dùng và Nhập môn (User Registration and Onboarding)}
+\noindent \textbf{1. Đăng ký Người dùng và Nhập môn (Target Architecture)}
 
-\indentpar \indentpar Luồng này (tương ứng với UC-01) mô tả cách một người dùng mới (Learner) tạo tài khoản. Nó sử dụng một mô hình bất đồng bộ (event-driven) để tách rời việc tạo thông tin xác thực (AuthN) khỏi việc tạo hồ sơ người dùng (PII). Điều này tuân thủ ADR-6 (Auth Service riêng biệt) và ADR-7 (Tách PII).
+\indentpar \indentpar \textit{*Tính năng này thuộc kiến trúc đích, chưa có trong MVP.*} Luồng này (tương ứng với UC-01) mô tả cách một người dùng mới (Learner) tạo tài khoản. Nó sử dụng một mô hình bất đồng bộ (event-driven) để tách rời việc tạo thông tin xác thực (AuthN) khỏi việc tạo hồ sơ người dùng (PII). Điều này tuân thủ ADR-6 (Auth Service riêng biệt) và ADR-7 (Tách PII).
 
 \indentpar \indentpar \textbf{Các thành phần tham gia:} Client, API Gateway, Auth Service (Java), User Management Service (Java), RabbitMQ.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{images/user_registration_sequence.png}
-\caption{Luồng Đăng ký Người dùng và Nhập môn}
+\caption{Luồng Đăng ký Người dùng và Nhập môn (Target)}
 \label{fig:user-registration-flow}
 \end{figure}
 
-\noindent \textbf{2. Cung cấp Nội dung Thích ứng (Adaptive Content Delivery)}
+\noindent \textbf{2. Cung cấp Nội dung Thích ứng (MVP Implementation)}
 
 \indentpar \indentpar Luồng này (tương ứng với UC-08) xảy ra khi người học yêu cầu bài học tiếp theo. Đây là một luồng đồng bộ (synchronous) phức tạp, đòi hỏi sự tương tác nhanh giữa Adaptive Engine và Learner Model Service (cả hai đều bằng Go, theo ADR-1) để tính toán và trả về nội dung phù hợp ngay lập tức.
 
@@ -34,20 +34,20 @@
 \label{fig:adaptive-content-flow}
 \end{figure}
 
-\noindent \textbf{3. Tạo Phản hồi Tức thì (Real-time Feedback Generation)}
+\noindent \textbf{3. Tạo Phản hồi Tức thì (Target Architecture)}
 
-\indentpar \indentpar Kịch bản này (một phần của UC-10) là luồng đồng bộ nhanh, tập trung vào việc cung cấp gợi ý (hints) ngay lập tức cho người học mà không cần nộp bài. Điều này yêu cầu hiệu năng cực cao (\textbf{AC3:} $< 500$ms), là lý do Scoring \& Feedback Service được viết bằng Go (ADR-1).
+\indentpar \indentpar \textit{*Tính năng gợi ý (Hint) chưa có trong MVP.*} Kịch bản này (một phần của UC-10) là luồng đồng bộ nhanh, tập trung vào việc cung cấp gợi ý (hints) ngay lập tức cho người học mà không cần nộp bài. Điều này yêu cầu hiệu năng cực cao (\textbf{AC3:} $< 500$ms), là lý do Scoring Service được viết bằng Go (ADR-1).
 
-\indentpar \indentpar \textbf{Các thành phần tham gia:} Learner, Client, API Gateway, Scoring \& Feedback Service.
+\indentpar \indentpar \textbf{Các thành phần tham gia:} Learner, Client, API Gateway, Scoring Service.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{images/real_time_feedback_sequence.png}
-\caption{Luồng Tạo Phản hồi Tức thì}
+\caption{Luồng Tạo Phản hồi Tức thì (Target)}
 \label{fig:realtime-feedback-flow}
 \end{figure}
 
-\noindent \textbf{4. Nộp và Chấm điểm Bài tập (Assessment Submission and Scoring)}
+\noindent \textbf{4. Nộp và Chấm điểm Bài tập (MVP Implementation)}
 
 \indentpar \indentpar Đây là luồng (UC-10) quan trọng nhất, thể hiện rõ kiến trúc hybrid (lai) của hệ thống để đáp ứng \textbf{AC3: Performance}.
 
@@ -65,16 +65,16 @@
 \label{fig:submission-scoring-flow}
 \end{figure}
 
-\noindent \textbf{5. Tạo Báo cáo Giảng viên (Instructor Report Generation)}
+\noindent \textbf{5. Tạo Báo cáo Giảng viên (Target Architecture)}
 
-\indentpar \indentpar Luồng này (tương ứng với UC-13/14) là một kịch bản ``đọc'' (read) phức tạp, đòi hỏi tổng hợp (orchestration) dữ liệu từ nhiều microservice khác nhau. Chúng ta giả định Content Service (Java, theo ADR-1) là dịch vụ thực hiện việc tổng hợp này, vì nó đòi hỏi logic nghiệp vụ phức tạp và không nhạy cảm về độ trễ như các luồng AI.
+\indentpar \indentpar \textit{*Tính năng này thuộc kiến trúc đích, chưa có trong MVP.*} Luồng này (tương ứng với UC-13/14) là một kịch bản ``đọc'' (read) phức tạp, đòi hỏi tổng hợp (orchestration) dữ liệu từ nhiều microservice khác nhau. Chúng ta giả định Content Service (Java, theo ADR-1) là dịch vụ thực hiện việc tổng hợp này, vì nó đòi hỏi logic nghiệp vụ phức tạp và không nhạy cảm về độ trễ như các luồng AI.
 
 \indentpar \indentpar \textbf{Các thành phần tham gia:} Instructor, Client, API Gateway, Content Service (Orchestrator), User Management Service, Learner Model Service.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{images/instructor_report_generation_sequence.png}
-\caption{Luồng Tạo Báo cáo Giảng viên}
+\caption{Luồng Tạo Báo cáo Giảng viên (Target)}
 \label{fig:instructor-report-flow}
 \end{figure}
 
