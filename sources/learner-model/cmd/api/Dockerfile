@@ -1,68 +1,78 @@
 # syntax=docker/dockerfile:1
 
 # =============================================================================
-# STAGE 1: BUILDER
-# Tip: --platform=$BUILDPLATFORM ensures Docker always uses the Go image that matches your machine's chip (e.g. Apple Silicon M4)
-# so the compiler runs at full speed with no need for slow emulation (QEMU).
+# Dockerfile for Learner Model Service API
+# Service: Learner Model - Student mastery tracking and skill management
+# Port: 8083
+# Technology: Golang 1.23 + Gin + PostgreSQL + MinIO + RabbitMQ
 # =============================================================================
-FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS builder
 
-WORKDIR /app
+# =============================================================================
+# STAGE 1: BUILDER
+# Multi-platform build support for efficient compilation
+# =============================================================================
+FROM --platform=$BUILDPLATFORM golang:1.23-alpine AS builder
 
-# 1. Declare Docker Buildx automatic ARG variables
-# When you build with --platform linux/amd64, Docker will automatically set "linux" for TARGETOS and "amd64" for TARGETARCH
+WORKDIR /build
+
+# Declare build platform arguments
 ARG TARGETOS
 ARG TARGETARCH
 
-# Install git and tzdata (will be copied to runtime image)
-RUN apk add --no-cache git tzdata
+# Install build dependencies
+RUN apk add --no-cache git tzdata ca-certificates
 
-# 2. Cache & Download Dependencies + Install Swag
-# Using cache mount prevents downloading dependencies on every build
+# Copy and download dependencies (cached layer)
 COPY go.mod go.sum ./
 RUN --mount=type=cache,target=/go/pkg/mod \
     go mod download && \
-    go install github.com/swaggo/swag/cmd/swag@v1.8.12
+    go install github.com/swaggo/swag/cmd/swag@v1.16.6
 
-# 3. Copy Source Code
+# Copy entire project (context is learner-model/ directory)
 COPY . .
 
-# 4. Generate Swagger Documentation
-RUN swag init -g cmd/api/main.go
+# Generate Swagger documentation
+RUN swag init -g cmd/api/main.go -o docs
 
-# 5. Build Binary (Explicitly specify GOOS and GOARCH from Docker ARGs)
-# CGO_ENABLED=0: Required to run with Distroless Static (no C libraries needed)
-# -ldflags="-s -w": Remove debug info to reduce binary size (~30-40% smaller)
-# --mount=type=cache: Reuses build cache between builds → Much faster!
+# Build binary with optimizations
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     CGO_ENABLED=0 \
     GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH} \
     go build \
-    -ldflags="-s -w" \
-    -o api ./cmd/api
+    -ldflags="-s -w -X main.Version=1.0.0" \
+    -o learner-api ./cmd/api
 
 # =============================================================================
-# STAGE 2: RUNTIME (Distroless Static - Ultra lightweight & Secure)
-# - No shell, no package manager → Minimal attack surface
-# - Image size ~2MB (vs Alpine ~20MB)
-# - Contains only: binary + ca-certs + timezone + user
+# STAGE 2: RUNTIME - Distroless for security and minimal size
 # =============================================================================
-FROM gcr.io/distroless/static-debian12:nonroot AS runtime
+FROM gcr.io/distroless/static-debian12:nonroot
 
 WORKDIR /app
 
-# Copy timezone data (because distroless static doesn't have it by default)
+# Copy timezone and CA certificates from builder
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+# Set timezone
 ENV TZ=Asia/Ho_Chi_Minh
 
-# Copy the compiled binary for the correct architecture
-COPY --from=builder --chown=nonroot:nonroot /app/api .
+# Copy binary
+COPY --from=builder --chown=nonroot:nonroot /build/learner-api .
 
-# Run as non-root (UID 65532)
+# Copy swagger docs if needed
+COPY --from=builder --chown=nonroot:nonroot /build/docs ./docs
+
+# Run as non-root user
 USER nonroot:nonroot
 
-EXPOSE 8080
+# Expose service port
+EXPOSE 8083
 
-ENTRYPOINT ["./api"]
+# Health check metadata
+LABEL org.opencontainers.image.title="Learner Model Service API" \
+      org.opencontainers.image.description="Student mastery tracking and learning analytics" \
+      org.opencontainers.image.version="1.0.0"
+
+ENTRYPOINT ["./learner-api"]
