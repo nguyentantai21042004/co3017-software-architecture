@@ -18,13 +18,13 @@ CREATE DATABASE content_db;
 -- Stores all learning questions with metadata for adaptive learning
 -- =============================================================================
 CREATE TABLE questions (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,              -- Changed from SERIAL to BIGSERIAL for Long compatibility
     content TEXT NOT NULL,
-    options JSONB,                     -- Example: ["A", "B", "C", "D"]
-    correct_answer VARCHAR(255) NOT NULL,
-    skill_tag VARCHAR(50) NOT NULL,    -- Example: "math_algebra"
-    difficulty_level INT DEFAULT 1,    -- 1: Easy, 2: Medium, 3: Hard
-    is_remedial BOOLEAN DEFAULT FALSE, -- TRUE: Remedial/review question
+    options JSONB,                         -- Example: ["A. Option1", "B. Option2", "C. Option3", "D. Option4"]
+    correct_answer TEXT NOT NULL,          -- Changed from VARCHAR(255) to TEXT for long-form answers
+    skill_tag VARCHAR(100) NOT NULL,       -- Changed from VARCHAR(50) to VARCHAR(100) to match JPA entity
+    difficulty_level INTEGER DEFAULT 1,    -- 1: Easy, 2: Medium, 3: Hard
+    is_remedial BOOLEAN DEFAULT FALSE,     -- TRUE: Remedial/review question
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -72,7 +72,7 @@ VALUES (
 -- Question 4: Another remedial for geometry (different skill)
 INSERT INTO questions (content, options, correct_answer, skill_tag, difficulty_level, is_remedial)
 VALUES (
-    'Bài ôn tập: Diện tích hình chữ nhật có chiều dài 5cm, chiều rộng 3cm là bao nhiêêu?',
+    'Bài ôn tập: Diện tích hình chữ nhật có chiều dài 5cm, chiều rộng 3cm là bao nhiêu?',
     '["A. 8 cm²", "B. 15 cm²", "C. 16 cm²", "D. 30 cm²"]',
     'B',
     'math_geometry',

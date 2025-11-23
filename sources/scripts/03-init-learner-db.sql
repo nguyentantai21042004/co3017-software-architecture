@@ -20,8 +20,8 @@ CREATE DATABASE learner_db;
 -- =============================================================================
 CREATE TABLE skill_mastery (
     user_id VARCHAR(50) NOT NULL,
-    skill_tag VARCHAR(50) NOT NULL,
-    current_score INT DEFAULT 0,           -- Mastery score (0-100)
+    skill_tag VARCHAR(100) NOT NULL,       -- Changed from VARCHAR(50) to VARCHAR(100) for consistency
+    current_score INTEGER DEFAULT 0,       -- Mastery score (0-100)
     last_updated TIMESTAMP DEFAULT NOW(),
     PRIMARY KEY (user_id, skill_tag)
 );

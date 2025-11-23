@@ -18,12 +18,12 @@ CREATE DATABASE scoring_db;
 -- Stores all user submissions and their scoring results
 -- =============================================================================
 CREATE TABLE submissions (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,              -- Changed from SERIAL to BIGSERIAL for int64 compatibility
     user_id VARCHAR(50) NOT NULL,
-    question_id INT NOT NULL,
+    question_id BIGINT NOT NULL,           -- Changed from INT to BIGINT to match Go int64 type
     submitted_answer VARCHAR(255) NOT NULL,
-    score_awarded INT NOT NULL,           -- Score in percentage (0-100)
-    is_passed BOOLEAN NOT NULL,           -- TRUE if score >= 50%
+    score_awarded INTEGER NOT NULL,        -- Score in percentage (0-100)
+    is_passed BOOLEAN NOT NULL,            -- TRUE if score >= 50%
     created_at TIMESTAMP DEFAULT NOW()
 );
 
