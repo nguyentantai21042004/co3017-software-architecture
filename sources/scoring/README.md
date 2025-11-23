@@ -1,33 +1,50 @@
 # Scoring Service (Golang)
 
 **Port:** 8082
-**Database:** scoring_db
-**Technology:** Go 1.25.4, Gin, PostgreSQL, RabbitMQ, SQLBoiler
-
-**Database ORM:** Uses [SQLBoiler](https://github.com/aarondl/sqlboiler) for type-safe, efficient database operations. See [SQLBOILER_MIGRATION.md](./SQLBOILER_MIGRATION.md) for details.
+**Database:** scoring_db (PostgreSQL)
+**Technology:** Go 1.23, Gin, PostgreSQL, RabbitMQ, SQLBoiler
 
 ## Overview
 
-Scoring Service handles answer submissions and publishes events to RabbitMQ.
+Scoring Service handles answer submissions and publishes events to RabbitMQ. It is fully containerized and integrated into the ITS microservices ecosystem.
 
-## Setup
+## Quick Start (Docker)
 
 ```bash
-# 1. Initialize database
-psql -U postgres -h localhost -p 5432 -f ../init-scripts/02-init-scoring-db.sql
-
-# 2. Install dependencies
-go mod tidy
-
-# 3. Run service
-go run cmd/api/main.go
+# Start service via Docker Compose (from sources/ root)
+make scoring
 ```
 
-Service starts on **http://localhost:8082**
+## Local Setup (Development)
 
-## API
+1. **Start Infrastructure**:
+   ```bash
+   # Ensure Postgres and RabbitMQ are running
+   cd ../ && make dev
+   ```
+
+2. **Run Service**:
+   ```bash
+   go mod tidy
+   go run cmd/api/main.go
+   ```
+
+## Configuration
+
+Environment variables (automatically set in `docker-compose.yml`):
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `APP_PORT` | Service Port | 8082 |
+| `POSTGRES_HOST` | Database Host | `postgres-scoring` (Docker) or `localhost` |
+| `POSTGRES_PORT` | Database Port | `5432` (Docker) or `5434` (Local) |
+| `RABBITMQ_URL` | RabbitMQ URL | `amqp://admintest:adminTest2025@rabbitmq:5672/` |
+
+## API Endpoints
 
 ### POST /api/scoring/submit
+
+Submit an answer for evaluation.
 
 ```bash
 curl -X POST http://localhost:8082/api/scoring/submit \
@@ -48,17 +65,8 @@ curl -X POST http://localhost:8082/api/scoring/submit \
 }
 ```
 
-## Testing
+## Health Check
 
 ```bash
-# Test wrong answer (triggers remedial)
-curl -X POST http://localhost:8082/api/scoring/submit \
-  -H "Content-Type: application/json" \
-  -d '{"user_id": "user_01", "question_id": 1, "answer": "C"}'
+curl http://localhost:8082/health
 ```
-
-## Dependencies
-
-1. Content Service (8081) - Must be running
-2. PostgreSQL (scoring_db)
-3. RabbitMQ (5672)
