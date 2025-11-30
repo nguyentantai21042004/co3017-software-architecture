@@ -1,5 +1,6 @@
 import axios from "axios"
 import { delay } from "@/lib/utils"
+import { API_URLS } from "@/lib/env-config"
 import type {
   QuestionResponse,
   ContentApiResponse,
@@ -12,13 +13,6 @@ import type {
 
 // Mock mode flag - set to true to simulate backend
 const USE_MOCK_DATA = false
-
-const API_URLS = {
-  content: "http://localhost:8081",
-  scoring: "http://localhost:8082",
-  learner: "http://localhost:8083",
-  adaptive: "http://localhost:8084/api/adaptive",
-}
 
 const apiClient = axios.create({
   timeout: 10000,

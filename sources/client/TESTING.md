@@ -8,6 +8,7 @@ This document provides comprehensive instructions for running tests in the clien
 - [Unit and Component Tests](#unit-and-component-tests)
 - [E2E Testing Setup](#e2e-testing-setup)
 - [Running E2E Tests](#running-e2e-tests)
+- [Environment Configuration](#environment-configuration)
 - [Service Management](#service-management)
 - [Test Data Management](#test-data-management)
 - [Troubleshooting](#troubleshooting)
@@ -141,6 +142,38 @@ npm run test:e2e               # Run Playwright tests
 npm run e2e:stop-services      # Stop all services
 ```
 
+## Environment Configuration
+
+The application supports multiple environments (local, test, staging) through environment variables. See [Environment Configuration Guide](docs/ENVIRONMENT_CONFIGURATION.md) for detailed documentation.
+
+### Quick Reference
+
+```bash
+# Switch environment
+npm run e2e:switch-env local    # Switch to local
+npm run e2e:switch-env test     # Switch to test
+npm run e2e:switch-env staging  # Switch to staging
+
+# Validate environment
+npm run e2e:validate-env
+
+# Load environment variables (for scripts)
+source ./scripts/load-env.sh [environment]
+```
+
+### Environment Variables
+
+Required environment variables (all prefixed with `NEXT_PUBLIC_`):
+- `NEXT_PUBLIC_CONTENT_API_URL` - Content Service URL
+- `NEXT_PUBLIC_SCORING_API_URL` - Scoring Service URL
+- `NEXT_PUBLIC_LEARNER_API_URL` - Learner Model Service URL
+- `NEXT_PUBLIC_ADAPTIVE_API_URL` - Adaptive Engine Service URL
+- `NEXT_PUBLIC_CLIENT_URL` - Client Application URL (for E2E tests)
+
+See [Environment Configuration Guide](docs/ENVIRONMENT_CONFIGURATION.md) for complete documentation.
+
+## Service Management
+
 ### Using Scripts Directly
 
 ```bash
@@ -177,6 +210,52 @@ npx playwright test --headed
 
 # View test report
 npx playwright show-report
+```
+
+## Environment Configuration
+
+The application supports multiple environments (local, test, staging) through environment variables. See [Environment Configuration Guide](docs/ENVIRONMENT_CONFIGURATION.md) for detailed documentation.
+
+### Quick Reference
+
+```bash
+# Switch environment
+npm run e2e:switch-env local    # Switch to local
+npm run e2e:switch-env test     # Switch to test
+npm run e2e:switch-env staging  # Switch to staging
+
+# Validate environment
+npm run e2e:validate-env
+
+# Load environment variables (for scripts)
+source ./scripts/load-env.sh [environment]
+```
+
+### Environment Variables
+
+Required environment variables (all prefixed with `NEXT_PUBLIC_`):
+- `NEXT_PUBLIC_CONTENT_API_URL` - Content Service URL
+- `NEXT_PUBLIC_SCORING_API_URL` - Scoring Service URL
+- `NEXT_PUBLIC_LEARNER_API_URL` - Learner Model Service URL
+- `NEXT_PUBLIC_ADAPTIVE_API_URL` - Adaptive Engine Service URL
+- `NEXT_PUBLIC_CLIENT_URL` - Client Application URL (for E2E tests)
+
+See [Environment Configuration Guide](docs/ENVIRONMENT_CONFIGURATION.md) for complete documentation.
+
+### Test Environment Setup
+
+For running E2E tests against a deployed test environment, see [Test Environment Setup Guide](docs/TEST_ENVIRONMENT_SETUP.md).
+
+**Quick commands:**
+```bash
+# Verify test environment deployment
+npm run e2e:verify-test-env [test|staging]
+
+# Test API connectivity
+npm run e2e:test-connectivity [test|staging]
+
+# Reset test environment (template)
+npm run e2e:reset-test-env [test|staging]
 ```
 
 ## Service Management
