@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"scoring/internal/model"
 	"scoring/internal/scoring"
@@ -22,6 +23,14 @@ type MockRepository struct {
 func (m *MockRepository) Create(ctx context.Context, submission *model.Submission) error {
 	args := m.Called(ctx, submission)
 	return args.Error(0)
+}
+
+func (m *MockRepository) FindAnsweredQuestionIDs(ctx context.Context, userID, skillTag string) ([]int64, error) {
+	args := m.Called(ctx, userID, skillTag)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]int64), args.Error(1)
 }
 
 // Mock Publisher
@@ -294,4 +303,60 @@ func TestNew(t *testing.T) {
 	uc := New(mockLogger, mockRepo, mockPublisher, mockContentClient)
 
 	assert.NotNil(t, uc)
+}
+
+func TestSubmitAnswer_PublishEventError(t *testing.T) {
+	mockLogger := new(MockLogger)
+	mockRepo := new(MockRepository)
+	mockPublisher := new(MockPublisher)
+	mockContentClient := new(MockContentServiceClient)
+
+	contentResp := &curl.ContentQuestionResponse{
+		ErrorCode: 0,
+		Message:   "Success",
+		Data: struct {
+			ID            int64  `json:"id"`
+			Content       string `json:"content"`
+			CorrectAnswer string `json:"correct_answer"`
+			SkillTag      string `json:"skill_tag"`
+			IsRemedial    bool   `json:"is_remedial"`
+		}{
+			ID:            1,
+			CorrectAnswer: "4",
+			SkillTag:      "math",
+		},
+	}
+	mockContentClient.On("GetQuestion", mock.Anything, int64(1)).Return(contentResp, nil)
+
+	mockRepo.On("Create", mock.Anything, mock.Anything).Return(nil)
+
+	expectedErr := errors.New("rabbitmq publish failed")
+	mockPublisher.On("PublishSubmissionEvent", mock.Anything).Return(expectedErr) // Simulate publish error
+
+	// Expect Errorf to be called due to publish failure
+	mockLogger.On("Infof", mock.Anything, mock.Anything, mock.Anything).Return()
+	mockLogger.On("Errorf", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return() // Adjusted mock for Errorf
+
+	uc := New(mockLogger, mockRepo, mockPublisher, mockContentClient)
+
+	input := scoring.SubmitInput{
+		UserID:     "user123",
+		QuestionID: 1,
+		Answer:     "4",
+	}
+
+	_, err := uc.SubmitAnswer(context.Background(), input)
+
+	require.NoError(t, err) // SubmitAnswer should still return nil for its own error, as publishing is async
+
+	// Wait briefly for the goroutine to execute
+	// This is a common but imperfect pattern for testing goroutines.
+	// A more robust approach might involve channels or sync.WaitGroup.
+	// For this context, a short sleep should be sufficient to allow the goroutine to run.
+	time.Sleep(10 * time.Millisecond)
+
+	mockContentClient.AssertExpectations(t)
+	mockRepo.AssertExpectations(t)
+	mockPublisher.AssertExpectations(t)
+	mockLogger.AssertExpectations(t) // Verify that Errorf was called
 }

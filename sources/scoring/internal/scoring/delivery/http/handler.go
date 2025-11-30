@@ -7,6 +7,7 @@ import (
 	"scoring/pkg/log"
 	"scoring/pkg/response"
 
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,6 +28,7 @@ func New(logger log.Logger, uc scoring.UseCase) Handler {
 type Handler interface {
 	SubmitAnswer(c *gin.Context)
 	Health(c *gin.Context)
+	GetAnsweredQuestions(c *gin.Context) // Added for Content Service
 }
 
 // SubmitAnswer handles POST /api/scoring/submit
@@ -95,6 +97,52 @@ func (h *handler) SubmitAnswer(c *gin.Context) {
 	// Convert output to response
 	resp := ToSubmitResponse(output)
 	response.OK(c, resp)
+}
+
+// GetAnsweredQuestions handles GET /api/scoring/answered-questions
+// @Summary Get answered questions by user and skill
+// @Description Retrieves a list of question IDs that a user has answered for a given skill tag
+// @Tags scoring
+// @Accept json
+// @Produce json
+// @Param user_id query string true "User ID"
+// @Param skill query string true "Skill Tag"
+// @Success 200 {object} response.Resp{data=[]int64}
+// @Failure 400 {object} response.Resp
+// @Failure 500 {object} response.Resp
+// @Router /scoring/answered-questions [get]
+func (h *handler) GetAnsweredQuestions(c *gin.Context) {
+	ctx := c.Request.Context()
+	userID := c.Query("user_id")
+	skillTag := c.Query("skill")
+
+	if userID == "" {
+		h.l.Errorf(ctx, "scoring.delivery.http.handler.GetAnsweredQuestions: %s | user_id=empty", ErrMsgInvalidUserID)
+		httpErr := errors.NewHTTPError(http.StatusBadRequest, ErrMsgInvalidUserID)
+		httpErr.StatusCode = http.StatusBadRequest
+		response.Error(c, httpErr, nil)
+		return
+	}
+	if skillTag == "" {
+		h.l.Errorf(ctx, "scoring.delivery.http.handler.GetAnsweredQuestions: %s | skill=empty", ErrMsgInvalidSkillTag)
+		httpErr := errors.NewHTTPError(http.StatusBadRequest, ErrMsgInvalidSkillTag)
+		httpErr.StatusCode = http.StatusBadRequest
+		response.Error(c, httpErr, nil)
+		return
+	}
+
+	questionIDs, err := h.uc.GetAnsweredQuestions(ctx, userID, skillTag)
+	if err != nil {
+		h.l.Errorf(ctx, "scoring.delivery.http.handler.GetAnsweredQuestions: %s | user_id=%s | skill=%s | error=%v",
+			ErrMsgGetAnsweredQuestionsFailed, userID, skillTag, err)
+		// More specific error handling could be implemented based on error type from use case
+		httpErr := errors.NewHTTPError(http.StatusInternalServerError, ErrMsgGetAnsweredQuestionsFailed)
+		httpErr.StatusCode = http.StatusInternalServerError
+		response.Error(c, httpErr, nil)
+		return
+	}
+
+	response.OK(c, questionIDs)
 }
 
 // Health check endpoint

@@ -11,5 +11,6 @@ var (
 const (
 	ErrMsgDatabaseQueryFailed = "database query failed"
 	ErrMsgDatabaseWriteFailed = "database write operation failed"
+	ErrMsgDatabaseReadFailed  = "database read operation failed"
 	ErrMsgRecordNotFound      = "record not found in database"
 )

@@ -21,6 +21,12 @@ func (uc *usecase) SubmitAnswer(ctx context.Context, input scoring.SubmitInput) 
 		return scoring.SubmitOutput{}, fmt.Errorf("%s: %w", ErrMsgFetchQuestionFailed, err)
 	}
 
+	if questionResp.ErrorCode != 0 {
+		uc.l.Errorf(ctx, "scoring.usecase.SubmitAnswer: %s | %s=%s | %s=%d | content_service_error=%s",
+			ErrMsgFetchQuestionFailed, ErrCtxUserID, input.UserID, ErrCtxQuestionID, input.QuestionID, questionResp.Message)
+		return scoring.SubmitOutput{}, fmt.Errorf("%s: %s", ErrMsgFetchQuestionFailed, questionResp.Message)
+	}
+
 	correctAnswer := questionResp.Data.CorrectAnswer
 	skillTag := questionResp.Data.SkillTag
 
@@ -88,4 +94,22 @@ func (uc *usecase) SubmitAnswer(ctx context.Context, input scoring.SubmitInput) 
 		Score:    score,
 		Feedback: feedback,
 	}, nil
+}
+
+// GetAnsweredQuestions retrieves a list of question IDs that a user has answered for a given skill tag.
+func (uc *usecase) GetAnsweredQuestions(ctx context.Context, userID, skillTag string) ([]int64, error) {
+	uc.l.Infof(ctx, "scoring.usecase.GetAnsweredQuestions: starting | %s=%s | %s=%s",
+		ErrCtxUserID, userID, ErrCtxSkillTag, skillTag)
+
+	questionIDs, err := uc.repo.FindAnsweredQuestionIDs(ctx, userID, skillTag)
+	if err != nil {
+		uc.l.Errorf(ctx, "scoring.usecase.GetAnsweredQuestions: %s | %s=%s | %s=%s | error=%v",
+			ErrMsgGetAnsweredQuestionsFailed, ErrCtxUserID, userID, ErrCtxSkillTag, skillTag, err)
+		return nil, fmt.Errorf("%s: %w", ErrMsgGetAnsweredQuestionsFailed, err)
+	}
+
+	uc.l.Infof(ctx, "scoring.usecase.GetAnsweredQuestions: completed | %s=%s | %s=%s | questions_found=%d",
+		ErrCtxUserID, userID, ErrCtxSkillTag, skillTag, len(questionIDs))
+
+	return questionIDs, nil
 }

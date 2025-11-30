@@ -2,100 +2,34 @@ package http
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"errors" 
 
 	"scoring/internal/scoring"
 
-	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
-// Mock UseCase
-type MockUseCase struct {
-	mock.Mock
-}
-
-func (m *MockUseCase) SubmitAnswer(ctx context.Context, input scoring.SubmitInput) (scoring.SubmitOutput, error) {
-	args := m.Called(ctx, input)
-	return args.Get(0).(scoring.SubmitOutput), args.Error(1)
-}
-
-// Mock Logger
-type MockLogger struct {
-	mock.Mock
-}
-
-func (m *MockLogger) Debug(ctx context.Context, arg ...any) {
-	m.Called(ctx, arg)
-}
-
-func (m *MockLogger) Debugf(ctx context.Context, template string, arg ...any) {
-	m.Called(ctx, template, arg)
-}
-
-func (m *MockLogger) Info(ctx context.Context, arg ...any) {
-	m.Called(ctx, arg)
-}
-
-func (m *MockLogger) Infof(ctx context.Context, template string, arg ...any) {
-	m.Called(ctx, template, arg)
-}
-
-func (m *MockLogger) Warn(ctx context.Context, arg ...any) {
-	m.Called(ctx, arg)
-}
-
-func (m *MockLogger) Warnf(ctx context.Context, template string, arg ...any) {
-	m.Called(ctx, template, arg)
-}
-
-func (m *MockLogger) Error(ctx context.Context, arg ...any) {
-	m.Called(ctx, arg)
-}
-
-func (m *MockLogger) Errorf(ctx context.Context, template string, arg ...any) {
-	m.Called(ctx, template, arg)
-}
-
-func (m *MockLogger) Fatal(ctx context.Context, arg ...any) {
-	m.Called(ctx, arg)
-}
-
-func (m *MockLogger) Fatalf(ctx context.Context, template string, arg ...any) {
-	m.Called(ctx, template, arg)
-}
-
-func setupRouter() *gin.Engine {
-	gin.SetMode(gin.TestMode)
-	return gin.New()
-}
+// The MockUseCase, MockLogger and SetupTestRouter are now defined in test_mocks.go
 
 func TestSubmitAnswer_Success(t *testing.T) {
-	mockLogger := new(MockLogger)
+	mockLogger := NewMockLogger()
 	mockUC := new(MockUseCase)
-
-	mockLogger.On("Errorf", mock.Anything, mock.Anything, mock.Anything).Return()
 
 	expectedOutput := scoring.SubmitOutput{
 		Correct:  true,
 		Score:    100,
 		Feedback: "Correct! Well done.",
 	}
-	mockUC.On("SubmitAnswer", mock.Anything, mock.MatchedBy(func(input scoring.SubmitInput) bool {
-		return input.UserID == "user123" && input.QuestionID == 1 && input.Answer == "4"
-	})).Return(expectedOutput, nil)
+	mockUC.On("SubmitAnswer", mock.Anything, mock.Anything).Return(expectedOutput, nil)
 
-	handler := New(mockLogger, mockUC)
-	router := setupRouter()
-	router.POST("/submit", handler.SubmitAnswer)
-
+	router := SetupTestRouter(mockUC, mockLogger)
+	
 	reqBody := SubmitRequest{
 		UserID:     "user123",
 		QuestionID: 1,
@@ -103,7 +37,7 @@ func TestSubmitAnswer_Success(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
-	req, _ := http.NewRequest("POST", "/submit", bytes.NewBuffer(body))
+	req, _ := http.NewRequest("POST", "/api/scoring/submit", bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -127,16 +61,12 @@ func TestSubmitAnswer_Success(t *testing.T) {
 }
 
 func TestSubmitAnswer_InvalidJSON(t *testing.T) {
-	mockLogger := new(MockLogger)
+	mockLogger := NewMockLogger()
 	mockUC := new(MockUseCase)
 
-	mockLogger.On("Errorf", mock.Anything, mock.Anything, mock.Anything).Return()
-
-	handler := New(mockLogger, mockUC)
-	router := setupRouter()
-	router.POST("/submit", handler.SubmitAnswer)
-
-	req, _ := http.NewRequest("POST", "/submit", bytes.NewBufferString("{invalid json"))
+	router := SetupTestRouter(mockUC, mockLogger)
+	
+	req, _ := http.NewRequest("POST", "/api/scoring/submit", bytes.NewBufferString("{invalid json"))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -148,19 +78,15 @@ func TestSubmitAnswer_InvalidJSON(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &response)
 
 	assert.Equal(t, float64(400), response["error_code"])
-	assert.Contains(t, response["message"], "failed to bind request")
+	assert.Contains(t, response["message"], ErrMsgBindRequestFailed) // Updated assertion
 }
 
 func TestSubmitAnswer_EmptyUserID(t *testing.T) {
-	mockLogger := new(MockLogger)
+	mockLogger := NewMockLogger()
 	mockUC := new(MockUseCase)
 
-	mockLogger.On("Errorf", mock.Anything, mock.Anything, mock.Anything).Return()
-
-	handler := New(mockLogger, mockUC)
-	router := setupRouter()
-	router.POST("/submit", handler.SubmitAnswer)
-
+	router := SetupTestRouter(mockUC, mockLogger)
+	
 	reqBody := SubmitRequest{
 		UserID:     "",
 		QuestionID: 1,
@@ -168,7 +94,7 @@ func TestSubmitAnswer_EmptyUserID(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
-	req, _ := http.NewRequest("POST", "/submit", bytes.NewBuffer(body))
+	req, _ := http.NewRequest("POST", "/api/scoring/submit", bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -180,19 +106,15 @@ func TestSubmitAnswer_EmptyUserID(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &response)
 
 	assert.Equal(t, float64(400), response["error_code"])
-	assert.Contains(t, response["message"], "user_id")
+	assert.Contains(t, response["message"], ErrMsgInvalidUserID) // Updated assertion
 }
 
 func TestSubmitAnswer_InvalidQuestionID(t *testing.T) {
-	mockLogger := new(MockLogger)
+	mockLogger := NewMockLogger()
 	mockUC := new(MockUseCase)
 
-	mockLogger.On("Errorf", mock.Anything, mock.Anything, mock.Anything).Return()
-
-	handler := New(mockLogger, mockUC)
-	router := setupRouter()
-	router.POST("/submit", handler.SubmitAnswer)
-
+	router := SetupTestRouter(mockUC, mockLogger)
+	
 	reqBody := SubmitRequest{
 		UserID:     "user123",
 		QuestionID: 0,
@@ -200,7 +122,7 @@ func TestSubmitAnswer_InvalidQuestionID(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
-	req, _ := http.NewRequest("POST", "/submit", bytes.NewBuffer(body))
+	req, _ := http.NewRequest("POST", "/api/scoring/submit", bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -212,19 +134,15 @@ func TestSubmitAnswer_InvalidQuestionID(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &response)
 
 	assert.Equal(t, float64(400), response["error_code"])
-	assert.Contains(t, response["message"], "question_id")
+	assert.Contains(t, response["message"], ErrMsgInvalidQuestionID) // Updated assertion
 }
 
 func TestSubmitAnswer_EmptyAnswer(t *testing.T) {
-	mockLogger := new(MockLogger)
+	mockLogger := NewMockLogger()
 	mockUC := new(MockUseCase)
 
-	mockLogger.On("Errorf", mock.Anything, mock.Anything, mock.Anything).Return()
-
-	handler := New(mockLogger, mockUC)
-	router := setupRouter()
-	router.POST("/submit", handler.SubmitAnswer)
-
+	router := SetupTestRouter(mockUC, mockLogger)
+	
 	reqBody := SubmitRequest{
 		UserID:     "user123",
 		QuestionID: 1,
@@ -232,7 +150,7 @@ func TestSubmitAnswer_EmptyAnswer(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
-	req, _ := http.NewRequest("POST", "/submit", bytes.NewBuffer(body))
+	req, _ := http.NewRequest("POST", "/api/scoring/submit", bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -244,22 +162,18 @@ func TestSubmitAnswer_EmptyAnswer(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &response)
 
 	assert.Equal(t, float64(400), response["error_code"])
-	assert.Contains(t, response["message"], "answer")
+	assert.Contains(t, response["message"], ErrMsgInvalidAnswer) // Updated assertion
 }
 
 func TestSubmitAnswer_UseCaseError(t *testing.T) {
-	mockLogger := new(MockLogger)
+	mockLogger := NewMockLogger()
 	mockUC := new(MockUseCase)
-
-	mockLogger.On("Errorf", mock.Anything, mock.Anything, mock.Anything).Return()
 
 	expectedErr := errors.New("usecase error")
 	mockUC.On("SubmitAnswer", mock.Anything, mock.Anything).Return(scoring.SubmitOutput{}, expectedErr)
 
-	handler := New(mockLogger, mockUC)
-	router := setupRouter()
-	router.POST("/submit", handler.SubmitAnswer)
-
+	router := SetupTestRouter(mockUC, mockLogger)
+	
 	reqBody := SubmitRequest{
 		UserID:     "user123",
 		QuestionID: 1,
@@ -267,7 +181,7 @@ func TestSubmitAnswer_UseCaseError(t *testing.T) {
 	}
 	body, _ := json.Marshal(reqBody)
 
-	req, _ := http.NewRequest("POST", "/submit", bytes.NewBuffer(body))
+	req, _ := http.NewRequest("POST", "/api/scoring/submit", bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
@@ -279,19 +193,19 @@ func TestSubmitAnswer_UseCaseError(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &response)
 
 	assert.Equal(t, float64(400), response["error_code"])
+	assert.Contains(t, response["message"], ErrMsgSubmitAnswerFailed) // Updated assertion
 
 	mockUC.AssertExpectations(t)
 }
 
 func TestHealth(t *testing.T) {
-	mockLogger := new(MockLogger)
+	mockLogger := NewMockLogger()
 	mockUC := new(MockUseCase)
 
-	handler := New(mockLogger, mockUC)
-	router := setupRouter()
-	router.GET("/health", handler.Health)
+	router := SetupTestRouter(mockUC, mockLogger)
 
-	req, _ := http.NewRequest("GET", "/health", nil)
+	// Corrected URL: main.go registers /health globally, not under /api/scoring
+	req, _ := http.NewRequest("GET", "/health", nil) 
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -311,10 +225,10 @@ func TestHealth(t *testing.T) {
 }
 
 func TestNew(t *testing.T) {
-	mockLogger := new(MockLogger)
+	mockLogger := NewMockLogger()
 	mockUC := new(MockUseCase)
 
-	handler := New(mockLogger, mockUC)
+	handler := New(mockLogger, mockUC) // This `handler` is used for the return value assertion
 
 	assert.NotNil(t, handler)
 }

@@ -7,4 +7,5 @@ import "context"
 //go:generate mockery --name UseCase
 type UseCase interface {
 	SubmitAnswer(ctx context.Context, input SubmitInput) (SubmitOutput, error)
+	GetAnsweredQuestions(ctx context.Context, userID, skillTag string) ([]int64, error)
 }

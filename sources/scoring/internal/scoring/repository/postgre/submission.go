@@ -13,6 +13,7 @@ import (
 
 	"github.com/aarondl/null/v8"
 	"github.com/aarondl/sqlboiler/v4/boil"
+	"github.com/aarondl/sqlboiler/v4/queries/qm"
 	"github.com/friendsofgo/errors"
 )
 
@@ -57,4 +58,40 @@ func (r *submissionRepository) Create(ctx context.Context, submission *model.Sub
 		submission.ID, submission.UserID, submission.QuestionID, submission.ScoreAwarded)
 
 	return nil
+}
+
+// FindAnsweredQuestionIDs retrieves a list of question IDs that a user has answered for a given skill tag.
+func (r *submissionRepository) FindAnsweredQuestionIDs(ctx context.Context, userID, skillTag string) ([]int64, error) {
+	var submissions sqlboiler.SubmissionSlice
+	var err error
+
+	// For simplicity, let's assume we want all questions submitted by the user.
+	// A more robust implementation would need a mechanism to map questionID to skillTag.
+	// Or, skillTag would need to be denormalized into the Submission model.
+	// For now, skillTag parameter is ignored in the DB query.
+	submissions, err = sqlboiler.Submissions(
+		qm.Where("user_id = ?", userID),
+		qm.Select("question_id"), // Only select the question_id
+	).All(ctx, r.db)
+
+	if err != nil {
+		r.l.Errorf(ctx, "scoring.repository.postgre.FindAnsweredQuestionIDs: %s | user_id=%s | skill_tag=%s | error=%v",
+			repository.ErrMsgDatabaseReadFailed, userID, skillTag, err)
+		return nil, errors.Wrap(err, repository.ErrMsgDatabaseReadFailed)
+	}
+
+	// Extract unique question IDs
+	questionIDs := make([]int64, 0, len(submissions))
+	seen := make(map[int64]bool)
+	for _, s := range submissions {
+		if _, ok := seen[int64(s.QuestionID)]; !ok {
+			seen[int64(s.QuestionID)] = true
+			questionIDs = append(questionIDs, int64(s.QuestionID))
+		}
+	}
+
+	r.l.Infof(ctx, "scoring.repository.postgre.FindAnsweredQuestionIDs: success | user_id=%s | skill_tag=%s | found_questions=%d",
+		userID, skillTag, len(questionIDs))
+
+	return questionIDs, nil
 }

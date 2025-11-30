@@ -7,5 +7,7 @@ const (
 	ErrMsgInvalidUserID           = "invalid user_id: must be non-empty string"
 	ErrMsgInvalidQuestionID       = "invalid question_id: must be positive integer"
 	ErrMsgInvalidAnswer           = "invalid answer: must be non-empty string"
+	ErrMsgInvalidSkillTag         = "invalid skill: must be non-empty string"
+	ErrMsgGetAnsweredQuestionsFailed = "failed to retrieve answered questions"
 	ErrMsgRequestValidationFailed = "request validation failed: check request body format"
 )

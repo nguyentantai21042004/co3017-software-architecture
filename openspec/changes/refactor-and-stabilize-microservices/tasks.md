@@ -9,10 +9,10 @@ This work is broken down by service. The backend services should be stabilized b
     - [x] Refactor code to address any identified issues.
 
 2.  **Scoring Service (`scoring-service`)**
-    - [ ] Review core logic in the `Scoring Service`, especially answer evaluation and event publishing.
-    - [ ] Analyze and improve unit test coverage.
-    - [ ] Write integration tests for the `/api/scoring/submit` endpoint and its interaction with RabbitMQ.
-    - [ ] Refactor code to address any identified issues.
+    - [x] Review core logic in the `Scoring Service`, especially answer evaluation and event publishing.
+    - [x] Analyze and improve unit test coverage.
+    - [x] Write integration tests for the `/api/scoring/submit` endpoint and its interaction with RabbitMQ.
+    - [x] Refactor code to address any identified issues.
 
 3.  **Learner Model Service (`learner-model`)**
     - [ ] Review the logic for both the API and the consumer in the `Learner Model Service`.

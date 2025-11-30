@@ -9,6 +9,7 @@ const (
 	ErrMsgQuestionNotFound        = "question not found"
 	ErrMsgServiceTimeout          = "service request timeout"
 	ErrMsgServiceConnectionFailed = "failed to connect to external service"
+	ErrMsgGetAnsweredQuestionsFailed = "failed to retrieve answered questions from database"
 )
 
 // Error context keys for detailed logging
