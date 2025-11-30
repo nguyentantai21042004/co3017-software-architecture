@@ -27,6 +27,8 @@ This work is broken down by service. The backend services should be stabilized b
     - [ ] Refactor code to address any identified issues.
 
 5.  **Client Application (`client`)**
+    - [ ] Review all backend service changes (Content, Scoring, Learner Model, Adaptive Engine) to identify new APIs, updated endpoints, and interface changes.
+    - [ ] Update client API service layer and TypeScript types/interfaces to match new backend contracts and ensure proper integration.
     - [ ] Review the frontend code for bugs, especially in state management and API service integration.
     - [ ] Add component tests for critical UI components.
     - [ ] Add end-to-end tests that simulate user interaction flows.

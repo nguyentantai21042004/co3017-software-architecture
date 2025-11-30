@@ -4,6 +4,8 @@
 
 ### Requirement: The Learner Model Service MUST be reliable and bug-free.
 
+The Learner Model Service SHALL undergo comprehensive code review, refactoring, and testing to ensure it operates correctly and efficiently. This includes reviewing both API and consumer logic for mastery score calculations, improving test coverage, and validating both API endpoints and RabbitMQ event processing.
+
 #### Scenario: Code Review and Refactoring
 - **Given** the existing `learner-model` codebase for both the API and the consumer.
 - **When** a developer reviews the logic for calculating and updating user skill mastery.

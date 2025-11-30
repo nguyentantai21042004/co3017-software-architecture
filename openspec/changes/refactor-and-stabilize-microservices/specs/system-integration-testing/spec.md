@@ -4,6 +4,8 @@
 
 ### Requirement: The entire system MUST function correctly as a whole.
 
+The system SHALL have comprehensive end-to-end tests that validate the complete user workflow across all microservices. These tests SHALL verify that services integrate correctly, handle errors gracefully, and maintain system resilience when individual services are unavailable.
+
 #### Scenario: End-to-End Workflow Test
 - **Given** the complete microservices suite is deployed and running in a test environment.
 - **When** an automated test script simulates a user completing a full learning loop:
