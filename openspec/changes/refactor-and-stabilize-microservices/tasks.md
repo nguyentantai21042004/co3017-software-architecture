@@ -21,10 +21,10 @@ This work is broken down by service. The backend services should be stabilized b
     - [x] Refactor code to address any identified issues.
 
 4.  **Adaptive Engine Service (`adaptive-engine`)**
-    - [ ] Review the orchestration logic in the `Adaptive Engine`.
-    - [ ] Analyze and improve unit test coverage for the content recommendation algorithm.
-    - [ ] Write integration tests that mock its dependencies (`content-service`, `learner-model-api`).
-    - [ ] Refactor code to address any identified issues.
+    - [x] Review the orchestration logic in the `Adaptive Engine`.
+    - [x] Analyze and improve unit test coverage for the content recommendation algorithm.
+    - [x] Write integration tests that mock its dependencies (`content-service`, `learner-model-api`).
+    - [x] Refactor code to address any identified issues.
 
 5.  **Client Application (`client`)**
     - [ ] Review all backend service changes (Content, Scoring, Learner Model, Adaptive Engine) to identify new APIs, updated endpoints, and interface changes.
