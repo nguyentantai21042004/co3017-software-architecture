@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.client.RestTemplate; // Import RestTemplate
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "co3017.microservices.content_service.repository.postgresql")
@@ -16,6 +17,11 @@ public class ContentServiceApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ContentServiceApplication.class, args);
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
     @Bean

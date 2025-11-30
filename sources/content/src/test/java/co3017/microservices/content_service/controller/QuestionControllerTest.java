@@ -1,5 +1,6 @@
-package co3017.microservices.content_service.adapter.http;
+package co3017.microservices.content_service.controller;
 
+import co3017.microservices.content_service.adapter.http.QuestionController;
 import co3017.microservices.content_service.adapter.http.dto.CreateQuestionRequest;
 import co3017.microservices.content_service.adapter.http.dto.UpdateQuestionRequest;
 import co3017.microservices.content_service.models.Question;
@@ -72,7 +73,7 @@ class QuestionControllerTest {
                 .thenReturn(testQuestion);
 
         // Act & Assert
-        mockMvc.perform(post("/api/questions")
+        mockMvc.perform(post("/api/content")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -94,7 +95,7 @@ class QuestionControllerTest {
                 .thenThrow(new IllegalArgumentException("Invalid question data: all fields are required"));
 
         // Act & Assert
-        mockMvc.perform(post("/api/questions")
+        mockMvc.perform(post("/api/content")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -127,7 +128,7 @@ class QuestionControllerTest {
                 .thenReturn(updatedQuestion);
 
         // Act & Assert
-        mockMvc.perform(put("/api/questions/1")
+        mockMvc.perform(put("/api/content/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -154,7 +155,7 @@ class QuestionControllerTest {
                 .thenThrow(new IllegalArgumentException("Question not found with id: 999"));
 
         // Act & Assert
-        mockMvc.perform(put("/api/questions/999")
+        mockMvc.perform(put("/api/content/999")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
@@ -170,7 +171,7 @@ class QuestionControllerTest {
         when(questionUseCase.getQuestionById(1)).thenReturn(Optional.of(testQuestion));
 
         // Act & Assert
-        mockMvc.perform(get("/api/questions/1"))
+        mockMvc.perform(get("/api/content/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error_code").value(0))
                 .andExpect(jsonPath("$.data.id").value(1))
@@ -187,7 +188,7 @@ class QuestionControllerTest {
         when(questionUseCase.getQuestionById(999)).thenReturn(Optional.empty());
 
         // Act & Assert
-        mockMvc.perform(get("/api/questions/999"))
+        mockMvc.perform(get("/api/content/999"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error_code").value(404))
                 .andExpect(jsonPath("$.message").value("Question not found with id: 999"));
@@ -205,7 +206,7 @@ class QuestionControllerTest {
                 .thenReturn(questions);
 
         // Act & Assert
-        mockMvc.perform(get("/api/questions"))
+        mockMvc.perform(get("/api/content"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error_code").value(0))
                 .andExpect(jsonPath("$.data").isArray())
@@ -224,7 +225,7 @@ class QuestionControllerTest {
                 .thenReturn(questions);
 
         // Act & Assert
-        mockMvc.perform(get("/api/questions")
+        mockMvc.perform(get("/api/content")
                 .param("difficulty", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error_code").value(0))
@@ -242,7 +243,7 @@ class QuestionControllerTest {
                 .thenReturn(questions);
 
         // Act & Assert
-        mockMvc.perform(get("/api/questions")
+        mockMvc.perform(get("/api/content")
                 .param("skillTag", "math_arithmetic"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error_code").value(0))
@@ -260,7 +261,7 @@ class QuestionControllerTest {
                 .thenReturn(questions);
 
         // Act & Assert
-        mockMvc.perform(get("/api/questions")
+        mockMvc.perform(get("/api/content")
                 .param("difficulty", "1")
                 .param("skillTag", "math_arithmetic"))
                 .andExpect(status().isOk())
@@ -278,7 +279,7 @@ class QuestionControllerTest {
                 .thenReturn(Arrays.asList());
 
         // Act & Assert
-        mockMvc.perform(get("/api/questions"))
+        mockMvc.perform(get("/api/content"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error_code").value(0))
                 .andExpect(jsonPath("$.data").isArray())
@@ -293,7 +294,7 @@ class QuestionControllerTest {
         doNothing().when(questionUseCase).deleteQuestion(1);
 
         // Act & Assert
-        mockMvc.perform(delete("/api/questions/1"))
+        mockMvc.perform(delete("/api/content/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error_code").value(0))
                 .andExpect(jsonPath("$.message").value("Question deleted successfully"));
@@ -308,7 +309,7 @@ class QuestionControllerTest {
                 .when(questionUseCase).deleteQuestion(999);
 
         // Act & Assert
-        mockMvc.perform(delete("/api/questions/999"))
+        mockMvc.perform(delete("/api/content/999"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error_code").value(404))
                 .andExpect(jsonPath("$.message").value("Question not found with id: 999"));

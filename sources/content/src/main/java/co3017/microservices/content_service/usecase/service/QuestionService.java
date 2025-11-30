@@ -13,6 +13,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,6 +28,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class QuestionService implements QuestionUseCase {
 
+    private static final Logger logger = LoggerFactory.getLogger(QuestionService.class);
+
     private final QuestionRepository questionRepository;
     private final RestTemplate restTemplate;
     private final Random random;
@@ -33,9 +37,9 @@ public class QuestionService implements QuestionUseCase {
     @Value("${services.scoring.url:http://localhost:8082}")
     private String scoringServiceUrl;
 
-    public QuestionService(QuestionRepository questionRepository) {
+    public QuestionService(QuestionRepository questionRepository, RestTemplate restTemplate) {
         this.questionRepository = questionRepository;
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = restTemplate;
         this.random = new Random();
     }
 
@@ -167,7 +171,7 @@ public class QuestionService implements QuestionUseCase {
             }
         } catch (Exception e) {
             // If Scoring Service is unavailable, log and continue without filtering
-            System.err.println("Failed to fetch answered questions from Scoring Service: " + e.getMessage());
+            logger.error("Failed to fetch answered questions from Scoring Service: {}", e.getMessage());
         }
         return new HashSet<>();
     }
