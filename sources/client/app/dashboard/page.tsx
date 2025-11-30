@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useStore } from "@/store/useStore"
 import { api } from "@/services/api"
+import { getApiErrorMessage } from "@/lib/api-helpers"
 import { toast } from "react-hot-toast"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -82,19 +83,28 @@ export default function DashboardPage() {
 
           setSkills(skillsWithMetadata)
 
-          // Fetch mastery for all skills in parallel
-          await Promise.all(
-            skillsWithMetadata.map(async (skill) => {
+          // Fetch mastery for all skills in parallel with error handling
+          const masteryPromises = skillsWithMetadata.map(async (skill) => {
+            try {
               const response = await api.getMastery(uid, skill.id)
               if (response.data.error_code === 0) {
                 setMastery(skill.id, response.data.data.mastery_score)
+              } else {
+                console.warn(`Failed to get mastery for ${skill.id}:`, response.data.message)
+                setMastery(skill.id, 0)
               }
-            })
-          )
+            } catch (error) {
+              console.error(`Error fetching mastery for ${skill.id}:`, error)
+              setMastery(skill.id, 0)
+            }
+          })
+          
+          await Promise.allSettled(masteryPromises)
         }
       } catch (error) {
-        toast.error("Failed to load skills and mastery data")
-        console.error(error)
+        const errorMessage = getApiErrorMessage(error)
+        toast.error(errorMessage || "Failed to load skills and mastery data")
+        console.error("Failed to load dashboard data:", error)
       } finally {
         setLoading(false)
       }

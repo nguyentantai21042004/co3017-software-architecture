@@ -11,8 +11,8 @@ interface StoreState {
   masteryData: MasteryData
   setMastery: (skill: string, score: number) => void
 
-  currentQuestion: any
-  setCurrentQuestion: (question: any) => void
+  currentQuestion: unknown
+  setCurrentQuestion: (question: unknown) => void
 
   currentMastery: number
   setCurrentMastery: (score: number) => void

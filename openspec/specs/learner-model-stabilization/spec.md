@@ -1,7 +1,8 @@
-# Capability: Learner Model Stabilization
+# learner-model-stabilization Specification
 
-## MODIFIED Requirements
-
+## Purpose
+TBD - created by archiving change refactor-and-stabilize-microservices. Update Purpose after archive.
+## Requirements
 ### Requirement: The Learner Model Service MUST be reliable and bug-free.
 
 The Learner Model Service SHALL undergo comprehensive code review, refactoring, and testing to ensure it operates correctly and efficiently. This includes reviewing both API and consumer logic for mastery score calculations, improving test coverage, and validating both API endpoints and RabbitMQ event processing.
@@ -23,3 +24,4 @@ The Learner Model Service SHALL undergo comprehensive code review, refactoring, 
 - **Then** it returns the correct score.
 - **And when** a `submission.scored` event is sent to its message queue.
 - **Then** the consumer correctly processes the event and updates the mastery score in the database.
+

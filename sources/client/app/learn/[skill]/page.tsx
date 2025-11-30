@@ -11,8 +11,10 @@ import { Badge } from "@/components/ui/badge"
 import { X, ArrowRight, CheckCircle, XCircle, Loader2, TrendingUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { delay } from "@/lib/utils"
+import { getApiErrorMessage } from "@/lib/api-helpers"
 import { MasteryCircle } from "@/components/learning/mastery-circle"
 import confetti from "canvas-confetti"
+import type { QuestionResponse, SubmitAnswerData } from "@/types/api"
 
 /**
  * Parse option string format "A. Answer text" into {key, text}
@@ -38,10 +40,10 @@ export default function LearningSessionPage() {
   // Local state for session flow
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
-  const [question, setQuestion] = useState<any>(null)
+  const [question, setQuestion] = useState<QuestionResponse | null>(null)
   const [contentType, setContentType] = useState<"standard" | "remedial">("standard")
   const [userAnswer, setUserAnswer] = useState<string | null>(null)
-  const [feedback, setFeedback] = useState<any>(null)
+  const [feedback, setFeedback] = useState<SubmitAnswerData | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [canContinue, setCanContinue] = useState(false)
 
@@ -65,7 +67,9 @@ export default function LearningSessionPage() {
       // Step 2 & 3: Load next question
       await loadNextQuestion(currentScore)
     } catch (error) {
-      toast.error("Failed to start learning session")
+      const errorMessage = getApiErrorMessage(error)
+      toast.error(errorMessage)
+      console.error("Failed to start learning session:", error)
     } finally {
       setLoading(false)
     }
@@ -75,12 +79,18 @@ export default function LearningSessionPage() {
     try {
       // Step 2: Adaptive Engine Recommendation
       const adaptiveRes = await api.getNextLesson(userId!, skillId)
+      if (adaptiveRes.data.error_code !== 0) {
+        throw new Error(adaptiveRes.data.message || "Failed to get next lesson recommendation")
+      }
       const { next_lesson_id, content_type } = adaptiveRes.data.data
 
       setContentType(content_type)
 
       // Step 3: Fetch Question Content
       const questionRes = await api.getQuestion(next_lesson_id)
+      if (questionRes.data.error_code !== 0) {
+        throw new Error(questionRes.data.message || "Failed to load question")
+      }
       setQuestion(questionRes.data.data)
 
       // Reset state for new question
@@ -88,8 +98,10 @@ export default function LearningSessionPage() {
       setFeedback(null)
       setShowFeedback(false)
       setCanContinue(false)
-    } catch (error) {
-      toast.error("Error loading next question")
+    } catch (error: any) {
+      const errorMessage = error?.userMessage || error?.message || "Error loading next question"
+      toast.error(errorMessage)
+      console.error("Error loading next question:", error)
     }
   }
 
@@ -139,32 +151,60 @@ export default function LearningSessionPage() {
       }
 
       // Step 5: Poll for Mastery Update
-      // Calculate expected mastery (simple mock logic for demo: +5 if correct)
-      const expectedMastery = result.correct ? Math.min(100, currentMastery + 5) : Math.max(0, currentMastery - 2)
+      // The backend will update mastery asynchronously via RabbitMQ
+      // We poll the mastery endpoint to get the updated score
+      await pollForMasteryUpdate(currentMastery)
 
-      await pollForMasteryUpdate(expectedMastery)
-
-      // Enable next button
-      setTimeout(() => setCanContinue(true), 1000)
+      // Enable next button after polling completes
+      setCanContinue(true)
     } catch (error) {
-      toast.error("Failed to submit answer")
+      const errorMessage = getApiErrorMessage(error)
+      toast.error(errorMessage)
+      console.error("Failed to submit answer:", error)
     } finally {
       setSubmitting(false)
     }
   }
 
-  const pollForMasteryUpdate = async (expectedScore: number) => {
+  const pollForMasteryUpdate = async (previousScore: number) => {
     const startTime = Date.now()
-    const timeout = 5000 // 5s timeout for demo
+    const timeout = 5000 // 5s timeout
+    const pollInterval = 500 // Poll every 500ms
+    const maxAttempts = Math.floor(timeout / pollInterval)
 
-    // Mock polling simulation
-    while (Date.now() - startTime < timeout) {
-      await delay(500)
-      // In real app, we'd fetch api.getMastery() here.
-      // For demo, we'll just simulate the update happening after delay
-      if (Date.now() - startTime > 1500) {
-        setCurrentMastery(expectedScore)
-        return
+    // Poll for mastery update from backend
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      await delay(pollInterval)
+
+      try {
+        const masteryRes = await api.getMastery(userId!, skillId)
+        if (masteryRes.data.error_code !== 0) {
+          console.warn("Mastery API returned error:", masteryRes.data.message)
+          continue
+        }
+
+        const newScore = masteryRes.data.data.mastery_score
+
+        // Update mastery if it has changed from previous score
+        if (newScore !== previousScore) {
+          setCurrentMastery(newScore)
+          return
+        }
+
+        // If we've waited long enough (2s) and score hasn't changed, that's okay
+        // The backend might still be processing, but we'll accept the current state
+        if (Date.now() - startTime > 2000) {
+          // Score hasn't changed, which might mean the answer didn't affect mastery
+          // or the update is still pending. Accept current state.
+          return
+        }
+      } catch (error) {
+        // Log error but continue polling
+        console.warn("Failed to poll mastery update:", error)
+        // If this is the last attempt, keep current mastery (don't change it)
+        if (attempt === maxAttempts - 1) {
+          console.warn("Mastery polling timed out, keeping current score")
+        }
       }
     }
   }

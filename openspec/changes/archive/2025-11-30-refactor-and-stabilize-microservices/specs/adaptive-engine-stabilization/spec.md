@@ -1,6 +1,6 @@
 # Capability: Adaptive Engine Stabilization
 
-## MODIFIED Requirements
+## ADDED Requirements
 
 ### Requirement: The Adaptive Engine Service MUST be reliable and bug-free.
 

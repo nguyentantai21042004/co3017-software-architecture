@@ -1,7 +1,8 @@
-# Capability: Client App Stabilization
+# client-app-stabilization Specification
 
-## MODIFIED Requirements
-
+## Purpose
+TBD - created by archiving change refactor-and-stabilize-microservices. Update Purpose after archive.
+## Requirements
 ### Requirement: The Client Application MUST be reliable and user-friendly.
 
 The Client Application SHALL undergo comprehensive code review, refactoring, and testing to ensure it operates correctly and provides a good user experience. This includes reviewing frontend components, state management, API integration, updating client code to match backend API changes, improving test coverage, and validating user workflows.
@@ -27,3 +28,4 @@ The Client Application SHALL undergo comprehensive code review, refactoring, and
 - **Given** the `client` application is running and connected to the backend.
 - **When** a user performs a key workflow (e.g., answering a question).
 - **Then** the UI updates correctly and reflects the state changes from the backend.
+
