@@ -11,28 +11,101 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
+// AMQPChannel is an interface for amqp.Channel to enable testing
+type AMQPChannel interface {
+	ExchangeDeclare(name, kind string, durable, autoDelete, internal, noWait bool, args amqp.Table) error
+	QueueDeclare(name string, durable, autoDelete, exclusive, noWait bool, args amqp.Table) (amqp.Queue, error)
+	QueueBind(name, key, exchange string, noWait bool, args amqp.Table) error
+	Consume(queue, consumer string, autoAck, exclusive, noLocal, noWait bool, args amqp.Table) (<-chan amqp.Delivery, error)
+	Close() error
+}
+
+// AMQPConnection is an interface for amqp.Connection to enable testing
+type AMQPConnection interface {
+	Channel() (AMQPChannel, error)
+	Close() error
+	IsClosed() bool
+}
+
+// AMQPChannelWrapper wraps *amqp.Channel to implement AMQPChannel interface
+type AMQPChannelWrapper struct {
+	ch *amqp.Channel
+}
+
+func (w *AMQPChannelWrapper) ExchangeDeclare(name, kind string, durable, autoDelete, internal, noWait bool, args amqp.Table) error {
+	return w.ch.ExchangeDeclare(name, kind, durable, autoDelete, internal, noWait, args)
+}
+
+func (w *AMQPChannelWrapper) QueueDeclare(name string, durable, autoDelete, exclusive, noWait bool, args amqp.Table) (amqp.Queue, error) {
+	return w.ch.QueueDeclare(name, durable, autoDelete, exclusive, noWait, args)
+}
+
+func (w *AMQPChannelWrapper) QueueBind(name, key, exchange string, noWait bool, args amqp.Table) error {
+	return w.ch.QueueBind(name, key, exchange, noWait, args)
+}
+
+func (w *AMQPChannelWrapper) Consume(queue, consumer string, autoAck, exclusive, noLocal, noWait bool, args amqp.Table) (<-chan amqp.Delivery, error) {
+	return w.ch.Consume(queue, consumer, autoAck, exclusive, noLocal, noWait, args)
+}
+
+func (w *AMQPChannelWrapper) Close() error {
+	return w.ch.Close()
+}
+
+// AMQPConnectionWrapper wraps *amqp.Connection to implement AMQPConnection interface
+type AMQPConnectionWrapper struct {
+	conn *amqp.Connection
+}
+
+func (w *AMQPConnectionWrapper) Channel() (AMQPChannel, error) {
+	ch, err := w.conn.Channel()
+	if err != nil {
+		return nil, err
+	}
+	return &AMQPChannelWrapper{ch: ch}, nil
+}
+
+func (w *AMQPConnectionWrapper) Close() error {
+	return w.conn.Close()
+}
+
+func (w *AMQPConnectionWrapper) IsClosed() bool {
+	return w.conn.IsClosed()
+}
+
 type EventConsumer interface {
 	Start() error
 	Close() error
 }
 
 type rabbitmqConsumer struct {
-	conn    *amqp.Connection
-	channel *amqp.Channel
+	conn    AMQPConnection
+	channel AMQPChannel
 	uc      learner.UseCase
 	queue   amqp.Queue
 	l       log.Logger
 }
 
+// NewRabbitMQConsumer creates a new RabbitMQ consumer
 func NewRabbitMQConsumer(url string, uc learner.UseCase, l log.Logger) (EventConsumer, error) {
 	ctx := context.Background()
 
 	// Connect to RabbitMQ
-	conn, err := amqp.Dial(url)
+	rawConn, err := amqpDialer(url)
 	if err != nil {
 		l.Errorf(ctx, "consumer.NewRabbitMQConsumer: failed to connect | error=%v", err)
 		return nil, err
 	}
+
+	// Wrap connection for interface compatibility
+	conn := &AMQPConnectionWrapper{conn: rawConn}
+
+	return newRabbitMQConsumerWithConnection(conn, uc, l)
+}
+
+// newRabbitMQConsumerWithConnection creates a consumer with an existing connection (for testing)
+func newRabbitMQConsumerWithConnection(conn AMQPConnection, uc learner.UseCase, l log.Logger) (EventConsumer, error) {
+	ctx := context.Background()
 
 	// Create a channel
 	ch, err := conn.Channel()
@@ -90,7 +163,7 @@ func NewRabbitMQConsumer(url string, uc learner.UseCase, l log.Logger) (EventCon
 		return nil, err
 	}
 
-	l.Infof(ctx, "consumer.NewRabbitMQConsumer: RabbitMQ Consumer connected successfully")
+	l.Infof(ctx, "consumer.newRabbitMQConsumerWithConnection: RabbitMQ Consumer connected successfully")
 
 	return &rabbitmqConsumer{
 		conn:    conn,
@@ -162,11 +235,18 @@ func (c *rabbitmqConsumer) handleMessage(msg amqp.Delivery) {
 }
 
 func (c *rabbitmqConsumer) Close() error {
+	var err error
+	// Check if channel is not nil by attempting to close it
+	// Since amqp.Channel is an interface, we can't directly compare to nil
 	if c.channel != nil {
-		c.channel.Close()
+		if closeErr := c.channel.Close(); closeErr != nil {
+			err = closeErr
+		}
 	}
 	if c.conn != nil {
-		c.conn.Close()
+		if closeErr := c.conn.Close(); closeErr != nil {
+			err = closeErr
+		}
 	}
-	return nil
+	return err
 }

@@ -15,10 +15,10 @@ This work is broken down by service. The backend services should be stabilized b
     - [x] Refactor code to address any identified issues.
 
 3.  **Learner Model Service (`learner-model`)**
-    - [ ] Review the logic for both the API and the consumer in the `Learner Model Service`.
-    - [ ] Analyze and improve unit test coverage for mastery score calculations.
-    - [ ] Write integration tests for the API and the RabbitMQ consumer.
-    - [ ] Refactor code to address any identified issues.
+    - [x] Review the logic for both the API and the consumer in the `Learner Model Service`.
+    - [x] Analyze and improve unit test coverage for mastery score calculations.
+    - [x] Write integration tests for the API and the RabbitMQ consumer.
+    - [x] Refactor code to address any identified issues.
 
 4.  **Adaptive Engine Service (`adaptive-engine`)**
     - [ ] Review the orchestration logic in the `Adaptive Engine`.
