@@ -11,7 +11,13 @@
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage",
         "test:e2e": "playwright test",
-        "test:e2e:ui": "playwright test --ui"
+        "test:e2e:ui": "playwright test --ui",
+        "e2e:start-services": "./scripts/start-services.sh",
+        "e2e:stop-services": "./scripts/stop-services.sh",
+        "e2e:verify-services": "./scripts/verify-services.sh",
+        "e2e:setup-data": "./scripts/setup-test-data.sh",
+        "e2e:cleanup-data": "./scripts/cleanup-test-data.sh",
+        "e2e:run-local": "./scripts/run-e2e-local.sh"
     },
     "dependencies": {
         "@emotion/is-prop-valid": "latest",

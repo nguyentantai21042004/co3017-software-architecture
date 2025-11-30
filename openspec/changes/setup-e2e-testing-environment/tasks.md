@@ -4,29 +4,31 @@ This work enables running E2E tests against both local and deployed test environ
 
 ## 1. Local E2E Testing Setup
 
-- [ ] Create service startup scripts:
-    - [ ] Create Docker Compose file for all backend services (Content, Scoring, Learner Model, Adaptive Engine)
-    - [ ] Create individual service startup scripts (alternative to Docker Compose)
-    - [ ] Create service health check script to verify all services are running
-    - [ ] Document service requirements and dependencies
+- [x] Create service startup scripts:
+    - [x] Create Docker Compose file for all backend services (Content, Scoring, Learner Model, Adaptive Engine) - Using existing `sources/docker-compose.yml` and `sources/docker-compose.infra.yml`
+    - [x] Create individual service startup scripts (alternative to Docker Compose) - Created `scripts/start-services.sh` that uses Docker Compose
+    - [x] Create service health check script to verify all services are running - Created `scripts/verify-services.sh`
+    - [x] Verify services are running and accessible - Health check script verifies all services
+    - [x] Document service requirements and dependencies - Documented in `TESTING.md` with service dependencies diagram and requirements table
 
-- [ ] Create test data setup:
-    - [ ] Create test data initialization scripts for Content Service (questions, skills)
-    - [ ] Create test user setup scripts for Learner Model Service
-    - [ ] Document expected test data state
-    - [ ] Create test data cleanup scripts
+- [x] Create test data setup:
+    - [x] Create test data initialization scripts for Content Service (questions, skills) - Created `scripts/setup-test-data.sh` and `scripts/insert_e2e_test_data.sql`
+    - [x] Create test user setup scripts for Learner Model Service - Created test user mastery data setup in `scripts/setup-test-data.sh`
+    - [x] Document expected test data state - Created `docs/E2E_TEST_DATA_STATE.md` with detailed documentation
+    - [x] Create test data cleanup scripts - Created `scripts/cleanup-test-data.sh`
+    - [x] Verify test data is initialized and accessible - Setup script verifies data after insertion
 
-- [ ] Create test execution scripts (if up to date, skip):
-    - [ ] Create `scripts/start-services.sh` to start all required services
-    - [ ] Create `scripts/stop-services.sh` to stop all services
-    - [ ] Create `scripts/verify-services.sh` to check service health before tests
-    - [ ] Create `scripts/run-e2e-local.sh` to run E2E tests with service verification
-    - [ ] Update `package.json` with new test scripts
+- [x] Create test execution scripts:
+    - [x] Create `scripts/start-services.sh` to start all required services - Created with Docker Compose integration
+    - [x] Create `scripts/stop-services.sh` to stop all services - Created
+    - [x] Create `scripts/verify-services.sh` to check service health before tests - Created with health endpoint checks
+    - [x] Create `scripts/run-e2e-local.sh` to run E2E tests with service verification - Created with complete workflow
+    - [x] Update `package.json` with new test scripts - Added `e2e:start-services`, `e2e:stop-services`, `e2e:verify-services`, `e2e:setup-data`, `e2e:cleanup-data`, `e2e:run-local`
 
-- [ ] Update documentation:
-    - [ ] Update `TESTING.md` with local E2E setup instructions
-    - [ ] Create troubleshooting guide for common E2E test issues
-    - [ ] Document service startup order and dependencies
+- [x] Update documentation:
+    - [x] Update `TESTING.md` with local E2E setup instructions - Created comprehensive `TESTING.md` with setup, service management, test data management, and troubleshooting
+    - [x] Create troubleshooting guide for common E2E test issues - Included in `TESTING.md` with solutions for common problems
+    - [x] Document service startup order and dependencies - Documented in `TESTING.md` with dependency diagram and service requirements table
 
 ## 2. Test Environment Configuration
 
