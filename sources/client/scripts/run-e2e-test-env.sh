@@ -62,22 +62,11 @@ if ! "$SCRIPT_DIR/validate-env.sh"; then
 fi
 printf "\n"
 
-# Step 3: Verify test environment connectivity (optional)
+# Step 3: Verify test environment connectivity
 printf "${YELLOW}Step 3: Verifying test environment connectivity...${NC}\n"
-CLIENT_URL="${NEXT_PUBLIC_CLIENT_URL:-http://localhost:3000}"
-printf "Checking connectivity to: $CLIENT_URL\n"
-
-if curl -f -s "$CLIENT_URL" > /dev/null 2>&1; then
-    printf "${GREEN}✓${NC} Test environment is accessible\n"
-else
-    printf "${YELLOW}⚠${NC} Cannot reach test environment at $CLIENT_URL\n"
-    printf "This may be expected if the environment is not yet deployed.\n"
-    read -p "Continue anyway? [y/N] " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        printf "${YELLOW}Cancelled.${NC}\n"
-        exit 0
-    fi
+if ! "$SCRIPT_DIR/test-env-connectivity.sh" "$ENV"; then
+    printf "\n${RED}✗${NC} Connectivity check failed. Aborting tests.\n"
+    exit 1
 fi
 printf "\n"
 
@@ -90,18 +79,34 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
+# Generate Run ID
+export PW_RUN_ID="test-env-$(date +%Y%m%d-%H%M%S)"
+printf "Run ID: ${BLUE}$PW_RUN_ID${NC}\n"
+
 # Run Playwright tests with environment variables
 printf "Executing Playwright E2E tests...\n"
-if NEXT_PUBLIC_ENV="$ENV" npm run test:e2e; then
+NEXT_PUBLIC_ENV="$ENV" npm run test:e2e || true # Allow script to continue to aggregation
+
+# Step 5: Aggregate Results
+printf "${YELLOW}Step 5: Aggregating results...${NC}\n"
+node "$SCRIPT_DIR/aggregate-results.js"
+TEST_EXIT_CODE=$?
+
+# Step 6: Post-test Cleanup (Optional)
+printf "${YELLOW}Step 6: Post-test cleanup...${NC}\n"
+# Add any cleanup logic here (e.g., resetting test data via API)
+printf "Cleanup complete.\n"
+
+if [ $TEST_EXIT_CODE -eq 0 ]; then
     printf "\n${GREEN}✅ E2E tests completed successfully!${NC}\n\n"
     printf "Test results are available in:\n"
-    printf "  • HTML Report: playwright-report/index.html\n"
-    printf "  • Test Artifacts: test-results/\n"
+    printf "  • HTML Report: playwright-report/$PW_RUN_ID/index.html\n"
+    printf "  • Test Artifacts: test-results/$PW_RUN_ID/\n"
     exit 0
 else
-    printf "\n${RED}✗${NC} E2E tests failed. Check the output above for details.\n"
+    printf "\n${RED}✗${NC} E2E tests failed.\n"
     printf "\nTo view test report:\n"
-    printf "  npx playwright show-report\n"
+    printf "  npx playwright show-report playwright-report/$PW_RUN_ID\n"
     exit 1
 fi
 
