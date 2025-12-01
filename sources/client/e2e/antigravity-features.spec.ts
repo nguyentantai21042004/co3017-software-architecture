@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures/antigravity-fixture';
+import { screenshotPath } from './utils/artifacts';
 
 test.describe('Antigravity Browser Features', () => {
 
@@ -29,7 +30,7 @@ test.describe('Antigravity Browser Features', () => {
         }
 
         // Capture screenshot
-        await agPage.screenshot({ path: 'test-results/screenshots/ag-advanced-selectors.png', fullPage: true });
+        await agPage.screenshot({ path: screenshotPath('ag-advanced-selectors.png'), fullPage: true });
     });
 
     test('should monitor performance metrics (Core Web Vitals)', async ({ agPage }) => {
@@ -53,7 +54,7 @@ test.describe('Antigravity Browser Features', () => {
         expect(performanceTiming.domInteractive).toBeGreaterThanOrEqual(0);
 
         // Capture screenshot
-        await agPage.screenshot({ path: 'test-results/screenshots/ag-performance-metrics.png', fullPage: true });
+        await agPage.screenshot({ path: screenshotPath('ag-performance-metrics.png'), fullPage: true });
     });
 
     test('should intercept network requests for API verification', async ({ agPage }) => {
@@ -83,7 +84,7 @@ test.describe('Antigravity Browser Features', () => {
         expect(hasContentOrMastery).toBeTruthy();
 
         // Capture screenshot
-        await agPage.screenshot({ path: 'test-results/screenshots/ag-network-interception.png', fullPage: true });
+        await agPage.screenshot({ path: screenshotPath('ag-network-interception.png'), fullPage: true });
     });
 
     test('should use debugging tools (console logs)', async ({ agPage }) => {
@@ -100,6 +101,6 @@ test.describe('Antigravity Browser Features', () => {
         expect(logs).toContain('Antigravity Debug Log: Dashboard Loaded');
 
         // Capture screenshot
-        await agPage.screenshot({ path: 'test-results/screenshots/ag-debug-console.png', fullPage: true });
+        await agPage.screenshot({ path: screenshotPath('ag-debug-console.png'), fullPage: true });
     });
 });
