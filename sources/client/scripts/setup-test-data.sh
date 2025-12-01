@@ -119,9 +119,7 @@ VALUES
     ('$TEST_USER_ID', 'math', 50, NOW()),
     ('$TEST_USER_ID', 'science', 60, NOW())
 ON CONFLICT (user_id, skill_tag) 
-DO UPDATE SET 
-    current_score = EXCLUDED.current_score,
-    last_updated = NOW();
+DO NOTHING;
 EOF
 
 if [ $? -eq 0 ]; then
