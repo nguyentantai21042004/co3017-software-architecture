@@ -126,6 +126,46 @@ Client Application
         └─► PostgreSQL (learner_db)
 ```
 
+### E2E Test Structure
+
+The E2E test suite is organized in `sources/client/e2e/`:
+
+- **`specs/`**: Test files (e.g., `dashboard.spec.ts`, `learning-flow.spec.ts`)
+  - `dashboard.spec.ts`: Dashboard functionality (loading, navigation, logout)
+  - `learning-flow.spec.ts`: Full learning session flow (questions, feedback, mastery)
+  - `api-integration.spec.ts`: Backend service integration verification
+  - `ui-components.spec.ts`: UI component isolation tests
+  - `error-handling.spec.ts`: Edge cases and error resilience
+  - `test-data.spec.ts`: Data verification and mock mode
+  - `antigravity-features.spec.ts`: Advanced browser features
+- **`fixtures/`**: Test fixtures and setup
+  - `antigravity-fixture.ts`: Custom Playwright fixture for Antigravity Browser
+  - `mock-data.ts`: Centralized mock data objects
+- **`utils/`**: Helper utilities
+  - `artifacts.ts`: Helper for persistent screenshot paths
+
+### Adding New E2E Tests
+
+1. **Create a new spec file** in `sources/client/e2e/`.
+2. **Import the custom fixture**:
+   ```typescript
+   import { test, expect } from './fixtures/antigravity-fixture';
+   import { screenshotPath } from './utils/artifacts';
+   ```
+3. **Write your test**:
+   ```typescript
+   test('should perform action', async ({ agPage }) => {
+     await agPage.goto('/page');
+     await expect(agPage.locator('selector')).toBeVisible();
+     await agPage.screenshot({ path: screenshotPath('action-result.png'), fullPage: true });
+   });
+   ```
+4. **Use `agPage`** instead of `page` to leverage Antigravity features.
+5. **Run the test** to verify:
+   ```bash
+   npx playwright test e2e/your-test.spec.ts
+   ```
+
 ## Running E2E Tests
 
 ### Using npm Scripts
@@ -211,6 +251,64 @@ npx playwright test --headed
 # View test report
 npx playwright show-report
 ```
+
+### E2E Artifacts (Reports, Screenshots, Videos)
+
+Playwright E2E runs now store artifacts in **per-run folders** so that reports and screenshots from different runs do **not overwrite** each other:
+
+- **Run identifier**
+  - Each run is assigned a `PW_RUN_ID` (timestamp by default, or you can set it manually).
+  - All artifact paths are scoped under this run ID.
+
+- **Directories**
+  - Test artifacts (traces, raw screenshots, videos, etc.):
+    - `test-results/<PW_RUN_ID>/...`
+  - HTML reports:
+    - `playwright-report/<PW_RUN_ID>/index.html`
+  - Named screenshots captured in tests (for documentation/debugging):
+    - `test-results/<PW_RUN_ID>/screenshots/*.png`
+
+- **Customising run id**
+
+```bash
+# Use a custom run id (e.g. CI build number or short git SHA)
+PW_RUN_ID=build-123 npm run test:e2e
+
+# Reports and screenshots will be stored under:
+#   test-results/build-123/
+#   playwright-report/build-123/
+```
+
+- **Opening older reports**
+  - Open a specific run’s report:
+
+```bash
+npx playwright show-report playwright-report/<PW_RUN_ID>
+```
+
+### Interpreting Test Results
+
+1. **Console Summary**:
+   - When running via `run-e2e-test-env.sh`, a summary is printed at the end:
+     ```
+     =============================================
+        E2E TEST SUMMARY
+     =============================================
+     Total Tests: 54
+     ✅ Passed:   54
+     ❌ Failed:   0
+     ...
+     ```
+
+2. **HTML Report**:
+   - Detailed view of all tests, steps, and artifacts.
+   - **Traces**: Click on a failed test to see the full execution trace.
+   - **Screenshots**: View captured screenshots for visual verification.
+   - **Console Logs**: See browser console output (including Antigravity logs).
+   - **Video**: Watch a video recording of the test execution.
+
+3. **JSON Report**:
+   - Raw data available in `test-results/<run-id>/results.json`.
 
 ## Environment Configuration
 
@@ -430,13 +528,43 @@ This removes:
 4. Run tests in headed mode to see what's happening:
    ```bash
    npx playwright test --headed
-   ```
-
-5. Check network connectivity:
-   ```bash
-   curl http://localhost:3000  # Client app
+```bash
    curl http://localhost:8084/api/adaptive/next-lesson?user_id=test-user-123&skill_tag=math
    ```
+
+### Debugging E2E Tests
+
+1. **Use Antigravity Debugging Tools**:
+   - **Console Logs**: Tests capture browser console logs. Check the test report for captured logs.
+   - **Network Interception**: Use `agPage.on('request')` to log API calls.
+
+2. **Run in Headed Mode**:
+   ```bash
+   npx playwright test --headed
+   ```
+
+3. **Use Playwright Inspector**:
+   ```bash
+   npx playwright test --debug
+   ```
+
+4. **Check Screenshots**:
+   - Look at `test-results/<run-id>/screenshots/` for visual state at failure points.
+
+### Handling Flaky Tests
+
+1. **Wait for Network Idle**:
+   - Use `await agPage.waitForLoadState('networkidle')` before assertions if the page loads data.
+
+2. **Use Robust Selectors**:
+   - Prefer `getByRole`, `getByText`, or `:has-text` over CSS classes.
+   - Example: `agPage.getByRole('button', { name: 'Submit' })`
+
+3. **Increase Timeouts (Sparingly)**:
+   - If a specific action is slow, pass a timeout option: `await expect(locator).toBeVisible({ timeout: 10000 })`.
+
+4. **Isolate State**:
+   - Ensure `beforeEach` cleans up or sets up unique state (e.g., unique user IDs if possible, or reset data).
 
 ### Database Connection Issues
 
@@ -478,6 +606,15 @@ This removes:
    ```bash
    docker logs its-rabbitmq
    ```
+
+### Antigravity Browser Issues
+
+**Problem**: `agPage` methods are not available or behave unexpectedly.
+
+**Solutions**:
+1. **Check Fixture Usage**: Ensure you import `test` from `./fixtures/antigravity-fixture` and destructure `agPage`.
+2. **Check Initialization**: The fixture injects an init script. Verify `window.__ANTIGRAVITY_ENABLED__` in the browser console if debugging.
+3. **Update Playwright**: Ensure `@playwright/test` is up to date.
 
 ## Additional Resources
 
