@@ -82,7 +82,7 @@ printf "\n"
 
 # Step 2: Start application services
 printf "${YELLOW}Step 2: Starting application services...${NC}\n"
-$DOCKER_COMPOSE -f docker-compose.yml up -d
+$DOCKER_COMPOSE -f docker-compose.yml up -d content-service scoring-service learner-model-api learner-model-consumer adaptive-engine
 
 # Wait for services to start
 printf "Waiting for services to start...\n"

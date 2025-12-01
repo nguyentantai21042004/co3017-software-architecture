@@ -16,7 +16,7 @@ const getBaseURL = (): string => {
   if (envBaseURL && envBaseURL.trim() !== '') {
     return envBaseURL.trim()
   }
-  return 'http://localhost:3000'
+  return 'http://localhost:3001'
 }
 
 // Get environment name
@@ -49,13 +49,22 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: baseURL,
+    baseURL,
+
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-    /* Screenshot on failure */
-    screenshot: 'only-on-failure',
-    /* Video on failure */
-    video: 'retain-on-failure',
+
+    /* Screenshot configuration */
+    screenshot: {
+      mode: 'only-on-failure', // Capture screenshots on test failure
+      fullPage: true, // Capture full page screenshot
+    },
+
+    /* Video configuration */
+    video: {
+      mode: 'retain-on-failure', // Keep videos only for failed tests
+      size: { width: 1280, height: 720 },
+    },
   },
 
   /* Configure projects for major browsers */
@@ -79,11 +88,11 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: environment === 'local' || !process.env.NEXT_PUBLIC_CLIENT_URL
     ? {
-        command: 'npm run dev',
-        url: baseURL,
-        reuseExistingServer: !process.env.CI,
-        timeout: 120 * 1000,
-      }
+      command: 'npm run dev -- -p 3001',
+      url: baseURL,
+      reuseExistingServer: false, // Always start fresh server to avoid stale code
+      timeout: 120 * 1000,
+    }
     : undefined, // Don't start web server for test/staging environments
 })
 

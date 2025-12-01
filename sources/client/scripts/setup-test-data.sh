@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 # Get the project root directory (sources/)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SOURCES_DIR="$SCRIPT_DIR/sources"
-CLIENT_SCRIPTS_DIR="$SCRIPT_DIR/sources/client/scripts"
+CLIENT_SCRIPTS_DIR="$SCRIPT_DIR/client/scripts"
 
 printf "${BLUE}Setting up E2E Test Data${NC}\n"
 printf "============================\n\n"

@@ -46,6 +46,7 @@ export default function DashboardPage() {
   useEffect(() => {
     // Check auth
     const storedUserId = localStorage.getItem("user_id")
+
     if (!storedUserId && !userId) {
       router.push("/")
       return
@@ -64,6 +65,7 @@ export default function DashboardPage() {
 
         // Fetch available skills from backend
         const skillsResponse = await api.getAvailableSkills()
+
         if (skillsResponse.data.error_code === 0) {
           const skillTags = skillsResponse.data.data as string[]
 
@@ -98,7 +100,7 @@ export default function DashboardPage() {
               setMastery(skill.id, 0)
             }
           })
-          
+
           await Promise.allSettled(masteryPromises)
         }
       } catch (error) {
