@@ -93,12 +93,12 @@ This task focuses on implementing a comprehensive Playwright test suite using an
     - [x] Document service startup requirements in test documentation - Will be documented in test documentation (part of later tasks)
     - [x] Create script to run Playwright tests with automatic service management - Created `scripts/run-playwright-with-services.sh` and added `npm run test:e2e:with-services` script
 
-- [ ] **Antigravity Browser Integration**:
-    - [ ] Install and configure antigravity web browser for Playwright
-    - [ ] Update `playwright.config.ts` to use antigravity browser as primary test execution engine
-    - [ ] Configure antigravity-specific options (selectors, performance monitoring, network interception)
-    - [ ] Set up antigravity browser for different environments (local, test, staging)
-    - [ ] Document antigravity browser setup and configuration
+- [x] **Antigravity Browser Integration**:
+    - [x] Install and configure antigravity web browser for Playwright
+    - [x] Update `playwright.config.ts` to use antigravity browser as primary test execution engine
+    - [x] Configure antigravity-specific options (selectors, performance monitoring, network interception)
+    - [x] Set up antigravity browser for different environments (local, test, staging)
+    - [x] Document antigravity browser setup and configuration
 
 - [ ] **Dashboard Functionality Tests** (`e2e/dashboard.spec.ts`):
     - [ ] Test: Dashboard loads and displays available skills

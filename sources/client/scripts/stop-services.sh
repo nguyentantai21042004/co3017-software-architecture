@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 
 # Get the project root directory (sources/)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-SOURCES_DIR="$SCRIPT_DIR/sources"
+SOURCES_DIR="$SCRIPT_DIR"
 
 printf "${BLUE}Stopping Backend Services${NC}\n"
 printf "============================\n\n"

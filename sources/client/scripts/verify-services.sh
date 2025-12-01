@@ -21,7 +21,7 @@ SERVICES=(
     "Content Service:http://localhost:8081/health"
     "Scoring Service:http://localhost:8082/health"
     "Learner Model Service:http://localhost:8083/health"
-    "Adaptive Engine Service:http://localhost:8084/health"
+    "Adaptive Engine Service:http://localhost:8084/api/adaptive/health"
 )
 
 ALL_HEALTHY=true
