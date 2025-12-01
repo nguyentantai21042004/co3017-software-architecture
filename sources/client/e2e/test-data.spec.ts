@@ -1,5 +1,6 @@
 import { test, expect } from './fixtures/antigravity-fixture';
 import { MOCK_QUESTION } from './fixtures/mock-data';
+import { screenshotPath } from './utils/artifacts';
 
 test.describe('Test Data and Mocking', () => {
 
@@ -22,7 +23,7 @@ test.describe('Test Data and Mocking', () => {
             await expect(skillCards.first()).toBeVisible();
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/data-real-user.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('data-real-user.png'), fullPage: true });
         });
 
         test('should verify test questions exist in database', async ({ agPage }) => {
@@ -38,7 +39,7 @@ test.describe('Test Data and Mocking', () => {
             expect(text?.length).toBeGreaterThan(0);
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/data-real-question.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('data-real-question.png'), fullPage: true });
         });
     });
 
@@ -125,7 +126,7 @@ test.describe('Test Data and Mocking', () => {
             await expect(optionB).toBeVisible();
 
             // Capture screenshot showing mocked data
-            await agPage.screenshot({ path: 'test-results/screenshots/data-mock-mode.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('data-mock-mode.png'), fullPage: true });
         });
 
         test('should mock scoring service for consistent testing', async ({ agPage }) => {
@@ -211,7 +212,7 @@ test.describe('Test Data and Mocking', () => {
             await expect(agPage.getByText('Correct! (MOCKED FEEDBACK)')).toBeVisible();
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/data-mock-scoring.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('data-mock-scoring.png'), fullPage: true });
         });
     });
 });

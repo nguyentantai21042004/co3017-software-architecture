@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures/antigravity-fixture';
+import { screenshotPath } from './utils/artifacts';
 
 test.describe('Error Handling and Edge Cases', () => {
     test.beforeEach(async ({ agPage }) => {
@@ -28,7 +29,7 @@ test.describe('Error Handling and Edge Cases', () => {
             expect(pageContent.length).toBeGreaterThan(100);
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/error-network-timeout.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('error-network-timeout.png'), fullPage: true });
         });
 
         test('should handle 503 Service Unavailable', async ({ agPage }) => {
@@ -48,7 +49,7 @@ test.describe('Error Handling and Edge Cases', () => {
             await expect(agPage.locator('header')).toBeVisible();
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/error-network-503.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('error-network-503.png'), fullPage: true });
         });
     });
 
@@ -73,7 +74,7 @@ test.describe('Error Handling and Edge Cases', () => {
             await expect(agPage.locator('header')).toBeVisible();
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/error-data-malformed.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('error-data-malformed.png'), fullPage: true });
         });
 
         test('should handle empty data gracefully', async ({ agPage }) => {
@@ -92,7 +93,7 @@ test.describe('Error Handling and Edge Cases', () => {
             await expect(agPage.locator('header')).toBeVisible();
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/error-data-empty.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('error-data-empty.png'), fullPage: true });
         });
     });
 
@@ -113,7 +114,7 @@ test.describe('Error Handling and Edge Cases', () => {
             await expect(agPage).toHaveURL(/\/learn\/math/);
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/error-session-refresh.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('error-session-refresh.png'), fullPage: true });
         });
 
         test('should clear session state on logout', async ({ agPage }) => {
@@ -131,7 +132,7 @@ test.describe('Error Handling and Edge Cases', () => {
             await expect(agPage).toHaveURL('/');
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/error-session-logout.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('error-session-logout.png'), fullPage: true });
         });
     });
 
@@ -157,7 +158,7 @@ test.describe('Error Handling and Edge Cases', () => {
             expect(title).toBeTruthy();
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/error-offline-mode.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('error-offline-mode.png'), fullPage: true });
 
             // Restore online state
             await agPage.context().setOffline(false);
