@@ -100,143 +100,214 @@ This task focuses on implementing a comprehensive Playwright test suite using an
     - [x] Set up antigravity browser for different environments (local, test, staging)
     - [x] Document antigravity browser setup and configuration
 
-- [ ] **Dashboard Functionality Tests** (`e2e/dashboard.spec.ts`):
-    - [ ] Test: Dashboard loads and displays available skills
+- [x] **Dashboard Functionality Tests** (`e2e/dashboard.spec.ts`):
+    - [x] Test: Dashboard loads and displays available skills
         - Use antigravity browser's advanced selectors for reliable element identification
         - Verify dashboard page loads correctly
         - Verify skill cards are displayed with mastery scores
         - Verify loading states are handled properly
         - Verify error states are displayed when API calls fail
-    - [ ] Test: Navigation to learning session
+    - [x] Test: Navigation to learning session
         - Verify clicking a skill card navigates to learning session page
         - Verify URL routing is correct (`/learn/[skill]`)
         - Verify skill context is preserved in navigation
-    - [ ] Test: User authentication and logout
+    - [x] Test: User authentication and logout
         - Verify logout button is visible and functional
         - Verify logout clears user session (localStorage)
         - Verify redirect to home page after logout
-    - [ ] Test: Dashboard state management
+    - [x] Test: Dashboard state management
         - Verify mastery scores are updated after returning from learning session
         - Verify dashboard refreshes correctly after session completion
+    - [x] **Screenshot Capture for Documentation**
+        - Configure Playwright to capture screenshots on test completion
+        - Capture UI screenshots at key test points (dashboard loaded, navigation, logout, mastery scores)
+        - Save screenshots to `test-results/screenshots/` folder
+        - Screenshots include: dashboard-skills-loaded.png, dashboard-before-navigation.png, learning-session-page.png, dashboard-with-logout.png, home-after-logout.png, dashboard-mastery-scores.png
 
-- [ ] **Learning Session Flow Tests** (`e2e/learning-flow.spec.ts`):
-    - [ ] Test: Learning session initialization
+- [x] **Learning Session Flow Tests** (`e2e/learning-flow.spec.ts`):
+    - [x] Test: Learning session initialization
         - Use antigravity browser's network interception to verify API calls
         - Verify learning session page loads correctly
         - Verify mastery score is displayed
         - Verify session state is initialized properly
         - Verify API calls to Adaptive Engine for next lesson recommendation
-    - [ ] Test: Question presentation
+    - [x] Test: Question presentation
         - Use antigravity browser's advanced selectors for question elements
         - Verify question content is loaded from Content Service
         - Verify question options/inputs are displayed correctly
         - Verify question metadata (difficulty, skill tag) is shown
         - Verify remedial vs standard content is displayed appropriately
-    - [ ] Test: Answer submission flow
+    - [x] Test: Answer submission flow
         - Use antigravity browser's network monitoring to verify API calls
         - Verify answer can be selected/entered
         - Verify submit button is functional
         - Verify answer is sent to Scoring Service
         - Verify loading state during submission
         - Verify error handling for failed submissions
-    - [ ] Test: Feedback display
+    - [x] Test: Feedback display
         - Use antigravity browser's performance monitoring to track UI updates
         - Verify feedback is displayed after answer submission
         - Verify correct/incorrect feedback is shown appropriately
         - Verify feedback includes explanation if available
         - Verify UI updates correctly based on feedback
-    - [ ] Test: Mastery score updates
+    - [x] Test: Mastery score updates
         - Use antigravity browser's network interception to monitor polling
         - Verify mastery polling mechanism works correctly
         - Verify mastery score updates in UI after answer submission
         - Verify mastery circle component updates with new score
         - Verify polling stops after timeout or successful update
-    - [ ] Test: Adaptive question selection
+    - [x] Test: Adaptive question selection
         - Use antigravity browser to verify adaptive recommendation flow
         - Verify next question is requested from Adaptive Engine
         - Verify adaptive recommendation logic is respected
         - Verify next question matches recommended difficulty/content type
         - Verify question progression follows adaptive algorithm
-    - [ ] Test: Session continuation
+    - [x] Test: Session continuation
         - Verify "Continue" button loads next question
         - Verify session state is maintained between questions
         - Verify question history is tracked correctly
         - Verify session can be completed and user returns to dashboard
+    - [x] **Screenshot Capture for Documentation**
+        - Configure Playwright to capture screenshots on test completion
+        - Capture UI screenshots at key test points (session init, question display, answer selection, feedback, next question, exit)
+        - Save screenshots to `test-results/screenshots/` folder
+        - Screenshots include: learning-session-initialized.png, learning-question-display.png, learning-answer-selected.png, learning-feedback-shown.png, learning-feedback-panel.png, learning-next-question.png, learning-after-exit.png
 
-- [ ] **API Integration Tests** (within E2E tests using antigravity browser):
-    - [ ] Test: Content Service integration
+- [x] **API Integration Tests** (within E2E tests using antigravity browser):
+    - [x] Test: Content Service integration
         - Use antigravity browser's network interception to verify API calls
         - Verify question content is fetched correctly
         - Verify question metadata is parsed correctly
         - Verify error handling for Content Service failures
-    - [ ] Test: Adaptive Engine integration
+    - [x] Test: Adaptive Engine integration
         - Use antigravity browser to monitor adaptive recommendation API calls
         - Verify next lesson recommendation API calls
         - Verify recommendation data is used correctly
         - Verify error handling for Adaptive Engine failures
-    - [ ] Test: Scoring Service integration
+    - [x] Test: Scoring Service integration
         - Use antigravity browser's network monitoring for answer submission
         - Verify answer submission API calls
         - Verify scoring response is processed correctly
         - Verify error handling for Scoring Service failures
-    - [ ] Test: Learner Model Service integration
+    - [x] Test: Learner Model Service integration
         - Use antigravity browser to track mastery polling API calls
         - Verify mastery score retrieval API calls
         - Verify mastery polling mechanism
         - Verify error handling for Learner Model Service failures
+    - [x] **Screenshot Capture for Documentation**
+        - Configure Playwright to capture screenshots on test completion
+        - Capture UI screenshots at key test points (service integrations and error states)
+        - Save screenshots to `test-results/screenshots/` folder
+        - Screenshots include: api-content-service.png, api-adaptive-engine.png, api-scoring-service.png, api-learner-model.png, api-content-error.png, api-scoring-error.png, api-learner-error.png
 
-- [ ] **UI Component Tests** (within E2E tests using antigravity browser):
-    - [ ] Test: Mastery Circle component
+- [x] **UI Component Tests** (within E2E tests using antigravity browser):
+    - [x] Test: Mastery Circle component
         - Use antigravity browser's advanced selectors for component elements
         - Verify mastery circle displays correct score
         - Verify color coding based on mastery level
         - Verify animation/transitions work correctly
-    - [ ] Test: Question display components
+    - [x] Test: Question display components
         - Use antigravity browser for reliable component interaction
         - Verify question text is rendered correctly
         - Verify multiple choice options are displayed
         - Verify text input fields are functional
         - Verify question metadata display
-    - [ ] Test: Feedback components
+    - [x] Test: Feedback components
         - Use antigravity browser's performance monitoring for UI updates
         - Verify feedback messages are displayed
         - Verify feedback styling (success/error)
         - Verify feedback animations/transitions
-    - [ ] Test: Navigation components
+    - [x] Test: Navigation components
         - Verify navigation links work correctly
         - Verify back button functionality
         - Verify breadcrumb navigation (if applicable)
+    - [x] Test: Accessibility and Visual Regression (ENHANCEMENT)
+        - Verify ARIA labels and roles for screen readers
+        - Test keyboard accessibility for all interactive elements
+        - Capture visual regression baselines for components
+        - Verify consistent styling across pages
+    - [x] **Screenshot Capture for Documentation**
+        - Configure Playwright to capture screenshots on test completion
+        - Capture UI screenshots at key test points (components, accessibility, visual regression)
+        - Save screenshots to `test-results/screenshots/` folder
+        - Screenshots include: component-mastery-circle.png, component-mastery-colors.png, component-mastery-header.png, component-question-text.png, component-question-options.png, component-question-metadata.png, component-feedback-message.png, component-feedback-styling.png, component-before-feedback.png, component-after-feedback.png, component-nav-exit.png, component-nav-back-dashboard.png, component-nav-logout.png, component-accessibility.png, component-visual-dashboard.png, component-visual-learning.png
 
-- [ ] **Error Handling and Edge Cases** (using antigravity browser):
-    - [ ] Test: Network failures
+- [x] **Error Handling and Edge Cases** (using antigravity browser):
+    - [x] Test: Network failures
         - Use antigravity browser's network interception to simulate failures
         - Verify graceful handling of API timeouts
         - Verify retry mechanisms work correctly
         - Verify user-friendly error messages are displayed
-    - [ ] Test: Invalid data handling
+    - [x] Test: Invalid data handling
         - Use antigravity browser to test malformed API responses
         - Verify handling of malformed API responses
         - Verify handling of missing required data
         - Verify validation errors are displayed correctly
-    - [ ] Test: Session state management
+    - [x] Test: Session state management
         - Use antigravity browser's state management capabilities
         - Verify session state persists during navigation
         - Verify session state is cleared on logout
         - Verify session recovery after page refresh
+    - [x] Test: Offline Mode Handling (ENHANCEMENT)
+        - Use antigravity browser to simulate offline state
+        - Verify application behavior when network is lost
+        - Verify no crashes during offline navigation
+        - Verify recovery when network is restored
+    - [x] **Screenshot Capture for Documentation**
+        - Configure Playwright to capture screenshots on test completion
+        - Capture UI screenshots at key test points (error states, edge cases)
+        - Save screenshots to `test-results/screenshots/` folder
+        - Screenshots include: error-network-timeout.png, error-network-503.png, error-data-malformed.png, error-data-empty.png, error-session-refresh.png, error-session-logout.png, error-offline-mode.png
 
-- [ ] **Test Data and Mocking** (with antigravity browser support):
-    - [ ] Create test data fixtures for consistent testing
-    - [ ] Set up test user accounts in test environment
-    - [ ] Create test questions with known answers
-    - [ ] Use antigravity browser's network interception for API mocking
-    - [ ] Document test data requirements and setup procedures
+- [x] **Test Data and Mocking** (with antigravity browser support):
+    - [x] Create test data fixtures for consistent testing
+        - Created `e2e/fixtures/mock-data.ts` with centralized mock objects
+    - [x] Set up test user accounts in test environment
+        - Verified real test user `test-user-123` exists and has profile
+    - [x] Create test questions with known answers
+        - Verified real questions exist in database
+    - [x] Use antigravity browser's network interception for API mocking
+        - Implemented `route` interception for Content and Scoring services
+    - [x] Implement Mock vs Real Mode Switching (ENHANCEMENT)
+        - Created utility to toggle between real backend and mocked responses
+        - Verify tests pass in both modes
+        - Document how to switch modes
+    - [x] Document test data requirements and setup procedures
+    - [x] **Screenshot Capture for Documentation**
+        - Configure Playwright to capture screenshots on test completion
+        - Capture UI screenshots at key test points (real vs mock data)
+        - Save screenshots to `test-results/screenshots/` folder
+        - Screenshots include: data-real-user.png, data-real-question.png, data-mock-mode.png, data-mock-scoring.png
 
-- [ ] **Antigravity Browser-Specific Features**:
-    - [ ] Leverage antigravity browser's advanced selectors for more reliable tests
-    - [ ] Use antigravity browser's performance monitoring for test metrics
-    - [ ] Implement antigravity browser's network interception for API verification
-    - [ ] Utilize antigravity browser's debugging tools for test failure analysis
-    - [ ] Document antigravity browser-specific test patterns and best practices
+- [x] **Antigravity Browser-Specific Features**:
+    - [x] Leverage antigravity browser's advanced selectors for more reliable tests
+        - Implemented tests using `:has-text`, role-based selectors, and chaining
+    - [x] Use antigravity browser's performance monitoring for test metrics
+        - Implemented Core Web Vitals (LCP, CLS, FID) monitoring via Performance API
+    - [x] Implement antigravity browser's network interception for API verification
+        - Implemented `agPage.on('request')` to monitor and verify API calls
+    - [x] Utilize antigravity browser's debugging tools for test failure analysis
+        - Implemented console log capture and analysis
+    - [x] Implement Performance Metrics Collection (ENHANCEMENT)
+        - Capture Core Web Vitals (LCP, CLS, FID) using Antigravity
+        - Log performance metrics to test report
+        - Fail tests if performance thresholds are exceeded
+    - [x] Document antigravity browser-specific test patterns and best practices
+    - [x] **Screenshot Capture for Documentation**
+        - Configure Playwright to capture screenshots on test completion
+        - Capture UI screenshots at key test points (performance metrics, advanced selectors)
+        - Save screenshots to `test-results/screenshots/` folder
+        - Screenshots include: ag-advanced-selectors.png, ag-performance-metrics.png, ag-network-interception.png, ag-debug-console.png
+
+- [ ] **Persistent Test Artifacts Configuration**:
+    - [ ] Configure Playwright `test-results` output so each run is stored in a separate, timestamped subfolder instead of overwriting (e.g., `test-results/<run-id>/screenshots`, `test-results/<run-id>/videos`)
+    - [ ] Configure `playwright-report` to either:
+        - [ ] Generate a per-run report directory (e.g., `playwright-report/<run-id>/index.html`), or
+        - [ ] Archive previous reports before generating a new one
+    - [ ] Update `playwright.config.ts` and related scripts to implement the new artifact storage strategy
+    - [ ] Verify that multiple consecutive runs keep all screenshots and reports for later comparison
+    - [ ] Document the new artifact layout and how to open older reports
+    - [ ] Rerun tests and verify artifact storage
 
 - [ ] **Test Maintenance**:
     - [ ] Document test structure and organization
@@ -244,6 +315,11 @@ This task focuses on implementing a comprehensive Playwright test suite using an
     - [ ] Document test debugging procedures using antigravity tools
     - [ ] Create test flakiness investigation guide
     - [ ] Document antigravity browser troubleshooting procedures
+    - [ ] **Screenshot Capture for Documentation**
+        - Configure Playwright to capture screenshots on test completion
+        - Capture UI screenshots at key test points (dashboard loaded, navigation, logout, mastery scores)
+        - Save screenshots to `test-results/screenshots/` folder
+        - Screenshots include: dashboard-skills-loaded.png, dashboard-before-navigation.png, learning-session-page.png, dashboard-with-logout.png, home-after-logout.png, dashboard-mastery-scores.png
 
 ## 5. Test Execution and Reporting
 
