@@ -288,6 +288,7 @@ export default function LearningSessionPage() {
                             key={opt}
                             onClick={() => !showFeedback && setUserAnswer(key)}
                             disabled={showFeedback || submitting}
+                            data-testid={`option-button-${key}`}
                             className={`
                               w-full p-4 rounded-lg border-2 text-left transition-all font-medium text-lg flex items-center
                               ${isSelected
@@ -341,6 +342,7 @@ export default function LearningSessionPage() {
                     className="w-full text-lg py-6"
                     onClick={handleSubmit}
                     disabled={!userAnswer || submitting}
+                    data-testid="submit-answer-button"
                   >
                     {submitting && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
                     {submitting ? "Submitting..." : "Submit Answer"}
