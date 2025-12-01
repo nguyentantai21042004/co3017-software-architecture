@@ -3,7 +3,7 @@
 
 ---
 
-## 📊 SCORING BREAKDOWN BY SECTION
+## SCORING BREAKDOWN BY SECTION
 
 ### OVERALL SCORE: 87/100 (B+)
 
@@ -19,18 +19,18 @@
 
 ---
 
-## 📝 DETAILED EVALUATION BY SECTION
+## DETAILED EVALUATION BY SECTION
 
 ### 1. REQUIREMENTS ANALYSIS (13.5/15 points)
 
-#### Strengths ✅
+#### Strengths
 | **Criterion** | **Score** | **Evidence** |
 |--------------|-----------|--------------|
 | User Stories Quality | 5/5 | Format chuẩn, đầy đủ 9 stories với clear value |
 | Use Cases Detail | 4.5/5 | 20 use cases chi tiết với flow rõ ràng |
 | Domain Model | 4/5 | Aggregates được identify tốt, boundaries clear |
 
-#### Weaknesses ❌
+#### Weaknesses
 | **Issue** | **Points Lost** | **How to Fix** |
 |-----------|----------------|----------------|
 | Missing stakeholder priorities | -0.5 | Add influence/interest matrix |
@@ -50,7 +50,7 @@ Impact: +1.5 points
 
 ### 2. ARCHITECTURE DESIGN (22/25 points)
 
-#### Strengths ✅
+#### Strengths
 | **Criterion** | **Score** | **Evidence** |
 |--------------|-----------|--------------|
 | AC Definition | 4.5/5 | Clear metrics, well-justified priorities |
@@ -58,7 +58,7 @@ Impact: +1.5 points
 | ADRs Quality | 5/5 | Professional format, alternatives considered |
 | Design Principles | 4/5 | SOLID, Clean Architecture, DDD mentioned |
 
-#### Weaknesses ❌
+#### Weaknesses
 | **Issue** | **Points Lost** | **How to Fix** |
 |-----------|----------------|----------------|
 | Missing fitness functions | -1 | Define automated AC validation |
@@ -79,7 +79,7 @@ Impact: +3 points
 
 ### 3. ARCHITECTURE VIEWS (16/20 points)
 
-#### Strengths ✅
+#### Strengths
 | **Criterion** | **Score** | **Evidence** |
 |--------------|-----------|--------------|
 | Module View | 4/5 | Clean Architecture clear, good separation |
@@ -87,7 +87,7 @@ Impact: +3 points
 | Deployment View | 3/5 | Container structure present |
 | Diagrams Quality | 3/4 | Mermaid diagrams provided |
 
-#### Weaknesses ❌
+#### Weaknesses
 | **Issue** | **Points Lost** | **How to Fix** |
 |-----------|----------------|----------------|
 | Incomplete component diagram | -1 | Add all services with interfaces |
@@ -108,7 +108,7 @@ Impact: +4 points
 
 ### 4. SOLID APPLICATION (19/20 points)
 
-#### Strengths ✅
+#### Strengths
 | **Criterion** | **Score** | **Evidence** |
 |--------------|-----------|--------------|
 | Principle Coverage | 5/5 | All 5 principles detailed |
@@ -116,7 +116,7 @@ Impact: +4 points
 | Practical Application | 5/5 | ITS context throughout |
 | Clarity | 4/5 | Well explained, good structure |
 
-#### Weaknesses ❌
+#### Weaknesses
 | **Issue** | **Points Lost** | **How to Fix** |
 |-----------|----------------|----------------|
 | No UML for principles | -0.5 | Add class diagrams per principle |
@@ -135,14 +135,14 @@ Impact: +1 point
 
 ### 5. REFLECTION & EVALUATION (7/10 points)
 
-#### Strengths ✅
+#### Strengths
 | **Criterion** | **Score** | **Evidence** |
 |--------------|-----------|--------------|
 | Honesty | 2/2 | Acknowledges challenges |
 | SOLID Impact | 2/3 | Basic coverage |
 | Lessons Learned | 1.5/2 | Some insights provided |
 
-#### Weaknesses ❌
+#### Weaknesses
 | **Issue** | **Points Lost** | **How to Fix** |
 |-----------|----------------|----------------|
 | Too brief (1 page) | -1 | Expand to 3-4 pages |
@@ -162,13 +162,13 @@ Impact: +3 points
 
 ### 6. DOCUMENTATION QUALITY (8.5/10 points)
 
-#### Strengths ✅
+#### Strengths
 | **Criterion** | **Score** | **Evidence** |
 |--------------|-----------|--------------|
 | Completeness | 4/4 | Most sections present |
 | Technical Accuracy | 3/3 | Correct information |
 
-#### Weaknesses ❌
+#### Weaknesses
 | **Issue** | **Points Lost** | **How to Fix** |
 |-----------|----------------|----------------|
 | Inconsistent format | -0.5 | Standardize headings, numbering |
@@ -186,7 +186,7 @@ Impact: +1.5 points
 
 ---
 
-## 🎯 PRIORITIZED IMPROVEMENT PLAN
+## PRIORITIZED IMPROVEMENT PLAN
 
 ### QUICK WINS (High Impact, Low Effort)
 **Timeline: 1 day | Potential: +5 points**
@@ -216,7 +216,7 @@ Impact: +1.5 points
 
 ---
 
-## 📈 PROJECTED FINAL SCORE
+## PROJECTED FINAL SCORE
 
 | **Scenario** | **Effort** | **Time** | **Final Score** | **Grade** |
 |--------------|-----------|----------|-----------------|-----------|
@@ -227,28 +227,28 @@ Impact: +1.5 points
 
 ---
 
-## ✅ GRADING RUBRIC ALIGNMENT
+## GRADING RUBRIC ALIGNMENT
 
 ### Assignment Requirements Coverage
 
 | **Requirement** | **Status** | **Location** | **Quality** |
 |----------------|-----------|--------------|-------------|
-| Context & Scope | ✅ | Chapter 1 | Good |
-| Functional Requirements | ✅ | Section 1.3 | Excellent |
-| Non-Functional Requirements | ✅ | Section 1.4 | Good |
-| Architecture Characteristics | ✅ | Section 2.1 | Excellent |
-| Architecture Style Comparison | ✅ | Section 2.2 | Excellent |
-| Module View | ✅ | Section 3.1 | Good |
-| C&C View | ⚠️ | Section 3.2 | Needs work |
-| Allocation View | ⚠️ | Section 3.3 | Basic |
-| Architecture Decisions | ✅ | Section 2.3 | Excellent |
-| Design Principles | ✅ | Section 2.4 | Good |
-| SOLID Application | ✅ | Chapter 4 | Excellent |
-| Reflection Report | ⚠️ | Chapter 5 | Too brief |
+| Context & Scope | Yes | Chapter 1 | Good |
+| Functional Requirements | Yes | Section 1.3 | Excellent |
+| Non-Functional Requirements | Yes | Section 1.4 | Good |
+| Architecture Characteristics | Yes | Section 2.1 | Excellent |
+| Architecture Style Comparison | Yes | Section 2.2 | Excellent |
+| Module View | Yes | Section 3.1 | Good |
+| C&C View | Partial | Section 3.2 | Needs work |
+| Allocation View | Partial | Section 3.3 | Basic |
+| Architecture Decisions | Yes | Section 2.3 | Excellent |
+| Design Principles | Yes | Section 2.4 | Good |
+| SOLID Application | Yes | Chapter 4 | Excellent |
+| Reflection Report | Partial | Chapter 5 | Too brief |
 
 ---
 
-## 🏆 COMPETITIVE ADVANTAGE
+## COMPETITIVE ADVANTAGE
 
 ### What Makes This Report Stand Out
 1. **Polyglot Programming Strategy** - Shows advanced thinking
@@ -265,21 +265,21 @@ Impact: +1.5 points
 
 ---
 
-## 💡 PROFESSOR'S LIKELY FOCUS AREAS
+## PROFESSOR'S LIKELY FOCUS AREAS
 
 Based on academic emphasis:
 
-1. **SOLID Understanding** (30%) - Currently EXCELLENT ✅
-2. **Architecture Justification** (25%) - Currently GOOD ✅
-3. **Multiple Views** (20%) - Currently NEEDS WORK ⚠️
-4. **Reflection Quality** (15%) - Currently WEAK ❌
-5. **Professional Presentation** (10%) - Currently GOOD ✅
+1. **SOLID Understanding** (30%) - Currently Excellent
+2. **Architecture Justification** (25%) - Currently Good
+3. **Multiple Views** (20%) - Currently Needs work
+4. **Reflection Quality** (15%) - Currently Weak
+5. **Professional Presentation** (10%) - Currently Good
 
 **Recommendation:** Focus on Views and Reflection for maximum impact!
 
 ---
 
-## 📋 FINAL CHECKLIST FOR SUBMISSION
+## FINAL CHECKLIST FOR SUBMISSION
 
 ### Must Have (Grade > 90)
 - [ ] Executive Summary (1-2 pages)
