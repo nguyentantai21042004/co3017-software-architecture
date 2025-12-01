@@ -24,12 +24,34 @@ const getEnvironment = (): string => {
   return process.env.NEXT_PUBLIC_ENV || process.env.NODE_ENV || 'local'
 }
 
+// Derive run identifier for per-run artifacts
+const getRunId = (): string => {
+  if (process.env.PW_RUN_ID && process.env.PW_RUN_ID.trim() !== '') {
+    return process.env.PW_RUN_ID.trim()
+  }
+  // ISO timestamp without characters that are invalid in folder names
+  return new Date().toISOString().replace(/[:.]/g, '-')
+}
+
 const baseURL = getBaseURL()
 const environment = getEnvironment()
+const runId = getRunId()
+
+// Base directories for artifacts (per-run)
+const artifactsBaseDir = process.env.PW_ARTIFACTS_DIR || `test-results/${runId}`
+const reportBaseDir = process.env.PW_REPORT_DIR || `playwright-report/${runId}`
+
+// Expose to tests so they can build screenshot paths
+process.env.PW_RUN_ID = runId
+process.env.PW_ARTIFACTS_DIR = artifactsBaseDir
+process.env.PW_REPORT_DIR = reportBaseDir
 
 // Log configuration on load
 console.log(`[Playwright] Environment: ${environment}`)
 console.log(`[Playwright] Base URL: ${baseURL}`)
+console.log(`[Playwright] Run ID: ${runId}`)
+console.log(`[Playwright] Artifacts dir: ${artifactsBaseDir}`)
+console.log(`[Playwright] Report dir: ${reportBaseDir}`)
 
 export default defineConfig({
   testDir: './e2e',
@@ -45,11 +67,28 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    [
+      'html',
+      {
+        outputFolder: reportBaseDir,
+        open: 'never',
+      },
+    ],
+    ['json', { outputFile: `${artifactsBaseDir}/results.json` }],
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL,
+
+    /* Where to put per-test artifacts (traces, screenshots, videos) */
+    // Note: manual screenshots use PW_ARTIFACTS_DIR to compute their own paths
+    // but Playwright's own artifacts will respect this outputDir.
+    // @ts-expect-error - Playwright types allow outputDir at top-level, but keeping here for clarity in config
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    outputDir: artifactsBaseDir,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
