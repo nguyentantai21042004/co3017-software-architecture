@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures/antigravity-fixture';
+import { screenshotPath } from './utils/artifacts';
 
 test.describe('UI Component Tests', () => {
     test.beforeEach(async ({ agPage }) => {
@@ -30,7 +31,7 @@ test.describe('UI Component Tests', () => {
             expect(scoreValue).toBeLessThanOrEqual(100);
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/component-mastery-circle.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('component-mastery-circle.png'), fullPage: true });
         });
 
         test('should display correct color coding based on mastery level', async ({ agPage }) => {
@@ -53,7 +54,7 @@ test.describe('UI Component Tests', () => {
                 expect(strokeColor).not.toBe('none');
 
                 // Capture screenshot showing color coding
-                await agPage.screenshot({ path: 'test-results/screenshots/component-mastery-colors.png', fullPage: true });
+                await agPage.screenshot({ path: screenshotPath('component-mastery-colors.png'), fullPage: true });
             }
         });
 
@@ -69,7 +70,7 @@ test.describe('UI Component Tests', () => {
             await expect(headerMastery.first()).toBeVisible();
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/component-mastery-header.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('component-mastery-header.png'), fullPage: true });
         });
     });
 
@@ -88,7 +89,7 @@ test.describe('UI Component Tests', () => {
             expect(text!.length).toBeGreaterThan(10); // Reasonable question length
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/component-question-text.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('component-question-text.png'), fullPage: true });
         });
 
         test('should display multiple choice options correctly', async ({ agPage }) => {
@@ -114,7 +115,7 @@ test.describe('UI Component Tests', () => {
                 await expect(firstOption).toBeEnabled();
 
                 // Capture screenshot
-                await agPage.screenshot({ path: 'test-results/screenshots/component-question-options.png', fullPage: true });
+                await agPage.screenshot({ path: screenshotPath('component-question-options.png'), fullPage: true });
             }
         });
 
@@ -132,7 +133,7 @@ test.describe('UI Component Tests', () => {
             await expect(typeBadge).toBeVisible();
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/component-question-metadata.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('component-question-metadata.png'), fullPage: true });
         });
     });
 
@@ -158,7 +159,7 @@ test.describe('UI Component Tests', () => {
                 await expect(feedbackText).toBeVisible();
 
                 // Capture screenshot
-                await agPage.screenshot({ path: 'test-results/screenshots/component-feedback-message.png', fullPage: true });
+                await agPage.screenshot({ path: screenshotPath('component-feedback-message.png'), fullPage: true });
             }
         });
 
@@ -182,7 +183,7 @@ test.describe('UI Component Tests', () => {
                 await expect(feedbackIcon).toBeVisible();
 
                 // Capture screenshot showing styling
-                await agPage.screenshot({ path: 'test-results/screenshots/component-feedback-styling.png', fullPage: true });
+                await agPage.screenshot({ path: screenshotPath('component-feedback-styling.png'), fullPage: true });
             }
         });
 
@@ -198,7 +199,7 @@ test.describe('UI Component Tests', () => {
                 await agPage.waitForTimeout(500);
 
                 // Take screenshot before submission
-                await agPage.screenshot({ path: 'test-results/screenshots/component-before-feedback.png', fullPage: true });
+                await agPage.screenshot({ path: screenshotPath('component-before-feedback.png'), fullPage: true });
 
                 await agPage.locator('button:has-text("Submit Answer")').click();
 
@@ -209,7 +210,7 @@ test.describe('UI Component Tests', () => {
                 await agPage.waitForTimeout(1000);
 
                 // Take screenshot after feedback appears
-                await agPage.screenshot({ path: 'test-results/screenshots/component-after-feedback.png', fullPage: true });
+                await agPage.screenshot({ path: screenshotPath('component-after-feedback.png'), fullPage: true });
             }
         });
     });
@@ -230,7 +231,7 @@ test.describe('UI Component Tests', () => {
             await expect(icon).toBeVisible();
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/component-nav-exit.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('component-nav-exit.png'), fullPage: true });
         });
 
         test('should navigate back to dashboard when exit is clicked', async ({ agPage }) => {
@@ -247,7 +248,7 @@ test.describe('UI Component Tests', () => {
             await expect(agPage.getByText('My Learning Dashboard')).toBeVisible({ timeout: 10000 });
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/component-nav-back-dashboard.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('component-nav-back-dashboard.png'), fullPage: true });
         });
 
         test('should have logout button on dashboard', async ({ agPage }) => {
@@ -261,7 +262,7 @@ test.describe('UI Component Tests', () => {
             await expect(logoutButton).toBeEnabled();
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/component-nav-logout.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('component-nav-logout.png'), fullPage: true });
         });
     });
 
@@ -281,7 +282,7 @@ test.describe('UI Component Tests', () => {
             await expect(firstButton).toBeEnabled();
 
             // Capture screenshot for visual regression baseline
-            await agPage.screenshot({ path: 'test-results/screenshots/component-accessibility.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('component-accessibility.png'), fullPage: true });
         });
 
         test('should maintain consistent styling across components', async ({ agPage }) => {
@@ -290,7 +291,7 @@ test.describe('UI Component Tests', () => {
             await expect(agPage.getByText('My Learning Dashboard')).toBeVisible({ timeout: 10000 });
 
             // Capture dashboard for visual regression
-            await agPage.screenshot({ path: 'test-results/screenshots/component-visual-dashboard.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('component-visual-dashboard.png'), fullPage: true });
 
             // Navigate to learning session
             const skillButton = agPage.locator('button:has-text("Continue Learning")').first();
@@ -300,7 +301,7 @@ test.describe('UI Component Tests', () => {
                 await expect(agPage.locator('h2').first()).toBeVisible({ timeout: 15000 });
 
                 // Capture learning session for visual regression
-                await agPage.screenshot({ path: 'test-results/screenshots/component-visual-learning.png', fullPage: true });
+                await agPage.screenshot({ path: screenshotPath('component-visual-learning.png'), fullPage: true });
             }
         });
     });

@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures/antigravity-fixture';
+import { screenshotPath } from './utils/artifacts';
 
 test.describe('API Integration Tests', () => {
     test.beforeEach(async ({ agPage }) => {
@@ -39,7 +40,7 @@ test.describe('API Integration Tests', () => {
         await expect(agPage.locator('text=/ID:/').first()).toBeVisible();
 
         // Capture screenshot
-        await agPage.screenshot({ path: 'test-results/screenshots/api-content-service.png', fullPage: true });
+        await agPage.screenshot({ path: screenshotPath('api-content-service.png'), fullPage: true });
     });
 
     test('should integrate with Adaptive Engine correctly', async ({ agPage }) => {
@@ -71,7 +72,7 @@ test.describe('API Integration Tests', () => {
         await expect(contentBadge).toBeVisible();
 
         // Capture screenshot
-        await agPage.screenshot({ path: 'test-results/screenshots/api-adaptive-engine.png', fullPage: true });
+        await agPage.screenshot({ path: screenshotPath('api-adaptive-engine.png'), fullPage: true });
     });
 
     test('should integrate with Scoring Service correctly', async ({ agPage }) => {
@@ -122,7 +123,7 @@ test.describe('API Integration Tests', () => {
             await expect(feedbackPanel).toBeVisible();
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/api-scoring-service.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('api-scoring-service.png'), fullPage: true });
         }
     });
 
@@ -168,7 +169,7 @@ test.describe('API Integration Tests', () => {
             console.log('Mastery polling calls:', learnerApiCalls.length - initialCallCount);
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/api-learner-model.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('api-learner-model.png'), fullPage: true });
         }
     });
 
@@ -197,7 +198,7 @@ test.describe('API Integration Tests', () => {
         console.log('Loading state visible:', isLoading);
 
         // Capture screenshot of error state
-        await agPage.screenshot({ path: 'test-results/screenshots/api-content-error.png', fullPage: true });
+        await agPage.screenshot({ path: screenshotPath('api-content-error.png'), fullPage: true });
     });
 
     test('should handle Scoring Service errors gracefully', async ({ agPage }) => {
@@ -235,7 +236,7 @@ test.describe('API Integration Tests', () => {
             console.log('Submit button still visible:', isVisible);
 
             // Capture screenshot
-            await agPage.screenshot({ path: 'test-results/screenshots/api-scoring-error.png', fullPage: true });
+            await agPage.screenshot({ path: screenshotPath('api-scoring-error.png'), fullPage: true });
         }
     });
 
@@ -264,6 +265,6 @@ test.describe('API Integration Tests', () => {
         expect(pageTitle).toBeTruthy();
 
         // Capture screenshot
-        await agPage.screenshot({ path: 'test-results/screenshots/api-learner-error.png', fullPage: true });
+        await agPage.screenshot({ path: screenshotPath('api-learner-error.png'), fullPage: true });
     });
 });

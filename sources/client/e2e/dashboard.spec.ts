@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures/antigravity-fixture';
+import { screenshotPath } from './utils/artifacts';
 
 test.describe('Dashboard Page', () => {
   test.beforeEach(async ({ agPage }) => {
@@ -19,7 +20,7 @@ test.describe('Dashboard Page', () => {
     await expect(skillButton).toBeVisible({ timeout: 10000 });
 
     // Capture screenshot of dashboard with skills loaded
-    await agPage.screenshot({ path: 'test-results/screenshots/dashboard-skills-loaded.png', fullPage: true });
+    await agPage.screenshot({ path: screenshotPath('dashboard-skills-loaded.png'), fullPage: true });
 
     // Verify at least one skill is displayed
     const skillCount = await agPage.locator('button:has-text("Continue Learning")').count();
@@ -34,7 +35,7 @@ test.describe('Dashboard Page', () => {
     await expect(skillButton).toBeVisible({ timeout: 10000 });
 
     // Capture screenshot before clicking
-    await agPage.screenshot({ path: 'test-results/screenshots/dashboard-before-navigation.png', fullPage: true });
+    await agPage.screenshot({ path: screenshotPath('dashboard-before-navigation.png'), fullPage: true });
 
     // Click on the first skill
     await skillButton.click();
@@ -43,7 +44,7 @@ test.describe('Dashboard Page', () => {
     await expect(agPage).toHaveURL(/\/learn\//, { timeout: 10000 });
 
     // Capture screenshot of learning page
-    await agPage.screenshot({ path: 'test-results/screenshots/learning-session-page.png', fullPage: true });
+    await agPage.screenshot({ path: screenshotPath('learning-session-page.png'), fullPage: true });
   });
 
   test('should show logout button and handle logout', async ({ agPage }) => {
@@ -53,7 +54,7 @@ test.describe('Dashboard Page', () => {
     await expect(logoutButton).toBeVisible({ timeout: 10000 });
 
     // Capture screenshot with logout button visible
-    await agPage.screenshot({ path: 'test-results/screenshots/dashboard-with-logout.png', fullPage: true });
+    await agPage.screenshot({ path: screenshotPath('dashboard-with-logout.png'), fullPage: true });
 
     await logoutButton.click();
 
@@ -61,7 +62,7 @@ test.describe('Dashboard Page', () => {
     await expect(agPage).toHaveURL('/', { timeout: 10000 });
 
     // Capture screenshot of home page after logout
-    await agPage.screenshot({ path: 'test-results/screenshots/home-after-logout.png', fullPage: true });
+    await agPage.screenshot({ path: screenshotPath('home-after-logout.png'), fullPage: true });
 
     // Verify localStorage is cleared (user_id removed)
     const userId = await agPage.evaluate(() => window.localStorage.getItem('user_id'));
@@ -85,6 +86,6 @@ test.describe('Dashboard Page', () => {
     await expect(masteryLabel).toBeVisible();
 
     // Capture screenshot showing mastery scores
-    await agPage.screenshot({ path: 'test-results/screenshots/dashboard-mastery-scores.png', fullPage: true });
+    await agPage.screenshot({ path: screenshotPath('dashboard-mastery-scores.png'), fullPage: true });
   });
 });

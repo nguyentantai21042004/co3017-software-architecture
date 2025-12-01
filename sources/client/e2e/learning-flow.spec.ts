@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures/antigravity-fixture';
+import { screenshotPath } from './utils/artifacts';
 
 test.describe('Learning Session Flow', () => {
   test.beforeEach(async ({ agPage }) => {
@@ -26,7 +27,7 @@ test.describe('Learning Session Flow', () => {
     await expect(agPage.locator('h2').first()).toBeVisible({ timeout: 15000 });
 
     // Capture screenshot of initialized session
-    await agPage.screenshot({ path: 'test-results/screenshots/learning-session-initialized.png', fullPage: true });
+    await agPage.screenshot({ path: screenshotPath('learning-session-initialized.png'), fullPage: true });
   });
 
   test('should display question with submit button', async ({ agPage }) => {
@@ -45,7 +46,7 @@ test.describe('Learning Session Flow', () => {
     await expect(submitButton).toBeVisible();
 
     // Capture screenshot
-    await agPage.screenshot({ path: 'test-results/screenshots/learning-question-display.png', fullPage: true });
+    await agPage.screenshot({ path: screenshotPath('learning-question-display.png'), fullPage: true });
   });
 
   test('should allow answer selection and submission', async ({ agPage }) => {
@@ -67,7 +68,7 @@ test.describe('Learning Session Flow', () => {
       await agPage.waitForTimeout(500);
 
       // Capture screenshot with selected answer
-      await agPage.screenshot({ path: 'test-results/screenshots/learning-answer-selected.png', fullPage: true });
+      await agPage.screenshot({ path: screenshotPath('learning-answer-selected.png'), fullPage: true });
 
       // Submit button should now be enabled
       const submitButton = agPage.locator('button:has-text("Submit Answer")');
@@ -80,7 +81,7 @@ test.describe('Learning Session Flow', () => {
       await expect(agPage.locator('text=/Excellent|Not quite/')).toBeVisible({ timeout: 15000 });
 
       // Capture screenshot with feedback
-      await agPage.screenshot({ path: 'test-results/screenshots/learning-feedback-shown.png', fullPage: true });
+      await agPage.screenshot({ path: screenshotPath('learning-feedback-shown.png'), fullPage: true });
     }
   });
 
@@ -107,7 +108,7 @@ test.describe('Learning Session Flow', () => {
       await expect(nextButton).toBeVisible({ timeout: 15000 });
 
       // Capture screenshot
-      await agPage.screenshot({ path: 'test-results/screenshots/learning-feedback-panel.png', fullPage: true });
+      await agPage.screenshot({ path: screenshotPath('learning-feedback-panel.png'), fullPage: true });
     }
   });
 
@@ -143,7 +144,7 @@ test.describe('Learning Session Flow', () => {
       expect(secondQuestionId).not.toBe(firstQuestionId);
 
       // Capture screenshot
-      await agPage.screenshot({ path: 'test-results/screenshots/learning-next-question.png', fullPage: true });
+      await agPage.screenshot({ path: screenshotPath('learning-next-question.png'), fullPage: true });
     }
   });
 
@@ -165,6 +166,6 @@ test.describe('Learning Session Flow', () => {
     await expect(agPage.getByText('My Learning Dashboard')).toBeVisible({ timeout: 10000 });
 
     // Capture screenshot
-    await agPage.screenshot({ path: 'test-results/screenshots/learning-after-exit.png', fullPage: true });
+    await agPage.screenshot({ path: screenshotPath('learning-after-exit.png'), fullPage: true });
   });
 });
