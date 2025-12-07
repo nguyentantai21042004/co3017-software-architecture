@@ -5,60 +5,60 @@
 
 \indentpar \indentpar Trong kiến trúc đích On-Premise, hệ thống ITS được triển khai hoàn toàn trên hạ tầng nội bộ (private infrastructure), bao gồm:
 \begin{itemize}[leftmargin=0.7cm]
-    \item Các Server vật lý hoặc Virtual Machines trong trung tâm dữ liệu.
-    \item Một Kubernetes Cluster tự quản lý (Self-managed K8s) do đội IT vận hành.
-    \item Các thành phần lưu trữ, mạng và giám sát được triển khai cục bộ.
+	\item Các Server vật lý hoặc Virtual Machines trong trung tâm dữ liệu.
+	\item Một Kubernetes Cluster tự quản lý (Self-managed K8s) do đội IT vận hành.
+	\item Các thành phần lưu trữ, mạng và giám sát được triển khai cục bộ.
 \end{itemize}
 
 \indentpar \indentpar Góc nhìn này ánh xạ các thành phần kiến trúc (Service Components) từ Mục~4.2 vào các tài nguyên vật lý và ảo tại trung tâm dữ liệu On-Premise.
 
 \indentpar \indentpar Liên kết với phần trước:
 \begin{itemize}[leftmargin=0.7cm]
-    \item Mục~4.1 Module View → cho biết cấu trúc code.
-    \item Mục~4.2 Component \& Connector View → cho biết các thành phần và cách chúng giao tiếp.
-    \item Mục~4.3 Allocation View → mô tả chúng chạy trên máy chủ/vùng mạng nào, với cơ chế HA và DR ra sao trong môi trường On-Premise.
+	\item Mục~4.1 Module View → cho biết cấu trúc code.
+	\item Mục~4.2 Component \& Connector View → cho biết các thành phần và cách chúng giao tiếp.
+	\item Mục~4.3 Allocation View → mô tả chúng chạy trên máy chủ/vùng mạng nào, với cơ chế HA và DR ra sao trong môi trường On-Premise.
 \end{itemize}
 
 \indentpar \indentpar Mục tiêu của Deployment View trong On-Premise:
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{AC2 -- Scalability:} Scale-out bằng Node Pools và tự động phân phối workload.
-    \item \textbf{AC5 -- Deployability:} Tự động hóa CI/CD nội bộ, sử dụng Container Registry riêng.
-    \item \textbf{AC9 -- Observability:} Quản lý logs/metrics phân tán trong hạ tầng nội bộ.
-    \item \textbf{High Availability \& Fault Tolerance:} Đảm bảo hệ thống chạy ổn định ngay cả khi một node hoặc tủ rack gặp sự cố.
+	\item \textbf{AC2 -- Scalability:} Scale-out bằng Node Pools và tự động phân phối workload.
+	\item \textbf{AC5 -- Deployability:} Tự động hóa CI/CD nội bộ, sử dụng Container Registry riêng.
+	\item \textbf{AC9 -- Observability:} Quản lý logs/metrics phân tán trong hạ tầng nội bộ.
+	\item \textbf{High Availability \& Fault Tolerance:} Đảm bảo hệ thống chạy ổn định ngay cả khi một node hoặc tủ rack gặp sự cố.
 \end{itemize}
 
 \subsubsection{Kiến trúc Triển khai (On-Premise Architecture)}
 
 \indentpar \indentpar Kiến trúc triển khai On-Premise vẫn tuân thủ nguyên tắc Cloud-Native, nhưng tất cả thành phần được host trên:
 \begin{itemize}[leftmargin=0.7cm]
-    \item Máy chủ vật lý (Bare-metal servers) với CPU/RAM cao.
-    \item Hệ thống lưu trữ SAN/NAS cho database và persistent volumes.
-    \item Hệ thống ảo hóa nội bộ (VMware vSphere / Proxmox / OpenStack) cho Kubernetes nodes.
-    \item Load Balancer cứng (hardware LB) hoặc HAProxy/NGINX nội bộ.
-    \item Private Docker Registry để lưu images.
+	\item Máy chủ vật lý (Bare-metal servers) với CPU/RAM cao.
+	\item Hệ thống lưu trữ SAN/NAS cho database và persistent volumes.
+	\item Hệ thống ảo hóa nội bộ (VMware vSphere / Proxmox / OpenStack) cho Kubernetes nodes.
+	\item Load Balancer cứng (hardware LB) hoặc HAProxy/NGINX nội bộ.
+	\item Private Docker Registry để lưu images.
 \end{itemize}
 
 \noindent \textbf{Hạ tầng phần cứng (Physical Infrastructure Layer)}
 
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-    \centering
-    \small
-    \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}X|}
-        \hline
-        \textbf{Thành phần}\rule{0pt}{1.6em} & \textbf{Mô tả}                                               \\
-        \hline
-        Rack Servers                         & 6--10 server vật lý, CPU Intel Xeon/AMD EPYC, RAM 128--256GB \\
-        \hline
-        Network                              & Switch Layer 2/3, VLAN tách biệt (DMZ / Internal / Storage)  \\
-        \hline
-        Storage                              & SAN/NAS hỗ trợ RAID-10, Fiber Channel/iSCSI                  \\
-        \hline
-        Management                           & vCenter/Proxmox Dashboard cho quản lý VM                     \\
-        \hline
-    \end{tabularx}
-    \caption{Hạ tầng phần cứng On-Premise}
-    \label{tab:physical-infrastructure}
+	\centering
+	\small
+	\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}X|}
+		\hline
+		\textbf{Thành phần}\rule{0pt}{1.6em} & \textbf{Mô tả}                                               \\
+		\hline
+		Rack Servers                         & 6--10 server vật lý, CPU Intel Xeon/AMD EPYC, RAM 128--256GB \\
+		\hline
+		Network                              & Switch Layer 2/3, VLAN tách biệt (DMZ / Internal / Storage)  \\
+		\hline
+		Storage                              & SAN/NAS hỗ trợ RAID-10, Fiber Channel/iSCSI                  \\
+		\hline
+		Management                           & vCenter/Proxmox Dashboard cho quản lý VM                     \\
+		\hline
+	\end{tabularx}
+	\caption{Hạ tầng phần cứng On-Premise}
+	\label{tab:physical-infrastructure}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
@@ -68,25 +68,25 @@
 
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-    \centering
-    \small
-    \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}X|}
-        \hline
-        \textbf{Thành phần}\rule{0pt}{1.6em} & \textbf{Mô tả}                        \\
-        \hline
-        Master Nodes                         & 3 master để đảm bảo HA (etcd cluster) \\
-        \hline
-        Worker Nodes                         & 6--12 worker (tuỳ tải)                \\
-        \hline
-        CNI                                  & Calico hoặc Cilium                    \\
-        \hline
-        Ingress                              & NGINX Ingress hoặc Istio Gateway      \\
-        \hline
-        Persistent Volumes                   & Rook-Ceph / Longhorn / NFS            \\
-        \hline
-    \end{tabularx}
-    \caption{Cấu hình Kubernetes Cluster}
-    \label{tab:k8s-cluster}
+	\centering
+	\small
+	\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}X|}
+		\hline
+		\textbf{Thành phần}\rule{0pt}{1.6em} & \textbf{Mô tả}                        \\
+		\hline
+		Master Nodes                         & 3 master để đảm bảo HA (etcd cluster) \\
+		\hline
+		Worker Nodes                         & 6--12 worker (tuỳ tải)                \\
+		\hline
+		CNI                                  & Calico hoặc Cilium                    \\
+		\hline
+		Ingress                              & NGINX Ingress hoặc Istio Gateway      \\
+		\hline
+		Persistent Volumes                   & Rook-Ceph / Longhorn / NFS            \\
+		\hline
+	\end{tabularx}
+	\caption{Cấu hình Kubernetes Cluster}
+	\label{tab:k8s-cluster}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
@@ -94,18 +94,80 @@
 
 \indentpar \indentpar Vì đây là môi trường On-Premise, việc phân vùng mạng (segmentation) là cực kỳ quan trọng:
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{DMZ Layer} → Load Balancer + API Gateway.
-    \item \textbf{Application Layer} → các pod Java/Go.
-    \item \textbf{Data Layer} → PostgreSQL, MongoDB, RabbitMQ, Redis.
-    \item \textbf{Monitoring Layer} → Prometheus, Grafana, Loki.
+	\item \textbf{DMZ Layer} → Load Balancer + API Gateway.
+	\item \textbf{Application Layer} → các pod Java/Go.
+	\item \textbf{Data Layer} → PostgreSQL, MongoDB, RabbitMQ, Redis.
+	\item \textbf{Monitoring Layer} → Prometheus, Grafana, Loki.
 \end{itemize}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{images/deployment_architecture_onprem.png}
-    \caption{Kiến trúc Triển khai On-Premise}
-    \label{fig:deployment-architecture-onprem}
+	\centering
+	\includegraphics[width=\textwidth]{images/deployment_architecture_onprem.png}
+	\caption{Kiến trúc Triển khai On-Premise}
+	\label{fig:deployment-architecture-onprem}
 \end{figure}
+
+\noindent \textbf{Sơ đồ Triển khai Chi tiết (Enhanced Deployment Diagram)}
+
+\indentpar \indentpar Sơ đồ dưới đây mô tả chi tiết hơn về kiến trúc triển khai, bao gồm các thành phần Kubernetes, network topology, và data flow giữa các layer.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{images/enhanced_deployment.png}
+	\caption{Sơ đồ Triển khai Chi tiết với Kubernetes và Infrastructure}
+	\label{fig:enhanced-deployment}
+\end{figure}
+
+\noindent \textbf{Chi tiết các Layer trong Kiến trúc:}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[H]
+	\centering
+	\small
+	\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{2.5cm}|>{\noindent\justifying\arraybackslash}X|>{\noindent\justifying\arraybackslash}p{4cm}|}
+		\hline
+		\textbf{Layer}   & \textbf{Thành phần}                                                & \textbf{Chức năng}                                   \\
+		\hline
+		DMZ Layer        & HAProxy/NGINX Load Balancer                                        & SSL termination, rate limiting, WAF, reverse proxy   \\
+		\hline
+		Ingress Layer    & NGINX Ingress Controller, Cert Manager                             & Routing, TLS certificates, path-based routing        \\
+		\hline
+		Node Pool A      & Go Services (API Gateway, Scoring, Learner Model, Adaptive Engine) & Compute-optimized workloads, low memory footprint    \\
+		\hline
+		Node Pool B      & Java Services (Content, Auth, User Management)                     & Memory-optimized workloads, Spring Boot applications \\
+		\hline
+		Data Layer       & PostgreSQL HA, RabbitMQ Cluster, Redis Sentinel                    & Persistent storage, message queuing, caching         \\
+		\hline
+		Monitoring Layer & Prometheus, Grafana, Loki, Alertmanager, Jaeger                    & Metrics, logging, tracing, alerting                  \\
+		\hline
+		Storage Layer    & Rook-Ceph/Longhorn, SAN/NAS                                        & Persistent volumes, backup storage                   \\
+		\hline
+	\end{tabularx}
+	\caption{Chi tiết các Layer trong Kiến trúc Triển khai}
+	\label{tab:deployment-layers}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\noindent \textbf{Network Topology và Security Zones:}
+
+\begin{itemize}[leftmargin=0.7cm]
+	\item \textbf{VLAN 10 -- DMZ}: Load Balancer, chỉ expose port 443 (HTTPS)
+	\item \textbf{VLAN 20 -- Application}: Kubernetes worker nodes, internal communication
+	\item \textbf{VLAN 30 -- Data}: Database clusters, message broker, cache
+	\item \textbf{VLAN 40 -- Management}: Monitoring stack, Kubernetes master nodes
+\end{itemize}
+
+\noindent \textbf{High Availability Configuration:}
+
+\begin{itemize}[leftmargin=0.7cm]
+	\item \textbf{Kubernetes Masters}: 3 nodes với etcd cluster (quorum-based)
+	\item \textbf{PostgreSQL}: Patroni với 1 Primary + 2 Replicas (streaming replication)
+	\item \textbf{RabbitMQ}: 3-node cluster với mirrored queues
+	\item \textbf{Redis}: Sentinel với 1 Master + 2 Replicas + 3 Sentinels
+	\item \textbf{Application Pods}: HPA (Horizontal Pod Autoscaler) với min/max replicas
+\end{itemize}
+
+\FloatBarrier
 
 \subsubsection{Thông số Container (On-Premise Resource Planning)}
 
@@ -113,29 +175,29 @@
 
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-    \centering
-    \small
-    \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.8cm}|}
-        \hline
-        \textbf{Service}\rule{0pt}{1.6em} & \textbf{Image Size} & \textbf{Memory Req/Lmt} & \textbf{CPU Req/Lmt} & \textbf{Replicas} & \textbf{Node Pool} \\
-        \hline
-        API Gateway (Go)                  & 30MB                & 256MB/512MB             & 0.25/1               & 3--10             & Node Pool A        \\
-        \hline
-        Auth Service (Java)               & 250MB               & 512MB/1GB               & 0.5/1.5              & 2--5              & Node Pool B        \\
-        \hline
-        User Service (Java)               & 250MB               & 512MB/1GB               & 0.5/1.5              & 2--5              & Node Pool B        \\
-        \hline
-        Content Service (Java)            & 250MB               & 512MB/1GB               & 0.5/1.5              & 2--5              & Node Pool B        \\
-        \hline
-        Scoring Svc (Go)                  & 40MB                & 256MB/1GB               & 0.5/2                & 3--15             & Node Pool A        \\
-        \hline
-        Learner Model (Go)                & 40MB                & 256MB/1GB               & 0.5/2                & 3--10             & Node Pool A        \\
-        \hline
-        Adaptive Engine (Go)              & 40MB                & 512MB/2GB               & 1/3                  & 2--8              & Node Pool A        \\
-        \hline
-    \end{tabularx}
-    \caption{Thông số Container và Resource Planning}
-    \label{tab:container-specs}
+	\centering
+	\small
+	\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.8cm}|}
+		\hline
+		\textbf{Service}\rule{0pt}{1.6em} & \textbf{Image Size} & \textbf{Memory Req/Lmt} & \textbf{CPU Req/Lmt} & \textbf{Replicas} & \textbf{Node Pool} \\
+		\hline
+		API Gateway (Go)                  & 30MB                & 256MB/512MB             & 0.25/1               & 3--10             & Node Pool A        \\
+		\hline
+		Auth Service (Java)               & 250MB               & 512MB/1GB               & 0.5/1.5              & 2--5              & Node Pool B        \\
+		\hline
+		User Service (Java)               & 250MB               & 512MB/1GB               & 0.5/1.5              & 2--5              & Node Pool B        \\
+		\hline
+		Content Service (Java)            & 250MB               & 512MB/1GB               & 0.5/1.5              & 2--5              & Node Pool B        \\
+		\hline
+		Scoring Svc (Go)                  & 40MB                & 256MB/1GB               & 0.5/2                & 3--15             & Node Pool A        \\
+		\hline
+		Learner Model (Go)                & 40MB                & 256MB/1GB               & 0.5/2                & 3--10             & Node Pool A        \\
+		\hline
+		Adaptive Engine (Go)              & 40MB                & 512MB/2GB               & 1/3                  & 2--8              & Node Pool A        \\
+		\hline
+	\end{tabularx}
+	\caption{Thông số Container và Resource Planning}
+	\label{tab:container-specs}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
@@ -146,78 +208,78 @@
 \noindent \textbf{1. Load Balancer (Lớp DMZ)}
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item Có thể dùng:
-          \begin{itemize}[nosep,leftmargin=0.9cm]
-              \item HAProxy (active-passive)
-              \item NGINX Plus
-              \item F5 BIG-IP (nếu doanh nghiệp có sẵn)
-          \end{itemize}
-    \item Chức năng:
-          \begin{itemize}[nosep,leftmargin=0.9cm]
-              \item SSL termination
-              \item Reverse proxy
-              \item Rate limit
-              \item WAF
-          \end{itemize}
+	\item Có thể dùng:
+	      \begin{itemize}[nosep,leftmargin=0.9cm]
+		      \item HAProxy (active-passive)
+		      \item NGINX Plus
+		      \item F5 BIG-IP (nếu doanh nghiệp có sẵn)
+	      \end{itemize}
+	\item Chức năng:
+	      \begin{itemize}[nosep,leftmargin=0.9cm]
+		      \item SSL termination
+		      \item Reverse proxy
+		      \item Rate limit
+		      \item WAF
+	      \end{itemize}
 \end{itemize}
 
 \noindent \textbf{2. Database \& Storage Zone}
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{PostgreSQL HA Cluster:}
-          \begin{itemize}[nosep,leftmargin=0.9cm]
-              \item Patroni + etcd hoặc
-              \item pgPool-II + Streaming Replication
-          \end{itemize}
-    \item \textbf{MongoDB Replica Set:}
-          \begin{itemize}[nosep,leftmargin=0.9cm]
-              \item Chạy 3 node trong các rack khác nhau.
-          \end{itemize}
-    \item \textbf{Redis Sentinel Cluster:}
-          \begin{itemize}[nosep,leftmargin=0.9cm]
-              \item Dùng local SSD của server để đạt IOPS cao.
-          \end{itemize}
-    \item \textbf{RabbitMQ Cluster:}
-          \begin{itemize}[nosep,leftmargin=0.9cm]
-              \item Mirrored queues (Highly Available).
-              \item Phù hợp với Adaptive Learning \& Scoring Event-driven flow.
-          \end{itemize}
+	\item \textbf{PostgreSQL HA Cluster:}
+	      \begin{itemize}[nosep,leftmargin=0.9cm]
+		      \item Patroni + etcd hoặc
+		      \item pgPool-II + Streaming Replication
+	      \end{itemize}
+	\item \textbf{MongoDB Replica Set:}
+	      \begin{itemize}[nosep,leftmargin=0.9cm]
+		      \item Chạy 3 node trong các rack khác nhau.
+	      \end{itemize}
+	\item \textbf{Redis Sentinel Cluster:}
+	      \begin{itemize}[nosep,leftmargin=0.9cm]
+		      \item Dùng local SSD của server để đạt IOPS cao.
+	      \end{itemize}
+	\item \textbf{RabbitMQ Cluster:}
+	      \begin{itemize}[nosep,leftmargin=0.9cm]
+		      \item Mirrored queues (Highly Available).
+		      \item Phù hợp với Adaptive Learning \& Scoring Event-driven flow.
+	      \end{itemize}
 \end{itemize}
 
 \noindent \textbf{3. Observability Stack (AC9 -- On-Premise)}
 
 \indentpar \indentpar Toàn bộ stack giám sát được cài trong namespace \texttt{its-monitoring}:
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Prometheus} -- metrics (scrape từ pods + node exporter)
-    \item \textbf{Loki} -- collector logs
-    \item \textbf{Grafana} -- dashboard hợp nhất
-    \item \textbf{Alertmanager} -- cảnh báo nội bộ (email/SMS/Zalo OA)
-    \item \textbf{OpenTelemetry Collector} -- gửi trace từ Java/Go đến Tempo/Jaeger
-    \item \textbf{Node Exporter} -- metrics phần cứng của mỗi server
+	\item \textbf{Prometheus} -- metrics (scrape từ pods + node exporter)
+	\item \textbf{Loki} -- collector logs
+	\item \textbf{Grafana} -- dashboard hợp nhất
+	\item \textbf{Alertmanager} -- cảnh báo nội bộ (email/SMS/Zalo OA)
+	\item \textbf{OpenTelemetry Collector} -- gửi trace từ Java/Go đến Tempo/Jaeger
+	\item \textbf{Node Exporter} -- metrics phần cứng của mỗi server
 \end{itemize}
 
 \subsubsection{So sánh Cloud vs On-Premise}
 
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-    \centering
-    \small
-    \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{4.5cm}|>{\raggedright\arraybackslash}X|}
-        \hline
-        \textbf{Cloud}\rule{0pt}{1.6em}            & \textbf{On-Premise}                          \\
-        \hline
-        Autoscaling theo tài nguyên không giới hạn & Scale bị giới hạn bởi số server vật lý       \\
-        \hline
-        Managed Databases                          & Tự quản lý DB HA (Patroni/Mongo Replica Set) \\
-        \hline
-        Load Balancer do Cloud cung cấp            & HAProxy/NGINX hoặc thiết bị phần cứng        \\
-        \hline
-        Observability Cloud Services               & Tự triển khai Prometheus + Loki + Grafana    \\
-        \hline
-        Storage quản lý bởi cloud                  & SAN/NAS + CSI Driver                         \\
-        \hline
-    \end{tabularx}
-    \caption{So sánh Cloud và On-Premise}
-    \label{tab:cloud-vs-onprem}
+	\centering
+	\small
+	\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{4.5cm}|>{\raggedright\arraybackslash}X|}
+		\hline
+		\textbf{Cloud}\rule{0pt}{1.6em}            & \textbf{On-Premise}                          \\
+		\hline
+		Autoscaling theo tài nguyên không giới hạn & Scale bị giới hạn bởi số server vật lý       \\
+		\hline
+		Managed Databases                          & Tự quản lý DB HA (Patroni/Mongo Replica Set) \\
+		\hline
+		Load Balancer do Cloud cung cấp            & HAProxy/NGINX hoặc thiết bị phần cứng        \\
+		\hline
+		Observability Cloud Services               & Tự triển khai Prometheus + Loki + Grafana    \\
+		\hline
+		Storage quản lý bởi cloud                  & SAN/NAS + CSI Driver                         \\
+		\hline
+	\end{tabularx}
+	\caption{So sánh Cloud và On-Premise}
+	\label{tab:cloud-vs-onprem}
 \end{table}
 \renewcommand{\arraystretch}{1.0}

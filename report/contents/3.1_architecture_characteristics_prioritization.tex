@@ -100,3 +100,71 @@ Không một hệ thống nào có thể đạt tối đa mọi tiêu chí cùng
               \item Áp dụng Circuit Breaker và Retry với exponential backoff để xử lý lỗi mạng.
           \end{enumerate}
 \end{itemize}
+
+\subsubsection{Fitness Functions}
+
+\indentpar \indentpar Fitness Functions là các hàm đo lường tự động để đánh giá mức độ tuân thủ của hệ thống đối với các đặc tính kiến trúc (ACs) đã định nghĩa. Chúng đóng vai trò như ``bài kiểm tra sức khỏe'' liên tục cho kiến trúc, giúp phát hiện sớm các vi phạm và đảm bảo hệ thống duy trì chất lượng theo thời gian.
+
+\renewcommand{\arraystretch}{1.4}
+\begin{longtable}{|>{\centering\arraybackslash}p{2.8cm}|>{\noindent\justifying\arraybackslash}p{4.5cm}|>{\centering\arraybackslash}p{2.5cm}|>{\noindent\justifying\arraybackslash}p{4.5cm}|}
+    \caption{Fitness Functions cho các Đặc tính Kiến trúc}
+    \label{tab:fitness_functions}
+    \\
+    \hline
+    \textbf{Đặc tính (AC)}        & \textbf{Fitness Function}                                                                                                            & \textbf{Ngưỡng Mục tiêu}      & \textbf{Phương pháp Đo lường}                                                                            \\
+    \hline
+    \endfirsthead
+    \caption[]{Fitness Functions cho các Đặc tính Kiến trúc (tiếp theo)}
+    \\
+    \hline
+    \textbf{Đặc tính (AC)}        & \textbf{Fitness Function}                                                                                                            & \textbf{Ngưỡng Mục tiêu}      & \textbf{Phương pháp Đo lường}                                                                            \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    \textbf{AC1: Modularity}      & \textbf{FF1.1}: Số lượng phụ thuộc vòng (cyclic dependencies) giữa các module/service.                                               & $= 0$ cycles                  & Phân tích dependency graph bằng ArchUnit (Java) hoặc go-arch-lint (Go). Chạy trong CI pipeline.          \\
+    \hline
+    \textbf{AC1: Modularity}      & \textbf{FF1.2}: Thời gian deploy độc lập một service mà không ảnh hưởng service khác.                                                & $< 10$ phút                   & Đo thời gian từ commit đến production cho single service. Kiểm tra không có downtime ở các service khác. \\
+    \hline
+    \textbf{AC2: Scalability}     & \textbf{FF2.1}: Số lượng người dùng đồng thời hệ thống có thể xử lý với latency $< 500$ms (P95).                                     & $\geq 5{,}000$ users          & Load testing với K6/Locust. Đo P95 response time dưới tải peak.                                          \\
+    \hline
+    \textbf{AC2: Scalability}     & \textbf{FF2.2}: Thời gian auto-scale từ $n$ đến $2n$ pods khi CPU $> 80\%$.                                                          & $< 2$ phút                    & Kubernetes HPA metrics. Trigger scale event và đo thời gian đến khi pods ready.                          \\
+    \hline
+    \textbf{AC3: Performance}     & \textbf{FF3.1}: Response time cho luồng Adaptive Content Delivery (API Gateway $\rightarrow$ Adaptive Engine $\rightarrow$ Content). & $< 200$ms (P95)               & APM tools (Jaeger/Zipkin). Đo end-to-end latency cho critical path.                                      \\
+    \hline
+    \textbf{AC3: Performance}     & \textbf{FF3.2}: Response time cho luồng Scoring \& Feedback sau khi submit bài.                                                      & $< 500$ms (P95)               & Distributed tracing. Đo từ submission đến feedback display.                                              \\
+    \hline
+    \textbf{AC4: Testability}     & \textbf{FF4.1}: Code coverage cho unit tests của domain/application layer.                                                           & $\geq 80\%$                   & JaCoCo (Java), go test -cover (Go). Enforce trong CI với quality gate.                                   \\
+    \hline
+    \textbf{AC4: Testability}     & \textbf{FF4.2}: Tỷ lệ test có thể chạy độc lập (không cần external dependencies).                                                    & $\geq 90\%$ unit tests        & Đếm số test sử dụng mocks vs real dependencies. Review trong code review.                                \\
+    \hline
+    \textbf{AC6: Security}        & \textbf{FF6.1}: Số lượng vulnerabilities với severity High/Critical trong dependencies.                                              & $= 0$ High/Critical           & OWASP Dependency Check, Snyk, Trivy. Chạy hàng ngày trong CI.                                            \\
+    \hline
+    \textbf{AC6: Security}        & \textbf{FF6.2}: Tỷ lệ API endpoints được bảo vệ bởi authentication.                                                                  & $= 100\%$ (trừ health checks) & API Gateway audit logs. Automated security scan với OWASP ZAP.                                           \\
+    \hline
+    \textbf{AC7: Maintainability} & \textbf{FF7.1}: Cyclomatic complexity trung bình của codebase.                                                                       & $< 10$ per method             & SonarQube, golangci-lint. Quality gate trong CI pipeline.                                                \\
+    \hline
+    \textbf{AC7: Maintainability} & \textbf{FF7.2}: Afferent/Efferent coupling ratio (instability metric).                                                               & $0.3 \leq I \leq 0.7$         & ArchUnit metrics, JDepend. Đánh giá hàng sprint.                                                         \\
+    \hline
+    \textbf{AC5: Deployability}   & \textbf{FF5.1}: Deployment frequency (số lần deploy thành công/tuần).                                                                & $\geq 5$ deploys/tuần         & CI/CD metrics từ GitHub Actions/GitLab CI.                                                               \\
+    \hline
+    \textbf{AC5: Deployability}   & \textbf{FF5.2}: Mean Time to Recovery (MTTR) sau deployment failure.                                                                 & $< 15$ phút                   & Incident tracking. Đo thời gian từ alert đến rollback hoàn tất.                                          \\
+    \hline
+    \textbf{AC9: Observability}   & \textbf{FF9.1}: Tỷ lệ requests có distributed trace đầy đủ.                                                                          & $\geq 99\%$                   & Jaeger/Zipkin sampling rate. Kiểm tra trace completeness.                                                \\
+    \hline
+    \textbf{AC9: Observability}   & \textbf{FF9.2}: Mean Time to Detect (MTTD) cho anomalies.                                                                            & $< 5$ phút                    & Prometheus alerting rules. Đo thời gian từ anomaly đến alert fired.                                      \\
+    \hline
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+
+\noindent\textbf{Chiến lược Thực thi Fitness Functions:}
+\begin{enumerate}[leftmargin=0.7cm]
+    \item \textbf{Automated}: Tích hợp vào CI/CD pipeline, chạy tự động mỗi commit/PR.
+    \item \textbf{Continuous}: Một số fitness functions (FF3.x, FF9.x) chạy liên tục trong production với APM tools.
+    \item \textbf{Periodic}: Load tests (FF2.x) và security scans (FF6.x) chạy định kỳ (hàng tuần/sprint).
+    \item \textbf{Quality Gates}: Các fitness functions quan trọng (FF4.1, FF6.1, FF7.1) là blocking gates -- build fail nếu không đạt ngưỡng.
+\end{enumerate}
+
+\FloatBarrier

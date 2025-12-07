@@ -1,0 +1,121 @@
+@startuml ai_pipeline_dataflow
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontSize 11
+
+title Luồng Dữ liệu AI Pipeline - Hệ thống ITS
+
+' Define colors for different data types
+skinparam rectangle {
+    BackgroundColor<<input>> LightBlue
+    BackgroundColor<<process>> LightGreen
+    BackgroundColor<<output>> LightYellow
+    BackgroundColor<<storage>> LightGray
+    BackgroundColor<<event>> LightPink
+}
+
+' Input Layer
+rectangle "Input Layer" {
+    rectangle "Student Submission\n(answers, time_spent)" as Input <<input>>
+    rectangle "Question Metadata\n(skill_tags, difficulty)" as QMeta <<input>>
+    rectangle "Current Mastery\n(skill_scores)" as CMastery <<input>>
+}
+
+' Processing Layer - Scoring
+rectangle "Scoring Pipeline" {
+    rectangle "Answer Validation\n(correct/incorrect)" as Validate <<process>>
+    rectangle "Score Calculation\n(weighted scoring)" as ScoreCalc <<process>>
+    rectangle "Performance Metrics\n(accuracy, speed)" as PerfMetrics <<process>>
+}
+
+' Event Bus
+rectangle "Event Bus (RabbitMQ)" {
+    rectangle "scoring.completed\n{user_id, score, skill_tags,\ntime_spent, accuracy}" as ScoringEvent <<event>>
+    rectangle "learner.updated\n{user_id, new_mastery,\nrecommendation_trigger}" as LearnerEvent <<event>>
+}
+
+' Processing Layer - Learner Model
+rectangle "Learner Model Pipeline" {
+    rectangle "Mastery Update\n(BKT/IRT Algorithm)" as MasteryUpdate <<process>>
+    rectangle "Skill Decay\n(time-based decay)" as SkillDecay <<process>>
+    rectangle "Learning Velocity\n(progress rate)" as Velocity <<process>>
+}
+
+' Processing Layer - Adaptive Engine
+rectangle "Adaptive Engine Pipeline" {
+    rectangle "Content Filtering\n(skill match)" as ContentFilter <<process>>
+    rectangle "Difficulty Selection\n(ZPD targeting)" as DiffSelect <<process>>
+    rectangle "Path Optimization\n(learning path)" as PathOpt <<process>>
+}
+
+' Output Layer
+rectangle "Output Layer" {
+    rectangle "Next Content\n(recommended item)" as NextContent <<output>>
+    rectangle "Learning Path\n(sequence of items)" as LearningPath <<output>>
+    rectangle "Progress Report\n(mastery visualization)" as Report <<output>>
+}
+
+' Storage Layer
+rectangle "Data Storage" {
+    database "questions\n(content_db)" as QDB <<storage>>
+    database "skill_mastery\n(learner_db)" as MasteryDB <<storage>>
+    database "submissions\n(scoring_db)" as SubDB <<storage>>
+}
+
+' Data Flow Connections
+Input --> Validate : Raw answers
+QMeta --> Validate : Expected answers
+Validate --> ScoreCalc : Validation result
+ScoreCalc --> PerfMetrics : Raw score
+PerfMetrics --> ScoringEvent : Performance data
+
+ScoringEvent --> MasteryUpdate : Score + skill_tags
+CMastery --> MasteryUpdate : Previous mastery
+MasteryUpdate --> SkillDecay : Updated scores
+SkillDecay --> Velocity : Decayed scores
+Velocity --> LearnerEvent : New mastery state
+
+LearnerEvent --> ContentFilter : Mastery profile
+QDB --> ContentFilter : Available content
+ContentFilter --> DiffSelect : Filtered items
+DiffSelect --> PathOpt : Difficulty-matched items
+PathOpt --> NextContent : Optimal next item
+PathOpt --> LearningPath : Full path
+
+MasteryDB --> CMastery : Load mastery
+Velocity --> MasteryDB : Save mastery
+PerfMetrics --> SubDB : Save submission
+NextContent --> Report : Current recommendation
+
+' Annotations
+note right of MasteryUpdate
+  **BKT Algorithm:**
+  P(L_n) = P(L_{n-1}) + (1-P(L_{n-1})) * P(T)
+  
+  **IRT Model:**
+  P(correct) = 1 / (1 + e^{-a(θ-b)})
+end note
+
+note right of DiffSelect
+  **Zone of Proximal Development:**
+  Target difficulty = mastery + 0.1~0.2
+  
+  **Constraints:**
+  - Not too easy (>mastery-0.1)
+  - Not too hard (<mastery+0.3)
+end note
+
+note bottom of ScoringEvent
+  **Event Payload:**
+  {
+    "user_id": "uuid",
+    "question_id": "uuid",
+    "score": 0.85,
+    "skill_tags": ["algebra", "equations"],
+    "time_spent_ms": 45000,
+    "accuracy": 0.85,
+    "timestamp": "ISO8601"
+  }
+end note
+
+@enduml

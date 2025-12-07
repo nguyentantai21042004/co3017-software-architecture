@@ -98,5 +98,144 @@ Phân tích kết quả và định hướng lựa chọn:
     \item \textbf{Phase 3 -- Full Microservices Ecosystem:} tiếp tục tách các module còn lại khi hệ thống trưởng thành, hướng tới hệ sinh thái microservices tối ưu AC1, AC2, AC5.
 \end{enumerate}
 
+\subsubsection{Phân tích Chi phí -- Lợi ích (TCO)}
+
+\indentpar \indentpar Để đánh giá tính khả thi về mặt kinh tế của quyết định kiến trúc, bảng dưới đây so sánh Tổng Chi phí Sở hữu (Total Cost of Ownership -- TCO) giữa kiến trúc Monolith truyền thống và Microservices được lựa chọn cho ITS trong chu kỳ $3$ năm.
+
+\renewcommand{\arraystretch}{1.4}
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\noindent\justifying\arraybackslash}p{3.5cm}|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{2.8cm}|>{\noindent\justifying\arraybackslash}X|}
+        \hline
+        \textbf{Hạng mục Chi phí} & \textbf{Monolith} & \textbf{Microservices} & \textbf{Ghi chú}                                                 \\
+        \hline
+        \multicolumn{4}{|c|}{\textbf{Chi phí Phát triển Ban đầu (Year 0)}}                                                                        \\
+        \hline
+        Thiết kế kiến trúc        & \$5,000           & \$15,000               & MS cần thiết kế domain boundaries, API contracts, event schemas. \\
+        \hline
+        Phát triển core features  & \$40,000          & \$60,000               & MS tăng $50\%$ do boilerplate, inter-service communication.      \\
+        \hline
+        CI/CD setup               & \$2,000           & \$8,000                & MS cần pipeline riêng cho mỗi service, container registry.       \\
+        \hline
+        Testing infrastructure    & \$3,000           & \$10,000               & MS cần integration tests, contract tests, Testcontainers.        \\
+        \hline
+        \textbf{Subtotal Year 0}  & \textbf{\$50,000} & \textbf{\$93,000}      & MS cao hơn $86\%$ ban đầu.                                       \\
+        \hline
+        \multicolumn{4}{|c|}{\textbf{Chi phí Hạ tầng Hàng năm}}                                                                                   \\
+        \hline
+        Compute (VMs/Containers)  & \$6,000/năm       & \$12,000/năm           & MS cần nhiều container instances hơn.                            \\
+        \hline
+        Database (PostgreSQL)     & \$3,600/năm       & \$7,200/năm            & MS: $3$ DB instances vs $1$ cho Monolith.                        \\
+        \hline
+        Message Broker (RabbitMQ) & \$0               & \$2,400/năm            & Chỉ MS cần message broker.                                       \\
+        \hline
+        Monitoring/Logging        & \$1,200/năm       & \$3,600/năm            & MS cần distributed tracing, centralized logging.                 \\
+        \hline
+        \textbf{Subtotal/năm}     & \textbf{\$10,800} & \textbf{\$25,200}      & MS cao hơn $133\%$ hạ tầng.                                      \\
+        \hline
+        \multicolumn{4}{|c|}{\textbf{Chi phí Bảo trì Hàng năm}}                                                                                   \\
+        \hline
+        Bug fixes \& patches      & \$8,000/năm       & \$6,000/năm            & MS dễ isolate và fix bugs hơn.                                   \\
+        \hline
+        Feature development       & \$20,000/năm      & \$15,000/năm           & MS cho phép parallel development.                                \\
+        \hline
+        DevOps/Operations         & \$5,000/năm       & \$12,000/năm           & MS cần kỹ năng K8s, monitoring cao hơn.                          \\
+        \hline
+        \textbf{Subtotal/năm}     & \textbf{\$33,000} & \textbf{\$33,000}      & Tương đương về bảo trì.                                          \\
+        \hline
+        \multicolumn{4}{|c|}{\textbf{Chi phí Mở rộng (Scaling) -- Khi đạt 5,000 users}}                                                           \\
+        \hline
+        Horizontal scaling        & \$15,000          & \$5,000                & MS scale từng service, Monolith scale toàn bộ.                   \\
+        \hline
+        Database sharding         & \$20,000          & \$8,000                & MS đã có DB riêng, dễ shard hơn.                                 \\
+        \hline
+        Refactoring effort        & \$30,000          & \$0                    & Monolith cần refactor lớn để scale.                              \\
+        \hline
+        \textbf{Subtotal Scaling} & \textbf{\$65,000} & \textbf{\$13,000}      & MS tiết kiệm $80\%$ khi scale.                                   \\
+        \hline
+    \end{tabularx}
+    \caption{So sánh TCO: Monolith vs Microservices (chu kỳ 3 năm)}
+    \label{tab:tco_comparison}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
+
+\noindent\textbf{Tổng hợp TCO 3 năm:}
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Monolith}: \$50,000 + (\$10,800 + \$33,000) $\times$ 3 + \$65,000 = \textbf{\$246,400}
+    \item \textbf{Microservices}: \$93,000 + (\$25,200 + \$33,000) $\times$ 3 + \$13,000 = \textbf{\$280,600}
+\end{itemize}
+
+\noindent\textbf{Phân tích Lợi ích -- Chi phí:}
+\begin{enumerate}[leftmargin=0.7cm]
+    \item \textbf{Chi phí cao hơn $14\%$}: Microservices tốn thêm $\sim$\$34,200 trong 3 năm so với Monolith.
+    \item \textbf{Lợi ích vô hình}: Microservices mang lại giá trị khó định lượng:
+          \begin{itemize}[nosep]
+              \item \textbf{Time-to-market}: Parallel development giảm $30\%$ thời gian release features mới.
+              \item \textbf{Fault isolation}: Lỗi một service không ảnh hưởng toàn hệ thống.
+              \item \textbf{Technology flexibility}: Có thể dùng ngôn ngữ/framework tối ưu cho từng service.
+              \item \textbf{Team autonomy}: Các team có thể làm việc độc lập, tăng productivity.
+          \end{itemize}
+    \item \textbf{Break-even point}: Khi hệ thống cần scale lên $>10,000$ users, Microservices trở nên rẻ hơn do chi phí scaling thấp hơn $80\%$.
+    \item \textbf{Kết luận}: Chi phí tăng thêm $14\%$ là chấp nhận được để đạt được Modularity (AC1), Scalability (AC2), và khả năng Live AI Model Swapping (FR12) -- các yêu cầu cốt lõi của ITS.
+\end{enumerate}
+
+\FloatBarrier
+
+\subsubsection{Ma trận Rủi ro Kiến trúc}
+
+\indentpar \indentpar Việc lựa chọn kiến trúc Hybrid Microservices + Event-Driven mang lại nhiều lợi ích nhưng cũng đi kèm các rủi ro cần được nhận diện và quản lý. Bảng dưới đây trình bày ma trận rủi ro với đánh giá xác suất, tác động và chiến lược giảm thiểu cho từng rủi ro.
+
+\renewcommand{\arraystretch}{1.4}
+\begin{longtable}{|>{\centering\arraybackslash}p{0.6cm}|>{\noindent\justifying\arraybackslash}p{3.8cm}|>{\centering\arraybackslash}p{1.4cm}|>{\centering\arraybackslash}p{1.4cm}|>{\noindent\justifying\arraybackslash}p{4.5cm}|>{\centering\arraybackslash}p{1.8cm}|}
+    \caption{Ma trận Rủi ro Kiến trúc}
+    \label{tab:risk_matrix}
+    \\
+    \hline
+    \textbf{ID} & \textbf{Mô tả Rủi ro}                                                                                                                     & \textbf{Xác suất} & \textbf{Tác động} & \textbf{Chiến lược Giảm thiểu}                                                                                                    & \textbf{Trạng thái} \\
+    \hline
+    \endfirsthead
+    \caption[]{Ma trận Rủi ro Kiến trúc (tiếp theo)}
+    \\
+    \hline
+    \textbf{ID} & \textbf{Mô tả Rủi ro}                                                                                                                     & \textbf{Xác suất} & \textbf{Tác động} & \textbf{Chiến lược Giảm thiểu}                                                                                                    & \textbf{Trạng thái} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    R1          & \textbf{Độ phức tạp vận hành cao}: Microservices yêu cầu kỹ năng DevOps, Kubernetes, monitoring vượt quá năng lực đội ngũ hiện tại.       & Cao               & Cao               & Triển khai theo giai đoạn (MVP $\rightarrow$ Full MS). Đào tạo đội ngũ. Sử dụng Docker Compose cho MVP trước khi chuyển sang K8s. & Đang giảm thiểu     \\
+    \hline
+    R2          & \textbf{Không nhất quán dữ liệu phân tán}: Eventual consistency giữa các service có thể gây ra trạng thái không đồng bộ tạm thời.         & Trung bình        & Cao               & Áp dụng Saga Pattern (ADR-9). Thiết kế idempotent consumers. Sử dụng Outbox Pattern cho event publishing.                         & Đang giảm thiểu     \\
+    \hline
+    R3          & \textbf{Single Point of Failure}: Auth Service và API Gateway là điểm lỗi đơn, sự cố gây downtime toàn hệ thống.                          & Trung bình        & Cao               & Triển khai HA với nhiều replica trên Kubernetes. Health checks và auto-restart. Circuit breaker pattern.                          & Kế hoạch            \\
+    \hline
+    R4          & \textbf{Chi phí hạ tầng cao}: Microservices yêu cầu nhiều tài nguyên hơn monolith (nhiều container, DB instances, message broker).        & Cao               & Trung bình        & Bắt đầu với MVP tối thiểu. Sử dụng shared database cho giai đoạn đầu. Tối ưu resource limits. Auto-scaling theo nhu cầu.          & Chấp nhận           \\
+    \hline
+    R5          & \textbf{Polyglot complexity}: Vận hành hai hệ sinh thái (Java + Go) tăng độ phức tạp CI/CD, debugging và onboarding.                      & Trung bình        & Trung bình        & Chuẩn hóa cấu trúc dự án. Chia sẻ template CI/CD. Thống nhất chuẩn logging/monitoring. Đào tạo chéo đội ngũ.                      & Đang giảm thiểu     \\
+    \hline
+    R6          & \textbf{Network latency}: Giao tiếp giữa các service qua mạng tăng độ trễ so với monolith, ảnh hưởng AC3 (Performance).                   & Trung bình        & Trung bình        & Sử dụng async messaging (RabbitMQ) cho non-critical paths. Caching với Redis. Service mesh cho internal traffic.                  & Đang giảm thiểu     \\
+    \hline
+    R7          & \textbf{Message broker failure}: RabbitMQ sự cố gây mất event, ảnh hưởng luồng Scoring $\rightarrow$ LearnerModel $\rightarrow$ Adaptive. & Thấp              & Cao               & Triển khai RabbitMQ cluster với mirrored queues. Persistent messages. Dead letter queues cho retry. Fallback sync API.            & Kế hoạch            \\
+    \hline
+    R8          & \textbf{Security breach}: Tấn công nội bộ bypass Gateway, giả mạo header X-User-ID/X-User-Roles.                                          & Thấp              & Cao               & Sử dụng VPC riêng và Network Policies. Chỉ Gateway gọi được service nội bộ. JWT với TTL ngắn. Audit logging.                      & Kế hoạch            \\
+    \hline
+    R9          & \textbf{AI Model deployment failure}: Triển khai phiên bản AI mới gây lỗi, ảnh hưởng trải nghiệm học sinh.                                & Trung bình        & Cao               & Blue/Green deployment. Canary releases với $10\%$ traffic. Rollback tự động trong $5$ phút. A/B testing trước production.         & Đang giảm thiểu     \\
+    \hline
+    R10         & \textbf{Database performance degradation}: PostgreSQL chậm khi tải nặng hoặc truy vấn chưa tối ưu.                                        & Trung bình        & Trung bình        & Read replicas. Connection pooling (PgBouncer). Index optimization. Slow query monitoring. Vertical scaling khi cần.               & Đang giảm thiểu     \\
+    \hline
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+
+\noindent\textbf{Ghi chú về mức độ đánh giá:}
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Xác suất}: Thấp ($< 20\%$), Trung bình ($20\%$--$50\%$), Cao ($> 50\%$)
+    \item \textbf{Tác động}: Thấp (ảnh hưởng nhỏ, dễ khắc phục), Trung bình (ảnh hưởng một phần hệ thống), Cao (ảnh hưởng nghiêm trọng, downtime hoặc mất dữ liệu)
+    \item \textbf{Trạng thái}: Đang giảm thiểu (đã có biện pháp), Kế hoạch (sẽ triển khai), Chấp nhận (rủi ro được chấp nhận)
+\end{itemize}
+
+\FloatBarrier
+
 \vspace{0.5em}
 \noindent\textbf{Kết luận:} Quyết định kiến trúc lai này đóng vai trò là nền tảng cho toàn bộ các quyết định kỹ thuật chi tiết được trình bày trong Mục~3.3 (Architecture Decision Records) và Mục~3.4 (Design Principles).

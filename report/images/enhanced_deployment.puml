@@ -1,0 +1,160 @@
+@startuml enhanced_deployment
+!theme plain
+skinparam componentStyle uml2
+skinparam backgroundColor white
+skinparam defaultFontSize 11
+
+title Kiến trúc Triển khai Chi tiết - ITS On-Premise
+
+actor "Client\n(Browser/Mobile)" as Client
+
+cloud "DMZ Layer" {
+    node "Load Balancer\n(HAProxy/NGINX)" as LB {
+        [SSL Termination]
+        [Rate Limiting]
+        [WAF]
+    }
+}
+
+frame "Kubernetes Cluster (Self-Managed)" {
+    
+    node "Master Nodes (HA - 3 nodes)" as Masters {
+        [etcd Cluster]
+        [API Server]
+        [Controller Manager]
+        [Scheduler]
+    }
+    
+    node "Ingress Controller" as Ingress {
+        [NGINX Ingress\nController]
+        [Cert Manager]
+    }
+
+    package "Node Pool A - Go Services (Compute Optimized)" {
+        node "Worker Node 1" as WN1 {
+            component "API Gateway Pod (x3)" as GWPod {
+                [API Gateway\n(Go/Gin)\n256MB/512MB]
+            }
+        }
+        
+        node "Worker Node 2" as WN2 {
+            component "Scoring Service Pod (x3-15)" as ScoringPod {
+                [Scoring Service\n(Go)\n256MB/1GB]
+            }
+            component "Learner Model Pod (x3-10)" as LearnerPod {
+                [Learner Model\n(Go)\n256MB/1GB]
+            }
+        }
+        
+        node "Worker Node 3" as WN3 {
+            component "Adaptive Engine Pod (x2-8)" as AdaptivePod {
+                [Adaptive Engine\n(Go)\n512MB/2GB]
+            }
+        }
+    }
+    
+    package "Node Pool B - Java Services (Memory Optimized)" {
+        node "Worker Node 4" as WN4 {
+            component "Content Service Pod (x2-5)" as ContentPod {
+                [Content Service\n(Java/Spring)\n512MB/1GB]
+            }
+        }
+        
+        node "Worker Node 5" as WN5 {
+            component "Auth Service Pod (x2-5)" as AuthPod {
+                [Auth Service\n(Java/Spring)\n512MB/1GB]
+            }
+            component "User Mgmt Pod (x2-5)" as UserPod {
+                [User Management\n(Java/Spring)\n512MB/1GB]
+            }
+        }
+    }
+}
+
+frame "Data Layer (Stateful - Separate VLAN)" {
+    
+    database "PostgreSQL HA Cluster\n(Patroni + etcd)" as PGHA {
+        database "Primary" as PGPrimary {
+            [content_db]
+            [scoring_db]
+            [learner_db]
+            [auth_db]
+            [user_db]
+        }
+        database "Replica 1" as PGReplica1
+        database "Replica 2" as PGReplica2
+    }
+    
+    queue "RabbitMQ Cluster\n(Mirrored Queues)" as RMQ {
+        [scoring.completed]
+        [learner.updated]
+        [content.created]
+    }
+    
+    database "Redis Sentinel\n(Session/Cache)" as Redis {
+        [Master]
+        [Sentinel x3]
+    }
+}
+
+frame "Monitoring Layer (its-monitoring namespace)" {
+    node "Observability Stack" as Obs {
+        [Prometheus]
+        [Grafana]
+        [Loki]
+        [Alertmanager]
+        [Jaeger/Tempo]
+    }
+    [Node Exporter] as NE
+}
+
+frame "Storage Layer (SAN/NAS)" {
+    storage "Persistent Volumes\n(Rook-Ceph/Longhorn)" as PV {
+        [DB Storage\n(RAID-10)]
+        [Log Storage]
+        [Backup Storage]
+    }
+}
+
+' Connections
+Client --> LB : HTTPS (443)
+LB --> Ingress : HTTP (80)
+Ingress --> GWPod : Route
+
+GWPod --> ContentPod : REST
+GWPod --> ScoringPod : REST
+GWPod --> LearnerPod : REST
+GWPod --> AdaptivePod : REST
+GWPod --> AuthPod : JWT Validate
+GWPod --> UserPod : REST
+
+ContentPod --> PGPrimary : JDBC (5432)
+ScoringPod --> PGPrimary : SQL (5432)
+LearnerPod --> PGPrimary : SQL (5432)
+AuthPod --> PGPrimary : JDBC (5432)
+UserPod --> PGPrimary : JDBC (5432)
+
+ScoringPod --> RMQ : Publish
+LearnerPod --> RMQ : Consume
+AdaptivePod --> LearnerPod : REST
+AdaptivePod --> ContentPod : REST
+
+GWPod --> Redis : Session
+AuthPod --> Redis : Token Cache
+AdaptivePod --> Redis : Cache
+
+PGPrimary --> PGReplica1 : Streaming\nReplication
+PGPrimary --> PGReplica2 : Streaming\nReplication
+
+Obs --> WN1 : Scrape Metrics
+Obs --> WN2 : Scrape Metrics
+Obs --> WN3 : Scrape Metrics
+Obs --> WN4 : Scrape Metrics
+Obs --> WN5 : Scrape Metrics
+NE --> Obs : Hardware Metrics
+
+PGHA --> PV : Persistent Storage
+RMQ --> PV : Message Persistence
+Redis --> PV : AOF/RDB
+
+@enduml
