@@ -171,7 +171,7 @@ services:
       NEXT_PUBLIC_CONTENT_API: http://localhost:8081
       NEXT_PUBLIC_ADAPTIVE_API: http://localhost:8084
     ports:
-      - "3001:3000"
+      - "3001:3001"
     depends_on:
       adaptive-engine:
         condition: service_started
