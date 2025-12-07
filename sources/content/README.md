@@ -33,27 +33,27 @@ Content Service hoạt động như một **nguồn dữ liệu trung tâm** cho
 
 ## Công nghệ
 
-### Core Technologies
+### Công nghệ Cốt lõi (Core Technologies)
 
 - **Java 17**: Ngôn ngữ lập trình chính
-- **Spring Boot 3.5.6**: Framework backend
-- **Spring Data JPA**: ORM và data access layer
+- **Spring Boot 3.5.6**: Framework phía máy chủ (backend)
+- **Spring Data JPA**: ORM và lớp truy cập dữ liệu (data access layer)
 - **PostgreSQL**: Cơ sở dữ liệu quan hệ
-- **Maven**: Build tool và dependency management
+- **Maven**: Công cụ build và quản lý phụ thuộc (dependency management)
 
-### Libraries & Tools
+### Thư viện và Công cụ (Libraries & Tools)
 
-- **Lombok**: Giảm boilerplate code
-- **SpringDoc OpenAPI**: Tự động tạo API documentation (Swagger)
-- **JUnit 5**: Unit testing framework
-- **H2 Database**: In-memory database cho testing
-- **Jackson**: JSON serialization/deserialization
+- **Lombok**: Giảm mã lặp (boilerplate code)
+- **SpringDoc OpenAPI**: Tự động tạo tài liệu API (Swagger)
+- **JUnit 5**: Framework kiểm thử đơn vị (Unit testing)
+- **H2 Database**: Cơ sở dữ liệu trong bộ nhớ cho kiểm thử
+- **Jackson**: Chuyển đổi JSON (serialization/deserialization)
 
-### Architecture Pattern
+### Mẫu Kiến trúc (Architecture Pattern)
 
-- **Clean Architecture**: Tách biệt business logic khỏi infrastructure
-- **Hexagonal Architecture**: Ports and Adapters pattern
-- **Repository Pattern**: Abstraction cho data access
+- **Kiến trúc Sạch (Clean Architecture)**: Tách biệt logic nghiệp vụ khỏi hạ tầng
+- **Kiến trúc Lục giác (Hexagonal Architecture)**: Mẫu Cổng và Bộ chuyển đổi (Ports and Adapters)
+- **Mẫu Repository (Repository Pattern)**: Trừu tượng hóa truy cập dữ liệu
 
 ---
 
@@ -669,7 +669,7 @@ curl http://localhost:8081/health
 open http://localhost:8081/swagger-ui.html
 ```
 
-### Hot Reload (Development)
+### Tải lại Nóng (Hot Reload) cho Phát triển
 
 Thêm Spring Boot DevTools vào `pom.xml`:
 
@@ -793,11 +793,11 @@ class JpaQuestionRepositoryTest {
 }
 ```
 
-### Test Coverage Goals
+### Mục tiêu Độ phủ Kiểm thử (Test Coverage Goals)
 
-- **Unit Tests**: > 80% coverage
-- **Integration Tests**: All API endpoints
-- **Repository Tests**: All CRUD operations
+- **Kiểm thử Đơn vị (Unit Tests)**: > 80% độ phủ
+- **Kiểm thử Tích hợp (Integration Tests)**: Tất cả API endpoints
+- **Kiểm thử Repository**: Tất cả thao tác CRUD (Tạo, Đọc, Cập nhật, Xóa)
 
 ---
 
@@ -947,13 +947,13 @@ public class QuestionService {
 }
 ```
 
-### SOLID Benefits trong Content Service
+### Lợi ích của SOLID trong Content Service
 
-1. **Testability**: Dễ dàng mock dependencies
-2. **Maintainability**: Thay đổi một phần không ảnh hưởng phần khác
-3. **Flexibility**: Dễ dàng thêm features mới
-4. **Reusability**: Components có thể tái sử dụng
-5. **Scalability**: Dễ dàng mở rộng hệ thống
+1. **Khả năng Kiểm thử (Testability)**: Dễ dàng giả lập (mock) các phụ thuộc
+2. **Khả năng Bảo trì (Maintainability)**: Thay đổi một phần không ảnh hưởng phần khác
+3. **Tính Linh hoạt (Flexibility)**: Dễ dàng thêm tính năng mới
+4. **Khả năng Tái sử dụng (Reusability)**: Các thành phần có thể tái sử dụng
+5. **Khả năng Mở rộng (Scalability)**: Dễ dàng mở rộng hệ thống
 
 ---
 

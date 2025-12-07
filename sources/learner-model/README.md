@@ -14,7 +14,7 @@
 - [Event Consumption](#event-consumption)
 - [Thuật toán BKT](#thuật-toán-bkt)
 - [Cấu hình](#cấu-hình)
-- [Phát triển Cục bộ](#phát-triển-cục-bộ)
+- [Phát triển Local](#phát-triển-local)
 - [Testing](#testing)
 - [Tích hợp MinIO](#tích-hợp-minio)
 - [Cấu trúc Thư mục](#cấu-trúc-thư-mục)
@@ -98,7 +98,7 @@ flowchart LR
 
 Learner Model Service sử dụng **Clean Architecture** với pattern **Module-First**, tách biệt rõ ràng giữa các layers:
 
-```
+```text
 ┌────────────────────────────────────────────────────────────────────┐
 │                    Learner Model Service                           │
 ├────────────────────────────────────────────────────────────────────┤
@@ -138,8 +138,7 @@ Learner Model Service sử dụng **Clean Architecture** với pattern **Module-
 
 ### Clean Architecture Layers
 
-```
-
+```text
 ┌──────────────────────────────────────────────────────────────────┐
 │ 1. Delivery Layer                                                │
 │ - HTTP Handlers (API endpoints)                                  │
@@ -169,10 +168,10 @@ Learner Model Service sử dụng **Clean Architecture** với pattern **Module-
 
 ### Nguyên tắc Thiết kế
 
-1. **Dependency Inversion**: UseCase không phụ thuộc vào Repository implementation
-2. **Interface Segregation**: Mỗi layer chỉ biết interface của layer dưới
-3. **Single Responsibility**: Mỗi component có một trách nhiệm duy nhất
-4. **Stateless API**: API service không lưu state giữa các requests
+1. **Đảo ngược Phụ thuộc (Dependency Inversion)**: UseCase không phụ thuộc vào triển khai Repository
+2. **Phân tách Giao diện (Interface Segregation)**: Mỗi lớp chỉ biết giao diện của lớp dưới
+3. **Trách nhiệm Đơn (Single Responsibility)**: Mỗi thành phần có một trách nhiệm duy nhất
+4. **API Không trạng thái (Stateless API)**: API service không lưu trạng thái giữa các yêu cầu
 
 ---
 
@@ -231,13 +230,13 @@ erDiagram
 
 ### Base URL
 
-```
+```text
 http://localhost:8083/internal/learner
 ```
 
 ### Swagger Documentation
 
-```
+```text
 http://localhost:8083/learner-model/swagger/index.html
 ```
 
@@ -270,7 +269,7 @@ Truy vấn điểm mastery của học sinh cho một kỹ năng cụ thể.
 
 **Endpoint:**
 
-```
+```text
 GET /internal/learner/:user_id/mastery?skill=:skill_tag
 ```
 
@@ -438,7 +437,7 @@ Service sử dụng phiên bản đơn giản hóa của thuật toán **Bayesia
 
 ### Công thức Tính toán
 
-```
+```text
 NewScore = (OldScore + ScoreObtained) / 2
 ```
 
@@ -495,12 +494,12 @@ func (uc *usecase) UpdateMasteryFromEvent(ctx context.Context, input learner.Upd
 
 ### Ưu điểm của Phương pháp
 
-1. **Đơn giản**: Dễ hiểu và implement
-2. **Ổn định**: Không thay đổi đột ngột khi có một bài kiểm tra tốt/xấu
-3. **Phản ánh xu hướng**: Mastery tăng dần khi học sinh cải thiện
-4. **Có trọng số**: Kết quả gần đây ảnh hưởng 50% đến score mới
+1. **Đơn giản**: Dễ hiểu và triển khai
+2. **Ổn định**: Không thay đổi đột ngột khi có một bài kiểm tra tốt hoặc xấu
+3. **Phản ánh xu hướng**: Mức độ thành thạo tăng dần khi học sinh cải thiện
+4. **Có trọng số**: Kết quả gần đây ảnh hưởng 50% đến điểm mới
 
-### Ngưỡng Mastery (Mastery Threshold)
+### Ngưỡng Thành thạo (Mastery Threshold)
 
 ```go
 const MASTERY_THRESHOLD = 50
@@ -620,7 +619,7 @@ MINIO_USE_SSL=false
 
 ---
 
-## Phát triển Cục bộ
+## Phát triển Local
 
 ### Yêu cầu Hệ thống
 
@@ -802,7 +801,7 @@ type MinIOConfig struct {
 
 Khi chạy với Docker Compose:
 
-```
+```text
 URL: http://localhost:9001
 Username: minioadmin
 Password: minioadmin
@@ -814,7 +813,7 @@ Password: minioadmin
 
 ## Cấu trúc Thư mục
 
-```
+```text
 learner-model/
 ├── cmd/                          # Entry points
 │   ├── api/                      # API service
@@ -920,7 +919,7 @@ learner-model/
 
 ### Lỗi Kết nối Database
 
-```
+```text
 Failed to connect to database
 ```
 
@@ -932,7 +931,7 @@ Failed to connect to database
 
 ### Lỗi Kết nối RabbitMQ
 
-```
+```text
 Failed to connect to RabbitMQ
 ```
 
@@ -1006,5 +1005,5 @@ Failed to connect to RabbitMQ
 
 ---
 
-**Cập nhật lần cuối:** 2024-12-07  
-**Phiên bản:** 1.0.0
+**Learner Model Service** - Phần của Intelligent Tutoring System (ITS)  
+CO3017 - Kiến Trúc Phần Mềm - HCMUT
