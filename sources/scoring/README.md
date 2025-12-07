@@ -1563,17 +1563,45 @@ db.SetConnMaxLifetime(5 * time.Minute)
 
 ---
 
-## Liên hệ
+## Liên kết Liên quan
 
-Để biết thêm thông tin về Scoring Service hoặc hệ thống ITS, vui lòng tham khảo:
+### Tài liệu Dự án
 
-- **Root README**: `../../README.md`
-- **Sources README**: `../README.md`
-- **Architecture Report**: `../../report/main.pdf`
-- **Content Service**: `../content/README.md`
-- **Learner Model Service**: `../learner-model/README.md`
+| Tài liệu           | Đường dẫn                                        | Mô tả                                |
+| ------------------ | ------------------------------------------------ | ------------------------------------ |
+| **Root README**    | [../../README.md](../../README.md)               | Tổng quan dự án, cấu trúc repository |
+| **Sources README** | [../README.md](../README.md)                     | Hướng dẫn microservices và Docker    |
+| **Report README**  | [../../report/README.md](../../report/README.md) | Hướng dẫn build báo cáo LaTeX        |
+| **Báo cáo PDF**    | [../../report/main.pdf](../../report/main.pdf)   | Báo cáo kiến trúc phần mềm           |
+
+### Service READMEs Khác
+
+| Service                   | Đường dẫn                                                    | Mô tả                             |
+| ------------------------- | ------------------------------------------------------------ | --------------------------------- |
+| **Content Service**       | [../content/README.md](../content/README.md)                 | Quản lý nội dung học tập          |
+| **Learner Model Service** | [../learner-model/README.md](../learner-model/README.md)     | Skill mastery tracking (consumer) |
+| **Adaptive Engine**       | [../adaptive-engine/README.md](../adaptive-engine/README.md) | Recommendation algorithm          |
+| **Client**                | [../client/README.md](../client/README.md)                   | Frontend UI/UX                    |
+
+### Tài liệu Kiến trúc
+
+| Tài liệu                   | Đường dẫn                                                                                              | Nội dung              |
+| -------------------------- | ------------------------------------------------------------------------------------------------------ | --------------------- |
+| **SOLID Principles**       | [../../markdown/report/6-SOLID-principles.md](../../markdown/report/6-SOLID-principles.md)             | Ví dụ áp dụng SOLID   |
+| **Architecture Decisions** | [../../markdown/report/5-architecture-decisions.md](../../markdown/report/5-architecture-decisions.md) | ADRs                  |
+| **Microservices Analysis** | [../../markdown/microservices.md](../../markdown/microservices.md)                                     | Chi tiết domain model |
+
+### API Documentation
+
+- **Swagger UI**: [http://localhost:8082/scoring/swagger/index.html](http://localhost:8082/scoring/swagger/index.html)
+- **OpenAPI Spec**: [docs/swagger.json](./docs/swagger.json)
+
+### Internal Documentation
+
+- **Architecture**: [document/architecture.md](./document/architecture.md) - Chi tiết Hexagonal Architecture
+- **API Flows**: [document/api.md](./document/api.md) - Sequence diagrams và API flows
 
 ---
 
 **Scoring Service** - Phần của Intelligent Tutoring System (ITS)  
-CO3017 - Kỹ Thuật Phần Mềm - HCMUT
+CO3017 - Kiến Trúc Phần Mềm - HCMUT
