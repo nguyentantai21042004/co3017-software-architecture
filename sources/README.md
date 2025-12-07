@@ -10,11 +10,11 @@
 
 - [Tổng quan Hệ thống](#tổng-quan-hệ-thống)
 - [Kiến trúc Microservices](#kiến-trúc-microservices)
-- [Technology Stack](#technology-stack)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Running Services](#running-services)
-- [Health Checks](#health-checks)
+- [Ngăn xếp Công nghệ (Technology Stack)](#ngăn-xếp-công-nghệ-technology-stack)
+- [Điều kiện Tiên quyết (Prerequisites)](#điều-kiện-tiên-quyết-prerequisites)
+- [Cài đặt (Installation)](#cài-đặt-installation)
+- [Chạy các Dịch vụ (Running Services)](#chạy-các-dịch-vụ-running-services)
+- [Kiểm tra Sức khỏe Dịch vụ (Health Checks)](#kiểm-tra-sức-khỏe-dịch-vụ-health-checks)
 - [Testing](#testing)
 - [Troubleshooting](#troubleshooting)
 - [Development Workflow](#development-workflow)
@@ -447,15 +447,15 @@ npm run dev
 
 Sau khi tất cả services đã khởi động:
 
-| Service                 | URL                                      | Mô tả                                                       |
-| ----------------------- | ---------------------------------------- | ----------------------------------------------------------- |
-| **Client (Frontend)**   | http://localhost:3001                    | Giao diện người dùng                                        |
-| **Content Service API** | http://localhost:8081/swagger-ui.html    | API documentation                                           |
-| **Scoring Service API** | http://localhost:8082/swagger/index.html | API documentation                                           |
-| **Learner Model API**   | http://localhost:8083/swagger/index.html | API documentation                                           |
-| **Adaptive Engine API** | http://localhost:8084/swagger/index.html | API documentation                                           |
-| **RabbitMQ Management** | http://localhost:15672                   | Queue monitoring (user: `admintest`, pass: `adminTest2025`) |
-| **MinIO Console**       | http://localhost:9001                    | Object storage (user: `minioadmin`, pass: `minioadmin123`)  |
+| Service                 | URL                                        | Mô tả                                                       |
+| ----------------------- | ------------------------------------------ | ----------------------------------------------------------- |
+| **Client (Frontend)**   | <http://localhost:3001>                    | Giao diện người dùng                                        |
+| **Content Service API** | <http://localhost:8081/swagger-ui.html>    | API documentation                                           |
+| **Scoring Service API** | <http://localhost:8082/swagger/index.html> | API documentation                                           |
+| **Learner Model API**   | <http://localhost:8083/swagger/index.html> | API documentation                                           |
+| **Adaptive Engine API** | <http://localhost:8084/swagger/index.html> | API documentation                                           |
+| **RabbitMQ Management** | <http://localhost:15672>                   | Queue monitoring (user: `admintest`, pass: `adminTest2025`) |
+| **MinIO Console**       | <http://localhost:9001>                    | Object storage (user: `minioadmin`, pass: `minioadmin123`)  |
 
 ## Docker Deployment Strategy
 

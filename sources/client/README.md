@@ -37,38 +37,38 @@ Client giao tiếp với các backend microservices thông qua REST API để cu
 
 ## Công nghệ
 
-### Core Technologies
+### Công nghệ Cốt lõi (Core Technologies)
 
-- **Next.js 15**: React framework với App Router
-- **React 19**: UI library
-- **TypeScript**: Type-safe JavaScript
-- **Tailwind CSS 4**: Utility-first CSS framework
-- **Node.js 18.17+** hoặc **20.3+**: JavaScript runtime
+- **Next.js 15**: Framework React với Bộ định tuyến Ứng dụng (App Router)
+- **React 19**: Thư viện giao diện người dùng (UI library)
+- **TypeScript**: JavaScript an toàn kiểu (Type-safe JavaScript)
+- **Tailwind CSS 4**: Framework CSS ưu tiên tiện ích (Utility-first CSS framework)
+- **Node.js 18.17+** hoặc **20.3+**: Môi trường chạy JavaScript (JavaScript runtime)
 
-### UI Libraries
+### Thư viện Giao diện (UI Libraries)
 
-- **Radix UI**: Headless UI components (Dialog, Dropdown, Toast, etc.)
-- **Lucide React**: Icon library
-- **Framer Motion**: Animation library
-- **Recharts**: Charting library cho biểu đồ tiến độ
+- **Radix UI**: Các thành phần UI không có giao diện mặc định (Headless UI components) - Dialog, Dropdown, Toast, v.v.
+- **Lucide React**: Thư viện biểu tượng (Icon library)
+- **Framer Motion**: Thư viện hoạt ảnh (Animation library)
+- **Recharts**: Thư viện biểu đồ cho hiển thị tiến độ
 
-### State Management & Data Fetching
+### Quản lý Trạng thái và Lấy Dữ liệu (State Management & Data Fetching)
 
-- **Zustand**: Lightweight state management
-- **Axios**: HTTP client cho API calls
-- **React Hook Form**: Form handling với Zod validation
+- **Zustand**: Quản lý trạng thái nhẹ (Lightweight state management)
+- **Axios**: HTTP client cho các lệnh gọi API
+- **React Hook Form**: Xử lý biểu mẫu với xác thực Zod (Form handling với Zod validation)
 
-### Development & Testing
+### Phát triển và Kiểm thử (Development & Testing)
 
-- **Jest**: Unit testing framework
-- **React Testing Library**: Component testing
-- **Playwright**: End-to-end (E2E) testing
-- **ESLint**: Code linting
+- **Jest**: Framework kiểm thử đơn vị (Unit testing framework)
+- **React Testing Library**: Kiểm thử thành phần (Component testing)
+- **Playwright**: Kiểm thử đầu-cuối (End-to-end - E2E testing)
+- **ESLint**: Kiểm tra mã nguồn (Code linting)
 
-### Build & Deployment
+### Build và Triển khai (Build & Deployment)
 
-- **Docker**: Containerization
-- **Standalone Output**: Optimized production build
+- **Docker**: Đóng gói container (Containerization)
+- **Standalone Output**: Bản build sản xuất được tối ưu hóa (Optimized production build)
 
 ---
 
@@ -424,9 +424,9 @@ function Dashboard() {
 }
 ```
 
-### Persistence
+### Lưu trữ Lâu dài (Persistence)
 
-User ID được persist vào `localStorage` để duy trì session:
+ID người dùng được lưu vào `localStorage` để duy trì phiên làm việc (session):
 
 ```typescript
 setUserId: (id) => {
@@ -509,9 +509,9 @@ export const api = {
 };
 ```
 
-### Error Handling
+### Xử lý Lỗi (Error Handling)
 
-API client có interceptor để xử lý errors:
+API client có bộ chặn (interceptor) để xử lý lỗi:
 
 ```typescript
 apiClient.interceptors.response.use(
@@ -1012,9 +1012,9 @@ npm run build
 npm run start
 ```
 
-### Standalone Output
+### Đầu ra Độc lập (Standalone Output)
 
-Next.js được cấu hình với `output: 'standalone'` để tạo minimal production build:
+Next.js được cấu hình với `output: 'standalone'` để tạo bản build sản xuất tối thiểu:
 
 ```javascript
 // next.config.mjs
