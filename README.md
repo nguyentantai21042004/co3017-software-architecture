@@ -7,14 +7,14 @@
 
 ## Mục lục
 
-- [Giới thiệu](#-giới-thiệu)
-- [Cấu trúc Repository](#-cấu-trúc-repository)
-- [Quick Start](#-quick-start)
-- [Kiến trúc Tổng quan](#-kiến-trúc-tổng-quan)
-- [Artifacts](#-artifacts)
-- [Đáp ứng Yêu cầu Assignment](#-đáp-ứng-yêu-cầu-assignment)
-- [Timeline](#-timeline)
-- [Liên hệ](#-liên-hệ)
+- [Giới thiệu](#giới-thiệu)
+- [Cấu trúc Repository](#cấu-trúc-repository)
+- [Bắt đầu Nhanh (Quick Start)](#bắt-đầu-nhanh-quick-start)
+- [Kiến trúc Tổng quan](#kiến-trúc-tổng-quan)
+- [Sản phẩm (Artifacts)](#sản-phẩm-artifacts)
+- [Đáp ứng Yêu cầu Assignment](#đáp-ứng-yêu-cầu-assignment)
+- [Dòng thời gian (Timeline)](#dòng-thời-gian-timeline)
+- [Liên hệ](#liên-hệ)
 
 ## Giới thiệu
 
@@ -42,7 +42,7 @@ Repository này thể hiện việc áp dụng các nguyên tắc và kỹ thu�
 
 ## Cấu trúc Repository
 
-```
+```text
 co3017-software-architecture/
 ├── markdown/                      # Phân tích và Tài liệu Thiết kế
 │   ├── assignment.md              # Yêu cầu bài tập (tiếng Việt)
@@ -148,7 +148,7 @@ Báo cáo kiến trúc phần mềm chính thức theo format yêu cầu của m
 
 Slide thuyết trình cho buổi defense, được tạo bằng Marp CLI.
 
-## Quick Start
+## Bắt đầu Nhanh (Quick Start)
 
 ### Yêu cầu Hệ thống (Prerequisites)
 
@@ -214,7 +214,7 @@ make health
 
 Kết quả mong đợi:
 
-```
+```text
 Content Service:        http://localhost:8081/health
 Scoring Service:        http://localhost:8082/health
 Learner Model API:      http://localhost:8083/health
@@ -439,7 +439,7 @@ Trách nhiệm: Giao diện người dùng (UI/UX)
 
 #### Luồng 1: Học sinh Làm Bài Tập
 
-```
+```text
 1. Client → Scoring Service: Submit answer
 2. Scoring Service → PostgreSQL: Save submission
 3. Scoring Service → RabbitMQ: Publish "submission.scored" event
@@ -450,7 +450,7 @@ Trách nhiệm: Giao diện người dùng (UI/UX)
 
 #### Luồng 2: Đề xuất Bài học Tiếp theo
 
-```
+```text
 1. Client → Adaptive Engine: Request next lesson
 2. Adaptive Engine → Learner Model Service: Query skill mastery
 3. Adaptive Engine → Content Service: Query available content
@@ -476,9 +476,9 @@ Xem chi tiết tại:
 - [`markdown/report/3-architecture-styles.md`](./markdown/report/3-architecture-styles.md) - So sánh các kiểu kiến trúc
 - [`markdown/report/5-architecture-decisions.md`](./markdown/report/5-architecture-decisions.md) - Architecture Decision Records (ADRs)
 
-## Artifacts
+## Sản phẩm (Artifacts)
 
-Repository này chứa đầy đủ các artifacts theo yêu cầu của bài tập:
+Repository này chứa đầy đủ các sản phẩm (artifacts) theo yêu cầu của bài tập:
 
 ### 1. Báo cáo LaTeX (LaTeX Report)
 
@@ -802,7 +802,7 @@ Ví dụ cụ thể:
 
 Code Examples:
 
-- [`sources/content/src/main/java/com/its/content/service/`](./sources/content/src/main/java/com/its/content/service/) - SRP, DIP
+- [`sources/content/src/main/java/co3017/microservices/content_service/usecase/service/`](./sources/content/src/main/java/co3017/microservices/content_service/usecase/service/) - SRP, DIP
 - [`sources/scoring/internal/scoring/usecase/`](./sources/scoring/internal/scoring/usecase/) - OCP, ISP
 - [`sources/learner-model/internal/learner/usecase/`](./sources/learner-model/internal/learner/usecase/) - LSP, DIP
 
@@ -902,7 +902,7 @@ Testing:
 | Code Implementation           | Hoàn thành (5/5 modules) | `sources/`                                             |
 | Báo cáo LaTeX                 | Hoàn thành               | `report/main.pdf`                                      |
 
-## Timeline
+## Dòng thời gian (Timeline)
 
 ### Học kỳ 251 (2024-2025)
 
@@ -920,12 +920,12 @@ Testing:
 
 ### Lộ trình Phát triển Chi tiết
 
-Xem [`markdown/roadmap.md`](./markdown/roadmap.md) cho:
+Xem [`markdown/roadmap.md`](./markdown/roadmap.md) để biết thêm về:
 
-- MVP features (đã hoàn thành)
-- Future enhancements (v2.0)
-- Technical debt items
-- Performance optimization plans
+- Tính năng MVP (Minimum Viable Product - Sản phẩm Khả thi Tối thiểu) đã hoàn thành
+- Các cải tiến trong tương lai (v2.0)
+- Các mục nợ kỹ thuật (Technical debt)
+- Kế hoạch tối ưu hóa hiệu năng (Performance optimization)
 
 ---
 
