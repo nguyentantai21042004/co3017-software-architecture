@@ -73,7 +73,7 @@ Mở trình duyệt tại `http://localhost:8080` để xem slides.
 
 ## Cấu Trúc Thư Mục
 
-```
+```text
 presentation/
 ├── slides.md           # Source file Markdown
 ├── slides.pdf          # PDF đã build
@@ -294,9 +294,9 @@ make diagram
 
 ## Tùy Chỉnh Theme
 
-### Cấu Trúc Theme
+### Cấu Trúc Chủ đề (Theme Structure)
 
-File `theme.css` định nghĩa custom theme `its-theme`:
+File `theme.css` định nghĩa chủ đề tùy chỉnh `its-theme`:
 
 ```css
 /* @theme its-theme */
@@ -313,14 +313,14 @@ File `theme.css` định nghĩa custom theme `its-theme`:
 }
 ```
 
-### Các Class Đặc Biệt
+### Các Lớp Đặc Biệt (Special Classes)
 
-| Class         | Mô tả                              | Sử dụng                        |
-| ------------- | ---------------------------------- | ------------------------------ |
-| `title-slide` | Slide tiêu đề với background HCMUT | `<!-- _class: title-slide -->` |
-| `lead`        | Slide section header với gradient  | `<!-- _class: lead -->`        |
+| Lớp (Class)   | Mô tả                               | Sử dụng                        |
+| ------------- | ----------------------------------- | ------------------------------ |
+| `title-slide` | Slide tiêu đề với nền HCMUT         | `<!-- _class: title-slide -->` |
+| `lead`        | Slide đầu mục với hiệu ứng gradient | `<!-- _class: lead -->`        |
 
-### Thay Đổi Màu Sắc
+### Thay Đổi Màu Sắc (Change Colors)
 
 Chỉnh sửa các biến CSS trong `theme.css`:
 
@@ -332,7 +332,7 @@ Chỉnh sửa các biến CSS trong `theme.css`:
 }
 ```
 
-### Thay Đổi Font
+### Thay Đổi Phông chữ (Change Font)
 
 ```css
 :root {
@@ -342,7 +342,7 @@ Chỉnh sửa các biến CSS trong `theme.css`:
 }
 ```
 
-### Thêm Custom Class
+### Thêm Lớp Tùy chỉnh (Add Custom Class)
 
 ```css
 /* Trong theme.css */
