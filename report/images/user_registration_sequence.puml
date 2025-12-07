@@ -1,0 +1,40 @@
+@startuml user_registration_sequence
+!theme plain
+autonumber
+
+actor "Client" as Client
+participant "API Gateway" as Gateway
+participant "Auth Service\n(Java)" as Auth
+queue "RabbitMQ" as Broker
+participant "User Mgmt Service\n(Java)" as UserMgmt
+database "User DB" as DB
+
+Client -> Gateway: POST /register (email, password, role)
+Gateway -> Auth: Forward Request
+activate Auth
+
+Auth -> Auth: Validate Input
+Auth -> Auth: Hash Password
+Auth -> Auth: Create Auth Record
+Auth -> Broker: Publish UserCreatedEvent
+activate Broker
+Broker --> Auth: Ack
+deactivate Broker
+
+Auth --> Gateway: 201 Created (UserId)
+deactivate Auth
+Gateway --> Client: 201 Created
+
+par Async Processing
+    Broker -> UserMgmt: Consume UserCreatedEvent
+    activate UserMgmt
+    UserMgmt -> UserMgmt: Create Learner Profile
+    UserMgmt -> DB: Save Profile
+    activate DB
+    DB --> UserMgmt: Success
+    deactivate DB
+    UserMgmt -> UserMgmt: Send Welcome Email
+    deactivate UserMgmt
+end
+
+@enduml

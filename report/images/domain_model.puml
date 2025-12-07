@@ -1,0 +1,125 @@
+@startuml domain_model
+!theme plain
+hide empty methods
+
+' --- User Management Context ---
+package "User Management Context" {
+    class User {
+        +id: UUID
+        +email: String
+        +password_hash: String
+        +role: UserRole
+        +created_at: DateTime
+    }
+
+    enum UserRole {
+        LEARNER
+        INSTRUCTOR
+        ADMIN
+    }
+
+    class LearnerProfile {
+        +user_id: UUID
+        +full_name: String
+        +date_of_birth: Date
+        +learning_goals: List<String>
+    }
+
+    User "1" -- "1" LearnerProfile
+}
+
+' --- Content Management Context ---
+package "Content Management Context" {
+    class Course {
+        +id: UUID
+        +title: String
+        +description: String
+        +difficulty_level: Level
+    }
+
+    class Chapter {
+        +id: UUID
+        +title: String
+        +sequence_order: Integer
+    }
+
+    class ContentUnit {
+        +id: UUID
+        +title: String
+        +content_type: ContentType
+        +body: Text/HTML
+    }
+
+    class Question {
+        +id: UUID
+        +content: String
+        +options: JSONB
+        +correct_answer: String
+        +difficulty: Double
+        +discrimination: Double
+        +guessing: Double
+    }
+
+    class Tag {
+        +id: UUID
+        +name: String
+    }
+
+    Course "1" *-- "*" Chapter
+    Chapter "1" *-- "*" ContentUnit
+    ContentUnit "1" *-- "*" Question
+    Question "*" -- "*" Tag
+}
+
+' --- Assessment Context ---
+package "Assessment Context" {
+    class Assessment {
+        +id: UUID
+        +title: String
+        +type: AssessmentType
+    }
+
+    class Submission {
+        +id: UUID
+        +learner_id: UUID
+        +assessment_id: UUID
+        +submitted_at: DateTime
+        +score: Double
+    }
+
+    class Answer {
+        +question_id: UUID
+        +selected_option: String
+        +is_correct: Boolean
+    }
+
+    Assessment "1" -- "*" Submission
+    Submission "1" *-- "*" Answer
+}
+
+' --- Learner Model Context ---
+package "Learner Model Context" {
+    class SkillMastery {
+        +learner_id: UUID
+        +skill_tag: String
+        +mastery_level: Double
+        +confidence: Double
+        +last_updated: DateTime
+    }
+
+    class LearningHistory {
+        +learner_id: UUID
+        +activity_type: String
+        +timestamp: DateTime
+        +details: JSONB
+    }
+
+    LearnerProfile "1" -- "*" SkillMastery
+    LearnerProfile "1" -- "*" LearningHistory
+}
+
+' --- Relationships across contexts ---
+LearnerProfile "1" -- "*" Submission : makes >
+Question "*" -- "*" SkillMastery : assesses >
+
+@enduml

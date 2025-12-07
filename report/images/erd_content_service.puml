@@ -1,0 +1,49 @@
+@startuml erd_content_service
+!theme plain
+hide empty methods
+
+package "Content Service (MVP + Target)" {
+    entity "courses" {
+        *id : UUID <<PK>>
+        --
+        title : VARCHAR(255)
+        description : TEXT
+        status : VARCHAR(50)
+        created_at : TIMESTAMP
+    }
+
+    entity "chapters" {
+        *id : UUID <<PK>>
+        --
+        course_id : UUID <<FK>>
+        title : VARCHAR(255)
+        sequence_order : INTEGER
+    }
+
+    entity "questions" {
+        *id : UUID <<PK>>
+        --
+        content : TEXT
+        options : JSONB
+        correct_answer : VARCHAR(255)
+        difficulty_level : DOUBLE
+        discrimination_index : DOUBLE
+        guessing_parameter : DOUBLE
+        tags : TEXT[]
+        created_at : TIMESTAMP
+    }
+
+    entity "content_units" {
+        *id : UUID <<PK>>
+        --
+        chapter_id : UUID <<FK>>
+        title : VARCHAR(255)
+        body : TEXT
+        content_type : VARCHAR(50)
+    }
+
+    courses ||--|{ chapters
+    chapters ||--|{ content_units
+    content_units ||--|{ questions
+}
+@enduml

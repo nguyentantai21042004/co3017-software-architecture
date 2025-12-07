@@ -13,28 +13,28 @@ Mỗi đặc tính được mô tả dưới dạng mục tiêu định lượng
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 \renewcommand{\arraystretch}{1.35}
 \begin{table}[ht]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{1.1cm}|>{\centering\arraybackslash}p{3.1cm}|Y|Y|Y|}
-\hline
-\textbf{AC} & \textbf{Đặc tính} & {\centering\textbf{Định nghĩa \& Tầm quan trọng}\par} & {\centering\textbf{Metrics \& Mục tiêu}\par} & {\centering\textbf{Fitness Function}\par} \\
-\hline
-\textbf{AC-1} & Modularity & \textbf{Định nghĩa:} Phân rã hệ thống thành các module độc lập với low coupling, high cohesion.\newline \textbf{Tầm quan trọng:} Bảo đảm live AI model swapping không downtime, cho phép cập nhật thuật toán liên tục. & \textbf{Metrics:} $I \approx 0$, $C_{\text{e}} < 5$, LCOM $< 1$.\newline \textbf{Mục tiêu:} Thay module $< 5$ phút, zero downtime khi swap AI, $\leq 3$ dependencies/module lõi. & \textbf{ArchUnit Test:} Fail nếu domain phụ thuộc repository cụ thể.\newline \textbf{Dependency Check:} Fail khi build phát hiện circular dependencies. \\
-\hline
-\textbf{AC-2} & Scalability & \textbf{Định nghĩa:} Đáp ứng tải tăng bằng horizontal scaling mà không tái thiết kế kiến trúc.\newline \textbf{Tầm quan trọng:} Phục vụ người học tăng trưởng theo khu vực, giờ cao điểm. & \textbf{Metrics:} Concurrent users, auto-scaling response time, CPU/Memory per request.\newline \textbf{Mục tiêu:} $\geq 5{,}000$ concurrent users, auto-scale $< 60$s, tăng gấp đôi resource $\rightarrow$ gấp đôi throughput. & \textbf{K6 Load Test:} Staging đạt p99 $< 1$s, error rate $< 0.1\%$ tại $5{,}000$ users.\newline \textbf{HPA Monitoring:} Alert nếu CPU $> 70\%$ trong $> 30$s mà không scale. \\
-\hline
-\textbf{AC-3} & Performance & \textbf{Định nghĩa:} Đáp ứng yêu cầu nhanh để giữ trải nghiệm học tập mượt mà.\newline \textbf{Tầm quan trọng:} Critical cho phản hồi remedial real-time trong phiên 1-kèm-1. & \textbf{Metrics:} Response time percentiles, throughput, cache hit ratio, query time.\newline \textbf{Mục tiêu:} p95 $< 500$ms, heavy ops p99 $< 1.5$s, cache hit $> 90\%$, $95\%$ query $< 100$ms. & \textbf{CI Latency Test:} Fail nếu /api/feedback p95 $> 500$ms.\newline \textbf{Performance Budget:} Alert khi page load $> 2$s hoặc TTI $> 3$s. \\
-\hline
-\textbf{AC-4} & Testability & \textbf{Định nghĩa:} Dễ xác minh tính đúng đắn của AI và business logic phức tạp.\newline \textbf{Tầm quan trọng:} Bảo đảm độ tin cậy cho adaptive learning và scoring engine. & \textbf{Metrics:} Code coverage, test execution time, test cases/feature, cyclomatic complexity.\newline \textbf{Mục tiêu:} Unit coverage $\geq 80\%$, integration $\geq 70\%$, full E2E cho critical paths, test suite $< 10$ phút. & \textbf{Coverage Gate:} Fail nếu ScoringEngine hoặc AdaptiveEngine $< 80\%$.\newline \textbf{Mutation Testing:} Mutation score $> 70\%$ cho module trọng yếu. \\
-\hline
-\end{tabularx}
-\caption{Các Đặc tính Kiến trúc Chính}
-\label{tab:primary-architecture-characteristics}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{1.1cm}|>{\centering\arraybackslash}p{3.1cm}|Y|Y|Y|}
+        \hline
+        \textbf{AC}   & \textbf{Đặc tính} & {\centering\textbf{Định nghĩa \& Tầm quan trọng}\par}                                                                                                                                                                  & {\centering\textbf{Metrics \& Mục tiêu}\par}                                                                                                                                                                                         & {\centering\textbf{Fitness Function}\par}                                                                                                                                      \\
+        \hline
+        \textbf{AC-1} & Modularity        & \textbf{Định nghĩa:} Phân rã hệ thống thành các module độc lập với low coupling, high cohesion.\newline \textbf{Tầm quan trọng:} Bảo đảm live AI model swapping không downtime, cho phép cập nhật thuật toán liên tục. & \textbf{Metrics:} $I \approx 0$, $C_{\text{e}} < 5$, LCOM $< 1$.\newline \textbf{Mục tiêu:} Thay module $< 5$ phút, zero downtime khi swap AI, $\leq 3$ dependencies/module lõi.                                                     & \textbf{ArchUnit Test:} Fail nếu domain phụ thuộc repository cụ thể.\newline \textbf{Dependency Check:} Fail khi build phát hiện circular dependencies.                        \\
+        \hline
+        \textbf{AC-2} & Scalability       & \textbf{Định nghĩa:} Đáp ứng tải tăng bằng horizontal scaling mà không tái thiết kế kiến trúc.\newline \textbf{Tầm quan trọng:} Phục vụ người học tăng trưởng theo khu vực, giờ cao điểm.                              & \textbf{Metrics:} Concurrent users, auto-scaling response time, CPU/Memory per request.\newline \textbf{Mục tiêu:} $\geq 5{,}000$ concurrent users, auto-scale $< 60$s, tăng gấp đôi resource $\rightarrow$ gấp đôi throughput.      & \textbf{K6 Load Test:} Staging đạt p99 $< 1$s, error rate $< 0.1\%$ tại $5{,}000$ users.\newline \textbf{HPA Monitoring:} Alert nếu CPU $> 70\%$ trong $> 30$s mà không scale. \\
+        \hline
+        \textbf{AC-3} & Performance       & \textbf{Định nghĩa:} Đáp ứng yêu cầu nhanh để giữ trải nghiệm học tập mượt mà.\newline \textbf{Tầm quan trọng:} Critical cho phản hồi remedial real-time trong phiên 1-kèm-1.                                          & \textbf{Metrics:} Response time percentiles, throughput, cache hit ratio, query time.\newline \textbf{Mục tiêu:} p95 $< 500$ms, heavy ops p99 $< 1.5$s, cache hit $> 90\%$, $95\%$ query $< 100$ms.                                  & \textbf{CI Latency Test:} Fail nếu /api/feedback p95 $> 500$ms.\newline \textbf{Performance Budget:} Alert khi page load $> 2$s hoặc TTI $> 3$s.                               \\
+        \hline
+        \textbf{AC-4} & Testability       & \textbf{Định nghĩa:} Dễ xác minh tính đúng đắn của AI và business logic phức tạp.\newline \textbf{Tầm quan trọng:} Bảo đảm độ tin cậy cho adaptive learning và scoring engine.                                         & \textbf{Metrics:} Code coverage, test execution time, test cases/feature, cyclomatic complexity.\newline \textbf{Mục tiêu:} Unit coverage $\geq 80\%$, integration $\geq 70\%$, full E2E cho critical paths, test suite $< 10$ phút. & \textbf{Coverage Gate:} Fail nếu ScoringEngine hoặc AdaptiveEngine $< 80\%$.\newline \textbf{Mutation Testing:} Mutation score $> 70\%$ cho module trọng yếu.                  \\
+        \hline
+    \end{tabularx}
+    \caption{Các Đặc tính Kiến trúc Chính}
+    \label{tab:primary-architecture-characteristics}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
 Sau khi xác định được các đặc tính trọng yếu ảnh hưởng đến hình dạng kiến trúc tổng thể, phần tiếp theo trình bày những đặc tính bổ trợ (Secondary ACs) — tập trung vào khía cạnh vận hành, bảo trì và mở rộng tính năng trong môi trường thực tế.
-Các đặc tính này không thay đổi cấu trúc hệ thống, nhưng quyết định trải nghiệm triển khai, vận hành và giám sát của đội ngũ kỹ thuật. 
+Các đặc tính này không thay đổi cấu trúc hệ thống, nhưng quyết định trải nghiệm triển khai, vận hành và giám sát của đội ngũ kỹ thuật.
 
 \vspace{7em}
 
@@ -42,25 +42,25 @@ Các đặc tính này không thay đổi cấu trúc hệ thống, nhưng quy�
 
 \renewcommand{\arraystretch}{1.35}
 \begin{table}[ht]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{1.1cm}|>{\centering\arraybackslash}p{3.3cm}|Y|Y|Y|}
-\hline
-\textbf{AC} & \textbf{Đặc tính} & {\centering\textbf{Định nghĩa \& Tầm quan trọng}\par} & {\centering\textbf{Metrics \& Mục tiêu}\par} & {\centering\textbf{Fitness Function}\par} \\
-\hline
-\textbf{AC-5} & Deployability & \textbf{Định nghĩa:} Khả năng triển khai phiên bản mới nhanh và độc lập.\newline \textbf{Tầm quan trọng:} Hỗ trợ continuous delivery, live AI model swapping mà không gián đoạn người dùng. & \textbf{Metrics:} Deployment frequency, lead time, rollback time, success rate.\newline \textbf{Mục tiêu:} Deploy $< 15$ phút, rollback $< 5$ phút, zero downtime, success rate $> 95\%$. & \textbf{Canary Deployment Test:} 1\% user, tiếp tục nếu error rate $=0\%$ sau 5 phút.\newline \textbf{Health Check:} Tự động rollback nếu health endpoint fail trong 2 phút. \\
-\hline
-\textbf{AC-6} & Security & \textbf{Định nghĩa:} Bảo vệ dữ liệu và hệ thống khỏi các mối đe doạ.\newline \textbf{Tầm quan trọng:} Đảm bảo an toàn PII, kết quả học tập, nội dung bản quyền. & \textbf{Metrics:} Critical vulnerabilities, patch time, auth failure rate, encryption coverage.\newline \textbf{Mục tiêu:} Zero critical vulns, TLS~1.3/AES-256, MFA, vá lỗi $< 24$ giờ. & \textbf{OWASP Dependency Check:} Fail build nếu phát hiện critical vulnerability.\newline \textbf{Penetration Test:} Kiểm thử tự động hàng quý, zero critical findings. \\
-\hline
-\textbf{AC-7} & Maintainability & \textbf{Định nghĩa:} Dễ hiểu, sửa đổi, cải tiến hệ thống.\newline \textbf{Tầm quan trọng:} Giảm chi phí vận hành, tăng tốc fix bug và bổ sung tính năng. & \textbf{Metrics:} Cyclomatic complexity, technical debt, MTTR, code duplication.\newline \textbf{Mục tiêu:} Complexity $< 10$ (90\% methods), debt $< 5\%$, duplication $< 3\%$, MTTR $< 4$ giờ. & \textbf{SonarQube Quality Gate:} Fail nếu complexity $> 10$ hoặc duplication $> 5\%$.\newline \textbf{Code Review Requirement:} Merge cần $\geq 2$ approvals. \\
-\hline
-\textbf{AC-8} & Extensibility & \textbf{Định nghĩa:} Thêm tính năng mới mà không sửa core code.\newline \textbf{Tầm quan trọng:} Thích ứng với nhu cầu giáo dục và công nghệ mới. & \textbf{Metrics:} Extension points, time to add feature, breaking changes.\newline \textbf{Mục tiêu:} Plugin cho content types, thêm assessment mới không chạm core, breaking changes $< 5\%$/major release. & \textbf{OCP Compliance Test:} Xác nhận mở rộng qua config/plugins.\newline \textbf{API Compatibility:} Test tự động bảo đảm backward compatibility. \\
-\hline
-\textbf{AC-9} & Observability & \textbf{Định nghĩa:} Hiểu trạng thái hệ thống qua logs, metrics, traces.\newline \textbf{Tầm quan trọng:} Phát hiện sớm sự cố trong hệ thống phân tán. & \textbf{Metrics:} Log coverage, MTTD, dashboard coverage, alert accuracy.\newline \textbf{Mục tiêu:} 100\% requests có trace ID, MTTD $< 5$ phút, đủ dashboards, alert noise $< 10\%$. & \textbf{Trace Coverage Test:} Alert nếu $< 95\%$ requests có trace ID.\newline \textbf{SLO Monitoring:} Tự động on-call khi SLO breach detected. \\
-\hline
-\end{tabularx}
-\caption{Các Đặc tính Kiến trúc Bổ trợ}
-\label{tab:secondary-architecture-characteristics}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{1.1cm}|>{\centering\arraybackslash}p{3.3cm}|Y|Y|Y|}
+        \hline
+        \textbf{AC}   & \textbf{Đặc tính} & {\centering\textbf{Định nghĩa \& Tầm quan trọng}\par}                                                                                                                                       & {\centering\textbf{Metrics \& Mục tiêu}\par}                                                                                                                                                                 & {\centering\textbf{Fitness Function}\par}                                                                                                                                    \\
+        \hline
+        \textbf{AC-5} & Deployability     & \textbf{Định nghĩa:} Khả năng triển khai phiên bản mới nhanh và độc lập.\newline \textbf{Tầm quan trọng:} Hỗ trợ continuous delivery, live AI model swapping mà không gián đoạn người dùng. & \textbf{Metrics:} Deployment frequency, lead time, rollback time, success rate.\newline \textbf{Mục tiêu:} Deploy $< 15$ phút, rollback $< 5$ phút, zero downtime, success rate $> 95\%$.                    & \textbf{Canary Deployment Test:} 1\% user, tiếp tục nếu error rate $=0\%$ sau 5 phút.\newline \textbf{Health Check:} Tự động rollback nếu health endpoint fail trong 2 phút. \\
+        \hline
+        \textbf{AC-6} & Security          & \textbf{Định nghĩa:} Bảo vệ dữ liệu và hệ thống khỏi các mối đe doạ.\newline \textbf{Tầm quan trọng:} Đảm bảo an toàn PII, kết quả học tập, nội dung bản quyền.                             & \textbf{Metrics:} Critical vulnerabilities, patch time, auth failure rate, encryption coverage.\newline \textbf{Mục tiêu:} Zero critical vulns, TLS~1.3/AES-256, MFA, vá lỗi $< 24$ giờ.                     & \textbf{OWASP Dependency Check:} Fail build nếu phát hiện critical vulnerability.\newline \textbf{Penetration Test:} Kiểm thử tự động hàng quý, zero critical findings.      \\
+        \hline
+        \textbf{AC-7} & Maintainability   & \textbf{Định nghĩa:} Dễ hiểu, sửa đổi, cải tiến hệ thống.\newline \textbf{Tầm quan trọng:} Giảm chi phí vận hành, tăng tốc fix bug và bổ sung tính năng.                                    & \textbf{Metrics:} Cyclomatic complexity, technical debt, MTTR, code duplication.\newline \textbf{Mục tiêu:} Complexity $< 10$ (90\% methods), debt $< 5\%$, duplication $< 3\%$, MTTR $< 4$ giờ.             & \textbf{SonarQube Quality Gate:} Fail nếu complexity $> 10$ hoặc duplication $> 5\%$.\newline \textbf{Code Review Requirement:} Merge cần $\geq 2$ approvals.                \\
+        \hline
+        \textbf{AC-8} & Extensibility     & \textbf{Định nghĩa:} Thêm tính năng mới mà không sửa core code.\newline \textbf{Tầm quan trọng:} Thích ứng với nhu cầu giáo dục và công nghệ mới.                                           & \textbf{Metrics:} Extension points, time to add feature, breaking changes.\newline \textbf{Mục tiêu:} Plugin cho content types, thêm assessment mới không chạm core, breaking changes $< 5\%$/major release. & \textbf{OCP Compliance Test:} Xác nhận mở rộng qua config/plugins.\newline \textbf{API Compatibility:} Test tự động bảo đảm backward compatibility.                          \\
+        \hline
+        \textbf{AC-9} & Observability     & \textbf{Định nghĩa:} Hiểu trạng thái hệ thống qua logs, metrics, traces.\newline \textbf{Tầm quan trọng:} Phát hiện sớm sự cố trong hệ thống phân tán.                                      & \textbf{Metrics:} Log coverage, MTTD, dashboard coverage, alert accuracy.\newline \textbf{Mục tiêu:} 100\% requests có trace ID, MTTD $< 5$ phút, đủ dashboards, alert noise $< 10\%$.                       & \textbf{Trace Coverage Test:} Alert nếu $< 95\%$ requests có trace ID.\newline \textbf{SLO Monitoring:} Tự động on-call khi SLO breach detected.                             \\
+        \hline
+    \end{tabularx}
+    \caption{Các Đặc tính Kiến trúc Bổ trợ}
+    \label{tab:secondary-architecture-characteristics}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
@@ -77,100 +77,100 @@ phản ánh mức độ mà hệ thống ITS đáp ứng các Service-Level Obje
 \textbf{a. Yêu cầu Hiệu năng (Performance Requirements)}%
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.2cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Nhóm} & \textbf{Hạng mục} & \textbf{Mục tiêu định lượng} \\
-\hline
-\multirow{7}{*}{Response Time} & Login/Authentication & $< 200$ms (p95) \\
-\cline{2-3}
- & Content Loading & $< 500$ms (p95) \\
-\cline{2-3}
- & Quiz/Assessment Submission & $< 300$ms (p95) \\
-\cline{2-3}
- & Real-time Feedback Generation & $< 500$ms (p95) \\
-\cline{2-3}
- & Report Generation & $< 2$ giây (p95) \\
-\cline{2-3}
- & Search Operations & $< 400$ms (p95) \\
-\cline{2-3}
- & Dashboard Loading & $< 1$ giây (p95) \\
-\hline
-\multirow{5}{*}{Throughput} & API Gateway & $5{,}000$ requests/giây \\
-\cline{2-3}
- & Assessment Service & $1{,}000$ submissions/giây \\
-\cline{2-3}
- & Content Delivery & $10{,}000$ concurrent streams \\
-\cline{2-3}
- & Analytics Processing & $100{,}000$ events/phút \\
-\cline{2-3}
- & Notification Service & $50{,}000$ messages/phút \\
-\hline
-\multirow{5}{*}{Resource Utilization} & CPU Usage & $< 70\%$ ở tải bình thường \\
-\cline{2-3}
- & Memory Usage & $< 80\%$ dung lượng cấp phát \\
-\cline{2-3}
- & Database Connection Pool & $< 80\%$ sử dụng \\
-\cline{2-3}
- & Network Bandwidth & $< 60\%$ công suất \\
-\cline{2-3}
- & Storage I/O & $< 10$ms latency trung bình \\
-\hline
-\end{tabularx}
-\caption{Yêu cầu Hiệu năng}
-\label{tab:performance-requirements}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.2cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Nhóm}                         & \textbf{Hạng mục}             & \textbf{Mục tiêu định lượng}  \\
+        \hline
+        \multirow{7}{*}{Response Time}        & Login/Authentication          & $< 200$ms (p95)               \\
+        \cline{2-3}
+                                              & Content Loading               & $< 500$ms (p95)               \\
+        \cline{2-3}
+                                              & Quiz/Assessment Submission    & $< 300$ms (p95)               \\
+        \cline{2-3}
+                                              & Real-time Feedback Generation & $< 500$ms (p95)               \\
+        \cline{2-3}
+                                              & Report Generation             & $< 2$ giây (p95)              \\
+        \cline{2-3}
+                                              & Search Operations             & $< 400$ms (p95)               \\
+        \cline{2-3}
+                                              & Dashboard Loading             & $< 1$ giây (p95)              \\
+        \hline
+        \multirow{5}{*}{Throughput}           & API Gateway                   & $5{,}000$ requests/giây       \\
+        \cline{2-3}
+                                              & Assessment Service            & $1{,}000$ submissions/giây    \\
+        \cline{2-3}
+                                              & Content Delivery              & $10{,}000$ concurrent streams \\
+        \cline{2-3}
+                                              & Analytics Processing          & $100{,}000$ events/phút       \\
+        \cline{2-3}
+                                              & Notification Service          & $50{,}000$ messages/phút      \\
+        \hline
+        \multirow{5}{*}{Resource Utilization} & CPU Usage                     & $< 70\%$ ở tải bình thường    \\
+        \cline{2-3}
+                                              & Memory Usage                  & $< 80\%$ dung lượng cấp phát  \\
+        \cline{2-3}
+                                              & Database Connection Pool      & $< 80\%$ sử dụng              \\
+        \cline{2-3}
+                                              & Network Bandwidth             & $< 60\%$ công suất            \\
+        \cline{2-3}
+                                              & Storage I/O                   & $< 10$ms latency trung bình   \\
+        \hline
+    \end{tabularx}
+    \caption{Yêu cầu Hiệu năng}
+    \label{tab:performance-requirements}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
 \textbf{b. Yêu cầu Khả năng Mở rộng}%
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.3cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Nhóm} & \textbf{Hạng mục} & \textbf{Yêu cầu/Mục tiêu} \\
-\hline
-\multirow{5}{*}{Horizontal Scaling} & Auto-scaling trigger & CPU $70\%$ hoặc memory $75\%$ \\
-\cline{2-3}
- & Scale units & 2 $\rightarrow$ 20 instance trong $< 60$ giây \\
-\cline{2-3}
- & Triển khai & Containerized (Docker/Kubernetes) \\
-\cline{2-3}
- & Kiến trúc service & Stateless để scale dễ dàng \\
-\cline{2-3}
- & Data tier & Database read replicas cho workloads đọc \\
-\hline
-\multirow{4}{*}{Vertical Scaling} & Instance upgrade & Không downtime \\
-\cline{2-3}
- & Database vertical scaling & Trong maintenance window \\
-\cline{2-3}
- & Cache layer & Mở rộng đến $128$GB RAM \\
-\cline{2-3}
- & Storage & Auto-expansion khi đạt $80\%$ dung lượng \\
-\hline
-\multirow{4}{*}{Load Distribution} & Geo load balancing & Đa vùng \\
-\cline{2-3}
- & CDN & Cho static assets \\
-\cline{2-3}
- & Database sharding & Theo trường/khu vực \\
-\cline{2-3}
- & Async operations & Queue-based load leveling \\
-\hline
-\multirow{5}{*}{Capacity Planning} & Concurrent users (initial) & $5{,}000$ \\
-\cline{2-3}
- & Concurrent users (year 2) & $50{,}000$ \\
-\cline{2-3}
- & Tổng số người dùng & $1$ triệu \\
-\cline{2-3}
- & Lưu trữ nội dung & $100$TB \\
-\cline{2-3}
- & Đánh giá/tháng & $10$ triệu bài \\
-\hline
-\end{tabularx}
-\caption{Yêu cầu Khả năng Mở Rộng}
-\label{tab:scalability-requirements}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.3cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Nhóm}                       & \textbf{Hạng mục}          & \textbf{Yêu cầu/Mục tiêu}                     \\
+        \hline
+        \multirow{5}{*}{Horizontal Scaling} & Auto-scaling trigger       & CPU $70\%$ hoặc memory $75\%$                 \\
+        \cline{2-3}
+                                            & Scale units                & 2 $\rightarrow$ 20 instance trong $< 60$ giây \\
+        \cline{2-3}
+                                            & Triển khai                 & Containerized (Docker/Kubernetes)             \\
+        \cline{2-3}
+                                            & Kiến trúc service          & Stateless để scale dễ dàng                    \\
+        \cline{2-3}
+                                            & Data tier                  & Database read replicas cho workloads đọc      \\
+        \hline
+        \multirow{4}{*}{Vertical Scaling}   & Instance upgrade           & Không downtime                                \\
+        \cline{2-3}
+                                            & Database vertical scaling  & Trong maintenance window                      \\
+        \cline{2-3}
+                                            & Cache layer                & Mở rộng đến $128$GB RAM                       \\
+        \cline{2-3}
+                                            & Storage                    & Auto-expansion khi đạt $80\%$ dung lượng      \\
+        \hline
+        \multirow{4}{*}{Load Distribution}  & Geo load balancing         & Đa vùng                                       \\
+        \cline{2-3}
+                                            & CDN                        & Cho static assets                             \\
+        \cline{2-3}
+                                            & Database sharding          & Theo trường/khu vực                           \\
+        \cline{2-3}
+                                            & Async operations           & Queue-based load leveling                     \\
+        \hline
+        \multirow{5}{*}{Capacity Planning}  & Concurrent users (initial) & $5{,}000$                                     \\
+        \cline{2-3}
+                                            & Concurrent users (year 2)  & $50{,}000$                                    \\
+        \cline{2-3}
+                                            & Tổng số người dùng         & $1$ triệu                                     \\
+        \cline{2-3}
+                                            & Lưu trữ nội dung           & $100$TB                                       \\
+        \cline{2-3}
+                                            & Đánh giá/tháng             & $10$ triệu bài                                \\
+        \hline
+    \end{tabularx}
+    \caption{Yêu cầu Khả năng Mở Rộng}
+    \label{tab:scalability-requirements}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
@@ -179,92 +179,92 @@ phản ánh mức độ mà hệ thống ITS đáp ứng các Service-Level Obje
 \textbf{c. Yêu cầu Bảo mật}%
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Nhóm} & \textbf{Hạng mục} & \textbf{Yêu cầu/Mục tiêu} \\
-\hline
-\multirow{5}{*}{Authentication \& Authorization} & SSO & OAuth~2.0 / OpenID Connect \\
-\cline{2-3}
- & Phiên làm việc & JWT 15 phút, refresh token an toàn \\
-\cline{2-3}
- & Multi-factor & MFA cho admin/instructor \\
-\cline{2-3}
- & Phân quyền & RBAC chi tiết \\
-\cline{2-3}
- & Session timeout & Tự động sau 30 phút không hoạt động \\
-\hline
-\multirow{3}{*}{Data Protection} & Encryption at rest & AES-256, database TDE, backup encryption \\
-\cline{2-3}
- & Encryption in transit & TLS~1.3 \\
-\cline{2-3}
- & Key management & Lưu trong HSM/Key Vault \\
-\hline
-\multirow{3}{*}{Compliance \& Privacy} & Chuẩn tuân thủ & GDPR, COPPA, FERPA \\
-\cline{2-3}
- & Quyền dữ liệu & Right-to-be-forgotten, retention 3 năm \\
-\cline{2-3}
- & Audit logs & Lưu trữ 1 năm \\
-\hline
-\multirow{5}{*}{Application Security} & Input validation & Áp dụng cho toàn bộ input \\
-\cline{2-3}
- & SQL injection & Parameterized queries \\
-\cline{2-3}
- & XSS / CSRF & CSP, CSRF tokens cho tác vụ thay đổi trạng thái \\
-\cline{2-3}
- & Rate limiting & 100 requests/phút/user \\
-\cline{2-3}
- & DDoS protection & WAF đám mây \\
-\hline
-\end{tabularx}
-\caption{Yêu cầu Bảo mật}
-\label{tab:security-requirements}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Nhóm}                                    & \textbf{Hạng mục}     & \textbf{Yêu cầu/Mục tiêu}                       \\
+        \hline
+        \multirow{5}{*}{Authentication \& Authorization} & SSO                   & OAuth~2.0 / OpenID Connect                      \\
+        \cline{2-3}
+                                                         & Phiên làm việc        & JWT 15 phút, refresh token an toàn              \\
+        \cline{2-3}
+                                                         & Multi-factor          & MFA cho admin/instructor                        \\
+        \cline{2-3}
+                                                         & Phân quyền            & RBAC chi tiết                                   \\
+        \cline{2-3}
+                                                         & Session timeout       & Tự động sau 30 phút không hoạt động             \\
+        \hline
+        \multirow{3}{*}{Data Protection}                 & Encryption at rest    & AES-256, database TDE, backup encryption        \\
+        \cline{2-3}
+                                                         & Encryption in transit & TLS~1.3                                         \\
+        \cline{2-3}
+                                                         & Key management        & Lưu trong HSM/Key Vault                         \\
+        \hline
+        \multirow{3}{*}{Compliance \& Privacy}           & Chuẩn tuân thủ        & GDPR, COPPA, FERPA                              \\
+        \cline{2-3}
+                                                         & Quyền dữ liệu         & Right-to-be-forgotten, retention 3 năm          \\
+        \cline{2-3}
+                                                         & Audit logs            & Lưu trữ 1 năm                                   \\
+        \hline
+        \multirow{5}{*}{Application Security}            & Input validation      & Áp dụng cho toàn bộ input                       \\
+        \cline{2-3}
+                                                         & SQL injection         & Parameterized queries                           \\
+        \cline{2-3}
+                                                         & XSS / CSRF            & CSP, CSRF tokens cho tác vụ thay đổi trạng thái \\
+        \cline{2-3}
+                                                         & Rate limiting         & 100 requests/phút/user                          \\
+        \cline{2-3}
+                                                         & DDoS protection       & WAF đám mây                                     \\
+        \hline
+    \end{tabularx}
+    \caption{Yêu cầu Bảo mật}
+    \label{tab:security-requirements}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
 \textbf{d. Yêu cầu Độ tin cậy}%
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Nhóm} & \textbf{Hạng mục} & \textbf{Yêu cầu/Mục tiêu} \\
-\hline
-\multirow{4}{*}{Availability} & Uptime hệ thống & 99.5\% (downtime $< 44$ giờ/năm) \\
-\cline{2-3}
- & Core services & 99.9\% (downtime $< 9$ giờ/năm) \\
-\cline{2-3}
- & Maintenance window & 2h--4h sáng Chủ nhật \\
-\cline{2-3}
- & Redundancy & Active-active, failover $< 30$ giây \\
-\hline
-\multirow{4}{*}{Fault Tolerance} & Circuit breaker & Cho external services \\
-\cline{2-3}
- & Retry policy & Exponential backoff \\
-\cline{2-3}
- & Degradation & Graceful khi service lỗi \\
-\cline{2-3}
- & Isolation & Bulkhead, dead letter queue \\
-\hline
-\multirow{3}{*}{Data Integrity} & Transaction & ACID cho tác vụ critical \\
-\cline{2-3}
- & Consistency & Eventual cho analytics \\
-\cline{2-3}
- & Validation & Multilayer validation, checksum uploads, conflict resolution \\
-\hline
-\multirow{4}{*}{Backup \& Recovery} & Backup & Tự động hàng ngày, PITR 7 ngày \\
-\cline{2-3}
- & Replication & Đa vùng \\
-\cline{2-3}
- & RTO/RPO & RTO $< 4$ giờ, RPO $< 1$ giờ \\
-\cline{2-3}
- & Testing & Kiểm thử backup mỗi quý \\
-\hline
-\end{tabularx}
-\caption{Yêu cầu Độ tin cậy}
-\label{tab:reliability-requirements}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Nhóm}                       & \textbf{Hạng mục}  & \textbf{Yêu cầu/Mục tiêu}                                    \\
+        \hline
+        \multirow{4}{*}{Availability}       & Uptime hệ thống    & 99.5\% (downtime $< 44$ giờ/năm)                             \\
+        \cline{2-3}
+                                            & Core services      & 99.9\% (downtime $< 9$ giờ/năm)                              \\
+        \cline{2-3}
+                                            & Maintenance window & 2h--4h sáng Chủ nhật                                         \\
+        \cline{2-3}
+                                            & Redundancy         & Active-active, failover $< 30$ giây                          \\
+        \hline
+        \multirow{4}{*}{Fault Tolerance}    & Circuit breaker    & Cho external services                                        \\
+        \cline{2-3}
+                                            & Retry policy       & Exponential backoff                                          \\
+        \cline{2-3}
+                                            & Degradation        & Graceful khi service lỗi                                     \\
+        \cline{2-3}
+                                            & Isolation          & Bulkhead, dead letter queue                                  \\
+        \hline
+        \multirow{3}{*}{Data Integrity}     & Transaction        & ACID cho tác vụ critical                                     \\
+        \cline{2-3}
+                                            & Consistency        & Eventual cho analytics                                       \\
+        \cline{2-3}
+                                            & Validation         & Multilayer validation, checksum uploads, conflict resolution \\
+        \hline
+        \multirow{4}{*}{Backup \& Recovery} & Backup             & Tự động hàng ngày, PITR 7 ngày                               \\
+        \cline{2-3}
+                                            & Replication        & Đa vùng                                                      \\
+        \cline{2-3}
+                                            & RTO/RPO            & RTO $< 4$ giờ, RPO $< 1$ giờ                                 \\
+        \cline{2-3}
+                                            & Testing            & Kiểm thử backup mỗi quý                                      \\
+        \hline
+    \end{tabularx}
+    \caption{Yêu cầu Độ tin cậy}
+    \label{tab:reliability-requirements}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
@@ -273,99 +273,99 @@ phản ánh mức độ mà hệ thống ITS đáp ứng các Service-Level Obje
 \textbf{e. Yêu cầu Khả năng Sử dụng}%
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Nhóm} & \textbf{Hạng mục} & \textbf{Yêu cầu/Mục tiêu} \\
-\hline
-\multirow{4}{*}{User Interface} & Responsive design & Mobile/Tablet/Desktop \\
-\cline{2-3}
- & Accessibility & WCAG~2.1 mức AA \\
-\cline{2-3}
- & Tuỳ biến & Đa ngôn ngữ (VN/EN), dark mode, font tuỳ chỉnh \\
-\cline{2-3}
- & Điều hướng & Hỗ trợ keyboard navigation \\
-\hline
-\multirow{3}{*}{User Experience} & Hiệu năng UI & First meaningful paint $< 1.5$ giây, TTI $< 3$ giây \\
-\cline{2-3}
- & Trải nghiệm & Animation 60~FPS, PWA, offline content \\
-\cline{2-3}
- & Lưu trạng thái & Auto-save mỗi 30 giây \\
-\hline
-\multirow{3}{*}{Learning Curve} & Onboarding & Tutorial, help context, tooltip \\
-\cline{2-3}
- & Hỗ trợ & Video hướng dẫn, in-app messaging \\
-\cline{2-3}
- & Tài liệu & Knowledge base, FAQ (nếu có) \\
-\hline
-\end{tabularx}
-\caption{Yêu cầu Khả năng Sử dụng}
-\label{tab:usability-requirements}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Nhóm}                    & \textbf{Hạng mục} & \textbf{Yêu cầu/Mục tiêu}                           \\
+        \hline
+        \multirow{4}{*}{User Interface}  & Responsive design & Mobile/Tablet/Desktop                               \\
+        \cline{2-3}
+                                         & Accessibility     & WCAG~2.1 mức AA                                     \\
+        \cline{2-3}
+                                         & Tuỳ biến          & Đa ngôn ngữ (VN/EN), dark mode, font tuỳ chỉnh      \\
+        \cline{2-3}
+                                         & Điều hướng        & Hỗ trợ keyboard navigation                          \\
+        \hline
+        \multirow{3}{*}{User Experience} & Hiệu năng UI      & First meaningful paint $< 1.5$ giây, TTI $< 3$ giây \\
+        \cline{2-3}
+                                         & Trải nghiệm       & Animation 60~FPS, PWA, offline content              \\
+        \cline{2-3}
+                                         & Lưu trạng thái    & Auto-save mỗi 30 giây                               \\
+        \hline
+        \multirow{3}{*}{Learning Curve}  & Onboarding        & Tutorial, help context, tooltip                     \\
+        \cline{2-3}
+                                         & Hỗ trợ            & Video hướng dẫn, in-app messaging                   \\
+        \cline{2-3}
+                                         & Tài liệu          & Knowledge base, FAQ (nếu có)                        \\
+        \hline
+    \end{tabularx}
+    \caption{Yêu cầu Khả năng Sử dụng}
+    \label{tab:usability-requirements}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
 \textbf{f. Yêu cầu Tương thích}%
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Nhóm} & \textbf{Hạng mục} & \textbf{Yêu cầu/Mục tiêu} \\
-\hline
-\multirow{2}{*}{Browser Support} & Trình duyệt & Chrome~90+, Firefox~88+, Safari~14+, Edge~90+ \\
-\cline{2-3}
- & Progressive enhancement & Hỗ trợ trình duyệt cũ ở mức tối thiểu \\
-\hline
-\multirow{2}{*}{Device Support} & Di động & iOS~13+, Android~8+ \\
-\cline{2-3}
- & Desktop & Windows~10+, macOS~10.15+, Linux Ubuntu~20.04+/Fedora~34+ \\
-\hline
-\multirow{2}{*}{Integration Compatibility} & Chuẩn tích hợp & LTI~1.3, SCORM~2004, xAPI, QTI~2.2, Common Cartridge~1.3 \\
-\cline{2-3}
- & Interop & Đảm bảo import/export nội dung chuẩn hoá \\
-\hline
-\multirow{2}{*}{API Compatibility} & Giao thức & REST (OpenAPI~3.0), GraphQL, WebSocket, Webhook \\
-\cline{2-3}
- & Backward compatibility & Hỗ trợ 2 phiên bản chính \\
-\hline
-\end{tabularx}
-\caption{Yêu cầu Tương thích}
-\label{tab:compatibility-requirements}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.5cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Nhóm}                              & \textbf{Hạng mục}       & \textbf{Yêu cầu/Mục tiêu}                                 \\
+        \hline
+        \multirow{2}{*}{Browser Support}           & Trình duyệt             & Chrome~90+, Firefox~88+, Safari~14+, Edge~90+             \\
+        \cline{2-3}
+                                                   & Progressive enhancement & Hỗ trợ trình duyệt cũ ở mức tối thiểu                     \\
+        \hline
+        \multirow{2}{*}{Device Support}            & Di động                 & iOS~13+, Android~8+                                       \\
+        \cline{2-3}
+                                                   & Desktop                 & Windows~10+, macOS~10.15+, Linux Ubuntu~20.04+/Fedora~34+ \\
+        \hline
+        \multirow{2}{*}{Integration Compatibility} & Chuẩn tích hợp          & LTI~1.3, SCORM~2004, xAPI, QTI~2.2, Common Cartridge~1.3  \\
+        \cline{2-3}
+                                                   & Interop                 & Đảm bảo import/export nội dung chuẩn hoá                  \\
+        \hline
+        \multirow{2}{*}{API Compatibility}         & Giao thức               & REST (OpenAPI~3.0), GraphQL, WebSocket, Webhook           \\
+        \cline{2-3}
+                                                   & Backward compatibility  & Hỗ trợ 2 phiên bản chính                                  \\
+        \hline
+    \end{tabularx}
+    \caption{Yêu cầu Tương thích}
+    \label{tab:compatibility-requirements}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
 \textbf{g. Yêu cầu Giám sát}%
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.8cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Nhóm} & \textbf{Hạng mục} & \textbf{Yêu cầu/Mục tiêu} \\
-\hline
-\multirow{3}{*}{Metrics Collection} & Application metrics & Prometheus/StatsD, dashboard KPI \\
-\cline{2-3}
- & AI metrics & Theo dõi hiệu suất model AI \\
-\cline{2-3}
- & Cost tracking & Resource usage, budget alerts \\
-\hline
-\multirow{2}{*}{Logging} & Nền tảng & ELK/EFK, cấu trúc JSON, correlation ID \\
-\cline{2-3}
- & Retention & 30 ngày (hot), 1 năm (cold) \\
-\hline
-Tracing & Distributed tracing & OpenTelemetry, dependency mapping, sampling 10\% \\
-\hline
-\multirow{3}{*}{Alerting} & Real-time alert & Escalation email $\rightarrow$ SMS $\rightarrow$ phone \\
-\cline{2-3}
- & Maintenance window & Suppress khi bảo trì, runbook tích hợp \\
-\cline{2-3}
- & SLO monitoring & Error budget burn rate \\
-\hline
-\end{tabularx}
-\caption{Yêu cầu Giám sát}
-\label{tab:monitoring-requirements}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.8cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Nhóm}                       & \textbf{Hạng mục}   & \textbf{Yêu cầu/Mục tiêu}                              \\
+        \hline
+        \multirow{3}{*}{Metrics Collection} & Application metrics & Prometheus/StatsD, dashboard KPI                       \\
+        \cline{2-3}
+                                            & AI metrics          & Theo dõi hiệu suất model AI                            \\
+        \cline{2-3}
+                                            & Cost tracking       & Resource usage, budget alerts                          \\
+        \hline
+        \multirow{2}{*}{Logging}            & Nền tảng            & ELK/EFK, cấu trúc JSON, correlation ID                 \\
+        \cline{2-3}
+                                            & Retention           & 30 ngày (hot), 1 năm (cold)                            \\
+        \hline
+        Tracing                             & Distributed tracing & OpenTelemetry, dependency mapping, sampling 10\%       \\
+        \hline
+        \multirow{3}{*}{Alerting}           & Real-time alert     & Escalation email $\rightarrow$ SMS $\rightarrow$ phone \\
+        \cline{2-3}
+                                            & Maintenance window  & Suppress khi bảo trì, runbook tích hợp                 \\
+        \cline{2-3}
+                                            & SLO monitoring      & Error budget burn rate                                 \\
+        \hline
+    \end{tabularx}
+    \caption{Yêu cầu Giám sát}
+    \label{tab:monitoring-requirements}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
@@ -374,77 +374,77 @@ Tracing & Distributed tracing & OpenTelemetry, dependency mapping, sampling 10\%
 \textbf{h. Yêu cầu Tuân thủ}%
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.8cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Nhóm} & \textbf{Hạng mục} & \textbf{Yêu cầu/Mục tiêu} \\
-\hline
-\multirow{2}{*}{Educational Standards} & Curriculum alignment & VN National Curriculum, Cambridge, IB \\
-\cline{2-3}
- & Competency-based & Mapping learning objectives, standards grading \\
-\hline
-Data Governance & Quản trị dữ liệu & Phân loại, lineage, quality monitoring, MDM, privacy impact assessment \\
-\hline
-Audit \& Reporting & Báo cáo & Audit trail, activity/security incident report, compliance dashboard, automated checking \\
-\hline
-\end{tabularx}
-\caption{Yêu cầu Tuân thủ}
-\label{tab:compliance-requirements}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.8cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Nhóm}                          & \textbf{Hạng mục}    & \textbf{Yêu cầu/Mục tiêu}                                                                \\
+        \hline
+        \multirow{2}{*}{Educational Standards} & Curriculum alignment & VN National Curriculum, Cambridge, IB                                                    \\
+        \cline{2-3}
+                                               & Competency-based     & Mapping learning objectives, standards grading                                           \\
+        \hline
+        Data Governance                        & Quản trị dữ liệu     & Phân loại, lineage, quality monitoring, MDM, privacy impact assessment                   \\
+        \hline
+        Audit \& Reporting                     & Báo cáo              & Audit trail, activity/security incident report, compliance dashboard, automated checking \\
+        \hline
+    \end{tabularx}
+    \caption{Yêu cầu Tuân thủ}
+    \label{tab:compliance-requirements}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
 \textbf{i. Yêu cầu Phục hồi Thảm hoạ}%
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.8cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Nhóm} & \textbf{Hạng mục} & \textbf{Yêu cầu/Mục tiêu} \\
-\hline
-\multirow{3}{*}{Business Continuity} & DR plan & Tài liệu đầy đủ, kiểm thử định kỳ \\
-\cline{2-3}
- & Site dự phòng & Alternative processing sites, communication plan, vendor contingency \\
-\cline{2-3}
- & DR drill & 2 lần/năm \\
-\hline
-\multirow{3}{*}{Data Recovery} & Verification & Backup verification tự động, nhiều địa điểm (on-prem + cloud) \\
-\cline{2-3}
- & Bảo mật & Backup encryption, integrity check, test restore hàng tháng \\
-\cline{2-3}
- & Granular recovery & Theo bảng, người dùng \\
-\hline
-\end{tabularx}
-\caption{Yêu cầu Phục hồi Thảm hoạ}
-\label{tab:disaster-requirements}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.8cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Nhóm}                        & \textbf{Hạng mục} & \textbf{Yêu cầu/Mục tiêu}                                            \\
+        \hline
+        \multirow{3}{*}{Business Continuity} & DR plan           & Tài liệu đầy đủ, kiểm thử định kỳ                                    \\
+        \cline{2-3}
+                                             & Site dự phòng     & Alternative processing sites, communication plan, vendor contingency \\
+        \cline{2-3}
+                                             & DR drill          & 2 lần/năm                                                            \\
+        \hline
+        \multirow{3}{*}{Data Recovery}       & Verification      & Backup verification tự động, nhiều địa điểm (on-prem + cloud)        \\
+        \cline{2-3}
+                                             & Bảo mật           & Backup encryption, integrity check, test restore hàng tháng          \\
+        \cline{2-3}
+                                             & Granular recovery & Theo bảng, người dùng                                                \\
+        \hline
+    \end{tabularx}
+    \caption{Yêu cầu Phục hồi Thảm hoạ}
+    \label{tab:disaster-requirements}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
 \textbf{j. Yêu cầu Bảo trì \& Hỗ trợ}%
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.8cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Nhóm} & \textbf{Hạng mục} & \textbf{Yêu cầu/Mục tiêu} \\
-\hline
-\multirow{3}{*}{System Maintenance} & Triển khai & Blue-green deployment, automation database maintenance \\
-\cline{2-3}
- & Vận hành & Log rotation/cleanup, certificate renewal automation \\
-\cline{2-3}
- & Cập nhật & Dependency update hàng tháng \\
-\hline
-\multirow{3}{*}{Technical Support} & Monitoring & Giám sát 24/7, support L1/L2/L3 \\
-\cline{2-3}
- & Response time & Critical incidents $< 15$ phút \\
-\cline{2-3}
- & Knowledge base & $> 500$ bài viết, hỗ trợ chẩn đoán từ xa \\
-\hline
-\end{tabularx}
-\caption{Yêu cầu Bảo trì \& Hỗ trợ}
-\label{tab:maintenance-requirements}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3.8cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Nhóm}                       & \textbf{Hạng mục} & \textbf{Yêu cầu/Mục tiêu}                              \\
+        \hline
+        \multirow{3}{*}{System Maintenance} & Triển khai        & Blue-green deployment, automation database maintenance \\
+        \cline{2-3}
+                                            & Vận hành          & Log rotation/cleanup, certificate renewal automation   \\
+        \cline{2-3}
+                                            & Cập nhật          & Dependency update hàng tháng                           \\
+        \hline
+        \multirow{3}{*}{Technical Support}  & Monitoring        & Giám sát 24/7, support L1/L2/L3                        \\
+        \cline{2-3}
+                                            & Response time     & Critical incidents $< 15$ phút                         \\
+        \cline{2-3}
+                                            & Knowledge base    & $> 500$ bài viết, hỗ trợ chẩn đoán từ xa               \\
+        \hline
+    \end{tabularx}
+    \caption{Yêu cầu Bảo trì \& Hỗ trợ}
+    \label{tab:maintenance-requirements}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 

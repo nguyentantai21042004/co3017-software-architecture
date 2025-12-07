@@ -8,12 +8,12 @@
 
 \begin{enumerate}[leftmargin=0.7cm]
     \item \textbf{Mức độ đáp ứng các ACs chính}: đánh giá khả năng hiện thực hóa bốn AC quan trọng nhất:
-    \begin{itemize}[nosep]
-        \item AC1: Modularity -- hỗ trợ hoán đổi mô hình AI (Live AI Model Swapping -- FR9, FR12).
-        \item AC2: Scalability -- mở rộng tới hơn $5{,}000$ người dùng đồng thời.
-        \item AC3: Performance -- duy trì khả năng phản hồi thời gian thực (FR6).
-        \item AC4: Testability -- đảm bảo tính chính xác của các thuật toán AI.
-    \end{itemize}
+          \begin{itemize}[nosep]
+              \item AC1: Modularity -- hỗ trợ hoán đổi mô hình AI (Live AI Model Swapping -- FR9, FR12).
+              \item AC2: Scalability -- mở rộng tới hơn $5{,}000$ người dùng đồng thời.
+              \item AC3: Performance -- duy trì khả năng phản hồi thời gian thực (FR6).
+              \item AC4: Testability -- đảm bảo tính chính xác của các thuật toán AI.
+          \end{itemize}
     \item \textbf{Độ phức tạp kỹ thuật}: chi phí vận hành, khả năng quan sát (observability) và độ phức tạp phát triển -- yếu tố trade-off trực tiếp với Scalability và Modularity.
     \item \textbf{Năng lực đội ngũ}: khả năng DevOps, kinh nghiệm với Kubernetes, CI/CD, monitoring. Kiến trúc mạnh nhưng vượt quá năng lực đội ngũ sẽ tiềm ẩn rủi ro.
     \item \textbf{Tác động chi phí}: tổng chi phí sở hữu (TCO) gồm chi phí hạ tầng ban đầu và chi phí mở rộng dài hạn.
@@ -23,31 +23,31 @@ Mục tiêu không phải là tìm kiến trúc ``hoàn hảo'', mà là kiến 
 
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Style} & \textbf{AC1} & \textbf{AC2} & \textbf{AC3} & \textbf{Complexity} & \textbf{Cost} & \textbf{Score (Avg)} \\
-\hline
-Layered (Monolith) & 1 sao & 1 sao & 4 sao & 1 sao & 1\$ & 1.75 / 5.0 \\
-\hline
-Modular Monolith & 3 sao & 2 sao & 4 sao & 2 sao & 1\$ & 2.75 / 5.0 \\
-\hline
-Microkernel & 4 sao & 2 sao & 2 sao & 2 sao & 1\$ & 2.5 / 5.0 \\
-\hline
-\textbf{Microservices} & 5 sao & 5 sao & 4 sao & 4 sao & 5\$ & \textbf{4.5 / 5.0} \\
-\hline
-Service-based & 4 sao & 4 sao & 2 sao & 3 sao & 2\$ & 3.25 / 5.0 \\
-\hline
-Service-oriented & 1 sao & 3 sao & 2 sao & 5 sao & 5\$ & 2.75 / 5.0 \\
-\hline
-\textbf{Event-driven} & 3 sao & 5 sao & 5 sao & 4 sao & 2\$ & \textbf{4.25 / 5.0} \\
-\hline
-Space-based & 4 sao & 5 sao & 4 sao & 5 sao & 5\$ & 4.5 / 5.0 \\
-\hline
-\end{tabularx}
-\caption{So sánh các phong cách kiến trúc ứng với các tiêu chí chính}
-\label{tab:architecture-style-comparison}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Style}         & \textbf{AC1} & \textbf{AC2} & \textbf{AC3} & \textbf{Complexity} & \textbf{Cost} & \textbf{Score (Avg)} \\
+        \hline
+        Layered (Monolith)     & 1 sao        & 1 sao        & 4 sao        & 1 sao               & 1\$           & 1.75 / 5.0           \\
+        \hline
+        Modular Monolith       & 3 sao        & 2 sao        & 4 sao        & 2 sao               & 1\$           & 2.75 / 5.0           \\
+        \hline
+        Microkernel            & 4 sao        & 2 sao        & 2 sao        & 2 sao               & 1\$           & 2.5 / 5.0            \\
+        \hline
+        \textbf{Microservices} & 5 sao        & 5 sao        & 4 sao        & 4 sao               & 5\$           & \textbf{4.5 / 5.0}   \\
+        \hline
+        Service-based          & 4 sao        & 4 sao        & 2 sao        & 3 sao               & 2\$           & 3.25 / 5.0           \\
+        \hline
+        Service-oriented       & 1 sao        & 3 sao        & 2 sao        & 5 sao               & 5\$           & 2.75 / 5.0           \\
+        \hline
+        \textbf{Event-driven}  & 3 sao        & 5 sao        & 5 sao        & 4 sao               & 2\$           & \textbf{4.25 / 5.0}  \\
+        \hline
+        Space-based            & 4 sao        & 5 sao        & 4 sao        & 5 sao               & 5\$           & 4.5 / 5.0            \\
+        \hline
+    \end{tabularx}
+    \caption{So sánh các phong cách kiến trúc ứng với các tiêu chí chính}
+    \label{tab:architecture-style-comparison}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
@@ -74,16 +74,16 @@ Phân tích kết quả và định hướng lựa chọn:
 \subsubsection{Lý do lựa chọn}
 \begin{enumerate}[leftmargin=0.7cm]
     \item Tối ưu các ACs cốt lõi:
-    \begin{itemize}[nosep]
-        \item Modularity (AC1) và Deployability (AC5): hỗ trợ Live AI Model Swapping (FR9, FR12).
-        \item Scalability (AC2): mở rộng từng service độc lập, tránh bottleneck.
-        \item Testability (AC4): kiểm thử độc lập nhờ Clean Architecture.
-    \end{itemize}
+          \begin{itemize}[nosep]
+              \item Modularity (AC1) và Deployability (AC5): hỗ trợ Live AI Model Swapping (FR9, FR12).
+              \item Scalability (AC2): mở rộng từng service độc lập, tránh bottleneck.
+              \item Testability (AC4): kiểm thử độc lập nhờ Clean Architecture.
+          \end{itemize}
     \item Đáp ứng yêu cầu thời gian thực:
-    \begin{itemize}[nosep]
-        \item Event-driven xử lý đồng thời SubmissionCompleted và cập nhật \texttt{LearnerModel} không gây nghẽn.
-        \item Cải thiện Performance/Responsiveness (AC3) và fault tolerance.
-    \end{itemize}
+          \begin{itemize}[nosep]
+              \item Event-driven xử lý đồng thời SubmissionCompleted và cập nhật \texttt{LearnerModel} không gây nghẽn.
+              \item Cải thiện Performance/Responsiveness (AC3) và fault tolerance.
+          \end{itemize}
     \item Quản lý rủi ro: nhận diện độ phức tạp cao và có chiến lược giảm thiểu thông qua lộ trình phát triển.
 \end{enumerate}
 

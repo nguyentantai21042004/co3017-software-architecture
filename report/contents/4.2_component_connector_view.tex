@@ -12,10 +12,10 @@ Phần này đặc biệt quan trọng vì nó hiện thực hóa các quyết �
 \vspace{1em}
 
 \begin{figure}[H]
-\centering
-\fbox{\includegraphics[width=0.93\textwidth]{images/service_architecture.png}}
-\caption{Sơ đồ kiến trúc dịch vụ của hệ thống ITS}
-\label{fig:service-architecture}
+    \centering
+    \fbox{\includegraphics[width=0.93\textwidth]{images/service_architecture.png}}
+    \caption{Sơ đồ kiến trúc dịch vụ của hệ thống ITS}
+    \label{fig:service-architecture}
 \end{figure}
 
 \subsubsection{Các Mẫu Tích hợp}
@@ -27,10 +27,10 @@ Phần này đặc biệt quan trọng vì nó hiện thực hóa các quyết �
 Sử dụng cho các tương tác yêu cầu-phản hồi (request-response) \textbf{ngay lập tức}.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.6\textwidth]{images/synchronous_communication.png}
-\caption{Giao tiếp Đồng bộ}
-\label{fig:synchronous-communication}
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/synchronous_communication.png}
+    \caption{Giao tiếp Đồng bộ}
+    \label{fig:synchronous-communication}
 \end{figure}
 
 \begin{itemize}[leftmargin=1.5em]
@@ -59,7 +59,7 @@ Sử dụng để tách rời (decouple) các service, xử lý các tác vụ n
     \includegraphics[width=0.7\textwidth]{images/asynchronous_communication.png}
     \caption{Giao tiếp Bất đồng bộ}
     \label{fig:asynchronous-communication}
-    \end{figure}
+\end{figure}
 
 \begin{itemize}[leftmargin=1.5em]
     \item Message Broker: RabbitMQ (sử dụng khả năng định tuyến AMQP linh hoạt cho các Domain Events)
@@ -76,10 +76,10 @@ Sử dụng để tách rời (decouple) các service, xử lý các tác vụ n
 Kịch bản này xảy ra khi người học (Learner) hoàn thành một bài học và yêu cầu nội dung tiếp theo. Luồng này chủ yếu là đồng bộ (synchronous).
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=1.0\textwidth]{images/adaptive_content_delivery_sequence.png}
-\caption{Luồng dữ liệu cho kịch bản Học tập Thích ứng}
-\label{fig:adaptive-learning-flow}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/adaptive_content_delivery_sequence.png}
+    \caption{Luồng dữ liệu cho kịch bản Học tập Thích ứng}
+    \label{fig:adaptive-learning-flow}
 \end{figure}
 
 \noindent\textbf{Luồng 2: Chấm điểm Bất đồng bộ (UC-10: Asynchronous Scoring)}
@@ -87,10 +87,10 @@ Kịch bản này xảy ra khi người học (Learner) hoàn thành một bài 
 Kịch bản này xảy ra khi người học (Learner) nộp một bài tập (ví dụ: quiz). Luồng này là sự kết hợp của đồng bộ (phản hồi tức thì) và bất đồng bộ (cập nhật nền) để đảm bảo AC3: Performance.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=1.0\textwidth]{images/assessment_submission_and_scoring_sequence.png}
-\caption{Luồng dữ liệu cho kịch bản Chấm điểm Bất đồng bộ}
-\label{fig:asynchronous-scoring-flow}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/assessment_submission_and_scoring_sequence.png}
+    \caption{Luồng dữ liệu cho kịch bản Chấm điểm Bất đồng bộ}
+    \label{fig:asynchronous-scoring-flow}
 \end{figure}
 
 \begin{enumerate}[leftmargin=1.5em]
@@ -98,19 +98,19 @@ Kịch bản này xảy ra khi người học (Learner) nộp một bài tập (
     \item Client gửi \texttt{POST /api/scoring/submit} (chứa câu trả lời) đến API Gateway
     \item API Gateway xác thực JWT và chuyển tiếp request đến Scoring \& Feedback Service (Go)
     \item \textbf{Scoring Service (Luồng đồng bộ)}:
-    \begin{enumerate}
-        \item Chạy thuật toán chấm điểm nhanh (ví dụ: so sánh đáp án quiz)
-        \item Tạo một phản hồi tức thì (ví dụ: ``Bạn đúng 8/10 câu'')
-        \item Trả về phản hồi nhanh cho API Gateway \(\rightarrow\) Client \(\rightarrow\) Learner (Hoàn thành trong <500ms)
-    \end{enumerate}
+          \begin{enumerate}
+              \item Chạy thuật toán chấm điểm nhanh (ví dụ: so sánh đáp án quiz)
+              \item Tạo một phản hồi tức thì (ví dụ: ``Bạn đúng 8/10 câu'')
+              \item Trả về phản hồi nhanh cho API Gateway \(\rightarrow\) Client \(\rightarrow\) Learner (Hoàn thành trong <500ms)
+          \end{enumerate}
     \item \textbf{Scoring Service (Luồng bất đồng bộ)}:
-    \begin{enumerate}
-        \item Phát (Publish) một sự kiện \texttt{SubmissionCompleted} (chứa kết quả chi tiết và user-id) lên RabbitMQ
-    \end{enumerate}
+          \begin{enumerate}
+              \item Phát (Publish) một sự kiện \texttt{SubmissionCompleted} (chứa kết quả chi tiết và user-id) lên RabbitMQ
+          \end{enumerate}
     \item \textbf{Learner Model Service (Go) (Luồng bất đồng bộ - Consumer)}:
-    \begin{enumerate}
-        \item Nhận được sự kiện \texttt{SubmissionCompleted} từ RabbitMQ
-        \item Phân tích kết quả chi tiết và cập nhật \texttt{SkillMasteryScores} cho người học đó trong cơ sở dữ liệu
-        \item (Tùy chọn) Phát ra sự kiện \texttt{LearnerModelUpdated} để thông báo cho Adaptive Engine
-    \end{enumerate}
+          \begin{enumerate}
+              \item Nhận được sự kiện \texttt{SubmissionCompleted} từ RabbitMQ
+              \item Phân tích kết quả chi tiết và cập nhật \texttt{SkillMasteryScores} cho người học đó trong cơ sở dữ liệu
+              \item (Tùy chọn) Phát ra sự kiện \texttt{LearnerModelUpdated} để thông báo cho Adaptive Engine
+          \end{enumerate}
 \end{enumerate}

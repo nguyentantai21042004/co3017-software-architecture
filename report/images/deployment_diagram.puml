@@ -1,0 +1,68 @@
+@startuml deployment_diagram
+!theme plain
+skinparam componentStyle uml2
+
+actor "Client\n(Browser/Mobile)" as Client
+
+node "Kubernetes Cluster" {
+    node "Ingress Controller" as Ingress {
+        [Nginx Ingress]
+    }
+
+    node "Worker Node 1 (General Purpose)" {
+        component "Content Service Pod" as ContentPod {
+            [Content Service\n(Java/Spring)]
+        }
+        component "User Mgmt Pod" as UserPod {
+            [User Mgmt Service]
+        }
+    }
+
+    node "Worker Node 2 (Compute Optimized)" {
+        component "Scoring Service Pod" as ScoringPod {
+            [Scoring Service\n(Go)]
+        }
+        component "Adaptive Engine Pod" as AdaptivePod {
+            [Adaptive Engine\n(Go)]
+        }
+        component "Learner Model Pod" as LearnerPod {
+            [Learner Model Service\n(Go)]
+        }
+    }
+
+    node "Data Node (Stateful)" {
+        database "PostgreSQL Cluster" {
+            [Content DB]
+            [Scoring DB]
+            [Learner DB]
+        }
+        queue "RabbitMQ Cluster" {
+            [Message Broker]
+        }
+    }
+}
+
+cloud "External Services" {
+    [Email Service]
+    [Auth Provider\n(OAuth2/OIDC)]
+}
+
+Client --> Ingress : HTTPS/REST
+Ingress --> ContentPod
+Ingress --> UserPod
+Ingress --> ScoringPod
+Ingress --> LearnerPod
+
+ContentPod --> [Content DB] : JDBC
+ScoringPod --> [Scoring DB] : SQL
+LearnerPod --> [Learner DB] : SQL
+
+ScoringPod --> [Message Broker] : Publish Event
+LearnerPod --> [Message Broker] : Consume Event
+AdaptivePod --> [Learner DB] : Read
+AdaptivePod --> [Content DB] : Read
+
+UserPod --> [Auth Provider] : Validate Token
+UserPod --> [Email Service] : Send Notifications
+
+@enduml

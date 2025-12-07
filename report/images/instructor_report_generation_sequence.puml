@@ -1,0 +1,34 @@
+@startuml instructor_report_generation_sequence
+!theme plain
+autonumber
+
+actor "Instructor" as Instructor
+participant "API Gateway" as Gateway
+participant "Content Service\n(Java)" as Orchestrator
+participant "User Mgmt Service\n(Java)" as UserMgmt
+participant "Learner Model Service\n(Go)" as LearnerModel
+
+Instructor -> Gateway: GET /reports/class/{classId}
+Gateway -> Orchestrator: Forward Request
+activate Orchestrator
+
+Orchestrator -> UserMgmt: GetStudentsInClass(classId)
+activate UserMgmt
+UserMgmt --> Orchestrator: List<Student>
+deactivate UserMgmt
+
+loop For each student
+    Orchestrator -> LearnerModel: GetProgress(studentId)
+    activate LearnerModel
+    LearnerModel --> Orchestrator: Progress Data
+    deactivate LearnerModel
+end
+
+Orchestrator -> Orchestrator: Aggregate Data
+Orchestrator -> Orchestrator: Generate Statistics
+
+Orchestrator --> Gateway: Report Data (JSON/PDF)
+deactivate Orchestrator
+Gateway --> Instructor: Display Dashboard
+
+@enduml

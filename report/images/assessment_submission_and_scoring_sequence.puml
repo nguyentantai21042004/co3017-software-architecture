@@ -1,0 +1,40 @@
+@startuml assessment_submission_and_scoring_sequence
+!theme plain
+autonumber
+
+actor "Learner" as Learner
+participant "API Gateway" as Gateway
+participant "Scoring Service\n(Go)" as Scoring
+queue "RabbitMQ" as Broker
+participant "Learner Model Service\n(Go)" as LearnerModel
+database "Scoring DB" as DB
+
+Learner -> Gateway: POST /assessment/submit (answers)
+Gateway -> Scoring: Forward Request
+activate Scoring
+
+Scoring -> Scoring: Calculate Score
+Scoring -> DB: Save Submission
+activate DB
+DB --> Scoring: Success
+deactivate DB
+
+Scoring -> Broker: Publish SubmissionEvent
+activate Broker
+Broker --> Scoring: Ack
+deactivate Broker
+
+Scoring --> Gateway: Return Score & Feedback
+deactivate Scoring
+Gateway --> Learner: Display Result
+
+par Async Processing
+    Broker -> LearnerModel: Consume SubmissionEvent
+    activate LearnerModel
+    LearnerModel -> LearnerModel: Update Skill Mastery
+    note right: Bayesian Knowledge Tracing\nor ELO Rating update
+    LearnerModel -> LearnerModel: Save New State
+    deactivate LearnerModel
+end
+
+@enduml

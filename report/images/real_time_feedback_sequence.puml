@@ -1,0 +1,26 @@
+@startuml real_time_feedback_sequence
+!theme plain
+autonumber
+
+actor "Learner" as Learner
+participant "API Gateway" as Gateway
+participant "Scoring Service\n(Go)" as Scoring
+database "Content DB" as DB
+
+Learner -> Gateway: GET /assessment/hint?questionId=...
+Gateway -> Scoring: Forward Request
+activate Scoring
+
+Scoring -> DB: GetQuestionHints(questionId)
+activate DB
+DB --> Scoring: Hints List
+deactivate DB
+
+Scoring -> Scoring: Select Relevant Hint
+note right: Based on previous attempts\nor random selection
+
+Scoring --> Gateway: Hint Content
+deactivate Scoring
+Gateway --> Learner: Display Hint
+
+@enduml

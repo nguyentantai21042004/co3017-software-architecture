@@ -499,23 +499,23 @@ public void testUpdateSkillMastery() {
 
 \renewcommand{\arraystretch}{1.8}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\noindent\justifying\arraybackslash}X|}
-\hline
-\textbf{Số liệu}\rule{0pt}{1.6em} & \textbf{Mục tiêu} & \textbf{Công cụ} & \textbf{Trạng thái} & \textbf{Ý nghĩa (liên quan đến SOLID)} \\
-\hline
-Cyclomatic Complexity & $< 10$ & SonarQube & 7.2 & SRP/OCP: Độ phức tạp thấp cho thấy các phương thức tập trung, ít if/else \\
-\hline
-Coupling (Afferent/Efferent) & $< 5$ & JDepend & 3.8 & DIP/ISP: Khớp nối (coupling) thấp cho thấy sự phụ thuộc vào abstraction \\
-\hline
-Cohesion (LCOM4) & $> 0.8$ & SonarQube & 0.85 & SRP: Độ gắn kết (cohesion) cao cho thấy các lớp có trách nhiệm rõ ràng \\
-\hline
-Test Coverage & $> 80\%$ & JaCoCo & 78\% & DIP: Tỷ lệ coverage cao là kết quả của việc áp dụng DIP, cho phép unit test \\
-\hline
-\end{tabularx}
-\caption{Số liệu đo lường tuân thủ SOLID}
-\label{tab:solid-metrics}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\noindent\justifying\arraybackslash}X|}
+        \hline
+        \textbf{Số liệu}\rule{0pt}{1.6em} & \textbf{Mục tiêu} & \textbf{Công cụ} & \textbf{Trạng thái} & \textbf{Ý nghĩa (liên quan đến SOLID)}                                      \\
+        \hline
+        Cyclomatic Complexity             & $< 10$            & SonarQube        & 7.2                 & SRP/OCP: Độ phức tạp thấp cho thấy các phương thức tập trung, ít if/else    \\
+        \hline
+        Coupling (Afferent/Efferent)      & $< 5$             & JDepend          & 3.8                 & DIP/ISP: Khớp nối (coupling) thấp cho thấy sự phụ thuộc vào abstraction     \\
+        \hline
+        Cohesion (LCOM4)                  & $> 0.8$           & SonarQube        & 0.85                & SRP: Độ gắn kết (cohesion) cao cho thấy các lớp có trách nhiệm rõ ràng      \\
+        \hline
+        Test Coverage                     & $> 80\%$          & JaCoCo           & 78\%                & DIP: Tỷ lệ coverage cao là kết quả của việc áp dụng DIP, cho phép unit test \\
+        \hline
+    \end{tabularx}
+    \caption{Số liệu đo lường tuân thủ SOLID}
+    \label{tab:solid-metrics}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
@@ -544,25 +544,25 @@ Test Coverage & $> 80\%$ & JaCoCo & 78\% & DIP: Tỷ lệ coverage cao là kết
 
 \renewcommand{\arraystretch}{1.6}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{2.5cm}|>{\noindent\justifying\arraybackslash}X|>{\noindent\justifying\arraybackslash}X|>{\noindent\justifying\arraybackslash}p{2.5cm}|>{\centering\arraybackslash}p{1.5cm}|}
-\hline
-\textbf{Thuộc tính (AC)}\rule{0pt}{1.6em} & \textbf{Kịch bản} & \textbf{Phản ứng Kiến trúc} & \textbf{Chỉ số Đo lường} & \textbf{Kết quả} \\
-\hline
-Performance (AC3) & 5.000 người dùng đồng thời nộp bài (UC-10) và yêu cầu phản hồi tức thì & 1. Polyglot (ADR-1): Dùng Golang cho ScoringService\newline 2. EDA: Tách rời việc cập nhật LearnerModel\newline 3. Caching (Redis) cho PII & p95 latency $< 500$ms cho phản hồi tức thì & \checkmark \\
-\hline
-Scalability (AC2) & Lượng người dùng tăng gấp 10 lần trong mùa cao điểm & 1. Kubernetes: Triển khai trên K8s\newline 2. HPA: Horizontal Pod Autoscaler\newline 3. Stateless: Services là stateless (JWT/ADR-6) & Service tự động scale-out (từ 3 lên 15 pod) & \checkmark \\
-\hline
-Modularity (AC1) / Deployability (AC5) & Team AI muốn triển khai thuật toán gợi ý mới (V2) mà không làm gián đoạn người dùng đang học (V1) & 1. OCP: AdaptiveEngine phụ thuộc vào interface\newline 2. Microservices: AdaptiveEngine là service độc lập\newline 3. Blue/Green deployment trên K8s & Zero downtime. Chuyển đổi 100\% traffic sang V2 trong < 5 phút & \checkmark \\
-\hline
-Testability (AC4) & Logic nghiệp vụ của AdaptiveEngine phải được xác minh là chính xác 100\% mà không cần chạy toàn bộ CSDL & 1. Clean Arch: Logic nghiệp vụ cô lập trong tầng Application/Domain\newline 2. DIP: Use Case phụ thuộc vào interfaces\newline 3. Testing Pyramid: Unit Tests mock repositories & Code Coverage cho module logic nghiệp vụ $> 85\%$ & \checkmark \\
-\hline
-Security (AC6) / Compliance & Một service (ví dụ: ScoringService) bị xâm nhập bởi kẻ tấn công & 1. Tách PII: Chỉ UserManagementService lưu PII\newline 2. Mã hóa: PII được mã hóa (at-rest) bằng pgcrypto\newline 3. AuthZ (ADR-6): API Gateway chặn cuộc gọi trái phép & Kẻ tấn công không thể truy cập PII từ service bị xâm nhập & \checkmark \\
-\hline
-\end{tabularx}
-\caption{Kịch bản đánh giá các thuộc tính chất lượng}
-\label{tab:qa-scenarios}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{2.5cm}|>{\noindent\justifying\arraybackslash}X|>{\noindent\justifying\arraybackslash}X|>{\noindent\justifying\arraybackslash}p{2.5cm}|>{\centering\arraybackslash}p{1.5cm}|}
+        \hline
+        \textbf{Thuộc tính (AC)}\rule{0pt}{1.6em} & \textbf{Kịch bản}                                                                                       & \textbf{Phản ứng Kiến trúc}                                                                                                                                                    & \textbf{Chỉ số Đo lường}                                       & \textbf{Kết quả} \\
+        \hline
+        Performance (AC3)                         & 5.000 người dùng đồng thời nộp bài (UC-10) và yêu cầu phản hồi tức thì                                  & 1. Polyglot (ADR-1): Dùng Golang cho ScoringService\newline 2. EDA: Tách rời việc cập nhật LearnerModel\newline 3. Caching (Redis) cho PII                                     & p95 latency $< 500$ms cho phản hồi tức thì                     & \checkmark       \\
+        \hline
+        Scalability (AC2)                         & Lượng người dùng tăng gấp 10 lần trong mùa cao điểm                                                     & 1. Kubernetes: Triển khai trên K8s\newline 2. HPA: Horizontal Pod Autoscaler\newline 3. Stateless: Services là stateless (JWT/ADR-6)                                           & Service tự động scale-out (từ 3 lên 15 pod)                    & \checkmark       \\
+        \hline
+        Modularity (AC1) / Deployability (AC5)    & Team AI muốn triển khai thuật toán gợi ý mới (V2) mà không làm gián đoạn người dùng đang học (V1)       & 1. OCP: AdaptiveEngine phụ thuộc vào interface\newline 2. Microservices: AdaptiveEngine là service độc lập\newline 3. Blue/Green deployment trên K8s                           & Zero downtime. Chuyển đổi 100\% traffic sang V2 trong < 5 phút & \checkmark       \\
+        \hline
+        Testability (AC4)                         & Logic nghiệp vụ của AdaptiveEngine phải được xác minh là chính xác 100\% mà không cần chạy toàn bộ CSDL & 1. Clean Arch: Logic nghiệp vụ cô lập trong tầng Application/Domain\newline 2. DIP: Use Case phụ thuộc vào interfaces\newline 3. Testing Pyramid: Unit Tests mock repositories & Code Coverage cho module logic nghiệp vụ $> 85\%$              & \checkmark       \\
+        \hline
+        Security (AC6) / Compliance               & Một service (ví dụ: ScoringService) bị xâm nhập bởi kẻ tấn công                                         & 1. Tách PII: Chỉ UserManagementService lưu PII\newline 2. Mã hóa: PII được mã hóa (at-rest) bằng pgcrypto\newline 3. AuthZ (ADR-6): API Gateway chặn cuộc gọi trái phép        & Kẻ tấn công không thể truy cập PII từ service bị xâm nhập      & \checkmark       \\
+        \hline
+    \end{tabularx}
+    \caption{Kịch bản đánh giá các thuộc tính chất lượng}
+    \label{tab:qa-scenarios}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
@@ -607,23 +607,23 @@ Security (AC6) / Compliance & Một service (ví dụ: ScoringService) bị xâm
 
 \renewcommand{\arraystretch}{1.6}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{1.5cm}|>{\noindent\justifying\arraybackslash}X|}
-\hline
-\textbf{Số liệu}\rule{0pt}{1.6em} & \textbf{Trước SOLID (Monolith)} & \textbf{Sau SOLID (Clean Arch)} & \textbf{Cải tiến} & \textbf{Ý nghĩa} \\
-\hline
-Test Coverage & \textasciitilde45\% (Chủ yếu E2E) & \textasciitilde85\% (Chủ yếu Unit) & +88\% & DIP cho phép Unit Test logic nghiệp vụ (AC4) \\
-\hline
-Build Time & 15 phút (Build tất cả) & 8 phút (Build service thay đổi) & -47\% & SRP (cấp service) cho phép build độc lập (AC5) \\
-\hline
-Defect Rate (Bug/KLOC) & 12/KLOC & 3/KLOC & -75\% & DIP/SRP làm giảm lỗi hồi quy \\
-\hline
-Change Impact (File thay đổi) & 5 files (trung bình/feature) & 2 files (trung bình/feature) & -60\% & OCP cho phép thêm code mà không sửa code cũ \\
-\hline
-\end{tabularx}
-\caption{Cải tiến định lượng từ việc áp dụng SOLID}
-\label{tab:solid-improvements}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{1.5cm}|>{\noindent\justifying\arraybackslash}X|}
+        \hline
+        \textbf{Số liệu}\rule{0pt}{1.6em} & \textbf{Trước SOLID (Monolith)}   & \textbf{Sau SOLID (Clean Arch)}    & \textbf{Cải tiến} & \textbf{Ý nghĩa}                               \\
+        \hline
+        Test Coverage                     & \textasciitilde45\% (Chủ yếu E2E) & \textasciitilde85\% (Chủ yếu Unit) & +88\%             & DIP cho phép Unit Test logic nghiệp vụ (AC4)   \\
+        \hline
+        Build Time                        & 15 phút (Build tất cả)            & 8 phút (Build service thay đổi)    & -47\%             & SRP (cấp service) cho phép build độc lập (AC5) \\
+        \hline
+        Defect Rate (Bug/KLOC)            & 12/KLOC                           & 3/KLOC                             & -75\%             & DIP/SRP làm giảm lỗi hồi quy                   \\
+        \hline
+        Change Impact (File thay đổi)     & 5 files (trung bình/feature)      & 2 files (trung bình/feature)       & -60\%             & OCP cho phép thêm code mà không sửa code cũ    \\
+        \hline
+    \end{tabularx}
+    \caption{Cải tiến định lượng từ việc áp dụng SOLID}
+    \label{tab:solid-improvements}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
@@ -668,7 +668,7 @@ Change Impact (File thay đổi) & 5 files (trung bình/feature) & 2 files (trun
 \noindent\textbf{Event-Driven cho các Thành phần AI}:
 \begin{itemize}[leftmargin=1.5em]
     \item Quyết định tách rời (decouple) ScoringService và LearnerModelService qua RabbitMQ là rất đúng đắn
-        \item Nó giúp đạt được AC3: Performance ($< 500$ms) bằng cách cho phép xử lý bất đồng bộ các mô hình ML/AI (cập nhật LearnerModel)
+    \item Nó giúp đạt được AC3: Performance ($< 500$ms) bằng cách cho phép xử lý bất đồng bộ các mô hình ML/AI (cập nhật LearnerModel)
 \end{itemize}
 
 \noindent\textbf{Polyglot Programming (ADR-1)}:
@@ -717,16 +717,16 @@ Change Impact (File thay đổi) & 5 files (trung bình/feature) & 2 files (trun
 \begin{itemize}[leftmargin=1.5em]
     \item \textbf{Phát triển lên Serverless}: Một số tác vụ (như ScoringService) có tải không liên tục (sporadic loads). Chuyển các hàm này sang AWS Lambda / Google Cloud Functions để giảm chi phí vận hành (idle cost) và tự động scale-to-zero
     \item \textbf{Quản lý Mô hình AI (MLOps)}:
-    \begin{itemize}
-        \item Xây dựng một pipeline MLOps hoàn chỉnh để tự động hóa việc training và deploy các mô hình AI mới
-        \item Hỗ trợ A/B testing chính thức cho các mô hình AI (hiện tại FR12 là Blue/Green)
-        \item Quản lý phiên bản (versioning) và rollback mô hình
-    \end{itemize}
+          \begin{itemize}
+              \item Xây dựng một pipeline MLOps hoàn chỉnh để tự động hóa việc training và deploy các mô hình AI mới
+              \item Hỗ trợ A/B testing chính thức cho các mô hình AI (hiện tại FR12 là Blue/Green)
+              \item Quản lý phiên bản (versioning) và rollback mô hình
+          \end{itemize}
     \item \textbf{Hỗ trợ Đa Người thuê (Multi-tenancy)}:
-    \begin{itemize}
-        \item Tái kiến trúc để hỗ trợ nhiều trường học (tenants) trên cùng một hạ tầng
-        \item Có thể yêu cầu tách biệt CSDL (database-per-tenant) hoặc schema-per-tenant
-    \end{itemize}
+          \begin{itemize}
+              \item Tái kiến trúc để hỗ trợ nhiều trường học (tenants) trên cùng một hạ tầng
+              \item Có thể yêu cầu tách biệt CSDL (database-per-tenant) hoặc schema-per-tenant
+          \end{itemize}
 \end{itemize}
 
 \subsubsection{Sổ nợ Kỹ thuật (Technical Debt Register)}
@@ -735,24 +735,24 @@ Change Impact (File thay đổi) & 5 files (trung bình/feature) & 2 files (trun
 
 \renewcommand{\arraystretch}{1.6}
 \begin{table}[H]
-\centering
-\small
-\begin{tabularx}{\textwidth}{|>{\noindent\justifying\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.5cm}|>{\noindent\justifying\arraybackslash}X|}
-\hline
-\textbf{Hạng mục Nợ}\rule{0pt}{1.6em} & \textbf{Tác động} & \textbf{Ưu tiên} & \textbf{Nỗ lực} & \textbf{Kế hoạch Xử lý} \\
-\hline
-Thiếu Integration Tests (cho CSDL) & Cao & 1 (Cao) & 2 tuần & Bổ sung Testcontainers vào pipeline (ADR-5) để kiểm thử với CSDL thật (Postgres, Mongo) \\
-\hline
-Cấu hình Hardcode & Trung bình & 2 & 1 tuần & Đưa tất cả cấu hình (ví dụ: RabbitMQ host) ra ngoài (Externalize) vào K8s ConfigMaps / Secrets \\
-\hline
-Không có Phiên bản API (No API Versioning) & Cao & 1 (Cao) & 3 tuần & Áp dụng URL versioning (ví dụ: /api/v1/...) cho tất cả các public API (tại API Gateway) \\
-\hline
-Thiếu Contract Testing & Cao & 1 (Cao) & 3 tuần & Triển khai Pact \\
-\hline
-Truy vấn N+1 (trong ContentService) & Trung bình & 2 & 1 tuần & Dùng JOIN FETCH (JPA) hoặc batch loading (GraphQL) để tối ưu hóa \\
-\hline
-\end{tabularx}
-\caption{Sổ nợ kỹ thuật và kế hoạch xử lý}
-\label{tab:technical-debt}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\noindent\justifying\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{1.5cm}|>{\noindent\justifying\arraybackslash}X|}
+        \hline
+        \textbf{Hạng mục Nợ}\rule{0pt}{1.6em}      & \textbf{Tác động} & \textbf{Ưu tiên} & \textbf{Nỗ lực} & \textbf{Kế hoạch Xử lý}                                                                        \\
+        \hline
+        Thiếu Integration Tests (cho CSDL)         & Cao               & 1 (Cao)          & 2 tuần          & Bổ sung Testcontainers vào pipeline (ADR-5) để kiểm thử với CSDL thật (Postgres, Mongo)        \\
+        \hline
+        Cấu hình Hardcode                          & Trung bình        & 2                & 1 tuần          & Đưa tất cả cấu hình (ví dụ: RabbitMQ host) ra ngoài (Externalize) vào K8s ConfigMaps / Secrets \\
+        \hline
+        Không có Phiên bản API (No API Versioning) & Cao               & 1 (Cao)          & 3 tuần          & Áp dụng URL versioning (ví dụ: /api/v1/...) cho tất cả các public API (tại API Gateway)        \\
+        \hline
+        Thiếu Contract Testing                     & Cao               & 1 (Cao)          & 3 tuần          & Triển khai Pact                                                                                \\
+        \hline
+        Truy vấn N+1 (trong ContentService)        & Trung bình        & 2                & 1 tuần          & Dùng JOIN FETCH (JPA) hoặc batch loading (GraphQL) để tối ưu hóa                               \\
+        \hline
+    \end{tabularx}
+    \caption{Sổ nợ kỹ thuật và kế hoạch xử lý}
+    \label{tab:technical-debt}
 \end{table}
 \renewcommand{\arraystretch}{1.0}

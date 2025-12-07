@@ -1,0 +1,35 @@
+@startuml erd_user_service
+!theme plain
+hide empty methods
+
+package "User Management Service (Target)" {
+    entity "users" {
+        *id : UUID <<PK>>
+        --
+        email : VARCHAR(255) <<Unique>>
+        password_hash : VARCHAR(255)
+        role : VARCHAR(50)
+        created_at : TIMESTAMP
+        updated_at : TIMESTAMP
+    }
+
+    entity "learner_profiles" {
+        *user_id : UUID <<PK, FK>>
+        --
+        full_name : VARCHAR(100)
+        date_of_birth : DATE
+        learning_goals : TEXT[]
+        preferences : JSONB
+    }
+
+    entity "instructor_profiles" {
+        *user_id : UUID <<PK, FK>>
+        --
+        department : VARCHAR(100)
+        qualifications : TEXT[]
+    }
+
+    users ||--|| learner_profiles
+    users ||--|| instructor_profiles
+}
+@enduml

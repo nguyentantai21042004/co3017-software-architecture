@@ -6,29 +6,69 @@ Mục tiêu của phần này là xác định ai chịu ảnh hưởng, ai ra q
 \subsubsection{Ma trận Bên Liên quan}
 
 \begin{table}[!htbp]
-\centering
-\small
-\renewcommand{\tabularxcolumn}[1]{m{#1}}
-\renewcommand{\arraystretch}{1.8}
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{2.2cm}|>{\centering\arraybackslash}m{2.5cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Bên liên quan} & \textbf{Vai trò} & \textbf{Quan tâm} & \textbf{Ảnh hưởng} & \textbf{Mối quan tâm chính} \\
-\hline
-Learner & Người dùng cuối (End User) & Cao & Cao & Trải nghiệm học tập cá nhân hóa, phản hồi nhanh, giao diện thân thiện. \\
-\hline
-Instructor & Người tạo và giám sát nội dung & Cao & Cao & Quản lý nội dung, báo cáo hiệu suất học tập, dễ sử dụng. \\
-\hline
-Admin & Chủ sở hữu \& vận hành hệ thống & Trung bình & Cao & Bảo mật, chi phí, khả năng mở rộng, triển khai không downtime. \\
-\hline
-AI Engineer & Phát triển mô hình thích ứng & Trung bình & Trung bình & Dễ tích hợp thuật toán mới, giám sát hiệu suất mô hình. \\
-\hline
-System Architect & Thiết kế \& duy trì cấu trúc hệ thống & Trung bình & Cao & Đảm bảo mô-đun hóa, khả năng test, tuân thủ Clean Architecture. \\
-\hline
-\end{tabularx}
-\caption{Ma trận Bên Liên quan}
-\label{tab:stakeholder_matrix}
+    \centering
+    \small
+    \renewcommand{\tabularxcolumn}[1]{m{#1}}
+    \renewcommand{\arraystretch}{1.8}
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{2.2cm}|>{\centering\arraybackslash}m{2.5cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Bên liên quan} & \textbf{Vai trò}                      & \textbf{Quan tâm} & \textbf{Ảnh hưởng} & \textbf{Mối quan tâm chính}                                            \\
+        \hline
+        Learner                & Người dùng cuối (End User)            & Cao               & Cao                & Trải nghiệm học tập cá nhân hóa, phản hồi nhanh, giao diện thân thiện. \\
+        \hline
+        Instructor             & Người tạo và giám sát nội dung        & Cao               & Cao                & Quản lý nội dung, báo cáo hiệu suất học tập, dễ sử dụng.               \\
+        \hline
+        Admin                  & Chủ sở hữu \& vận hành hệ thống       & Trung bình        & Cao                & Bảo mật, chi phí, khả năng mở rộng, triển khai không downtime.         \\
+        \hline
+        AI Engineer            & Phát triển mô hình thích ứng          & Trung bình        & Trung bình         & Dễ tích hợp thuật toán mới, giám sát hiệu suất mô hình.                \\
+        \hline
+        System Architect       & Thiết kế \& duy trì cấu trúc hệ thống & Trung bình        & Cao                & Đảm bảo mô-đun hóa, khả năng test, tuân thủ Clean Architecture.        \\
+        \hline
+    \end{tabularx}
+    \caption{Ma trận Bên Liên quan}
+    \label{tab:stakeholder_matrix}
 \end{table}
 \FloatBarrier
+
+\subsubsection{Biểu đồ Ma trận Quyền lực/Sự quan tâm (Power/Interest Grid)}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[scale=1.2, transform shape]
+        % Draw axes
+        \draw[->, thick] (0,0) -- (10,0) node[right] {\textbf{Sự quan tâm (Interest)}};
+        \draw[->, thick] (0,0) -- (0,10) node[above] {\textbf{Quyền lực (Power)}};
+
+        % Draw quadrant lines
+        \draw[dashed] (5,0) -- (5,10);
+        \draw[dashed] (0,5) -- (10,5);
+
+        % Labels for quadrants
+        \node[align=center, font=\bfseries] at (2.5, 2.5) {MONITOR\\(Giám sát)};
+        \node[align=center, font=\bfseries] at (7.5, 2.5) {KEEP INFORMED\\(Cung cấp thông tin)};
+        \node[align=center, font=\bfseries] at (2.5, 7.5) {KEEP SATISFIED\\(Làm hài lòng)};
+        \node[align=center, font=\bfseries] at (7.5, 7.5) {MANAGE CLOSELY\\(Quản lý chặt chẽ)};
+
+        % Plot stakeholders
+        % Learner: High Power, High Interest
+        \node[circle, fill=blue!30, draw, minimum size=1.5cm, align=center] at (8, 8.5) {Learner};
+
+        % Instructor: High Power, High Interest
+        \node[circle, fill=blue!30, draw, minimum size=1.5cm, align=center] at (8, 6.5) {Instructor};
+
+        % Admin: High Power, Medium Interest -> High Power, Low Interest (Keep Satisfied)
+        \node[circle, fill=green!30, draw, minimum size=1.5cm, align=center] at (2.5, 8.5) {Admin};
+
+        % Architect: High Power, Medium Interest -> Keep Satisfied
+        \node[circle, fill=green!30, draw, minimum size=1.5cm, align=center] at (4, 6.5) {Architect};
+
+        % AI Engineer: Medium Power, Medium Interest -> Middle
+        \node[circle, fill=yellow!30, draw, minimum size=1.5cm, align=center] at (5, 5) {AI Engineer};
+
+    \end{tikzpicture}
+    \caption{Ma trận Quyền lực/Sự quan tâm (Power/Interest Grid)}
+    \label{fig:stakeholder_grid}
+\end{figure}
 
 \noindent\textbf{Ý nghĩa liên kết:}
 
@@ -42,52 +82,52 @@ Các stakeholder trên tương ứng trực tiếp với các ``actors'' đã đ
 \subsubsection{Yêu cầu và Mối quan hệ}
 
 \begin{table}[H]
-\centering
-\footnotesize
-\renewcommand{\tabularxcolumn}[1]{m{#1}}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
-\hline
-\textbf{Stakeholder} & \textbf{Nhu cầu chính} & \textbf{Kỳ vọng} & \textbf{Ràng buộc} & \textbf{Liên kết} & \textbf{Chỉ số thành công} \\
-\hline
-\textbf{Learner} (Người học) & 
-Cá nhân hóa lộ trình học theo năng lực và tiến độ. Phản hồi tức thì sau khi nộp bài. Giao diện thân thiện, dễ sử dụng trên mọi thiết bị. & 
-Tốc độ phản hồi $< 500$ms (AC3 -- Performance). Gợi ý học lại (Remediation) chính xác $\geq 80\%$. & 
-Không có kỹ năng kỹ thuật, cần UI/UX trực quan. & 
-Ánh xạ thành User Stories US0--US3. Hiện thực trong Adaptive Engine Service và Feedback Service. & 
-$\geq 85\%$ người học hoàn thành lộ trình gợi ý. Mức hài lòng $\geq 4.5/5$. \\
-\hline
-\textbf{Instructor} (Giảng viên) & 
-Quản lý và gắn thẻ metadata nội dung học tập. Xem báo cáo tổng hợp và chi tiết học sinh. Hỗ trợ đánh giá và cập nhật lộ trình giảng dạy. & 
-Dashboard phản hồi trong $< 1$ giây. Hệ thống tự động phát hiện học viên yếu để gợi ý can thiệp. & 
-Phải thao tác được trên giao diện quản trị, không can thiệp backend. & 
-Phản ánh trong User Stories US4--US6 và Functional Requirements FR3, FR8. Liên kết với Content Management Service và Dashboard module. & 
-$\geq 90\%$ nội dung học tập có metadata đầy đủ. Thời gian tạo báo cáo lớp học $< 1$ giây. \\
-\hline
-\textbf{Admin} (Quản trị viên) & 
-Quản lý người dùng, vai trò, bảo mật và logs. Quản lý vận hành mô hình AI, deploy blue/green không downtime. & 
-SLA $\geq 99.9\%$ uptime. Mọi thay đổi được ghi lại trong audit logs. & 
-Giới hạn tài nguyên (K8s cluster), yêu cầu chi phí thấp. & 
-Mô hình hóa trong User Stories US7--US8 và Non-functional Requirements AC6--AC7. Tác động đến Deployment Diagram (phần $2.4$), CI/CD và autoscaling. & 
-Không gián đoạn dịch vụ trong $100\%$ các đợt deploy AI mới. Thời gian rollback $< 5$ phút. \\
-\hline
-\textbf{AI Engineer} (Kỹ sư AI) & 
-Dễ dàng tích hợp hoặc thay thế mô hình gợi ý học tập (Adaptive Algorithm). Có môi trường test độc lập cho A/B testing. & 
---- & 
---- & 
-Liên quan tới Architecture Decision -- AdaptivePathGenerator (phần Domain Services). Ảnh hưởng tới AC1 (Extensibility) và AC4 (Testability). & 
-Thêm hoặc thay thế thuật toán mới mà không cần sửa code service khác. \\
-\hline
-\textbf{System Architect} (Kiến trúc sư) & 
-Đảm bảo Clean Architecture, tuân thủ SOLID. Giám sát hệ thống qua Prometheus/Grafana/Jaeger. & 
---- & 
---- & 
-Quyết định đến thiết kế C4 Diagram, Module Diagram, Sequence Diagram (phần $2.x$). Đảm bảo mọi thành phần triển khai độc lập (Microservices). & 
-Code coverage $\geq 80\%$. Mỗi service deploy độc lập không ảnh hưởng hệ thống. \\
-\hline
-\end{tabularx}
-\renewcommand{\arraystretch}{1.0}
-\caption{Yêu cầu và Mối quan hệ}
-\label{tab:stakeholder_requirements}
+    \centering
+    \footnotesize
+    \renewcommand{\tabularxcolumn}[1]{m{#1}}
+    \renewcommand{\arraystretch}{1.4}
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+        \hline
+        \textbf{Stakeholder}                                                                                                                                 & \textbf{Nhu cầu chính} & \textbf{Kỳ vọng} & \textbf{Ràng buộc} & \textbf{Liên kết} & \textbf{Chỉ số thành công} \\
+        \hline
+        \textbf{Learner} (Người học)                                                                                                                         &
+        Cá nhân hóa lộ trình học theo năng lực và tiến độ. Phản hồi tức thì sau khi nộp bài. Giao diện thân thiện, dễ sử dụng trên mọi thiết bị.             &
+        Tốc độ phản hồi $< 500$ms (AC3 -- Performance). Gợi ý học lại (Remediation) chính xác $\geq 80\%$.                                                   &
+        Không có kỹ năng kỹ thuật, cần UI/UX trực quan.                                                                                                      &
+        Ánh xạ thành User Stories US0--US3. Hiện thực trong Adaptive Engine Service và Feedback Service.                                                     &
+        $\geq 85\%$ người học hoàn thành lộ trình gợi ý. Mức hài lòng $\geq 4.5/5$.                                                                                                                                                                                            \\
+        \hline
+        \textbf{Instructor} (Giảng viên)                                                                                                                     &
+        Quản lý và gắn thẻ metadata nội dung học tập. Xem báo cáo tổng hợp và chi tiết học sinh. Hỗ trợ đánh giá và cập nhật lộ trình giảng dạy.             &
+        Dashboard phản hồi trong $< 1$ giây. Hệ thống tự động phát hiện học viên yếu để gợi ý can thiệp.                                                     &
+        Phải thao tác được trên giao diện quản trị, không can thiệp backend.                                                                                 &
+        Phản ánh trong User Stories US4--US6 và Functional Requirements FR3, FR8. Liên kết với Content Management Service và Dashboard module.               &
+        $\geq 90\%$ nội dung học tập có metadata đầy đủ. Thời gian tạo báo cáo lớp học $< 1$ giây.                                                                                                                                                                             \\
+        \hline
+        \textbf{Admin} (Quản trị viên)                                                                                                                       &
+        Quản lý người dùng, vai trò, bảo mật và logs. Quản lý vận hành mô hình AI, deploy blue/green không downtime.                                         &
+        SLA $\geq 99.9\%$ uptime. Mọi thay đổi được ghi lại trong audit logs.                                                                                &
+        Giới hạn tài nguyên (K8s cluster), yêu cầu chi phí thấp.                                                                                             &
+        Mô hình hóa trong User Stories US7--US8 và Non-functional Requirements AC6--AC7. Tác động đến Deployment Diagram (phần $2.4$), CI/CD và autoscaling. &
+        Không gián đoạn dịch vụ trong $100\%$ các đợt deploy AI mới. Thời gian rollback $< 5$ phút.                                                                                                                                                                            \\
+        \hline
+        \textbf{AI Engineer} (Kỹ sư AI)                                                                                                                      &
+        Dễ dàng tích hợp hoặc thay thế mô hình gợi ý học tập (Adaptive Algorithm). Có môi trường test độc lập cho A/B testing.                               &
+        ---                                                                                                                                                  &
+        ---                                                                                                                                                  &
+        Liên quan tới Architecture Decision -- AdaptivePathGenerator (phần Domain Services). Ảnh hưởng tới AC1 (Extensibility) và AC4 (Testability).         &
+        Thêm hoặc thay thế thuật toán mới mà không cần sửa code service khác.                                                                                                                                                                                                  \\
+        \hline
+        \textbf{System Architect} (Kiến trúc sư)                                                                                                             &
+        Đảm bảo Clean Architecture, tuân thủ SOLID. Giám sát hệ thống qua Prometheus/Grafana/Jaeger.                                                         &
+        ---                                                                                                                                                  &
+        ---                                                                                                                                                  &
+        Quyết định đến thiết kế C4 Diagram, Module Diagram, Sequence Diagram (phần $2.x$). Đảm bảo mọi thành phần triển khai độc lập (Microservices).        &
+        Code coverage $\geq 80\%$. Mỗi service deploy độc lập không ảnh hưởng hệ thống.                                                                                                                                                                                        \\
+        \hline
+    \end{tabularx}
+    \renewcommand{\arraystretch}{1.0}
+    \caption{Yêu cầu và Mối quan hệ}
+    \label{tab:stakeholder_requirements}
 \end{table}
 \FloatBarrier

@@ -1,0 +1,37 @@
+@startuml erd_learner_model_service
+!theme plain
+hide empty methods
+
+package "Learner Model Service (MVP + Target)" {
+    entity "skill_mastery" {
+        *learner_id : UUID <<PK>>
+        *skill_tag : VARCHAR(100) <<PK>>
+        --
+        mastery_level : DOUBLE
+        confidence_interval : DOUBLE
+        last_updated : TIMESTAMP
+    }
+
+    entity "learning_history" {
+        *id : UUID <<PK>>
+        --
+        learner_id : UUID <<FK>>
+        activity_type : VARCHAR(50)
+        timestamp : TIMESTAMP
+        details : JSONB
+    }
+
+    entity "submissions" {
+        *id : UUID <<PK>>
+        --
+        learner_id : UUID <<FK>>
+        question_id : UUID <<FK>>
+        selected_option : VARCHAR(255)
+        is_correct : BOOLEAN
+        score : DOUBLE
+        submitted_at : TIMESTAMP
+    }
+    
+    note bottom of submissions: Managed by Scoring Service,\nreplicated/referenced here for analytics
+}
+@enduml

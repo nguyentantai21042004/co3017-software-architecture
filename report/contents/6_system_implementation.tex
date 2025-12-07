@@ -8,21 +8,21 @@
 
 \begin{itemize}[leftmargin=0.7cm]
     \item \textbf{Content Service (Java 17 + Spring Boot 3.x)}:
-    \begin{itemize}
-        \item \textbf{Lý do chọn}: Hệ sinh thái Spring mạnh mẽ cho các nghiệp vụ CRUD phức tạp, hỗ trợ tốt JPA/Hibernate cho quản lý dữ liệu quan hệ.
-        \item \textbf{Thư viện chính}: Spring Web (REST), Spring Data JPA (PostgreSQL), Lombok (Boilerplate reduction).
-    \end{itemize}
-    
+          \begin{itemize}
+              \item \textbf{Lý do chọn}: Hệ sinh thái Spring mạnh mẽ cho các nghiệp vụ CRUD phức tạp, hỗ trợ tốt JPA/Hibernate cho quản lý dữ liệu quan hệ.
+              \item \textbf{Thư viện chính}: Spring Web (REST), Spring Data JPA (PostgreSQL), Lombok (Boilerplate reduction).
+          \end{itemize}
+
     \item \textbf{Scoring, Learner Model, Adaptive Engine (Go 1.23 + Gin)}:
-    \begin{itemize}
-        \item \textbf{Lý do chọn}: Go có hiệu năng cao (high throughput), khởi động nhanh và tiêu tốn ít tài nguyên, lý tưởng cho các service xử lý sự kiện và tính toán thời gian thực.
-        \item \textbf{Thư viện chính}: Gin (Web Framework), GORM (ORM), amqp091-go (RabbitMQ client).
-    \end{itemize}
-    
+          \begin{itemize}
+              \item \textbf{Lý do chọn}: Go có hiệu năng cao (high throughput), khởi động nhanh và tiêu tốn ít tài nguyên, lý tưởng cho các service xử lý sự kiện và tính toán thời gian thực.
+              \item \textbf{Thư viện chính}: Gin (Web Framework), GORM (ORM), amqp091-go (RabbitMQ client).
+          \end{itemize}
+
     \item \textbf{Frontend (Next.js 15 + React)}:
-    \begin{itemize}
-        \item \textbf{Lý do chọn}: Server-Side Rendering (SSR) giúp tối ưu SEO và trải nghiệm tải trang ban đầu.
-    \end{itemize}
+          \begin{itemize}
+              \item \textbf{Lý do chọn}: Server-Side Rendering (SSR) giúp tối ưu SEO và trải nghiệm tải trang ban đầu.
+          \end{itemize}
 \end{itemize}
 
 \subsection{Chi tiết Triển khai Microservices}
@@ -116,10 +116,10 @@ Hiện tại sử dụng công thức trung bình cộng có trọng số (Weigh
     \item Client gọi \texttt{POST /api/adaptive/next-lesson}.
     \item Engine gọi Learner Model Service: \texttt{GET /internal/mastery?user\_id=...}
     \item \textbf{Quyết định Phân nhánh}:
-    \begin{itemize}
-        \item Nếu \texttt{mastery\_score < 50}: Người học đang gặp khó khăn. $\rightarrow$ Yêu cầu Content Service lấy câu hỏi \textbf{REMEDIAL} (Bổ trợ, độ khó thấp).
-        \item Nếu \texttt{mastery\_score >= 50}: Người học đã nắm vững. $\rightarrow$ Yêu cầu câu hỏi \textbf{STANDARD} (Tiêu chuẩn, độ khó tăng dần).
-    \end{itemize}
+          \begin{itemize}
+              \item Nếu \texttt{mastery\_score < 50}: Người học đang gặp khó khăn. $\rightarrow$ Yêu cầu Content Service lấy câu hỏi \textbf{REMEDIAL} (Bổ trợ, độ khó thấp).
+              \item Nếu \texttt{mastery\_score >= 50}: Người học đã nắm vững. $\rightarrow$ Yêu cầu câu hỏi \textbf{STANDARD} (Tiêu chuẩn, độ khó tăng dần).
+          \end{itemize}
     \item Trả về câu hỏi cho Client.
 \end{enumerate}
 

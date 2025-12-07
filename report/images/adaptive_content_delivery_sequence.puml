@@ -1,0 +1,40 @@
+@startuml adaptive_content_delivery_sequence
+!theme plain
+autonumber
+
+actor "Learner" as Learner
+participant "API Gateway" as Gateway
+participant "Adaptive Engine\n(Go)" as Adaptive
+participant "Learner Model Service\n(Go)" as LearnerModel
+participant "Content Service\n(Java)" as Content
+database "Redis Cache" as Cache
+
+Learner -> Gateway: GET /learning/next-content
+Gateway -> Adaptive: Forward Request
+activate Adaptive
+
+Adaptive -> LearnerModel: GetSkillMastery(userId)
+activate LearnerModel
+LearnerModel --> Adaptive: MasteryScore (e.g., 0.7)
+deactivate LearnerModel
+
+Adaptive -> Adaptive: Calculate Next Difficulty
+note right: Algorithm: If mastery > 0.8 -> Hard\nIf mastery < 0.4 -> Easy
+
+Adaptive -> Content: GetQuestion(difficulty, tags)
+activate Content
+Content -> Cache: Check Cache
+alt Cache Hit
+    Cache --> Content: Question Data
+else Cache Miss
+    Content -> Content: Query DB
+    Content --> Cache: Update Cache
+end
+Content --> Adaptive: Question Data
+deactivate Content
+
+Adaptive --> Gateway: Recommended Content
+deactivate Adaptive
+Gateway --> Learner: Display Question
+
+@enduml
