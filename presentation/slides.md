@@ -390,6 +390,36 @@ footer: "CO3017 - Software Architecture - HK251"
 
 ---
 
+## Giao Diện - Trang Chủ (Homepage)
+
+![bg right:65% fit](images/homepage.png)
+
+- Tổng quan hệ thống
+- Điều hướng dễ dàng
+- Thiết kế hiện đại
+
+---
+
+## Giao Diện - Dashboard
+
+![bg right:65% fit](images/dashboard.png)
+
+- Thống kê tiến độ học tập
+- Biểu đồ Mastery cá nhân
+- Theo dõi hoạt động gần đây
+
+---
+
+## Giao Diện - Bài Học (Learning Page)
+
+![bg right:65% fit](images/learnpage.png)
+
+- Tương tác làm bài trực quan
+- Feedback ngay lập tức
+- Hỗ trợ đa dạng loại câu hỏi
+
+---
+
 ## Cấu Trúc Code - Content Service (Java)
 
 ```
