@@ -463,3 +463,75 @@
 **Date:** 2025-12-01  
 **Phase:** Phase 1 (Analysis and Planning) Complete  
 **Next:** Phase 2 (Content Gap Filling) and Phase 3 (Implementation Verification)
+
+---
+
+## Rubric Traceability (Added 2025-12-07)
+
+**Purpose:** Map course rubric criteria to report sections for grading verification.
+
+### Task 1: Software Architecture Design (55%)
+
+| Criterion                         | Weight  | Report Section         | Status      |
+| --------------------------------- | ------- | ---------------------- | ----------- |
+| 1.1 ITS Context Description       | 5%      | Chapter 1, Section 2.1 | ✅ Complete |
+| 1.2 Architecture Style Comparison | 3%      | Section 3.2            | ✅ Complete |
+| 1.3 Overall Architecture Design   | 20%     | Chapter 3, 4           | ✅ Complete |
+| 1.4 UML Class Diagram             | 7%      | Section 4.1            | ✅ Complete |
+| 1.5 SOLID Principles              | 15%     | Chapter 5              | ✅ Complete |
+| 1.6 Future Extensibility          | 5%      | Section 3.2, Chapter 7 | ✅ Complete |
+| **Total**                         | **55%** |                        | **55%**     |
+
+### Task 2: Code Implementation (30% + 10% Bonus)
+
+| Criterion                | Weight  | Evidence                       | Status               |
+| ------------------------ | ------- | ------------------------------ | -------------------- |
+| 2.1 Core Functionalities | 15%     | 4 microservices in sources/\*/ | ✅ Complete          |
+| 2.1b Bonus >1 module     | +10%    | 4 microservices                | ✅ Bonus Achieved    |
+| 2.2 SOLID in Code        | 15%     | Chapter 5 code examples        | ✅ Verified          |
+| **Total**                | **30%** |                                | **40%** (with bonus) |
+
+### Task 3: Documentation (5%)
+
+| Criterion             | Weight | Report Section  | Status       |
+| --------------------- | ------ | --------------- | ------------ |
+| 3.1 Reflection Report | 3%     | Chapter 7       | ✅ Complete  |
+| 3.2 Division of Work  | 2%     | Appendix/README | ⚠️ To Verify |
+| **Total**             | **5%** |                 | **5%**       |
+
+### Expected Score Summary
+
+| Task                        | Max Score | Expected | Notes                    |
+| --------------------------- | --------- | -------- | ------------------------ |
+| Task 1: Architecture Design | 55%       | 55%      | All criteria addressed   |
+| Task 2: Code Implementation | 30%       | 40%      | With +10% bonus          |
+| Task 3: Documentation       | 5%        | 5%       | Complete                 |
+| **Content Total**           | **90%**   | **100%** | Exceeds max due to bonus |
+
+**Note:** Presentation (10%) is evaluated separately.
+
+**Detailed Traceability:** See `report/issues/rubric-traceability.md` for full mapping with code locations and evidence.
+
+---
+
+## Sync Status (Updated 2025-12-07)
+
+### MVP vs Target Architecture Labels
+
+| Section                    | Labels Added                                | Status      |
+| -------------------------- | ------------------------------------------- | ----------- |
+| ERD Diagrams (4.1)         | [MVP], [Target], [MVP + Target]             | ✅ Complete |
+| Sequence Diagrams (4.4)    | [MVP Implementation], [Target Architecture] | ✅ Complete |
+| Component Table (4.2)      | Status column added                         | ✅ Complete |
+| ADR Table (3.3)            | Trạng thái column added                     | ✅ Complete |
+| Implementation Section (6) | Verification statistics added               | ✅ Complete |
+
+### Verification Statistics
+
+| Category          | MVP    | Target | Match Rate |
+| ----------------- | ------ | ------ | ---------- |
+| Database Tables   | 3      | 11     | 21%        |
+| Sequence Diagrams | 2      | 3      | 40%        |
+| ADRs              | 5      | 5      | 50%        |
+| SOLID Examples    | 13     | 2      | 87%        |
+| **Overall**       | **23** | **21** | **52%**    |
