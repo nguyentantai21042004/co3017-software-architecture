@@ -12,87 +12,115 @@ Phần này đặc biệt quan trọng vì nó hiện thực hóa các quyết �
 \vspace{1em}
 
 \begin{figure}[H]
-  \centering
-  \fbox{\includegraphics[width=0.93\textwidth]{images/service_architecture.png}}
-  \caption{Sơ đồ kiến trúc dịch vụ của hệ thống ITS}
-  \label{fig:service-architecture}
+    \centering
+    \fbox{\includegraphics[width=0.93\textwidth]{images/service_architecture.png}}
+    \caption{Sơ đồ kiến trúc dịch vụ của hệ thống ITS}
+    \label{fig:service-architecture}
 \end{figure}
 
 \noindent\textbf{Chi tiết các Component và Interfaces:}
 
 \renewcommand{\arraystretch}{1.3}
 \begin{longtable}{|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\noindent\justifying\arraybackslash}p{4cm}|>{\noindent\justifying\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{2cm}|}
-  \caption{Chi tiết Components, Interfaces và Dependencies}
-  \label{tab:component_details}
-  \\
-  \hline
-  \textbf{Component}       & \textbf{Ngôn ngữ} & \textbf{REST Endpoints}                                                                                       & \textbf{Dependencies}                  & \textbf{Data Store} \\
-  \hline
-  \endfirsthead
-  \caption[]{Chi tiết Components, Interfaces và Dependencies (tiếp theo)}
-  \\
-  \hline
-  \textbf{Component}       & \textbf{Ngôn ngữ} & \textbf{REST Endpoints}                                                                                       & \textbf{Dependencies}                  & \textbf{Data Store} \\
-  \hline
-  \endhead
-  \hline
-  \endfoot
-  \hline
-  \endlastfoot
-  API Gateway              & Go (Gin)          & \texttt{/api/*} (proxy)\newline \texttt{/health}                                                              & Auth Service (JWT validation)          & Redis (cache)       \\
-  \hline
-  Content Service          & Java (Spring)     & \texttt{GET /api/content/\{id\}}\newline \texttt{GET /api/questions}\newline \texttt{POST /api/content}       & PostgreSQL                             & content\_db         \\
-  \hline
-  Scoring Service          & Go (Gin)          & \texttt{POST /api/scoring/submit}\newline \texttt{GET /api/scoring/\{id\}}                                    & Content Service, RabbitMQ (publish)    & scoring\_db         \\
-  \hline
-  Learner Model Service    & Go (Gin)          & \texttt{GET /api/learner/\{id\}/mastery}\newline \texttt{PUT /api/learner/\{id\}/skills}                      & RabbitMQ (consume), PostgreSQL         & learner\_db         \\
-  \hline
-  Adaptive Engine          & Go (Gin)          & \texttt{GET /api/adaptive/next}\newline \texttt{GET /api/adaptive/path/\{id\}}                                & Learner Model Service, Content Service & Redis (cache)       \\
-  \hline
-  Auth Service (Target)    & Java (Spring)     & \texttt{POST /api/auth/login}\newline \texttt{POST /api/auth/refresh}\newline \texttt{GET /api/auth/validate} & PostgreSQL, Redis (sessions)           & auth\_db            \\
-  \hline
-  User Management (Target) & Java (Spring)     & \texttt{GET /api/users/\{id\}}\newline \texttt{POST /api/users}\newline \texttt{PUT /api/users/\{id\}/roles}  & Auth Service, PostgreSQL               & user\_db            \\
-  \hline
+    \caption{Chi tiết Components, Interfaces và Dependencies}
+    \label{tab:component_details}
+    \\
+    \hline
+    \textbf{Component}       & \textbf{Ngôn ngữ} & \textbf{REST Endpoints}                                                                                       & \textbf{Dependencies}                  & \textbf{Data Store} \\
+    \hline
+    \endfirsthead
+    \caption[]{Chi tiết Components, Interfaces và Dependencies (tiếp theo)}
+    \\
+    \hline
+    \textbf{Component}       & \textbf{Ngôn ngữ} & \textbf{REST Endpoints}                                                                                       & \textbf{Dependencies}                  & \textbf{Data Store} \\
+    \hline
+    \endhead
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+    API Gateway              & Go (Gin)          & \texttt{/api/*} (proxy)\newline \texttt{/health}                                                              & Auth Service (JWT validation)          & Redis (cache)       \\
+    \hline
+    Content Service          & Java (Spring)     & \texttt{GET /api/content/\{id\}}\newline \texttt{GET /api/questions}\newline \texttt{POST /api/content}       & PostgreSQL                             & content\_db         \\
+    \hline
+    Scoring Service          & Go (Gin)          & \texttt{POST /api/scoring/submit}\newline \texttt{GET /api/scoring/\{id\}}                                    & Content Service, RabbitMQ (publish)    & scoring\_db         \\
+    \hline
+    Learner Model Service    & Go (Gin)          & \texttt{GET /api/learner/\{id\}/mastery}\newline \texttt{PUT /api/learner/\{id\}/skills}                      & RabbitMQ (consume), PostgreSQL         & learner\_db         \\
+    \hline
+    Adaptive Engine          & Go (Gin)          & \texttt{GET /api/adaptive/next}\newline \texttt{GET /api/adaptive/path/\{id\}}                                & Learner Model Service, Content Service & Redis (cache)       \\
+    \hline
+    Auth Service (Target)    & Java (Spring)     & \texttt{POST /api/auth/login}\newline \texttt{POST /api/auth/refresh}\newline \texttt{GET /api/auth/validate} & PostgreSQL, Redis (sessions)           & auth\_db            \\
+    \hline
+    User Management (Target) & Java (Spring)     & \texttt{GET /api/users/\{id\}}\newline \texttt{POST /api/users}\newline \texttt{PUT /api/users/\{id\}/roles}  & Auth Service, PostgreSQL               & user\_db            \\
+    \hline
 \end{longtable}
 \renewcommand{\arraystretch}{1.0}
 
+\noindent\textbf{Trạng thái Triển khai Components:}
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{4cm}|>{\centering\arraybackslash}p{2.5cm}|>{\noindent\justifying\arraybackslash}X|}
+        \hline
+        \textbf{Component}    & \textbf{Trạng thái} & \textbf{Ghi chú}          \\
+        \hline
+        Content Service       & MVP                 & Đã triển khai đầy đủ      \\
+        \hline
+        Scoring Service       & MVP                 & Đã triển khai đầy đủ      \\
+        \hline
+        Learner Model Service & MVP                 & Đã triển khai đầy đủ      \\
+        \hline
+        Adaptive Engine       & MVP                 & Đã triển khai đầy đủ      \\
+        \hline
+        API Gateway           & Target              & Chưa triển khai trong MVP \\
+        \hline
+        Auth Service          & Target              & Chưa triển khai trong MVP \\
+        \hline
+        User Management       & Target              & Chưa triển khai trong MVP \\
+        \hline
+    \end{tabularx}
+    \caption{Trạng thái triển khai các Components}
+    \label{tab:component_status}
+\end{table}
+
 \noindent\textbf{Message Queue Channels (RabbitMQ):}
 \begin{itemize}[leftmargin=0.7cm]
-  \item \texttt{scoring.completed}: Scoring Service $\rightarrow$ Learner Model Service (khi chấm điểm xong)
-  \item \texttt{learner.updated}: Learner Model Service $\rightarrow$ Adaptive Engine (khi cập nhật mastery)
-  \item \texttt{content.created}: Content Service $\rightarrow$ Search Index (khi tạo nội dung mới)
+    \item \texttt{scoring.completed}: Scoring Service $\rightarrow$ Learner Model Service (khi chấm điểm xong)
+    \item \texttt{learner.updated}: Learner Model Service $\rightarrow$ Adaptive Engine (khi cập nhật mastery)
+    \item \texttt{content.created}: Content Service $\rightarrow$ Search Index (khi tạo nội dung mới)
 \end{itemize}
 
 \FloatBarrier
 
 \subsubsection{Các Mẫu Tích hợp}
 
-\indentpar \indentpar Sau khi hệ thống được phân tách thành nhiều module và microservice độc lập, cần mô tả rõ cách các thành phần này giao tiếp với nhau. Trong giai đoạn MVP, chúng tôi ưu tiên sự đơn giản và tốc độ phát triển, nhưng vẫn giữ nguyên tắc phân tách rõ ràng.
+\indentpar \indentpar Sau khi hệ thống được phân tách thành nhiều module và microservice độc lập, cần mô tả rõ cách các thành phần này giao tiếp với nhau. Trong giai đoạn MVP, nhóm ưu tiên sự đơn giản và tốc độ phát triển, nhưng vẫn giữ nguyên tắc phân tách rõ ràng.
 
 \noindent\textbf{a. Giao tiếp Đồng bộ (Synchronous Communication)}
 
 Sử dụng cho các tương tác yêu cầu-phản hồi (request-response) \textbf{ngay lập tức}.
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.6\textwidth]{images/synchronous_communication.png}
-  \caption{Giao tiếp Đồng bộ}
-  \label{fig:synchronous-communication}
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/synchronous_communication.png}
+    \caption{Giao tiếp Đồng bộ}
+    \label{fig:synchronous-communication}
 \end{figure}
 
 \begin{itemize}[leftmargin=1.5em]
-  \item \textbf{Giao thức}: REST qua HTTP. Tất cả các giao tiếp giữa Client-Service và Service-Service (ví dụ: Adaptive Engine gọi Content Service) đều sử dụng chuẩn RESTful API với định dạng JSON.
-  \item \textbf{Lý do chọn REST cho MVP}: Xem phần Phân tích Đánh đổi bên dưới.
+    \item \textbf{Giao thức}: REST qua HTTP. Tất cả các giao tiếp giữa Client-Service và Service-Service (ví dụ: Adaptive Engine gọi Content Service) đều sử dụng chuẩn RESTful API với định dạng JSON.
+    \item \textbf{Lý do chọn REST cho MVP}: Xem phần Phân tích Đánh đổi bên dưới.
 \end{itemize}
 
 \noindent\textbf{b. Phân tích Đánh đổi: REST vs gRPC}
 
-\indentpar \indentpar Mặc dù gRPC mang lại hiệu năng cao hơn và type-safety tốt hơn (như đã đề cập trong thiết kế ban đầu), chúng tôi quyết định sử dụng \textbf{REST/HTTP} cho phiên bản hiện tại vì các lý do sau:
+\indentpar \indentpar Mặc dù gRPC mang lại hiệu năng cao hơn và type-safety tốt hơn (như đã đề cập trong thiết kế ban đầu), nhóm quyết định sử dụng \textbf{REST/HTTP} cho phiên bản hiện tại vì các lý do sau:
 
 \begin{itemize}[leftmargin=1.5em]
-  \item \textbf{Tốc độ phát triển}: REST là tiêu chuẩn quen thuộc, giúp đội ngũ phát triển nhanh chóng tích hợp và gỡ lỗi (debug) trực tiếp bằng các công cụ như Postman hay cURL mà không cần tooling phức tạp.
-  \item \textbf{Giảm độ phức tạp}: Loại bỏ nhu cầu quản lý file `.proto` và quy trình code generation trong giai đoạn đầu, giúp tập trung vào logic nghiệp vụ cốt lõi.
-  \item \textbf{Tính tương thích}: JSON/HTTP được hỗ trợ tự nhiên bởi cả Spring Boot (Java), Gin (Go) và Next.js (Frontend), giảm thiểu rủi ro tích hợp.
+    \item \textbf{Tốc độ phát triển}: REST là tiêu chuẩn quen thuộc, giúp đội ngũ phát triển nhanh chóng tích hợp và gỡ lỗi (debug) trực tiếp bằng các công cụ như Postman hay cURL mà không cần tooling phức tạp.
+    \item \textbf{Giảm độ phức tạp}: Loại bỏ nhu cầu quản lý file `.proto` và quy trình code generation trong giai đoạn đầu, giúp tập trung vào logic nghiệp vụ cốt lõi.
+    \item \textbf{Tính tương thích}: JSON/HTTP được hỗ trợ tự nhiên bởi cả Spring Boot (Java), Gin (Go) và Next.js (Frontend), giảm thiểu rủi ro tích hợp.
 \end{itemize}
 
 Tuy nhiên, kiến trúc vẫn được thiết kế để có thể chuyển đổi sang gRPC trong tương lai (Phase 2) khi yêu cầu về hiệu năng và latency trở nên khắt khe hơn, nhờ vào việc đóng gói logic giao tiếp trong các lớp Adapter/Client riêng biệt.
@@ -102,16 +130,16 @@ Tuy nhiên, kiến trúc vẫn được thiết kế để có thể chuyển đ
 Sử dụng để tách rời (decouple) các service, xử lý các tác vụ nền (background tasks) và đảm bảo hiệu suất (AC3). Đây là nền tảng của kiến trúc Event-Driven.
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{images/asynchronous_communication.png}
-  \caption{Giao tiếp Bất đồng bộ}
-  \label{fig:asynchronous-communication}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/asynchronous_communication.png}
+    \caption{Giao tiếp Bất đồng bộ}
+    \label{fig:asynchronous-communication}
 \end{figure}
 
 \begin{itemize}[leftmargin=1.5em]
-  \item Message Broker: RabbitMQ (sử dụng khả năng định tuyến AMQP linh hoạt cho các Domain Events)
-  \item Định dạng: JSON
-  \item Mô hình (Patterns): Publish/Subscribe sử dụng Domain Events. Khi một nghiệp vụ quan trọng xảy ra (ví dụ: nộp bài), service gốc sẽ phát ra một sự kiện miền. Các service khác (consumers) lắng nghe sự kiện này mà không cần biết về service gốc, nơi đã publish một sự kiện
+    \item Message Broker: RabbitMQ (sử dụng khả năng định tuyến AMQP linh hoạt cho các Domain Events)
+    \item Định dạng: JSON
+    \item Mô hình (Patterns): Publish/Subscribe sử dụng Domain Events. Khi một nghiệp vụ quan trọng xảy ra (ví dụ: nộp bài), service gốc sẽ phát ra một sự kiện miền. Các service khác (consumers) lắng nghe sự kiện này mà không cần biết về service gốc, nơi đã publish một sự kiện
 \end{itemize}
 
 \subsubsection{Luồng Dữ liệu}
@@ -123,10 +151,10 @@ Sử dụng để tách rời (decouple) các service, xử lý các tác vụ n
 Kịch bản này xảy ra khi người học (Learner) hoàn thành một bài học và yêu cầu nội dung tiếp theo. Luồng này chủ yếu là đồng bộ (synchronous).
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=1.0\textwidth]{images/adaptive_content_delivery_sequence.png}
-  \caption{Luồng dữ liệu cho kịch bản Học tập Thích ứng}
-  \label{fig:adaptive-learning-flow}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/adaptive_content_delivery_sequence.png}
+    \caption{Luồng dữ liệu cho kịch bản Học tập Thích ứng}
+    \label{fig:adaptive-learning-flow}
 \end{figure}
 
 \noindent\textbf{Luồng 2: Chấm điểm Bất đồng bộ (UC-10: Asynchronous Scoring)}
@@ -134,32 +162,32 @@ Kịch bản này xảy ra khi người học (Learner) hoàn thành một bài 
 Kịch bản này xảy ra khi người học (Learner) nộp một bài tập (ví dụ: quiz). Luồng này là sự kết hợp của đồng bộ (phản hồi tức thì) và bất đồng bộ (cập nhật nền) để đảm bảo AC3: Performance.
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=1.0\textwidth]{images/assessment_submission_and_scoring_sequence.png}
-  \caption{Luồng dữ liệu cho kịch bản Chấm điểm Bất đồng bộ}
-  \label{fig:asynchronous-scoring-flow}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/assessment_submission_and_scoring_sequence.png}
+    \caption{Luồng dữ liệu cho kịch bản Chấm điểm Bất đồng bộ}
+    \label{fig:asynchronous-scoring-flow}
 \end{figure}
 
 \begin{enumerate}[leftmargin=1.5em]
-  \item Learner nhấn ``Nộp bài''
-  \item Client gửi \texttt{POST /api/scoring/submit} (chứa câu trả lời) đến API Gateway
-  \item API Gateway xác thực JWT và chuyển tiếp request đến Scoring \& Feedback Service (Go)
-  \item \textbf{Scoring Service (Luồng đồng bộ)}:
-        \begin{enumerate}
-          \item Chạy thuật toán chấm điểm nhanh (ví dụ: so sánh đáp án quiz)
-          \item Tạo một phản hồi tức thì (ví dụ: ``Bạn đúng 8/10 câu'')
-          \item Trả về phản hồi nhanh cho API Gateway \(\rightarrow\) Client \(\rightarrow\) Learner (Hoàn thành trong <500ms)
-        \end{enumerate}
-  \item \textbf{Scoring Service (Luồng bất đồng bộ)}:
-        \begin{enumerate}
-          \item Phát (Publish) một sự kiện \texttt{SubmissionCompleted} (chứa kết quả chi tiết và user-id) lên RabbitMQ
-        \end{enumerate}
-  \item \textbf{Learner Model Service (Go) (Luồng bất đồng bộ - Consumer)}:
-        \begin{enumerate}
-          \item Nhận được sự kiện \texttt{SubmissionCompleted} từ RabbitMQ
-          \item Phân tích kết quả chi tiết và cập nhật \texttt{SkillMasteryScores} cho người học đó trong cơ sở dữ liệu
-          \item (Tùy chọn) Phát ra sự kiện \texttt{LearnerModelUpdated} để thông báo cho Adaptive Engine
-        \end{enumerate}
+    \item Learner nhấn ``Nộp bài''
+    \item Client gửi \texttt{POST /api/scoring/submit} (chứa câu trả lời) đến API Gateway
+    \item API Gateway xác thực JWT và chuyển tiếp request đến Scoring \& Feedback Service (Go)
+    \item \textbf{Scoring Service (Luồng đồng bộ)}:
+          \begin{enumerate}
+              \item Chạy thuật toán chấm điểm nhanh (ví dụ: so sánh đáp án quiz)
+              \item Tạo một phản hồi tức thì (ví dụ: ``Bạn đúng 8/10 câu'')
+              \item Trả về phản hồi nhanh cho API Gateway \(\rightarrow\) Client \(\rightarrow\) Learner (Hoàn thành trong <500ms)
+          \end{enumerate}
+    \item \textbf{Scoring Service (Luồng bất đồng bộ)}:
+          \begin{enumerate}
+              \item Phát (Publish) một sự kiện \texttt{SubmissionCompleted} (chứa kết quả chi tiết và user-id) lên RabbitMQ
+          \end{enumerate}
+    \item \textbf{Learner Model Service (Go) (Luồng bất đồng bộ - Consumer)}:
+          \begin{enumerate}
+              \item Nhận được sự kiện \texttt{SubmissionCompleted} từ RabbitMQ
+              \item Phân tích kết quả chi tiết và cập nhật \texttt{SkillMasteryScores} cho người học đó trong cơ sở dữ liệu
+              \item (Tùy chọn) Phát ra sự kiện \texttt{LearnerModelUpdated} để thông báo cho Adaptive Engine
+          \end{enumerate}
 \end{enumerate}
 
 \subsubsection{Luồng Dữ liệu AI Pipeline}
@@ -167,70 +195,70 @@ Kịch bản này xảy ra khi người học (Learner) nộp một bài tập (
 \indentpar \indentpar Hệ thống ITS sử dụng một pipeline AI/ML để cung cấp trải nghiệm học tập thích ứng. Pipeline này bao gồm ba giai đoạn chính: Scoring (chấm điểm), Learner Modeling (mô hình hóa người học), và Adaptive Content Selection (chọn nội dung thích ứng).
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=1.0\textwidth]{images/ai_pipeline_dataflow.png}
-  \caption{Luồng Dữ liệu AI Pipeline}
-  \label{fig:ai-pipeline-dataflow}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/ai_pipeline_dataflow.png}
+    \caption{Luồng Dữ liệu AI Pipeline}
+    \label{fig:ai-pipeline-dataflow}
 \end{figure}
 
 \noindent\textbf{Các Giai đoạn của AI Pipeline:}
 
 \begin{enumerate}[leftmargin=1.5em]
-  \item \textbf{Input Layer (Lớp Đầu vào):}
-        \begin{itemize}[nosep,leftmargin=0.9cm]
-          \item Student Submission: Câu trả lời của học sinh, thời gian làm bài
-          \item Question Metadata: Skill tags, độ khó của câu hỏi
-          \item Current Mastery: Điểm mastery hiện tại của học sinh
-        \end{itemize}
+    \item \textbf{Input Layer (Lớp Đầu vào):}
+          \begin{itemize}[nosep,leftmargin=0.9cm]
+              \item Student Submission: Câu trả lời của học sinh, thời gian làm bài
+              \item Question Metadata: Skill tags, độ khó của câu hỏi
+              \item Current Mastery: Điểm mastery hiện tại của học sinh
+          \end{itemize}
 
-  \item \textbf{Scoring Pipeline (Chấm điểm):}
-        \begin{itemize}[nosep,leftmargin=0.9cm]
-          \item Answer Validation: Kiểm tra đáp án đúng/sai
-          \item Score Calculation: Tính điểm có trọng số
-          \item Performance Metrics: Tính toán accuracy, speed
-        \end{itemize}
+    \item \textbf{Scoring Pipeline (Chấm điểm):}
+          \begin{itemize}[nosep,leftmargin=0.9cm]
+              \item Answer Validation: Kiểm tra đáp án đúng/sai
+              \item Score Calculation: Tính điểm có trọng số
+              \item Performance Metrics: Tính toán accuracy, speed
+          \end{itemize}
 
-  \item \textbf{Learner Model Pipeline (Mô hình hóa Người học):}
-        \begin{itemize}[nosep,leftmargin=0.9cm]
-          \item Mastery Update: Cập nhật mastery sử dụng thuật toán BKT/IRT
-          \item Skill Decay: Áp dụng decay theo thời gian
-          \item Learning Velocity: Tính tốc độ học tập
-        \end{itemize}
+    \item \textbf{Learner Model Pipeline (Mô hình hóa Người học):}
+          \begin{itemize}[nosep,leftmargin=0.9cm]
+              \item Mastery Update: Cập nhật mastery sử dụng thuật toán BKT/IRT
+              \item Skill Decay: Áp dụng decay theo thời gian
+              \item Learning Velocity: Tính tốc độ học tập
+          \end{itemize}
 
-  \item \textbf{Adaptive Engine Pipeline (Chọn Nội dung Thích ứng):}
-        \begin{itemize}[nosep,leftmargin=0.9cm]
-          \item Content Filtering: Lọc nội dung theo skill match
-          \item Difficulty Selection: Chọn độ khó phù hợp (Zone of Proximal Development)
-          \item Path Optimization: Tối ưu hóa lộ trình học tập
-        \end{itemize}
+    \item \textbf{Adaptive Engine Pipeline (Chọn Nội dung Thích ứng):}
+          \begin{itemize}[nosep,leftmargin=0.9cm]
+              \item Content Filtering: Lọc nội dung theo skill match
+              \item Difficulty Selection: Chọn độ khó phù hợp (Zone of Proximal Development)
+              \item Path Optimization: Tối ưu hóa lộ trình học tập
+          \end{itemize}
 
-  \item \textbf{Output Layer (Lớp Đầu ra):}
-        \begin{itemize}[nosep,leftmargin=0.9cm]
-          \item Next Content: Nội dung được đề xuất tiếp theo
-          \item Learning Path: Lộ trình học tập tối ưu
-          \item Progress Report: Báo cáo tiến độ và mastery
-        \end{itemize}
+    \item \textbf{Output Layer (Lớp Đầu ra):}
+          \begin{itemize}[nosep,leftmargin=0.9cm]
+              \item Next Content: Nội dung được đề xuất tiếp theo
+              \item Learning Path: Lộ trình học tập tối ưu
+              \item Progress Report: Báo cáo tiến độ và mastery
+          \end{itemize}
 \end{enumerate}
 
 \noindent\textbf{Thuật toán AI/ML được sử dụng:}
 
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
-  \centering
-  \small
-  \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3cm}|>{\noindent\justifying\arraybackslash}X|>{\noindent\justifying\arraybackslash}p{4cm}|}
-    \hline
-    \textbf{Thuật toán}                & \textbf{Mô tả}                                                            & \textbf{Ứng dụng}                         \\
-    \hline
-    Bayesian Knowledge Tracing (BKT)   & Mô hình xác suất ước tính kiến thức của học sinh dựa trên lịch sử trả lời & Cập nhật mastery score sau mỗi submission \\
-    \hline
-    Item Response Theory (IRT)         & Mô hình thống kê đánh giá khả năng học sinh và độ khó câu hỏi             & Chọn câu hỏi phù hợp với trình độ         \\
-    \hline
-    Zone of Proximal Development (ZPD) & Lý thuyết giáo dục xác định vùng học tập tối ưu                           & Chọn nội dung không quá dễ, không quá khó \\
-    \hline
-  \end{tabularx}
-  \caption{Thuật toán AI/ML trong ITS}
-  \label{tab:ai-algorithms}
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{3cm}|>{\noindent\justifying\arraybackslash}X|>{\noindent\justifying\arraybackslash}p{4cm}|}
+        \hline
+        \textbf{Thuật toán}                & \textbf{Mô tả}                                                            & \textbf{Ứng dụng}                         \\
+        \hline
+        Bayesian Knowledge Tracing (BKT)   & Mô hình xác suất ước tính kiến thức của học sinh dựa trên lịch sử trả lời & Cập nhật mastery score sau mỗi submission \\
+        \hline
+        Item Response Theory (IRT)         & Mô hình thống kê đánh giá khả năng học sinh và độ khó câu hỏi             & Chọn câu hỏi phù hợp với trình độ         \\
+        \hline
+        Zone of Proximal Development (ZPD) & Lý thuyết giáo dục xác định vùng học tập tối ưu                           & Chọn nội dung không quá dễ, không quá khó \\
+        \hline
+    \end{tabularx}
+    \caption{Thuật toán AI/ML trong ITS}
+    \label{tab:ai-algorithms}
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 

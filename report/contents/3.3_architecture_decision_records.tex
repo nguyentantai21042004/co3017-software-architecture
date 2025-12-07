@@ -17,34 +17,37 @@ Phần này sử dụng mô hình \textbf{Architecture Decision Record (ADR)} đ
 \begin{table}[H]
     \centering
     \small
-    \begin{tabularx}{\textwidth}{|A{1.8cm}|B|A{3cm}|}
+    \begin{tabularx}{\textwidth}{|A{1.5cm}|B|A{2.2cm}|A{2cm}|}
         \hline
-        \textbf{ADR}\rule{0pt}{1.6em} & \textbf{Mục tiêu chính}                                        & \textbf{Liên kết ACs} \\
+        \textbf{ADR}\rule{0pt}{1.6em} & \textbf{Mục tiêu chính}                                        & \textbf{Liên kết ACs} & \textbf{Trạng thái} \\
         \hline
-        ADR-1                         & Xác định chiến lược ngôn ngữ đa nền tảng (Polyglot)            & AC3, AC7              \\
+        ADR-1                         & Xác định chiến lược ngôn ngữ đa nền tảng (Polyglot)            & AC3, AC7              & MVP                 \\
         \hline
-        ADR-2                         & Lựa chọn cơ sở dữ liệu quan hệ chính (PostgreSQL)              & AC6, AC7              \\
+        ADR-2                         & Lựa chọn cơ sở dữ liệu quan hệ chính (PostgreSQL)              & AC6, AC7              & MVP                 \\
         \hline
-        ADR-3                         & Thiết lập mô hình kiến trúc nội bộ (Clean/Hexagonal)           & AC1, AC4              \\
+        ADR-3                         & Thiết lập mô hình kiến trúc nội bộ (Clean/Hexagonal)           & AC1, AC4              & MVP                 \\
         \hline
-        ADR-4                         & Triển khai Repository Pattern để tách tầng dữ liệu             & AC1, AC4              \\
+        ADR-4                         & Triển khai Repository Pattern để tách tầng dữ liệu             & AC1, AC4              & MVP                 \\
         \hline
-        ADR-5                         & Định nghĩa chiến lược kiểm thử (Testing Pyramid)               & AC4, AC7              \\
+        ADR-5                         & Định nghĩa chiến lược kiểm thử (Testing Pyramid)               & AC4, AC7              & Partial             \\
         \hline
-        ADR-6                         & Thiết kế kiến trúc bảo mật tập trung (AuthN/AuthZ)             & AC6                   \\
+        ADR-6                         & Thiết kế kiến trúc bảo mật tập trung (AuthN/AuthZ)             & AC6                   & Target              \\
         \hline
-        ADR-7                         & Chiến lược bảo vệ dữ liệu cá nhân (Data Privacy \& Compliance) & AC6                   \\
+        ADR-7                         & Chiến lược bảo vệ dữ liệu cá nhân (Data Privacy \& Compliance) & AC6                   & Target              \\
         \hline
-        ADR-8                         & Lựa chọn Message Broker cho giao tiếp bất đồng bộ              & AC1, AC2, AC3         \\
+        ADR-8                         & Lựa chọn Message Broker cho giao tiếp bất đồng bộ              & AC1, AC2, AC3         & MVP                 \\
         \hline
-        ADR-9                         & Chiến lược nhất quán dữ liệu phân tán (Saga Pattern)           & AC1, AC6              \\
+        ADR-9                         & Chiến lược nhất quán dữ liệu phân tán (Saga Pattern)           & AC1, AC6              & Target              \\
         \hline
-        ADR-10                        & Chiến lược quan sát hệ thống (Observability Strategy)          & AC9                   \\
+        ADR-10                        & Chiến lược quan sát hệ thống (Observability Strategy)          & AC9                   & Target              \\
         \hline
     \end{tabularx}
     \caption{Tổng quan các Architecture Decision Records}
     \label{tab:adr-overview}
 \end{table}
+
+\noindent\textit{Chú thích trạng thái: \textbf{MVP} = Đã triển khai trong phiên bản hiện tại, \textbf{Partial} = Triển khai một phần, \textbf{Target} = Kế hoạch cho kiến trúc đích.}
+
 \renewcommand{\arraystretch}{1.0}
 
 \subsubsection{ADR-1: Chiến lược lập trình đa ngôn ngữ}
@@ -588,9 +591,9 @@ Phần này sử dụng mô hình \textbf{Architecture Decision Record (ADR)} đ
         \hline
         \textbf{Bối cảnh}                  & \begin{itemize}[leftmargin=0.4cm]
                                                  \item Hệ thống là một hệ thống phân tán, bất đồng bộ và đa ngôn ngữ (\textbf{Polyglot}: Java + Go, ADR-1).
-                                                 \item Để đáp ứng \textbf{AC9: Observability}, việc gỡ lỗi (debug) một request (ví dụ: ``tại sao việc nộp bài của tôi bị chậm?'') là cực kỳ phức tạp, vì nó đi qua API Gateway (Go), `ScoringService` (Go), `RabbitMQ`, và `LearnerModelService` (Go/Java).
+                                                 \item Để đáp ứng \textbf{AC9: Observability}, việc gỡ lỗi (debug) một request (ví dụ: ``tại sao việc nộp bài bị chậm?'') là cực kỳ phức tạp, vì nó đi qua API Gateway (Go), `ScoringService` (Go), `RabbitMQ`, và `LearnerModelService` (Go/Java).
                                                  \item Đã xác định các công cụ (Prometheus, Grafana, Loki), nhưng cần các tiêu chuẩn (standards) để chúng hoạt động hiệu quả.
-                                             \end{itemize}                    \\
+                                             \end{itemize}                            \\
         \hline
         \textbf{Quyết định}                & \begin{enumerate}[leftmargin=0.4cm]
                                                  \item \textbf{Distributed Tracing (Truy vết Phân tán):} Bắt buộc triển khai. Mọi request vào hệ thống (tại API Gateway) phải được gán một \textbf{Trace ID} (hoặc Correlation ID) duy nhất.

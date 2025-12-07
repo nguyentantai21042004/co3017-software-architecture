@@ -1,0 +1,67 @@
+@startuml erd_mvp_overview
+!theme plain
+skinparam linetype ortho
+skinparam backgroundColor #FEFEFE
+
+title MVP Database Schema (3 Tables - Implemented)
+
+entity "questions" as q #90EE90 {
+  * id : BIGSERIAL <<PK>>
+  --
+  content : TEXT
+  options : JSONB
+  correct_answer : TEXT
+  skill_tag : VARCHAR(100)
+  difficulty_level : INTEGER
+  is_remedial : BOOLEAN
+  created_at : TIMESTAMP
+}
+
+entity "submissions" as s #90EE90 {
+  * id : BIGSERIAL <<PK>>
+  --
+  user_id : VARCHAR(50)
+  question_id : BIGINT <<FK>>
+  submitted_answer : VARCHAR(255)
+  score_awarded : INTEGER
+  is_passed : BOOLEAN
+  created_at : TIMESTAMP
+}
+
+entity "skill_mastery" as sm #90EE90 {
+  * user_id : VARCHAR(50) <<PK>>
+  * skill_tag : VARCHAR(100) <<PK>>
+  --
+  current_score : INTEGER
+  last_updated : TIMESTAMP
+}
+
+note right of q
+  **Content Service**
+  Database: content_db
+  Port: 8081
+end note
+
+note right of s
+  **Scoring Service**
+  Database: scoring_db
+  Port: 8082
+end note
+
+note right of sm
+  **Learner Model Service**
+  Database: learner_db
+  Port: 8083
+end note
+
+q ||--o{ s : "question_id"
+sm }o..|| q : "skill_tag (logical)"
+
+legend right
+  |= Color |= Status |
+  | <#90EE90> | MVP (Implemented) |
+  | <#FFFFE0> | Partial |
+  | <#D3D3D3> | Target (Planned) |
+endlegend
+
+@enduml

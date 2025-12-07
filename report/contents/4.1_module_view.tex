@@ -16,7 +16,7 @@ Module View đặc biệt quan trọng vì nó thể hiện cách các quyết �
 
 \indentpar \indentpar Hệ thống ITS được thiết kế theo phong cách \textbf{Hybrid Microservices + Event-Driven Architecture}. Việc phân rã hệ thống \textbf{(System Decomposition)} dựa trên Bounded Contexts của Domain-Driven Design (DDD).
 
-\textbf{Lưu ý về phạm vi MVP:} Trong giai đoạn hiện tại (MVP), chúng tôi tập trung hiện thực các service cốt lõi liên quan trực tiếp đến luồng học tập thích ứng (Content, Scoring, Learner Model, Adaptive Engine). Các service hỗ trợ như \textbf{User Management} và \textbf{Auth Service} được mô tả trong kiến trúc đích (Target Architecture) nhưng chưa được tách thành microservice riêng biệt trong phiên bản code hiện tại; thay vào đó, các chức năng này được giả lập hoặc xử lý đơn giản để ưu tiên kiểm chứng logic nghiệp vụ chính.
+\textbf{Lưu ý về phạm vi MVP:} Trong giai đoạn hiện tại (MVP), nhóm tập trung hiện thực các service cốt lõi liên quan trực tiếp đến luồng học tập thích ứng (Content, Scoring, Learner Model, Adaptive Engine). Các service hỗ trợ như \textbf{User Management} và \textbf{Auth Service} được mô tả trong kiến trúc đích (Target Architecture) nhưng chưa được tách thành microservice riêng biệt trong phiên bản code hiện tại; thay vào đó, các chức năng này được giả lập hoặc xử lý đơn giản để ưu tiên kiểm chứng logic nghiệp vụ chính.
 
 \vspace{1em}
 
@@ -144,32 +144,53 @@ Cách tổ chức này giúp code Go gọn gàng, dễ đọc và tuân thủ ng
 
 \indentpar \indentpar Tuân thủ nguyên tắc \textbf{Database-per-Service} của kiến trúc Microservices, hệ thống không sử dụng một cơ sở dữ liệu khổng lồ dùng chung. Thay vào đó, mỗi service sở hữu một lược đồ dữ liệu (schema) riêng biệt, tối ưu cho nghiệp vụ của nó.
 
-\noindent\textbf{1. User Management Service (PostgreSQL)}
+\noindent\textbf{Chú thích trạng thái ERD:}
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{[MVP]}: Đã triển khai trong phiên bản hiện tại
+    \item \textbf{[Target]}: Kế hoạch cho kiến trúc đích, chưa triển khai
+    \item \textbf{[MVP + Target]}: Một phần đã triển khai, phần còn lại là kế hoạch
+\end{itemize}
+
+\noindent\textbf{Tổng quan MVP Database Schema:}
+\indentpar MVP hiện tại triển khai 3 bảng chính phục vụ luồng học tập thích ứng:
+\begin{itemize}[leftmargin=0.7cm]
+    \item \texttt{questions} (Content Service): Lưu trữ câu hỏi với JSONB options
+    \item \texttt{submissions} (Scoring Service): Ghi nhận bài nộp và điểm số
+    \item \texttt{skill\_mastery} (Learner Model): Theo dõi mức độ thông thạo kỹ năng
+\end{itemize}
+
+\noindent\textbf{1. User Management Service (PostgreSQL) -- [Target Architecture]}
 \indentpar Quản lý người dùng, vai trò (Roles) và quyền hạn (Permissions). Dữ liệu PII (Thông tin cá nhân) được tách riêng vào bảng \texttt{learner\_profiles} và được mã hóa để đảm bảo tuân thủ bảo mật (ADR-7).
+
+\textit{Lưu ý: Service này thuộc kiến trúc đích (Target Architecture), chưa được triển khai trong phiên bản MVP hiện tại. Trong MVP, user ID được xử lý đơn giản hóa để tập trung vào luồng học tập thích ứng.}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{images/erd_user_service.png}
-    \caption{ERD của User Management Service}
+    \caption{ERD của User Management Service [Target Architecture -- Planned]}
     \label{fig:erd-user-service}
 \end{figure}
 
-\noindent\textbf{2. Content Service (PostgreSQL + JSONB)}
+\noindent\textbf{2. Content Service (PostgreSQL + JSONB) -- [MVP + Target]}
 \indentpar Quản lý cấu trúc khóa học phong phú. Sử dụng tính năng \texttt{JSONB} của PostgreSQL cho bảng \texttt{content\_units} và \texttt{questions} để lưu trữ dữ liệu bán cấu trúc (như danh sách đáp án, nội dung bài học đa phương tiện) một cách linh hoạt mà không cần quá nhiều bảng phụ (ADR-2).
+
+\textit{Trạng thái triển khai: MVP hiện tại chỉ triển khai bảng \texttt{questions} với cột JSONB cho options. Các bảng courses, chapters, content\_units, metadata\_tags thuộc kiến trúc đích.}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{images/erd_content_service.png}
-    \caption{ERD của Content Service}
+    \caption{ERD của Content Service [MVP: questions table, Target: full hierarchy]}
     \label{fig:erd-content-service}
 \end{figure}
 
-\noindent\textbf{3. Learner Model Service (PostgreSQL)}
+\noindent\textbf{3. Learner Model Service (PostgreSQL) -- [MVP + Target]}
 \indentpar Tập trung vào dữ liệu phân tích (Analytics). Bảng \texttt{skill\_mastery} lưu trữ điểm số thông thạo hiện tại, trong khi \texttt{learning\_history} là một nhật ký (log) ghi lại toàn bộ quá trình làm bài của người học, phục vụ cho việc tính toán và truy vết sau này.
+
+\textit{Trạng thái triển khai: MVP hiện tại triển khai bảng \texttt{skill\_mastery} với composite primary key (user\_id, skill\_tag). Các bảng learning\_history và diagnostic\_results thuộc kiến trúc đích.}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{images/erd_learner_model_service.png}
-    \caption{ERD của Learner Model Service}
+    \caption{ERD của Learner Model Service [MVP: skill\_mastery table, Target: full history]}
     \label{fig:erd-learner-model-service}
 \end{figure}

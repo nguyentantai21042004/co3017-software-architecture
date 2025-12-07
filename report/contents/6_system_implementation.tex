@@ -1,6 +1,6 @@
 \section{Hiện thực Hệ thống}
 
-\indentpar \indentpar Chương này trình bày chi tiết quá trình hiện thực hóa hệ thống ITS (Intelligent Tutoring System). Thay vì chỉ liệt kê công nghệ, chúng tôi sẽ đi sâu vào cách thức triển khai các pattern kiến trúc (Clean Architecture, Event-Driven), cấu trúc dữ liệu, và logic nghiệp vụ cốt lõi trong từng microservice.
+\indentpar \indentpar Chương này trình bày chi tiết quá trình hiện thực hóa hệ thống ITS (Intelligent Tutoring System). Thay vì chỉ liệt kê công nghệ, báo cáo sẽ đi sâu vào cách thức triển khai các pattern kiến trúc (Clean Architecture, Event-Driven), cấu trúc dữ liệu, và logic nghiệp vụ cốt lõi trong từng microservice.
 
 \subsection{Công nghệ và Môi trường Phát triển}
 
@@ -142,7 +142,7 @@ ports:
 
 \subsection{Kiểm thử Hệ thống (System Testing)}
 
-\indentpar \indentpar Ngoài Unit Test, chúng tôi đã xây dựng kịch bản kiểm thử End-to-End (E2E) nằm trong thư mục \texttt{sources/tests/system} để xác minh toàn bộ luồng tích hợp:
+\indentpar \indentpar Ngoài Unit Test, nhóm đã xây dựng kịch bản kiểm thử End-to-End (E2E) nằm trong thư mục \texttt{sources/tests/system} để xác minh toàn bộ luồng tích hợp:
 
 \begin{enumerate}
     \item \textbf{Setup}: Khởi tạo dữ liệu câu hỏi mẫu vào \texttt{content\_db}.
@@ -154,3 +154,69 @@ ports:
 \end{enumerate}
 
 Kịch bản này chứng minh sự phối hợp chính xác giữa 4 microservice và message broker.
+
+
+\subsection{Trạng thái Triển khai (Implementation Status)}
+
+\indentpar \indentpar Báo cáo này mô tả cả kiến trúc MVP (đã triển khai) và Target Architecture (kế hoạch tương lai). Phần này tóm tắt trạng thái triển khai hiện tại dựa trên kết quả xác minh Phase 3.
+
+\subsubsection{Thống kê Xác minh}
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{|>{\noindent\justifying\arraybackslash}X|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|>{\centering\arraybackslash}p{2cm}|}
+        \hline
+        \textbf{Hạng mục}                    & \textbf{MVP} & \textbf{Target} & \textbf{Tỷ lệ} \\
+        \hline
+        Database Tables                      & 3            & 11              & 21\%           \\
+        \hline
+        Sequence Diagrams                    & 2            & 3               & 40\%           \\
+        \hline
+        ADRs (Architecture Decision Records) & 5            & 5               & 50\%           \\
+        \hline
+        SOLID Examples                       & 13           & 2               & 87\%           \\
+        \hline
+        \textbf{Tổng cộng}                   & \textbf{23}  & \textbf{21}     & \textbf{52\%}  \\
+        \hline
+    \end{tabularx}
+    \caption{Thống kê xác minh MVP vs Target Architecture}
+    \label{tab:verification_stats}
+\end{table}
+
+\subsubsection{MVP Implementation (Đã triển khai)}
+
+\indentpar \indentpar Phiên bản MVP tập trung vào luồng học tập thích ứng cốt lõi:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{4 Microservices hoạt động}: Content Service, Scoring Service, Learner Model Service, Adaptive Engine
+    \item \textbf{3 Databases}: content\_db (questions), scoring\_db (submissions), learner\_db (skill\_mastery)
+    \item \textbf{RabbitMQ}: Giao tiếp bất đồng bộ giữa Scoring và Learner Model
+    \item \textbf{Luồng Adaptive Learning}: Đã xác minh 100\% hoạt động đúng
+\end{itemize}
+
+\subsubsection{Target Architecture (Kế hoạch)}
+
+\indentpar \indentpar Các tính năng sau được thiết kế nhưng chưa triển khai trong MVP:
+
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{User Management Service}: Quản lý người dùng, vai trò, quyền hạn (RBAC)
+    \item \textbf{Auth Service}: Xác thực OAuth 2.0/OIDC, JWT tokens
+    \item \textbf{API Gateway}: Routing, rate limiting, authentication middleware
+    \item \textbf{Reporting Service}: Báo cáo phân tích cho giảng viên
+    \item \textbf{Real-time Feedback}: WebSocket, AI-generated hints
+    \item \textbf{Observability}: Distributed tracing, centralized logging
+\end{itemize}
+
+\subsubsection{Lý do Phân chia MVP/Target}
+
+\indentpar \indentpar Việc phân chia này tuân theo nguyên tắc \textbf{Iterative Development}:
+
+\begin{enumerate}
+    \item \textbf{Ưu tiên giá trị nghiệp vụ}: MVP tập trung vào tính năng cốt lõi (Adaptive Learning) để chứng minh khái niệm.
+    \item \textbf{Giảm rủi ro}: Triển khai từng phần giúp phát hiện và sửa lỗi sớm.
+    \item \textbf{Phù hợp phạm vi học thuật}: Dự án academic cần cân bằng giữa độ sâu kiến trúc và thời gian thực hiện.
+\end{enumerate}
+
+\FloatBarrier
