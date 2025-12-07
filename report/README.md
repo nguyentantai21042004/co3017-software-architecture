@@ -36,7 +36,7 @@ Thư mục này chứa báo cáo Kiến trúc Phần mềm (Software Architectur
 
 ## Cấu trúc Thư mục
 
-```
+```text
 report/
 ├── main.tex              # File LaTeX chính
 ├── main.pdf              # Báo cáo đã biên dịch (PDF)
@@ -239,13 +239,13 @@ plantuml -tpng puml/*.puml -o ../images/
 
 ## Khắc phục Sự cố
 
-### Lỗi Thường gặp
+### Các Lỗi Thường gặp
 
-#### 1. Thiếu Package LaTeX
+#### 1. Thiếu Gói LaTeX (Missing Package)
 
 **Triệu chứng:**
 
-```
+```text
 ! LaTeX Error: File `vntex.sty' not found.
 ```
 
@@ -258,11 +258,11 @@ tlmgr install vntex
 # MiKTeX: Mở MiKTeX Console và cài đặt package
 ```
 
-#### 2. Lỗi Font Tiếng Việt
+#### 2. Lỗi Phông chữ Tiếng Việt (Vietnamese Font Error)
 
 **Triệu chứng:**
 
-```
+```text
 ! Package inputenc Error: Unicode character ... not set up for use with LaTeX.
 ```
 
@@ -273,11 +273,11 @@ tlmgr install vntex
 tlmgr install vntex collection-langvietnamese
 ```
 
-#### 3. Hình ảnh Không Tìm thấy
+#### 3. Hình ảnh Không Tìm thấy (Image Not Found)
 
 **Triệu chứng:**
 
-```
+```text
 ! LaTeX Error: File `images/diagram.png' not found.
 ```
 
@@ -289,11 +289,11 @@ tlmgr install vntex collection-langvietnamese
   plantuml -tpng puml/diagram.puml -o ../images/
   ```
 
-#### 4. Lỗi Memory Overflow
+#### 4. Lỗi Tràn Bộ nhớ (Memory Overflow)
 
 **Triệu chứng:**
 
-```
+```text
 ! TeX capacity exceeded, sorry [main memory size=...]
 ```
 
@@ -304,7 +304,7 @@ tlmgr install vntex collection-langvietnamese
 lualatex main.tex
 ```
 
-#### 5. References Không Cập nhật
+#### 5. Tham chiếu Không Cập nhật (References Not Updated)
 
 **Triệu chứng:**
 
@@ -322,22 +322,22 @@ latexmk -C
 latexmk -pdf main.tex
 ```
 
-### Packages LaTeX Cần thiết
+### Các Gói LaTeX Cần thiết (Required LaTeX Packages)
 
-Báo cáo sử dụng các packages sau (đã được cài sẵn trong TeX Live Full):
+Báo cáo sử dụng các gói (packages) sau (đã được cài sẵn trong TeX Live Full):
 
-| Package    | Mục đích                |
-| ---------- | ----------------------- |
-| `vntex`    | Hỗ trợ tiếng Việt       |
-| `mathptmx` | Font Times              |
-| `graphicx` | Chèn hình ảnh           |
-| `hyperref` | Liên kết trong PDF      |
-| `fancyhdr` | Header/Footer tùy chỉnh |
-| `tikz`     | Vẽ đồ họa               |
-| `listings` | Hiển thị code           |
-| `booktabs` | Bảng đẹp                |
-| `geometry` | Căn lề trang            |
-| `caption`  | Chú thích hình/bảng     |
+| Gói (Package) | Mục đích                       |
+| ------------- | ------------------------------ |
+| `vntex`       | Hỗ trợ tiếng Việt              |
+| `mathptmx`    | Phông chữ Times (Font Times)   |
+| `graphicx`    | Chèn hình ảnh                  |
+| `hyperref`    | Liên kết trong PDF             |
+| `fancyhdr`    | Đầu trang/Chân trang tùy chỉnh |
+| `tikz`        | Vẽ đồ họa                      |
+| `listings`    | Hiển thị mã nguồn (code)       |
+| `booktabs`    | Bảng đẹp                       |
+| `geometry`    | Căn lề trang                   |
+| `caption`     | Chú thích hình ảnh và bảng     |
 
 ---
 
