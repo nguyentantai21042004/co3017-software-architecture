@@ -9,8 +9,8 @@
 - [API Endpoints](#api-endpoints)
 - [Phụ thuộc Dịch vụ](#phụ-thuộc-dịch-vụ)
 - [Cấu hình](#cấu-hình)
-- [Phát triển Cục bộ](#phát-triển-cục-bộ)
-- [Kiểm thử](#kiểm-thử)
+- [Phát triển Local](#phát-triển-local)
+- [Testing](#testing)
 - [Triển khai Blue/Green](#triển-khai-bluegreen)
 - [Cấu trúc Thư mục](#cấu-trúc-thư-mục)
 
@@ -28,13 +28,13 @@
 
 ### Đặc điểm
 
-| Thuộc tính    | Giá trị              |
-| ------------- | -------------------- |
-| **Port**      | 8084                 |
-| **Database**  | Không có (Stateless) |
-| **Ngôn ngữ**  | Go 1.25.4            |
-| **Framework** | Gin                  |
-| **Kiến trúc** | Clean Architecture   |
+| Thuộc tính    | Giá trị                                 |
+| ------------- | --------------------------------------- |
+| **Port**      | 8084                                    |
+| **Database**  | Không có (Không trạng thái - Stateless) |
+| **Ngôn ngữ**  | Go 1.25.4                               |
+| **Framework** | Gin                                     |
+| **Kiến trúc** | Kiến trúc Sạch (Clean Architecture)     |
 
 ---
 
@@ -432,7 +432,7 @@ adaptive-engine:
 
 ---
 
-## Phát triển Cục bộ
+## Phát triển Local
 
 ### Yêu cầu Hệ thống
 
@@ -507,7 +507,7 @@ Swagger UI sẽ có tại: `http://localhost:8084/adaptive-engine/swagger/index.
 
 ---
 
-## Kiểm thử
+## Testing
 
 ### Chạy Tests
 
@@ -590,18 +590,18 @@ graph TB
     style G2 fill:#4caf50,color:#fff
 ```
 
-### Đặc điểm Hỗ trợ Blue/Green
+### Đặc điểm Hỗ trợ Triển khai Xanh/Lục (Blue/Green)
 
-| Đặc điểm              | Mô tả                                           |
-| --------------------- | ----------------------------------------------- |
-| **Stateless**         | Không lưu trữ state, có thể switch ngay lập tức |
-| **Health Check**      | Endpoint `/health` để kiểm tra sẵn sàng         |
-| **Graceful Shutdown** | Xử lý requests đang chạy trước khi shutdown     |
-| **Configuration**     | Cấu hình qua environment variables              |
+| Đặc điểm                                  | Mô tả                                                    |
+| ----------------------------------------- | -------------------------------------------------------- |
+| **Không trạng thái (Stateless)**          | Không lưu trữ trạng thái, có thể chuyển đổi ngay lập tức |
+| **Kiểm tra Sức khỏe (Health Check)**      | Endpoint `/health` để kiểm tra sẵn sàng                  |
+| **Tắt máy Nhẹ nhàng (Graceful Shutdown)** | Xử lý các yêu cầu đang chạy trước khi tắt                |
+| **Cấu hình (Configuration)**              | Cấu hình qua biến môi trường (environment variables)     |
 
-### Live Model Swapping
+### Hoán đổi Mô hình Trực tiếp (Live Model Swapping)
 
-Vì Adaptive Engine là stateless và lấy dữ liệu từ external services, việc thay đổi thuật toán đề xuất có thể thực hiện bằng cách:
+Vì Adaptive Engine không có trạng thái và lấy dữ liệu từ các dịch vụ bên ngoài, việc thay đổi thuật toán đề xuất có thể thực hiện bằng cách:
 
 1. **Deploy phiên bản mới** với thuật toán cập nhật
 2. **Chuyển traffic** từ Blue sang Green
@@ -766,4 +766,5 @@ tail -f adaptive.log
 
 ---
 
-_Adaptive Engine - Công cụ Thích ứng cho Hệ thống Gia sư Thông minh_
+**Adaptive Engine** - Phần của Intelligent Tutoring System (ITS)  
+CO3017 - Kiến Trúc Phần Mềm - HCMUT

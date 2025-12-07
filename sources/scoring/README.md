@@ -35,28 +35,28 @@ Scoring Service hoạt động như một **trung gian xử lý** giữa học s
 
 ## Công nghệ
 
-### Core Technologies
+### Công nghệ Cốt lõi (Core Technologies)
 
 - **Go 1.23**: Ngôn ngữ lập trình chính
-- **Gin**: HTTP web framework
+- **Gin**: Framework web HTTP
 - **PostgreSQL**: Cơ sở dữ liệu quan hệ
-- **RabbitMQ**: Message broker cho event publishing
-- **SQLBoiler**: Type-safe ORM và code generation
+- **RabbitMQ**: Trình môi giới thông điệp (Message broker) cho phát hành sự kiện
+- **SQLBoiler**: ORM an toàn kiểu và sinh mã tự động (Type-safe ORM và code generation)
 
-### Libraries & Tools
+### Thư viện và Công cụ (Libraries & Tools)
 
-- **amqp091-go**: RabbitMQ client library
-- **Zap**: Structured logging
-- **Swagger/Swaggo**: API documentation tự động
-- **UUID**: Unique identifier generation
-- **go-i18n**: Internationalization support
+- **amqp091-go**: Thư viện client RabbitMQ
+- **Zap**: Ghi nhật ký có cấu trúc (Structured logging)
+- **Swagger/Swaggo**: Tự động tạo tài liệu API
+- **UUID**: Sinh định danh duy nhất (Unique identifier generation)
+- **go-i18n**: Hỗ trợ đa ngôn ngữ (Internationalization)
 
-### Architecture Pattern
+### Mẫu Kiến trúc (Architecture Pattern)
 
-- **Hexagonal Architecture (Ports & Adapters)**: Tách biệt business logic khỏi infrastructure
-- **Module-First Architecture**: Tổ chức code theo feature/domain
-- **Event-Driven Architecture**: Sử dụng RabbitMQ cho async communication
-- **Clean Architecture**: Dependency inversion và separation of concerns
+- **Kiến trúc Lục giác (Hexagonal Architecture - Ports & Adapters)**: Tách biệt logic nghiệp vụ khỏi hạ tầng
+- **Kiến trúc Ưu tiên Module (Module-First Architecture)**: Tổ chức mã theo tính năng/miền nghiệp vụ
+- **Kiến trúc Hướng Sự kiện (Event-Driven Architecture)**: Sử dụng RabbitMQ cho giao tiếp bất đồng bộ
+- **Kiến trúc Sạch (Clean Architecture)**: Đảo ngược phụ thuộc và phân tách mối quan tâm
 
 ---
 
@@ -458,9 +458,9 @@ type rabbitmqPublisher struct {
 4. **Error Logging**: Log chi tiết khi publish thất bại
 5. **Graceful Shutdown**: Close connection khi service shutdown
 
-### Async Publishing
+### Phát hành Bất đồng bộ (Async Publishing)
 
-Event publishing được thực hiện **asynchronously** để không block HTTP response:
+Việc phát hành sự kiện được thực hiện **bất đồng bộ (asynchronously)** để không chặn phản hồi HTTP:
 
 ```go
 // Step 4: Publish event to RabbitMQ (async, don't block response)
@@ -759,9 +759,9 @@ curl -X POST http://localhost:8082/api/scoring/submit \
   }'
 ```
 
-### Hot Reload (Development)
+### Tải lại Nóng (Hot Reload) cho Phát triển
 
-Sử dụng **Air** cho hot reload:
+Sử dụng **Air** để tải lại nóng:
 
 ```bash
 # Install Air
@@ -943,15 +943,15 @@ func TestRepository_Create(t *testing.T) {
 }
 ```
 
-### Test Coverage Goals
+### Mục tiêu Độ phủ Kiểm thử (Test Coverage Goals)
 
-- **Unit Tests**: > 80% coverage
-- **Integration Tests**: All API endpoints
-- **Repository Tests**: All CRUD operations
+- **Kiểm thử Đơn vị (Unit Tests)**: > 80% độ phủ
+- **Kiểm thử Tích hợp (Integration Tests)**: Tất cả API endpoints
+- **Kiểm thử Repository**: Tất cả thao tác CRUD (Tạo, Đọc, Cập nhật, Xóa)
 
-### Mocking
+### Giả lập (Mocking)
 
-Sử dụng **testify/mock** cho mocking:
+Sử dụng **testify/mock** để giả lập:
 
 ```bash
 # Install mockery
