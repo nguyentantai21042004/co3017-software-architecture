@@ -10,13 +10,13 @@ Nếu Chương 3 tập trung vào việc ``chọn kiến trúc nào'' và ``quy�
 Module View (Góc nhìn Module) mô tả sự phân rã của hệ thống thành các thành phần (components) và các module con, cùng mối quan hệ giữa chúng. Góc nhìn này trả lời cho hai câu hỏi cốt lõi: \textit{``Hệ thống được tổ chức như thế nào?''} và \textit{``Các phần code bên trong được cấu trúc ra sao?''}
 
 Module View đặc biệt quan trọng vì nó thể hiện cách các quyết định trong ADR-1 \textrightarrow{} ADR-4 (Polyglot, Clean Architecture, Repository Pattern) được hiện thực hóa ở cấp mã nguồn, giúp đạt được các đặc tính kiến trúc quan trọng nhất của ITS:
-\textbf{AC1 -- Modularity}, \textbf{AC4 -- Testability}, và \textbf{AC7 -- Maintainability}.
+AC1 -- Modularity, AC4 -- Testability, và AC7 -- Maintainability.
 
 \subsubsection{Phân rã Hệ thống}
 
-\indentpar \indentpar Hệ thống ITS được thiết kế theo phong cách \textbf{Hybrid Microservices + Event-Driven Architecture}. Việc phân rã hệ thống \textbf{(System Decomposition)} dựa trên Bounded Contexts của Domain-Driven Design (DDD).
+\indentpar \indentpar Hệ thống ITS được thiết kế theo phong cách Hybrid Microservices + Event-Driven Architecture. Việc phân rã hệ thống (System Decomposition) dựa trên Bounded Contexts của Domain-Driven Design (DDD).
 
-\textbf{Lưu ý về phạm vi MVP:} Trong giai đoạn hiện tại (MVP), nhóm tập trung hiện thực các service cốt lõi liên quan trực tiếp đến luồng học tập thích ứng (Content, Scoring, Learner Model, Adaptive Engine). Các service hỗ trợ như \textbf{User Management} và \textbf{Auth Service} được mô tả trong kiến trúc đích (Target Architecture) nhưng chưa được tách thành microservice riêng biệt trong phiên bản code hiện tại; thay vào đó, các chức năng này được giả lập hoặc xử lý đơn giản để ưu tiên kiểm chứng logic nghiệp vụ chính.
+Lưu ý về phạm vi MVP: Trong giai đoạn hiện tại (MVP), nhóm tập trung hiện thực các service cốt lõi liên quan trực tiếp đến luồng học tập thích ứng (Content, Scoring, Learner Model, Adaptive Engine). Các service hỗ trợ như User Management và Auth Service được mô tả trong kiến trúc đích (Target Architecture) nhưng chưa được tách thành microservice riêng biệt trong phiên bản code hiện tại; thay vào đó, các chức năng này được giả lập hoặc xử lý đơn giản để ưu tiên kiểm chứng logic nghiệp vụ chính.
 
 \vspace{1em}
 
@@ -27,13 +27,13 @@ Module View đặc biệt quan trọng vì nó thể hiện cách các quyết �
     \label{fig:system-decomposition}
 \end{figure}
 
-Phân rã này cũng thể hiện rõ \textbf{``Bounded Contexts''} của DDD, cho phép mỗi service có thể triển khai, kiểm thử và mở rộng độc lập mà vẫn phối hợp thông qua event bus (RabbitMQ theo ADR-8).
+Phân rã này cũng thể hiện rõ ``Bounded Contexts'' của DDD, cho phép mỗi service có thể triển khai, kiểm thử và mở rộng độc lập mà vẫn phối hợp thông qua event bus (RabbitMQ theo ADR-8).
 
 \subsubsection{Cấu trúc các Tầng}
 
 \indentpar \indentpar Để hiện thực hóa ADR-3 (Clean/Hexagonal Architecture), tất cả service (Java và Go) đều tuân thủ kiến trúc phân tầng đồng tâm. Cách tiếp cận này tách biệt rõ Business Logic và Infrastructure, qua đó bảo đảm khả năng kiểm thử và bảo trì lâu dài.
 
-\noindent\textbf{Quy tắc Phụ thuộc (Dependency Rule)}
+\noindent Quy tắc Phụ thuộc (Dependency Rule)
 \begin{itemize}[leftmargin=1.5em]
     \item Luồng phụ thuộc của mã nguồn luôn đi từ vòng ngoài vào vòng trong
     \item Tầng trung tâm (Domain, Application) không phụ thuộc vào Database, Framework hay UI
@@ -75,9 +75,9 @@ Phân rã này cũng thể hiện rõ \textbf{``Bounded Contexts''} của DDD, c
 
 \indentpar \indentpar Việc chuẩn hóa, minh họa cách tổ chức mã nguồn thực tế (Java \& Go) sao cho phù hợp với Clean Architecture và Polyglot Strategy (ADR-1) nhằm đảm bảo tính nhất quán giữa các ngôn ngữ, đồng thời giúp đội ngũ phát triển dễ dàng định hướng khi làm việc với các service khác nhau.
 
-\noindent\textbf{a. Service Java (Content Service)}
+\noindent a. Service Java (Content Service)
 
-\noindent\textbf{Cấu trúc thư mục}
+\noindent Cấu trúc thư mục
 \begin{center}
     \begin{minipage}{0.95\textwidth}
         \begin{verbatim}
@@ -95,19 +95,19 @@ src/main/java/co3017/microservices/content_service/
     \end{minipage}
 \end{center}
 
-\noindent\textbf{Giải thích cấu trúc}
+\noindent Giải thích cấu trúc
 \begin{itemize}[leftmargin=1.2em]
-    \item \textbf{Domain Layer} (\texttt{models/}): Chứa các Entity JPA như \texttt{Question}. Đây là trung tâm của nghiệp vụ.
-    \item \textbf{Application Layer} (\texttt{usecase/}): Chứa logic nghiệp vụ cốt lõi. \texttt{QuestionService} thực thi các quy tắc nghiệp vụ và gọi xuống Repository.
-    \item \textbf{Interface Adapters} (\texttt{adapter/http}): Chứa Controller để xử lý HTTP request/response, đóng vai trò là cổng giao tiếp với bên ngoài.
-    \item \textbf{Infrastructure} (\texttt{repository/}, \texttt{config/}): Triển khai các interface lưu trữ (Spring Data JPA) và cấu hình hệ thống.
+    \item Domain Layer (\texttt{models/}): Chứa các Entity JPA như \texttt{Question}. Đây là trung tâm của nghiệp vụ.
+    \item Application Layer (\texttt{usecase/}): Chứa logic nghiệp vụ cốt lõi. \texttt{QuestionService} thực thi các quy tắc nghiệp vụ và gọi xuống Repository.
+    \item Interface Adapters (\texttt{adapter/http}): Chứa Controller để xử lý HTTP request/response, đóng vai trò là cổng giao tiếp với bên ngoài.
+    \item Infrastructure (\texttt{repository/}, \texttt{config/}): Triển khai các interface lưu trữ (Spring Data JPA) và cấu hình hệ thống.
 \end{itemize}
 
-\noindent\textbf{b. Service Go (Scoring, Learner Model, Adaptive Engine)}
+\noindent b. Service Go (Scoring, Learner Model, Adaptive Engine)
 
-Các service viết bằng Go tuân thủ \textbf{Standard Go Project Layout}, tối ưu cho microservices.
+Các service viết bằng Go tuân thủ Standard Go Project Layout, tối ưu cho microservices.
 
-\noindent\textbf{Cấu trúc thư mục (Ví dụ: Scoring Service)}
+\noindent Cấu trúc thư mục (Ví dụ: Scoring Service)
 \begin{center}
     \begin{minipage}{0.95\textwidth}
         \begin{verbatim}
@@ -126,15 +126,15 @@ sources/scoring/
     \end{minipage}
 \end{center}
 
-\noindent\textbf{Giải thích cấu trúc}
+\noindent Giải thích cấu trúc
 \begin{itemize}[leftmargin=1.2em]
-    \item \textbf{cmd/api}: Chứa hàm \texttt{main}, nơi khởi tạo ứng dụng, kết nối DB và đăng ký các route.
-    \item \textbf{internal/}: Chứa mã nguồn riêng tư của service, không thể import từ bên ngoài.
+    \item cmd/api: Chứa hàm \texttt{main}, nơi khởi tạo ứng dụng, kết nối DB và đăng ký các route.
+    \item internal/: Chứa mã nguồn riêng tư của service, không thể import từ bên ngoài.
           \begin{itemize}
-              \item \textbf{model}: Định nghĩa các struct dữ liệu (Entity).
-              \item \textbf{repository}: Tương tác trực tiếp với cơ sở dữ liệu.
-              \item \textbf{usecase}: Chứa logic nghiệp vụ, gọi repository để lấy dữ liệu.
-              \item \textbf{delivery}: Xử lý HTTP request, parse JSON và gọi usecase.
+              \item model: Định nghĩa các struct dữ liệu (Entity).
+              \item repository: Tương tác trực tiếp với cơ sở dữ liệu.
+              \item usecase: Chứa logic nghiệp vụ, gọi repository để lấy dữ liệu.
+              \item delivery: Xử lý HTTP request, parse JSON và gọi usecase.
           \end{itemize}
 \end{itemize}
 
@@ -142,16 +142,16 @@ Cách tổ chức này giúp code Go gọn gàng, dễ đọc và tuân thủ ng
 
 \subsubsection{Thiết kế Dữ liệu (Data Persistence Design)}
 
-\indentpar \indentpar Tuân thủ nguyên tắc \textbf{Database-per-Service} của kiến trúc Microservices, hệ thống không sử dụng một cơ sở dữ liệu khổng lồ dùng chung. Thay vào đó, mỗi service sở hữu một lược đồ dữ liệu (schema) riêng biệt, tối ưu cho nghiệp vụ của nó.
+\indentpar \indentpar Tuân thủ nguyên tắc Database-per-Service của kiến trúc Microservices, hệ thống không sử dụng một cơ sở dữ liệu khổng lồ dùng chung. Thay vào đó, mỗi service sở hữu một lược đồ dữ liệu (schema) riêng biệt, tối ưu cho nghiệp vụ của nó.
 
-\noindent\textbf{Chú thích trạng thái ERD:}
+\noindent Chú thích trạng thái ERD:
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{[MVP]}: Đã triển khai trong phiên bản hiện tại
-    \item \textbf{[Target]}: Kế hoạch cho kiến trúc đích, chưa triển khai
-    \item \textbf{[MVP + Target]}: Một phần đã triển khai, phần còn lại là kế hoạch
+    \item [MVP]: Đã triển khai trong phiên bản hiện tại
+    \item [Target]: Kế hoạch cho kiến trúc đích, chưa triển khai
+    \item [MVP + Target]: Một phần đã triển khai, phần còn lại là kế hoạch
 \end{itemize}
 
-\noindent\textbf{Tổng quan MVP Database Schema:}
+\noindent Tổng quan MVP Database Schema:
 \indentpar MVP hiện tại triển khai 3 bảng chính phục vụ luồng học tập thích ứng:
 \begin{itemize}[leftmargin=0.7cm]
     \item \texttt{questions} (Content Service): Lưu trữ câu hỏi với JSONB options
@@ -159,7 +159,7 @@ Cách tổ chức này giúp code Go gọn gàng, dễ đọc và tuân thủ ng
     \item \texttt{skill\_mastery} (Learner Model): Theo dõi mức độ thông thạo kỹ năng
 \end{itemize}
 
-\noindent\textbf{1. User Management Service (PostgreSQL) -- [Target Architecture]}
+\noindent 1. User Management Service (PostgreSQL) -- [Target Architecture]
 \indentpar Quản lý người dùng, vai trò (Roles) và quyền hạn (Permissions). Dữ liệu PII (Thông tin cá nhân) được tách riêng vào bảng \texttt{learner\_profiles} và được mã hóa để đảm bảo tuân thủ bảo mật (ADR-7).
 
 \textit{Lưu ý: Service này thuộc kiến trúc đích (Target Architecture), chưa được triển khai trong phiên bản MVP hiện tại. Trong MVP, user ID được xử lý đơn giản hóa để tập trung vào luồng học tập thích ứng.}
@@ -171,7 +171,7 @@ Cách tổ chức này giúp code Go gọn gàng, dễ đọc và tuân thủ ng
     \label{fig:erd-user-service}
 \end{figure}
 
-\noindent\textbf{2. Content Service (PostgreSQL + JSONB) -- [MVP + Target]}
+\noindent 2. Content Service (PostgreSQL + JSONB) -- [MVP + Target]
 \indentpar Quản lý cấu trúc khóa học phong phú. Sử dụng tính năng \texttt{JSONB} của PostgreSQL cho bảng \texttt{content\_units} và \texttt{questions} để lưu trữ dữ liệu bán cấu trúc (như danh sách đáp án, nội dung bài học đa phương tiện) một cách linh hoạt mà không cần quá nhiều bảng phụ (ADR-2).
 
 \textit{Trạng thái triển khai: MVP hiện tại chỉ triển khai bảng \texttt{questions} với cột JSONB cho options. Các bảng courses, chapters, content\_units, metadata\_tags thuộc kiến trúc đích.}
@@ -183,7 +183,7 @@ Cách tổ chức này giúp code Go gọn gàng, dễ đọc và tuân thủ ng
     \label{fig:erd-content-service}
 \end{figure}
 
-\noindent\textbf{3. Learner Model Service (PostgreSQL) -- [MVP + Target]}
+\noindent 3. Learner Model Service (PostgreSQL) -- [MVP + Target]
 \indentpar Tập trung vào dữ liệu phân tích (Analytics). Bảng \texttt{skill\_mastery} lưu trữ điểm số thông thạo hiện tại, trong khi \texttt{learning\_history} là một nhật ký (log) ghi lại toàn bộ quá trình làm bài của người học, phục vụ cho việc tính toán và truy vết sau này.
 
 \textit{Trạng thái triển khai: MVP hiện tại triển khai bảng \texttt{skill\_mastery} với composite primary key (user\_id, skill\_tag). Các bảng learning\_history và diagnostic\_results thuộc kiến trúc đích.}

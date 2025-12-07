@@ -3,7 +3,7 @@
 \indentpar \indentpar Sau khi Module View đã mô tả cách ITS được tổ chức thành các module tĩnh ở cấp mã nguồn, phần này đi sâu vào khía cạnh động (runtime) - tức là, các thành phần thực thi (components) và các kênh giao tiếp (connectors) giữa chúng trong môi trường hoạt động thực tế.
 Nếu Module View trả lời câu hỏi \textit{``hệ thống được chia như thế nào''}, thì Component \& Connector View trả lời \textit{``các phần đó tương tác ra sao khi hệ thống chạy''}.
 
-Phần này đặc biệt quan trọng vì nó hiện thực hóa các quyết định trong các ADR như \textbf{ADR-1}, \textbf{ADR-3}, \textbf{ADR-6} và \textbf{ADR-7}. Đồng thời, phần này cũng trực tiếp thể hiện các ACs trọng yếu: \textbf{AC2}, \textbf{AC3} và \textbf{AC6}.
+Phần này đặc biệt quan trọng vì nó hiện thực hóa các quyết định trong các ADR như ADR-1, ADR-3, ADR-6 và ADR-7. Đồng thời, phần này cũng trực tiếp thể hiện các ACs trọng yếu: AC2, AC3 và AC6.
 
 \subsubsection{Sơ đồ Kiến trúc Dịch vụ}
 
@@ -18,7 +18,7 @@ Phần này đặc biệt quan trọng vì nó hiện thực hóa các quyết �
     \label{fig:service-architecture}
 \end{figure}
 
-\noindent\textbf{Chi tiết các Component và Interfaces:}
+\noindent Chi tiết các Component và Interfaces:
 
 \renewcommand{\arraystretch}{1.3}
 \begin{longtable}{|>{\centering\arraybackslash}p{2.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\noindent\justifying\arraybackslash}p{4cm}|>{\noindent\justifying\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{2cm}|}
@@ -56,7 +56,7 @@ Phần này đặc biệt quan trọng vì nó hiện thực hóa các quyết �
 \end{longtable}
 \renewcommand{\arraystretch}{1.0}
 
-\noindent\textbf{Trạng thái Triển khai Components:}
+\noindent Trạng thái Triển khai Components:
 
 \begin{table}[H]
     \centering
@@ -84,7 +84,7 @@ Phần này đặc biệt quan trọng vì nó hiện thực hóa các quyết �
     \label{tab:component_status}
 \end{table}
 
-\noindent\textbf{Message Queue Channels (RabbitMQ):}
+\noindent Message Queue Channels (RabbitMQ):
 \begin{itemize}[leftmargin=0.7cm]
     \item \texttt{scoring.completed}: Scoring Service $\rightarrow$ Learner Model Service (khi chấm điểm xong)
     \item \texttt{learner.updated}: Learner Model Service $\rightarrow$ Adaptive Engine (khi cập nhật mastery)
@@ -97,9 +97,9 @@ Phần này đặc biệt quan trọng vì nó hiện thực hóa các quyết �
 
 \indentpar \indentpar Sau khi hệ thống được phân tách thành nhiều module và microservice độc lập, cần mô tả rõ cách các thành phần này giao tiếp với nhau. Trong giai đoạn MVP, nhóm ưu tiên sự đơn giản và tốc độ phát triển, nhưng vẫn giữ nguyên tắc phân tách rõ ràng.
 
-\noindent\textbf{a. Giao tiếp Đồng bộ (Synchronous Communication)}
+\noindent a. Giao tiếp Đồng bộ (Synchronous Communication)
 
-Sử dụng cho các tương tác yêu cầu-phản hồi (request-response) \textbf{ngay lập tức}.
+Sử dụng cho các tương tác yêu cầu-phản hồi (request-response) ngay lập tức.
 
 \begin{figure}[H]
     \centering
@@ -109,23 +109,23 @@ Sử dụng cho các tương tác yêu cầu-phản hồi (request-response) \te
 \end{figure}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Giao thức}: REST qua HTTP. Tất cả các giao tiếp giữa Client-Service và Service-Service (ví dụ: Adaptive Engine gọi Content Service) đều sử dụng chuẩn RESTful API với định dạng JSON.
-    \item \textbf{Lý do chọn REST cho MVP}: Xem phần Phân tích Đánh đổi bên dưới.
+    \item Giao thức: REST qua HTTP. Tất cả các giao tiếp giữa Client-Service và Service-Service (ví dụ: Adaptive Engine gọi Content Service) đều sử dụng chuẩn RESTful API với định dạng JSON.
+    \item Lý do chọn REST cho MVP: Xem phần Phân tích Đánh đổi bên dưới.
 \end{itemize}
 
-\noindent\textbf{b. Phân tích Đánh đổi: REST vs gRPC}
+\noindent b. Phân tích Đánh đổi: REST vs gRPC
 
-\indentpar \indentpar Mặc dù gRPC mang lại hiệu năng cao hơn và type-safety tốt hơn (như đã đề cập trong thiết kế ban đầu), nhóm quyết định sử dụng \textbf{REST/HTTP} cho phiên bản hiện tại vì các lý do sau:
+\indentpar \indentpar Mặc dù gRPC mang lại hiệu năng cao hơn và type-safety tốt hơn (như đã đề cập trong thiết kế ban đầu), nhóm quyết định sử dụng REST/HTTP cho phiên bản hiện tại vì các lý do sau:
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Tốc độ phát triển}: REST là tiêu chuẩn quen thuộc, giúp đội ngũ phát triển nhanh chóng tích hợp và gỡ lỗi (debug) trực tiếp bằng các công cụ như Postman hay cURL mà không cần tooling phức tạp.
-    \item \textbf{Giảm độ phức tạp}: Loại bỏ nhu cầu quản lý file `.proto` và quy trình code generation trong giai đoạn đầu, giúp tập trung vào logic nghiệp vụ cốt lõi.
-    \item \textbf{Tính tương thích}: JSON/HTTP được hỗ trợ tự nhiên bởi cả Spring Boot (Java), Gin (Go) và Next.js (Frontend), giảm thiểu rủi ro tích hợp.
+    \item Tốc độ phát triển: REST là tiêu chuẩn quen thuộc, giúp đội ngũ phát triển nhanh chóng tích hợp và gỡ lỗi (debug) trực tiếp bằng các công cụ như Postman hay cURL mà không cần tooling phức tạp.
+    \item Giảm độ phức tạp: Loại bỏ nhu cầu quản lý file `.proto` và quy trình code generation trong giai đoạn đầu, giúp tập trung vào logic nghiệp vụ cốt lõi.
+    \item Tính tương thích: JSON/HTTP được hỗ trợ tự nhiên bởi cả Spring Boot (Java), Gin (Go) và Next.js (Frontend), giảm thiểu rủi ro tích hợp.
 \end{itemize}
 
 Tuy nhiên, kiến trúc vẫn được thiết kế để có thể chuyển đổi sang gRPC trong tương lai (Phase 2) khi yêu cầu về hiệu năng và latency trở nên khắt khe hơn, nhờ vào việc đóng gói logic giao tiếp trong các lớp Adapter/Client riêng biệt.
 
-\noindent\textbf{b. Giao tiếp Bất đồng bộ (Asynchronous Communication)}
+\noindent b. Giao tiếp Bất đồng bộ (Asynchronous Communication)
 
 Sử dụng để tách rời (decouple) các service, xử lý các tác vụ nền (background tasks) và đảm bảo hiệu suất (AC3). Đây là nền tảng của kiến trúc Event-Driven.
 
@@ -146,7 +146,7 @@ Sử dụng để tách rời (decouple) các service, xử lý các tác vụ n
 
 \indentpar \indentpar Để hiểu rõ cách hệ thống vận hành trong thực tế, cần xem xét các luồng tương tác giữa các thành phần khi một nghiệp vụ được thực thi. Các mô tả này được thể hiện thông qua hai sequence diagram, giúp làm rõ cách dữ liệu được truyền tải và xử lý xuyên suốt các use case quan trọng
 
-\noindent\textbf{Luồng 1: Học tập Thích ứng (UC-08: Adaptive Learning Flow)}
+\noindent Luồng 1: Học tập Thích ứng (UC-08: Adaptive Learning Flow)
 
 Kịch bản này xảy ra khi người học (Learner) hoàn thành một bài học và yêu cầu nội dung tiếp theo. Luồng này chủ yếu là đồng bộ (synchronous).
 
@@ -157,7 +157,7 @@ Kịch bản này xảy ra khi người học (Learner) hoàn thành một bài 
     \label{fig:adaptive-learning-flow}
 \end{figure}
 
-\noindent\textbf{Luồng 2: Chấm điểm Bất đồng bộ (UC-10: Asynchronous Scoring)}
+\noindent Luồng 2: Chấm điểm Bất đồng bộ (UC-10: Asynchronous Scoring)
 
 Kịch bản này xảy ra khi người học (Learner) nộp một bài tập (ví dụ: quiz). Luồng này là sự kết hợp của đồng bộ (phản hồi tức thì) và bất đồng bộ (cập nhật nền) để đảm bảo AC3: Performance.
 
@@ -172,17 +172,17 @@ Kịch bản này xảy ra khi người học (Learner) nộp một bài tập (
     \item Learner nhấn ``Nộp bài''
     \item Client gửi \texttt{POST /api/scoring/submit} (chứa câu trả lời) đến API Gateway
     \item API Gateway xác thực JWT và chuyển tiếp request đến Scoring \& Feedback Service (Go)
-    \item \textbf{Scoring Service (Luồng đồng bộ)}:
+    \item Scoring Service (Luồng đồng bộ):
           \begin{enumerate}
               \item Chạy thuật toán chấm điểm nhanh (ví dụ: so sánh đáp án quiz)
               \item Tạo một phản hồi tức thì (ví dụ: ``Bạn đúng 8/10 câu'')
               \item Trả về phản hồi nhanh cho API Gateway \(\rightarrow\) Client \(\rightarrow\) Learner (Hoàn thành trong <500ms)
           \end{enumerate}
-    \item \textbf{Scoring Service (Luồng bất đồng bộ)}:
+    \item Scoring Service (Luồng bất đồng bộ):
           \begin{enumerate}
               \item Phát (Publish) một sự kiện \texttt{SubmissionCompleted} (chứa kết quả chi tiết và user-id) lên RabbitMQ
           \end{enumerate}
-    \item \textbf{Learner Model Service (Go) (Luồng bất đồng bộ - Consumer)}:
+    \item Learner Model Service (Go) (Luồng bất đồng bộ - Consumer):
           \begin{enumerate}
               \item Nhận được sự kiện \texttt{SubmissionCompleted} từ RabbitMQ
               \item Phân tích kết quả chi tiết và cập nhật \texttt{SkillMasteryScores} cho người học đó trong cơ sở dữ liệu
@@ -201,38 +201,38 @@ Kịch bản này xảy ra khi người học (Learner) nộp một bài tập (
     \label{fig:ai-pipeline-dataflow}
 \end{figure}
 
-\noindent\textbf{Các Giai đoạn của AI Pipeline:}
+\noindent Các Giai đoạn của AI Pipeline:
 
 \begin{enumerate}[leftmargin=1.5em]
-    \item \textbf{Input Layer (Lớp Đầu vào):}
+    \item Input Layer (Lớp Đầu vào):
           \begin{itemize}[nosep,leftmargin=0.9cm]
               \item Student Submission: Câu trả lời của học sinh, thời gian làm bài
               \item Question Metadata: Skill tags, độ khó của câu hỏi
               \item Current Mastery: Điểm mastery hiện tại của học sinh
           \end{itemize}
 
-    \item \textbf{Scoring Pipeline (Chấm điểm):}
+    \item Scoring Pipeline (Chấm điểm):
           \begin{itemize}[nosep,leftmargin=0.9cm]
               \item Answer Validation: Kiểm tra đáp án đúng/sai
               \item Score Calculation: Tính điểm có trọng số
               \item Performance Metrics: Tính toán accuracy, speed
           \end{itemize}
 
-    \item \textbf{Learner Model Pipeline (Mô hình hóa Người học):}
+    \item Learner Model Pipeline (Mô hình hóa Người học):
           \begin{itemize}[nosep,leftmargin=0.9cm]
               \item Mastery Update: Cập nhật mastery sử dụng thuật toán BKT/IRT
               \item Skill Decay: Áp dụng decay theo thời gian
               \item Learning Velocity: Tính tốc độ học tập
           \end{itemize}
 
-    \item \textbf{Adaptive Engine Pipeline (Chọn Nội dung Thích ứng):}
+    \item Adaptive Engine Pipeline (Chọn Nội dung Thích ứng):
           \begin{itemize}[nosep,leftmargin=0.9cm]
               \item Content Filtering: Lọc nội dung theo skill match
               \item Difficulty Selection: Chọn độ khó phù hợp (Zone of Proximal Development)
               \item Path Optimization: Tối ưu hóa lộ trình học tập
           \end{itemize}
 
-    \item \textbf{Output Layer (Lớp Đầu ra):}
+    \item Output Layer (Lớp Đầu ra):
           \begin{itemize}[nosep,leftmargin=0.9cm]
               \item Next Content: Nội dung được đề xuất tiếp theo
               \item Learning Path: Lộ trình học tập tối ưu
@@ -240,7 +240,7 @@ Kịch bản này xảy ra khi người học (Learner) nộp một bài tập (
           \end{itemize}
 \end{enumerate}
 
-\noindent\textbf{Thuật toán AI/ML được sử dụng:}
+\noindent Thuật toán AI/ML được sử dụng:
 
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]

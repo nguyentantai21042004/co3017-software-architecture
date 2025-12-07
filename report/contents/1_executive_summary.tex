@@ -15,14 +15,12 @@
 
 \subsection{Phương Pháp Kiến Trúc}
 
-\indentpar \indentpar Sau quá trình phân tích và đánh giá các phương án kiến trúc, nhóm đã lựa chọn \textbf{kiến trúc Microservices lai (Hybrid Microservices)} kết hợp với \textbf{mô hình hướng sự kiện (Event-Driven Architecture)}. Quyết định này được đưa ra dựa trên ma trận ưu tiên các đặc tính kiến trúc (Architecture Characteristics), trong đó \textbf{Modularity (AC1)}, \textbf{Performance (AC3)}, \textbf{Testability (AC4)}, và \textbf{Maintainability (AC7)} được xác định là các yếu tố quan trọng nhất.
-
-\noindent\textbf{Lý do lựa chọn:}
+\indentpar \indentpar Sau quá trình phân tích và đánh giá các phương án kiến trúc, nhóm đã lựa chọn kiến trúc Microservices lai (Hybrid Microservices) kết hợp với mô hình hướng sự kiện (Event-Driven Architecture). Quyết định này được đưa ra dựa trên ma trận ưu tiên các đặc tính kiến trúc (Architecture Characteristics), trong đó Modularity (AC1), Performance (AC3), Testability (AC4), và Maintainability (AC7) được xác định là các yếu tố quan trọng nhất. Lý do lựa chọn:
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Tính mô-đun cao:} Mỗi microservice sở hữu một miền nghiệp vụ (Bounded Context) riêng biệt, cho phép phát triển và triển khai độc lập
-    \item \textbf{Khả năng mở rộng linh hoạt:} Các service có thể được scale độc lập dựa trên nhu cầu thực tế (ví dụ: Scoring Service cần nhiều instance hơn Content Service)
-    \item \textbf{Hiệu năng cao:} Giao tiếp bất đồng bộ qua RabbitMQ giảm thiểu độ trễ và tăng throughput
-    \item \textbf{Dễ kiểm thử:} Kiến trúc Clean Architecture cho phép mock dependencies và đạt coverage >80\%
+    \item Tính mô-đun cao: Mỗi microservice sở hữu một miền nghiệp vụ (Bounded Context) riêng biệt, cho phép phát triển và triển khai độc lập
+    \item Khả năng mở rộng linh hoạt: Các service có thể được scale độc lập dựa trên nhu cầu thực tế (ví dụ: Scoring Service cần nhiều instance hơn Content Service)
+    \item Hiệu năng cao: Giao tiếp bất đồng bộ qua RabbitMQ giảm thiểu độ trễ và tăng throughput
+    \item Dễ kiểm thử: Kiến trúc Clean Architecture cho phép mock dependencies và đạt coverage >80\%
 \end{itemize}
 
 \subsection{Các Quyết Định Kiến Trúc Chính}
@@ -31,124 +29,124 @@
 
 \subsubsection{ADR-1: Lập Trình Đa Ngôn Ngữ (Polyglot Programming)}
 
-\noindent\textbf{Quyết định:} Sử dụng Java cho các dịch vụ quản lý nghiệp vụ, Go cho các dịch vụ tính toán hiệu năng cao.
+\noindent Quyết định: Sử dụng Java cho các dịch vụ quản lý nghiệp vụ, Go cho các dịch vụ tính toán hiệu năng cao.
 
-\noindent\textbf{Triển khai thực tế:}
+\noindent Triển khai thực tế:
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Java 17 + Spring Boot 3.x:} Content Service - quản lý câu hỏi và nội dung học tập
-    \item \textbf{Golang 1.21 + Gin:} Scoring Service, Learner Model Service, Adaptive Engine - xử lý chấm điểm, theo dõi tiến độ, và đề xuất nội dung thích ứng
+    \item Java 17 + Spring Boot 3.x: Content Service - quản lý câu hỏi và nội dung học tập
+    \item Golang 1.21 + Gin: Scoring Service, Learner Model Service, Adaptive Engine - xử lý chấm điểm, theo dõi tiến độ, và đề xuất nội dung thích ứng
 \end{itemize}
 
-\noindent\textbf{Kết quả:} Đạt được sự cân bằng tối ưu giữa khả năng bảo trì (Java ecosystem) và hiệu năng (Go concurrency).
+\noindent Kết quả: Đạt được sự cân bằng tối ưu giữa khả năng bảo trì (Java ecosystem) và hiệu năng (Go concurrency).
 
 \subsubsection{ADR-2: PostgreSQL làm Cơ Sở Dữ Liệu Chính}
 
-\noindent\textbf{Quyết định:} Sử dụng PostgreSQL cho tất cả các microservices với database-per-service pattern.
+\noindent Quyết định: Sử dụng PostgreSQL cho tất cả các microservices với database-per-service pattern.
 
-\noindent\textbf{Triển khai thực tế:}
+\noindent Triển khai thực tế:
 \begin{itemize}[leftmargin=1.5em]
     \item \texttt{content\_db}: Lưu trữ câu hỏi với JSONB cho tính linh hoạt (bảng \texttt{questions})
     \item \texttt{scoring\_db}: Lưu trữ kết quả bài làm của học viên (bảng \texttt{submissions})
     \item \texttt{learner\_db}: Theo dõi mức độ thành thạo kỹ năng (bảng \texttt{skill\_mastery})
 \end{itemize}
 
-\noindent\textbf{Kết quả:} 3 databases hoạt động ổn định với proper indexing (6 indexes tổng cộng) và JSONB support cho flexible schema.
+\noindent Kết quả: 3 databases hoạt động ổn định với proper indexing (6 indexes tổng cộng) và JSONB support cho flexible schema.
 
 \subsubsection{ADR-3: Kiến Trúc Clean/Hexagonal}
 
-\noindent\textbf{Quyết định:} Tất cả các services tuân theo Clean Architecture với 4 tầng rõ ràng: Domain, Application, Adapters, Infrastructure.
+\noindent Quyết định: Tất cả các services tuân theo Clean Architecture với 4 tầng rõ ràng: Domain, Application, Adapters, Infrastructure.
 
-\noindent\textbf{Triển khai thực tế:}
+\noindent Triển khai thực tế:
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Java (Content Service):} Domain models (\texttt{Question.java}) tách biệt khỏi JPA entities (\texttt{QuestionEntity.java})
-    \item \textbf{Go services:} Domain models (\texttt{internal/model/}) độc lập với SQLBoiler ORM (\texttt{internal/sqlboiler/})
-    \item \textbf{Dependency Inversion:} Application layer định nghĩa interfaces, Infrastructure layer implement
+    \item Java (Content Service): Domain models (\texttt{Question.java}) tách biệt khỏi JPA entities (\texttt{QuestionEntity.java})
+    \item Go services: Domain models (\texttt{internal/model/}) độc lập với SQLBoiler ORM (\texttt{internal/sqlboiler/})
+    \item Dependency Inversion: Application layer định nghĩa interfaces, Infrastructure layer implement
 \end{itemize}
 
-\noindent\textbf{Kết quả:} Đạt được tính testability cao và maintainability tốt nhờ clear separation of concerns.
+\noindent Kết quả: Đạt được tính testability cao và maintainability tốt nhờ clear separation of concerns.
 
 \subsubsection{ADR-4: Repository Pattern}
 
-\noindent\textbf{Quyết định:} Sử dụng Repository Pattern với interface abstraction để tuân thủ Dependency Inversion Principle.
+\noindent Quyết định: Sử dụng Repository Pattern với interface abstraction để tuân thủ Dependency Inversion Principle.
 
-\noindent\textbf{Triển khai thực tế:}
+\noindent Triển khai thực tế:
 \begin{itemize}[leftmargin=1.5em]
     \item Repository interfaces trong application layer
     \item Concrete implementations (JPA, SQLBoiler) trong infrastructure layer
     \item Cho phép dễ dàng mock repositories trong unit tests
 \end{itemize}
 
-\noindent\textbf{Kết quả:} Code dễ test, dễ thay đổi persistence mechanism nếu cần.
+\noindent Kết quả: Code dễ test, dễ thay đổi persistence mechanism nếu cần.
 
 \subsubsection{ADR-8: RabbitMQ cho Giao Tiếp Bất Đồng Bộ}
 
-\noindent\textbf{Quyết định:} Sử dụng RabbitMQ làm message broker cho event-driven architecture.
+\noindent Quyết định: Sử dụng RabbitMQ làm message broker cho event-driven architecture.
 
-\noindent\textbf{Triển khai thực tế:}
+\noindent Triển khai thực tế:
 \begin{itemize}[leftmargin=1.5em]
     \item Scoring Service publish \texttt{SubmissionEvent} sau khi chấm điểm
     \item Learner Model Service consume events và cập nhật \texttt{skill\_mastery}
     \item Async flow giảm coupling giữa services
 \end{itemize}
 
-\noindent\textbf{Kết quả:} Hệ thống event-driven hoạt động ổn định, đạt được loose coupling giữa services.
+\noindent Kết quả: Hệ thống event-driven hoạt động ổn định, đạt được loose coupling giữa services.
 
 \subsection{Áp Dụng Nguyên Tắc SOLID}
 
 \indentpar \indentpar Toàn bộ hệ thống được thiết kế tuân thủ nghiêm ngặt 5 nguyên tắc SOLID, đóng vai trò nền tảng kỹ thuật để đạt được các Architecture Characteristics đã đề ra:
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Single Responsibility Principle (SRP):} Mỗi microservice có một Bounded Context duy nhất; mỗi class có một trách nhiệm rõ ràng
-    \item \textbf{Open/Closed Principle (OCP):} Sử dụng Strategy Pattern và Interface-based design để mở rộng mà không sửa đổi code hiện có
-    \item \textbf{Liskov Substitution Principle (LSP):} Các implementation tuân thủ contract của interfaces
-    \item \textbf{Interface Segregation Principle (ISP):} Repository interfaces được thiết kế nhỏ gọn, chỉ expose methods cần thiết
-    \item \textbf{Dependency Inversion Principle (DIP):} Application layer phụ thuộc vào abstractions, không phụ thuộc vào concrete implementations
+    \item Single Responsibility Principle (SRP): Mỗi microservice có một Bounded Context duy nhất; mỗi class có một trách nhiệm rõ ràng
+    \item Open/Closed Principle (OCP): Sử dụng Strategy Pattern và Interface-based design để mở rộng mà không sửa đổi code hiện có
+    \item Liskov Substitution Principle (LSP): Các implementation tuân thủ contract của interfaces
+    \item Interface Segregation Principle (ISP): Repository interfaces được thiết kế nhỏ gọn, chỉ expose methods cần thiết
+    \item Dependency Inversion Principle (DIP): Application layer phụ thuộc vào abstractions, không phụ thuộc vào concrete implementations
 \end{itemize}
 
-\noindent\textbf{Kết quả đo lường:}
+\noindent Kết quả đo lường:
 \begin{itemize}[leftmargin=1.5em]
-    \item Cyclomatic Complexity trung bình: 7.2 (mục tiêu <10) \checkmark
-    \item Coupling giữa modules: 3.8 (mục tiêu <5) \checkmark
-    \item Cohesion: 0.85 (mục tiêu >0.8) \checkmark
+    \item Cyclomatic Complexity trung bình: 7.2 (mục tiêu <10)
+    \item Coupling giữa modules: 3.8 (mục tiêu <5)
+    \item Cohesion: 0.85 (mục tiêu >0.8)
 \end{itemize}
 
 \subsection{Trạng Thái Triển Khai: MVP vs Target Architecture}
 
-\indentpar \indentpar Báo cáo này mô tả \textbf{Target Architecture} - kiến trúc đầy đủ dự kiến cho hệ thống. Tuy nhiên, phiên bản MVP hiện tại đã triển khai \textbf{core functional subset} đủ để chứng minh khả năng hoạt động của adaptive learning system.
+\indentpar \indentpar Báo cáo này mô tả Target Architecture - kiến trúc đầy đủ dự kiến cho hệ thống. Tuy nhiên, phiên bản MVP hiện tại đã triển khai core functional subset đủ để chứng minh khả năng hoạt động của adaptive learning system.
 
 \subsubsection{MVP Hiện Tại (Đã Triển Khai)}
 
-\noindent\textbf{Services (4/7):}
+\noindent Services (4/7):
 \begin{itemize}[leftmargin=1.5em]
-    \item \checkmark{} Content Service (Java) - Quản lý câu hỏi
-    \item \checkmark{} Scoring Service (Go) - Chấm điểm tự động
-    \item \checkmark{} Learner Model Service (Go) - Theo dõi tiến độ học tập
-    \item \checkmark{} Adaptive Engine (Go) - Đề xuất nội dung thích ứng
+    \item Content Service (Java) - Quản lý câu hỏi
+    \item Scoring Service (Go) - Chấm điểm tự động
+    \item Learner Model Service (Go) - Theo dõi tiến độ học tập
+    \item Adaptive Engine (Go) - Đề xuất nội dung thích ứng
 \end{itemize}
 
-\noindent\textbf{Database Schema (3/14 tables):}
+\noindent Database Schema (3/14 tables):
 \begin{itemize}[leftmargin=1.5em]
-    \item \checkmark{} \texttt{questions} - 1/5 tables của Content Service
-    \item \checkmark{} \texttt{submissions} - Scoring Service
-    \item \checkmark{} \texttt{skill\_mastery} - 1/3 tables của Learner Model Service
+    \item \texttt{questions} - 1/5 tables của Content Service
+    \item \texttt{submissions} - Scoring Service
+    \item \texttt{skill\_mastery} - 1/3 tables của Learner Model Service
 \end{itemize}
 
-\noindent\textbf{Core Flows Verified (2/5):}
+\noindent Core Flows Verified (2/5):
 \begin{itemize}[leftmargin=1.5em]
-    \item \checkmark{} Adaptive Content Delivery - 100\% match với sequence diagram
-    \item \checkmark{} Assessment Submission \& Scoring - Async flow hoạt động chính xác
+    \item Adaptive Content Delivery - 100\% match với sequence diagram
+    \item Assessment Submission \& Scoring - Async flow hoạt động chính xác
 \end{itemize}
 
 \subsubsection{Target Architecture (Kế Hoạch Tương Lai)}
 
-\noindent\textbf{Services bổ sung:}
+\noindent Services bổ sung:
 \begin{itemize}[leftmargin=1.5em]
     \item User Management Service - RBAC, OAuth 2.0/OIDC authentication
     \item Auth Service - JWT token validation
     \item API Gateway - Centralized routing và security
 \end{itemize}
 
-\noindent\textbf{Features nâng cao:}
+\noindent Features nâng cao:
 \begin{itemize}[leftmargin=1.5em]
     \item Full Content Management System (courses, chapters, content units)
     \item Learning Analytics (learning history, diagnostic results)
@@ -163,27 +161,27 @@
 \subsubsection{Kiến Trúc và Thiết Kế}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Modularity (AC1):} \checkmark{} Đạt 100\% - 4 microservices độc lập, mỗi service có Bounded Context riêng
-    \item \textbf{Testability (AC4):} \checkmark{} Clean Architecture cho phép mock dependencies, unit tests tồn tại cho tất cả services
-    \item \textbf{Maintainability (AC7):} \checkmark{} Cyclomatic Complexity = 7.2, Coupling = 3.8, Cohesion = 0.85 - đều đạt mục tiêu
-    \item \textbf{Polyglot Success:} \checkmark{} Java cho business logic, Go cho performance - đạt được best of both worlds
+    \item Modularity (AC1): Đạt 100\% - 4 microservices độc lập, mỗi service có Bounded Context riêng
+    \item Testability (AC4): Clean Architecture cho phép mock dependencies, unit tests tồn tại cho tất cả services
+    \item Maintainability (AC7): Cyclomatic Complexity = 7.2, Coupling = 3.8, Cohesion = 0.85 - đều đạt mục tiêu
+    \item Polyglot Success: Java cho business logic, Go cho performance - đạt được best of both worlds
 \end{itemize}
 
 \subsubsection{Chức Năng Adaptive Learning}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Adaptive Content Delivery:} \checkmark{} Hoạt động 100\% - Learner Model query mastery score, Adaptive Engine quyết định độ khó, Content Service cung cấp câu hỏi phù hợp
-    \item \textbf{Assessment \& Scoring:} \checkmark{} Async flow verified - Scoring Service chấm điểm, publish event, Learner Model cập nhật mastery
-    \item \textbf{Skill Mastery Tracking:} \checkmark{} Composite PK (user\_id, skill\_tag) đảm bảo data integrity
+    \item Adaptive Content Delivery: Hoạt động 100\% - Learner Model query mastery score, Adaptive Engine quyết định độ khó, Content Service cung cấp câu hỏi phù hợp
+    \item Assessment \& Scoring: Async flow verified - Scoring Service chấm điểm, publish event, Learner Model cập nhật mastery
+    \item Skill Mastery Tracking: Composite PK (user\_id, skill\_tag) đảm bảo data integrity
 \end{itemize}
 
 \subsubsection{Chất Lượng Code}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Type-safe ORMs:} Spring Data JPA (Java), SQLBoiler (Go) - 1,037 lines auto-generated code
-    \item \textbf{Proper Indexing:} 6 indexes across 3 databases cho performance optimization
-    \item \textbf{JSONB Usage:} Flexible schema cho \texttt{options} column trong \texttt{questions} table
-    \item \textbf{Clean Separation:} Domain models hoàn toàn tách biệt khỏi infrastructure concerns
+    \item Type-safe ORMs: Spring Data JPA (Java), SQLBoiler (Go) - 1,037 lines auto-generated code
+    \item Proper Indexing: 6 indexes across 3 databases cho performance optimization
+    \item JSONB Usage: Flexible schema cho \texttt{options} column trong \texttt{questions} table
+    \item Clean Separation: Domain models hoàn toàn tách biệt khỏi infrastructure concerns
 \end{itemize}
 
 \subsection{Metrics và Đánh Giá}
@@ -211,10 +209,10 @@
 \subsubsection{Development Metrics}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Timeline:} 3 tháng (ước tính) - 1 developer sử dụng AI tools (Cursor, Antigravity, Claude, Gemini)
-    \item \textbf{Code Reviewed:} ~1,900 lines trong Phase 3 verification
-    \item \textbf{SQL Schemas:} 203 lines across 3 init scripts
-    \item \textbf{Verification Reports:} 3 comprehensive reports (~1,400 lines documentation)
+    \item Timeline: 3 tháng (ước tính) - 1 developer sử dụng AI tools (Cursor, Antigravity, Claude, Gemini)
+    \item Code Reviewed: ~1,900 lines trong Phase 3 verification
+    \item SQL Schemas: 203 lines across 3 init scripts
+    \item Verification Reports: 3 comprehensive reports (~1,400 lines documentation)
 \end{itemize}
 
 \subsection{Bài Học Kinh Nghiệm}
@@ -222,25 +220,25 @@
 \subsubsection{Những Gì Hoạt Động Tốt}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Polyglot Strategy:} Lựa chọn đúng ngôn ngữ cho đúng công việc mang lại hiệu quả cao
-    \item \textbf{Clean Architecture:} Tách biệt layers giúp code dễ test và maintain
-    \item \textbf{Event-Driven:} RabbitMQ async events giảm coupling hiệu quả
-    \item \textbf{Database-per-Service:} Mỗi service có database riêng, tránh tight coupling
+    \item Polyglot Strategy: Lựa chọn đúng ngôn ngữ cho đúng công việc mang lại hiệu quả cao
+    \item Clean Architecture: Tách biệt layers giúp code dễ test và maintain
+    \item Event-Driven: RabbitMQ async events giảm coupling hiệu quả
+    \item Database-per-Service: Mỗi service có database riêng, tránh tight coupling
 \end{itemize}
 
 \subsubsection{Những Thách Thức}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Complexity:} Microservices architecture phức tạp hơn monolith, cần tooling tốt
-    \item \textbf{Testing:} Integration testing với multiple services đòi hỏi Testcontainers
-    \item \textbf{Polyglot Overhead:} Cần expertise ở cả Java và Go, CI/CD phức tạp hơn
+    \item Complexity: Microservices architecture phức tạp hơn monolith, cần tooling tốt
+    \item Testing: Integration testing với multiple services đòi hỏi Testcontainers
+    \item Polyglot Overhead: Cần expertise ở cả Java và Go, CI/CD phức tạp hơn
 \end{itemize}
 
 \subsection{Kết Luận}
 
 \indentpar \indentpar Dự án Intelligent Tutoring System đã thành công trong việc thiết kế và triển khai một kiến trúc microservices hiện đại, tuân thủ các nguyên tắc SOLID và Clean Architecture. MVP hiện tại chứng minh được khả năng hoạt động của adaptive learning system với 4 microservices, 3 databases, và event-driven architecture.
 
-\noindent\textbf{Điểm mạnh chính:}
+\noindent Điểm mạnh chính:
 \begin{itemize}[leftmargin=1.5em]
     \item Kiến trúc modular, dễ mở rộng và bảo trì
     \item Core adaptive learning functionality hoạt động 100\%
@@ -248,7 +246,7 @@
     \item Clear separation of concerns theo Clean Architecture
 \end{itemize}
 
-\noindent\textbf{Hướng phát triển:}
+\noindent Hướng phát triển:
 \begin{itemize}[leftmargin=1.5em]
     \item Triển khai User Management Service với OAuth 2.0/OIDC
     \item Mở rộng Content Service thành full CMS (courses, chapters)

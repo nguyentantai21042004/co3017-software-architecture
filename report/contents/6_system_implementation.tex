@@ -7,21 +7,21 @@
 \indentpar \indentpar Hệ thống áp dụng chiến lược "Polyglot Programming" để tối ưu hóa hiệu năng và tốc độ phát triển:
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Content Service (Java 17 + Spring Boot 3.x)}:
+    \item Content Service (Java 17 + Spring Boot 3.x):
           \begin{itemize}
-              \item \textbf{Lý do chọn}: Hệ sinh thái Spring mạnh mẽ cho các nghiệp vụ CRUD phức tạp, hỗ trợ tốt JPA/Hibernate cho quản lý dữ liệu quan hệ.
-              \item \textbf{Thư viện chính}: Spring Web (REST), Spring Data JPA (PostgreSQL), Lombok (Boilerplate reduction).
+              \item Lý do chọn: Hệ sinh thái Spring mạnh mẽ cho các nghiệp vụ CRUD phức tạp, hỗ trợ tốt JPA/Hibernate cho quản lý dữ liệu quan hệ.
+              \item Thư viện chính: Spring Web (REST), Spring Data JPA (PostgreSQL), Lombok (Boilerplate reduction).
           \end{itemize}
 
-    \item \textbf{Scoring, Learner Model, Adaptive Engine (Go 1.23 + Gin)}:
+    \item Scoring, Learner Model, Adaptive Engine (Go 1.23 + Gin):
           \begin{itemize}
-              \item \textbf{Lý do chọn}: Go có hiệu năng cao (high throughput), khởi động nhanh và tiêu tốn ít tài nguyên, lý tưởng cho các service xử lý sự kiện và tính toán thời gian thực.
-              \item \textbf{Thư viện chính}: Gin (Web Framework), GORM (ORM), amqp091-go (RabbitMQ client).
+              \item Lý do chọn: Go có hiệu năng cao (high throughput), khởi động nhanh và tiêu tốn ít tài nguyên, lý tưởng cho các service xử lý sự kiện và tính toán thời gian thực.
+              \item Thư viện chính: Gin (Web Framework), GORM (ORM), amqp091-go (RabbitMQ client).
           \end{itemize}
 
-    \item \textbf{Frontend (Next.js 15 + React)}:
+    \item Frontend (Next.js 15 + React):
           \begin{itemize}
-              \item \textbf{Lý do chọn}: Server-Side Rendering (SSR) giúp tối ưu SEO và trải nghiệm tải trang ban đầu.
+              \item Lý do chọn: Server-Side Rendering (SSR) giúp tối ưu SEO và trải nghiệm tải trang ban đầu.
           \end{itemize}
 \end{itemize}
 
@@ -29,9 +29,9 @@
 
 \subsubsection{1. Content Service: Quản lý Nội dung Học tập}
 
-\indentpar \indentpar Content Service được thiết kế theo \textbf{Hexagonal Architecture} để tách biệt logic nghiệp vụ khỏi framework.
+\indentpar \indentpar Content Service được thiết kế theo mô hình kiến trúc Hexagonal Architecture để tách biệt logic nghiệp vụ khỏi framework.
 
-\noindent\textbf{Cấu trúc Package:}
+\noindent Cấu trúc Package:
 \begin{itemize}
     \item \texttt{adapter.http}: Chứa \texttt{QuestionController} xử lý REST request.
     \item \texttt{usecase}: Chứa \texttt{QuestionUseCase} (interface) và \texttt{QuestionService} (implementation).
@@ -39,7 +39,7 @@
     \item \texttt{models}: Chứa entity \texttt{Question}.
 \end{itemize}
 
-\noindent\textbf{Mô hình Dữ liệu (Entity Question):}
+\noindent Mô hình Dữ liệu (Entity Question):\\
 Sử dụng tính năng \texttt{JSONB} của PostgreSQL để lưu trữ các lựa chọn trắc nghiệm, cho phép linh hoạt số lượng đáp án mà không cần bảng phụ.
 
 \begin{lstlisting}[language=Java, caption={Entity Question trong Content Service}]
@@ -63,7 +63,7 @@ public class Question {
 }
 \end{lstlisting}
 
-\noindent\textbf{API Quan trọng:}
+\noindent API Quan trọng:
 \begin{itemize}
     \item \texttt{GET /api/content/recommend}: Endpoint này nhận tham số \texttt{skill\_tag} và \texttt{type} (REMEDIAL/STANDARD). Nó sử dụng JPA Specification để lọc câu hỏi ngẫu nhiên phù hợp, phục vụ cho Adaptive Engine.
 \end{itemize}
@@ -72,13 +72,13 @@ public class Question {
 
 \indentpar \indentpar Service này đóng vai trò là Producer trong mô hình Event-Driven.
 
-\noindent\textbf{Luồng xử lý (Submission Flow):}
+\noindent Luồng xử lý (Submission Flow):
 \begin{enumerate}
-    \item \textbf{Nhận bài nộp}: Client gửi \texttt{POST /api/scoring/submit} với \texttt{question\_id} và \texttt{answer}.
-    \item \textbf{Xác thực đáp án}: Service gọi nội bộ sang Content Service để lấy đáp án đúng (trong tương lai sẽ cache bước này bằng Redis).
-    \item \textbf{Tính điểm}: So sánh string (MVP) hoặc chạy thuật toán AI (Future).
-    \item \textbf{Lưu DB}: Ghi kết quả vào bảng \texttt{submissions} trong \texttt{scoring\_db}.
-    \item \textbf{Publish Event (Async)}: Sử dụng Goroutine để gửi sự kiện vào RabbitMQ mà không block phản hồi HTTP.
+    \item Nhận bài nộp: Client gửi \texttt{POST /api/scoring/submit} với \texttt{question\_id} và \texttt{answer}.
+    \item Xác thực đáp án: Service gọi nội bộ sang Content Service để lấy đáp án đúng (trong tương lai sẽ cache bước này bằng Redis).
+    \item Tính điểm: So sánh string (MVP) hoặc chạy thuật toán AI (Future).
+    \item Lưu DB: Ghi kết quả vào bảng \texttt{submissions} trong \texttt{scoring\_db}.
+    \item Publish Event (Async): Sử dụng Goroutine để gửi sự kiện vào RabbitMQ mà không block phản hồi HTTP.
 \end{enumerate}
 
 \begin{lstlisting}[language=Go, caption={Cấu trúc sự kiện SubmissionCompleted}]
@@ -99,10 +99,10 @@ go func() {
 
 \indentpar \indentpar Service này hoạt động song song hai tiến trình: API Server (phục vụ truy vấn) và Worker (xử lý sự kiện).
 
-\noindent\textbf{Cơ chế Consumer:}
+\noindent Cơ chế Consumer:\\
 Worker lắng nghe queue \texttt{learner.updates}. Khi nhận được \texttt{SubmissionEvent}, nó tính toán lại điểm thông thạo (Mastery Score) cho kỹ năng tương ứng.
 
-\noindent\textbf{Logic cập nhật Mastery (MVP):}
+\noindent Logic cập nhật Mastery (MVP):\\
 Hiện tại sử dụng công thức trung bình cộng có trọng số (Weighted Average) đơn giản:
 \[ NewMastery = (OldMastery \times 0.7) + (NewScore \times 0.3) \]
 Điều này giúp điểm số phản ánh cả lịch sử lẫn kết quả mới nhất.
@@ -111,11 +111,11 @@ Hiện tại sử dụng công thức trung bình cộng có trọng số (Weigh
 
 \indentpar \indentpar Đây là thành phần thể hiện rõ nhất tính "Thông minh" (Intelligent) của hệ thống.
 
-\noindent\textbf{Thuật toán Thích ứng (Adaptive Algorithm):}
+\noindent Thuật toán Thích ứng (Adaptive Algorithm):
 \begin{enumerate}
     \item Client gọi \texttt{POST /api/adaptive/next-lesson}.
     \item Engine gọi Learner Model Service: \texttt{GET /internal/mastery?user\_id=...}
-    \item \textbf{Quyết định Phân nhánh}:
+    \item Quyết định Phân nhánh:
           \begin{itemize}
               \item Nếu \texttt{mastery\_score < 50}: Người học đang gặp khó khăn. $\rightarrow$ Yêu cầu Content Service lấy câu hỏi \textbf{REMEDIAL} (Bổ trợ, độ khó thấp).
               \item Nếu \texttt{mastery\_score >= 50}: Người học đã nắm vững. $\rightarrow$ Yêu cầu câu hỏi \textbf{STANDARD} (Tiêu chuẩn, độ khó tăng dần).
@@ -125,12 +125,12 @@ Hiện tại sử dụng công thức trung bình cộng có trọng số (Weigh
 
 \subsection{Cơ sở Hạ tầng và Triển khai (Infrastructure)}
 
-\indentpar \indentpar Hệ thống sử dụng \textbf{Docker Compose} để định nghĩa toàn bộ môi trường runtime, đảm bảo tính nhất quán giữa Dev và Prod (cho MVP).
+\indentpar \indentpar Hệ thống sử dụng Docker Compose để định nghĩa toàn bộ môi trường runtime, đảm bảo tính nhất quán giữa Dev và Prod (cho MVP).
 
-\noindent\textbf{Cấu hình Mạng (Networking):}
+\noindent Cấu hình Mạng (Networking):\\
 Tất cả service nằm trong mạng cầu nối \texttt{its-network}. Service gọi nhau thông qua DNS name của Docker container (ví dụ: \texttt{http://content-service:8081}).
 
-\noindent\textbf{Cấu hình RabbitMQ:}
+\noindent Cấu hình RabbitMQ:
 \begin{verbatim}
 environment:
   RABBITMQ_DEFAULT_USER: admintest
@@ -145,12 +145,12 @@ ports:
 \indentpar \indentpar Ngoài Unit Test, nhóm đã xây dựng kịch bản kiểm thử End-to-End (E2E) nằm trong thư mục \texttt{sources/tests/system} để xác minh toàn bộ luồng tích hợp:
 
 \begin{enumerate}
-    \item \textbf{Setup}: Khởi tạo dữ liệu câu hỏi mẫu vào \texttt{content\_db}.
-    \item \textbf{Action}: Giả lập HTTP request nộp bài sai liên tục (Score = 0).
-    \item \textbf{Verify 1}: Kiểm tra \texttt{scoring\_db} đã lưu submission.
-    \item \textbf{Verify 2}: Kiểm tra RabbitMQ đã nhận message.
-    \item \textbf{Verify 3}: Kiểm tra \texttt{learner\_db} thấy điểm mastery giảm.
-    \item \textbf{Verify 4}: Gọi Adaptive Engine, mong đợi nhận được câu hỏi loại \texttt{REMEDIAL}.
+    \item Setup: Khởi tạo dữ liệu câu hỏi mẫu vào \texttt{content\_db}.
+    \item Action: Giả lập HTTP request nộp bài sai liên tục (Score = 0).
+    \item Verify 1: Kiểm tra \texttt{scoring\_db} đã lưu submission.
+    \item Verify 2: Kiểm tra RabbitMQ đã nhận message.
+    \item Verify 3: Kiểm tra \texttt{learner\_db} thấy điểm mastery giảm.
+    \item Verify 4: Gọi Adaptive Engine, mong đợi nhận được câu hỏi loại \texttt{REMEDIAL}.
 \end{enumerate}
 
 Kịch bản này chứng minh sự phối hợp chính xác giữa 4 microservice và message broker.
@@ -190,10 +190,10 @@ Kịch bản này chứng minh sự phối hợp chính xác giữa 4 microservi
 \indentpar \indentpar Phiên bản MVP tập trung vào luồng học tập thích ứng cốt lõi:
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{4 Microservices hoạt động}: Content Service, Scoring Service, Learner Model Service, Adaptive Engine
-    \item \textbf{3 Databases}: content\_db (questions), scoring\_db (submissions), learner\_db (skill\_mastery)
-    \item \textbf{RabbitMQ}: Giao tiếp bất đồng bộ giữa Scoring và Learner Model
-    \item \textbf{Luồng Adaptive Learning}: Đã xác minh 100\% hoạt động đúng
+    \item 4 Microservices hoạt động: Content Service, Scoring Service, Learner Model Service, Adaptive Engine
+    \item 3 Databases: content\_db (questions), scoring\_db (submissions), learner\_db (skill\_mastery)
+    \item RabbitMQ: Giao tiếp bất đồng bộ giữa Scoring và Learner Model
+    \item Luồng Adaptive Learning: Đã xác minh 100\% hoạt động đúng
 \end{itemize}
 
 \subsubsection{Target Architecture (Kế hoạch)}
@@ -201,22 +201,22 @@ Kịch bản này chứng minh sự phối hợp chính xác giữa 4 microservi
 \indentpar \indentpar Các tính năng sau được thiết kế nhưng chưa triển khai trong MVP:
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{User Management Service}: Quản lý người dùng, vai trò, quyền hạn (RBAC)
-    \item \textbf{Auth Service}: Xác thực OAuth 2.0/OIDC, JWT tokens
-    \item \textbf{API Gateway}: Routing, rate limiting, authentication middleware
-    \item \textbf{Reporting Service}: Báo cáo phân tích cho giảng viên
-    \item \textbf{Real-time Feedback}: WebSocket, AI-generated hints
-    \item \textbf{Observability}: Distributed tracing, centralized logging
+    \item User Management Service: Quản lý người dùng, vai trò, quyền hạn (RBAC)
+    \item Auth Service: Xác thực OAuth 2.0/OIDC, JWT tokens
+    \item API Gateway: Routing, rate limiting, authentication middleware
+    \item Reporting Service: Báo cáo phân tích cho giảng viên
+    \item Real-time Feedback: WebSocket, AI-generated hints
+    \item Observability: Distributed tracing, centralized logging
 \end{itemize}
 
 \subsubsection{Lý do Phân chia MVP/Target}
 
-\indentpar \indentpar Việc phân chia này tuân theo nguyên tắc \textbf{Iterative Development}:
+\indentpar \indentpar Việc phân chia này tuân theo nguyên tắc Iterative Development:
 
 \begin{enumerate}
-    \item \textbf{Ưu tiên giá trị nghiệp vụ}: MVP tập trung vào tính năng cốt lõi (Adaptive Learning) để chứng minh khái niệm.
-    \item \textbf{Giảm rủi ro}: Triển khai từng phần giúp phát hiện và sửa lỗi sớm.
-    \item \textbf{Phù hợp phạm vi học thuật}: Dự án academic cần cân bằng giữa độ sâu kiến trúc và thời gian thực hiện.
+    \item Ưu tiên giá trị nghiệp vụ: MVP tập trung vào tính năng cốt lõi (Adaptive Learning) để chứng minh khái niệm.
+    \item Giảm rủi ro: Triển khai từng phần giúp phát hiện và sửa lỗi sớm.
+    \item Phù hợp phạm vi học thuật: Dự án academic cần cân bằng giữa độ sâu kiến trúc và thời gian thực hiện.
 \end{enumerate}
 
 \FloatBarrier

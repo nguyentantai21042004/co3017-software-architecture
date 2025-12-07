@@ -12,18 +12,18 @@ Tầm nhìn của ITS là tái hiện trải nghiệm học một--kèm--một g
 
 \subsubsection{Bối cảnh kinh doanh}
 
-\noindent\textbf{Nhu cầu thị trường}
+\noindent Nhu cầu thị trường
 
 Sự bùng nổ của công nghệ và xu hướng học tập trực tuyến đã mở ra cơ hội lớn cho các hệ thống e-learning cá nhân hóa. Tuy nhiên, phần lớn các nền tảng hiện nay vẫn mang tính đại trà, chưa thể tự động thích ứng với trình độ, tiến độ và phong cách học tập riêng của từng người học.
 
-\noindent\textbf{Đối tượng người dùng}
+\noindent Đối tượng người dùng
 \begin{itemize}
     \item Học sinh, sinh viên (K--12 và đại học): Cần lộ trình học phù hợp năng lực, tránh học lại kiến thức đã biết
     \item Giảng viên / giáo viên: Cần công cụ giám sát tiến trình, tạo báo cáo, và gợi ý cải thiện cho từng học sinh
     \item Quản trị viên (Admin): Quản lý vận hành hệ thống, phân quyền và triển khai các phiên bản AI mới
 \end{itemize}
 
-\noindent\textbf{Tiêu chí thành công}
+\noindent Tiêu chí thành công
 \begin{itemize}
     \item Hỗ trợ tối thiểu 5.000 người dùng đồng thời, thời gian phản hồi nhỏ hơn 500ms cho truy vấn phổ biến
     \item Hệ thống đạt SLA tối thiểu 99.5\% uptime, triển khai tính năng mới trong vòng 1 ngày
@@ -33,7 +33,7 @@ Sự bùng nổ của công nghệ và xu hướng học tập trực tuyến đ
 
 \subsubsection{Bối cảnh kỹ thuật}
 
-\noindent\textbf{Hệ thống hiện có và tích hợp:}
+\noindent Hệ thống hiện có và tích hợp:
 \begin{itemize}
     \item Hệ thống quản lý học tập (LMS) hiện có thông qua API
     \item Dịch vụ xác thực người dùng (Auth Service) dùng JWT/OAuth2
@@ -41,7 +41,7 @@ Sự bùng nổ của công nghệ và xu hướng học tập trực tuyến đ
     \item Môi trường triển khai Kubernetes cho phép auto-scaling và CI/CD
 \end{itemize}
 
-\noindent\textbf{Ràng buộc công nghệ}
+\noindent Ràng buộc công nghệ
 \begin{itemize}
     \item Ngôn ngữ chính: Java (Spring Boot) cho backend nghiệp vụ, Golang cho các dịch vụ hiệu năng cao (AI/ML)
     \item Cơ sở dữ liệu: PostgreSQL cho dữ liệu người học và nội dung; RabbitMQ cho giao tiếp sự kiện bất đồng bộ
@@ -49,7 +49,7 @@ Sự bùng nổ của công nghệ và xu hướng học tập trực tuyến đ
     \item Áp dụng nguyên tắc SOLID cho thiết kế module độc lập và dễ kiểm thử
 \end{itemize}
 
-\noindent\textbf{Kỳ vọng hiệu năng và khả năng mở rộng}
+\noindent Kỳ vọng hiệu năng và khả năng mở rộng
 \begin{itemize}
     \item Hiệu năng (Performance): API phản hồi nhỏ hơn $300\,$ms; tác vụ chấm điểm hoặc tạo lộ trình nhỏ hơn $1\,$s
     \item Khả năng mở rộng (Scalability): triển khai dạng Kubernetes cluster với Horizontal Pod Autoscaling (HPA) lớn hơn hoặc bằng $5{,}000$ người dùng đồng thời

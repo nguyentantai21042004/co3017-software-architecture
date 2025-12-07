@@ -10,7 +10,7 @@ Việc này giúp chuyển hóa các tiêu chí chất lượng trừu tượng 
 \indentpar \indentpar Toàn bộ 9 đặc tính kiến trúc đã được xác định từ Mục~2.4 (Non-Functional Requirements) được tổng hợp và sắp xếp theo tác động nghiệp vụ, rủi ro kỹ thuật, và mức độ ưu tiên.
 Bảng ma trận bên dưới không chỉ phản ánh độ quan trọng của từng AC đối với mục tiêu tổng thể của ITS, mà còn cho thấy những yếu tố nào sẽ chi phối trực tiếp kiến trúc hệ thống trong các phần sau.
 
-\textbf{Lưu ý:} Những AC có thứ hạng cao (AC1–AC4, AC6) sẽ là trọng tâm cho các quyết định kiến trúc ở Mục~3.2 (lựa chọn phong cách) và Mục~3.3 (ADRs), trong khi các AC thứ cấp (AC5–AC9) sẽ định hình cách triển khai và vận hành thực tế.
+Lưu ý: Những AC có thứ hạng cao (AC1–AC4, AC6) sẽ là trọng tâm cho các quyết định kiến trúc ở Mục~3.2 (lựa chọn phong cách) và Mục~3.3 (ADRs), trong khi các AC thứ cấp (AC5–AC9) sẽ định hình cách triển khai và vận hành thực tế.
 
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
@@ -45,13 +45,13 @@ Bảng ma trận bên dưới không chỉ phản ánh độ quan trọng của 
 \renewcommand{\arraystretch}{1.0}
 
 Sau khi xác định mức độ ưu tiên, bước tiếp theo là phân tích các đánh đổi (trade-offs) giữa những đặc tính này.
-Không một hệ thống nào có thể đạt tối đa mọi tiêu chí cùng lúc — việc hiểu rõ chúng xung đột ở đâu và sẽ hy sinh yếu tố nào là điều kiện tiên quyết để đưa ra \textbf{“kiến trúc ít tệ nhất” (the least worst architecture)} cho ITS.
+Không một hệ thống nào có thể đạt tối đa mọi tiêu chí cùng lúc — việc hiểu rõ chúng xung đột ở đâu và sẽ hy sinh yếu tố nào là điều kiện tiên quyết để đưa ra “kiến trúc ít tệ nhất” (the least worst architecture) cho ITS.
 
 \subsubsection{Phân tích Đánh Đổi}
 
 \indentpar \indentpar Mọi quyết định kiến trúc đều là sự đánh đổi. Phần này trình bày các trade-off chính mà nhóm kiến trúc chấp nhận để đạt được mục tiêu ưu tiên đã nêu trong ma trận ACs, cùng với các biện pháp giảm thiểu rủi ro tương ứng.
 
-\noindent \textbf{Trade-off: (AC1) Modularity \& (AC2) Scalability vs. Simplicity}
+\noindent Trade-off: (AC1) Modularity \& (AC2) Scalability vs. Simplicity
 \begin{itemize}[leftmargin=0.7cm]
     \item Scenario: Lựa chọn kiến trúc (Microservices) để hỗ trợ ``Live AI Model Swapping'' (FR12) và tải $> 5{,}000$ người dùng.
     \item Decision: Ưu tiên Modularity \& Scalability hơn Simplicity.
@@ -64,7 +64,7 @@ Không một hệ thống nào có thể đạt tối đa mọi tiêu chí cùng
           \end{enumerate}
 \end{itemize}
 
-\noindent \textbf{Trade-off: (AC4) Testability vs. Development Cost}
+\noindent Trade-off: (AC4) Testability vs. Development Cost
 \begin{itemize}[leftmargin=0.7cm]
     \item Scenario: Thiết kế cấu trúc service đảm bảo kiểm thử chính xác thuật toán AI (FR7).
     \item Decision: Ưu tiên Testability hơn chi phí phát triển ban đầu.
@@ -76,7 +76,7 @@ Không một hệ thống nào có thể đạt tối đa mọi tiêu chí cùng
           \end{enumerate}
 \end{itemize}
 
-\noindent \textbf{Trade-off: (AC6) Security vs. (AC3) Performance}
+\noindent Trade-off: (AC6) Security vs. (AC3) Performance
 \begin{itemize}[leftmargin=0.7cm]
     \item Scenario: Mã hóa PII và xác thực token làm tăng độ trễ hệ thống.
     \item Decision: Ưu tiên Security trong giới hạn hiệu năng chấp nhận được.
@@ -88,7 +88,7 @@ Không một hệ thống nào có thể đạt tối đa mọi tiêu chí cùng
           \end{enumerate}
 \end{itemize}
 
-\noindent \textbf{Trade-off: (AC3) Performance vs. (AC1) Modularity/Coupling}
+\noindent Trade-off: (AC3) Performance vs. (AC1) Modularity/Coupling
 \begin{itemize}[leftmargin=0.7cm]
     \item Scenario: Khi chia nhỏ hệ thống thành nhiều microservice quá mức (granularity quá mịn), mỗi luồng xử lý phải gọi qua mạng nhiều lần giữa các service, làm tăng độ trễ (latency) và giảm hiệu năng.
     \item Decision: Giữ mức độ phân rã vừa phải (balanced granularity), ưu tiên hiệu năng cho các luồng thời gian thực, thay vì cố đạt tính mô-đun cực độ.
@@ -124,47 +124,47 @@ Không một hệ thống nào có thể đạt tối đa mọi tiêu chí cùng
     \endfoot
     \hline
     \endlastfoot
-    \textbf{AC1: Modularity}      & \textbf{FF1.1}: Số lượng phụ thuộc vòng (cyclic dependencies) giữa các module/service.                                               & $= 0$ cycles                  & Phân tích dependency graph bằng ArchUnit (Java) hoặc go-arch-lint (Go). Chạy trong CI pipeline.          \\
+    AC1: Modularity      & FF1.1: Số lượng phụ thuộc vòng (cyclic dependencies) giữa các module/service.                                               & $= 0$ cycles                  & Phân tích dependency graph bằng ArchUnit (Java) hoặc go-arch-lint (Go). Chạy trong CI pipeline.          \\
     \hline
-    \textbf{AC1: Modularity}      & \textbf{FF1.2}: Thời gian deploy độc lập một service mà không ảnh hưởng service khác.                                                & $< 10$ phút                   & Đo thời gian từ commit đến production cho single service. Kiểm tra không có downtime ở các service khác. \\
+    AC1: Modularity      & FF1.2: Thời gian deploy độc lập một service mà không ảnh hưởng service khác.                                                & $< 10$ phút                   & Đo thời gian từ commit đến production cho single service. Kiểm tra không có downtime ở các service khác. \\
     \hline
-    \textbf{AC2: Scalability}     & \textbf{FF2.1}: Số lượng người dùng đồng thời hệ thống có thể xử lý với latency $< 500$ms (P95).                                     & $\geq 5{,}000$ users          & Load testing với K6/Locust. Đo P95 response time dưới tải peak.                                          \\
+    AC2: Scalability     & FF2.1: Số lượng người dùng đồng thời hệ thống có thể xử lý với latency $< 500$ms (P95).                                     & $\geq 5{,}000$ users          & Load testing với K6/Locust. Đo P95 response time dưới tải peak.                                          \\
     \hline
-    \textbf{AC2: Scalability}     & \textbf{FF2.2}: Thời gian auto-scale từ $n$ đến $2n$ pods khi CPU $> 80\%$.                                                          & $< 2$ phút                    & Kubernetes HPA metrics. Trigger scale event và đo thời gian đến khi pods ready.                          \\
+    AC2: Scalability     & FF2.2: Thời gian auto-scale từ $n$ đến $2n$ pods khi CPU $> 80\%$.                                                          & $< 2$ phút                    & Kubernetes HPA metrics. Trigger scale event và đo thời gian đến khi pods ready.                          \\
     \hline
-    \textbf{AC3: Performance}     & \textbf{FF3.1}: Response time cho luồng Adaptive Content Delivery (API Gateway $\rightarrow$ Adaptive Engine $\rightarrow$ Content). & $< 200$ms (P95)               & APM tools (Jaeger/Zipkin). Đo end-to-end latency cho critical path.                                      \\
+    AC3: Performance     & FF3.1: Response time cho luồng Adaptive Content Delivery (API Gateway $\rightarrow$ Adaptive Engine $\rightarrow$ Content). & $< 200$ms (P95)               & APM tools (Jaeger/Zipkin). Đo end-to-end latency cho critical path.                                      \\
     \hline
-    \textbf{AC3: Performance}     & \textbf{FF3.2}: Response time cho luồng Scoring \& Feedback sau khi submit bài.                                                      & $< 500$ms (P95)               & Distributed tracing. Đo từ submission đến feedback display.                                              \\
+    AC3: Performance     & FF3.2: Response time cho luồng Scoring \& Feedback sau khi submit bài.                                                      & $< 500$ms (P95)               & Distributed tracing. Đo từ submission đến feedback display.                                              \\
     \hline
-    \textbf{AC4: Testability}     & \textbf{FF4.1}: Code coverage cho unit tests của domain/application layer.                                                           & $\geq 80\%$                   & JaCoCo (Java), go test -cover (Go). Enforce trong CI với quality gate.                                   \\
+    AC4: Testability     & FF4.1: Code coverage cho unit tests của domain/application layer.                                                           & $\geq 80\%$                   & JaCoCo (Java), go test -cover (Go). Enforce trong CI với quality gate.                                   \\
     \hline
-    \textbf{AC4: Testability}     & \textbf{FF4.2}: Tỷ lệ test có thể chạy độc lập (không cần external dependencies).                                                    & $\geq 90\%$ unit tests        & Đếm số test sử dụng mocks vs real dependencies. Review trong code review.                                \\
+    AC4: Testability     & FF4.2: Tỷ lệ test có thể chạy độc lập (không cần external dependencies).                                                    & $\geq 90\%$ unit tests        & Đếm số test sử dụng mocks vs real dependencies. Review trong code review.                                \\
     \hline
-    \textbf{AC6: Security}        & \textbf{FF6.1}: Số lượng vulnerabilities với severity High/Critical trong dependencies.                                              & $= 0$ High/Critical           & OWASP Dependency Check, Snyk, Trivy. Chạy hàng ngày trong CI.                                            \\
+    AC6: Security        & FF6.1: Số lượng vulnerabilities với severity High/Critical trong dependencies.                                              & $= 0$ High/Critical           & OWASP Dependency Check, Snyk, Trivy. Chạy hàng ngày trong CI.                                            \\
     \hline
-    \textbf{AC6: Security}        & \textbf{FF6.2}: Tỷ lệ API endpoints được bảo vệ bởi authentication.                                                                  & $= 100\%$ (trừ health checks) & API Gateway audit logs. Automated security scan với OWASP ZAP.                                           \\
+    AC6: Security        & FF6.2: Tỷ lệ API endpoints được bảo vệ bởi authentication.                                                                  & $= 100\%$ (trừ health checks) & API Gateway audit logs. Automated security scan với OWASP ZAP.                                           \\
     \hline
-    \textbf{AC7: Maintainability} & \textbf{FF7.1}: Cyclomatic complexity trung bình của codebase.                                                                       & $< 10$ per method             & SonarQube, golangci-lint. Quality gate trong CI pipeline.                                                \\
+    AC7: Maintainability & FF7.1: Cyclomatic complexity trung bình của codebase.                                                                       & $< 10$ per method             & SonarQube, golangci-lint. Quality gate trong CI pipeline.                                                \\
     \hline
-    \textbf{AC7: Maintainability} & \textbf{FF7.2}: Afferent/Efferent coupling ratio (instability metric).                                                               & $0.3 \leq I \leq 0.7$         & ArchUnit metrics, JDepend. Đánh giá hàng sprint.                                                         \\
+    AC7: Maintainability & FF7.2: Afferent/Efferent coupling ratio (instability metric).                                                               & $0.3 \leq I \leq 0.7$         & ArchUnit metrics, JDepend. Đánh giá hàng sprint.                                                         \\
     \hline
-    \textbf{AC5: Deployability}   & \textbf{FF5.1}: Deployment frequency (số lần deploy thành công/tuần).                                                                & $\geq 5$ deploys/tuần         & CI/CD metrics từ GitHub Actions/GitLab CI.                                                               \\
+    AC5: Deployability   & FF5.1: Deployment frequency (số lần deploy thành công/tuần).                                                                & $\geq 5$ deploys/tuần         & CI/CD metrics từ GitHub Actions/GitLab CI.                                                               \\
     \hline
-    \textbf{AC5: Deployability}   & \textbf{FF5.2}: Mean Time to Recovery (MTTR) sau deployment failure.                                                                 & $< 15$ phút                   & Incident tracking. Đo thời gian từ alert đến rollback hoàn tất.                                          \\
+    AC5: Deployability   & FF5.2: Mean Time to Recovery (MTTR) sau deployment failure.                                                                 & $< 15$ phút                   & Incident tracking. Đo thời gian từ alert đến rollback hoàn tất.                                          \\
     \hline
-    \textbf{AC9: Observability}   & \textbf{FF9.1}: Tỷ lệ requests có distributed trace đầy đủ.                                                                          & $\geq 99\%$                   & Jaeger/Zipkin sampling rate. Kiểm tra trace completeness.                                                \\
+    AC9: Observability   & FF9.1: Tỷ lệ requests có distributed trace đầy đủ.                                                                          & $\geq 99\%$                   & Jaeger/Zipkin sampling rate. Kiểm tra trace completeness.                                                \\
     \hline
-    \textbf{AC9: Observability}   & \textbf{FF9.2}: Mean Time to Detect (MTTD) cho anomalies.                                                                            & $< 5$ phút                    & Prometheus alerting rules. Đo thời gian từ anomaly đến alert fired.                                      \\
+    AC9: Observability   & FF9.2: Mean Time to Detect (MTTD) cho anomalies.                                                                            & $< 5$ phút                    & Prometheus alerting rules. Đo thời gian từ anomaly đến alert fired.                                      \\
     \hline
 \end{longtable}
 \renewcommand{\arraystretch}{1.0}
 
-\noindent\textbf{Chiến lược Thực thi Fitness Functions:}
+\noindent Chiến lược Thực thi Fitness Functions:
 \begin{enumerate}[leftmargin=0.7cm]
-    \item \textbf{Automated}: Tích hợp vào CI/CD pipeline, chạy tự động mỗi commit/PR.
-    \item \textbf{Continuous}: Một số fitness functions (FF3.x, FF9.x) chạy liên tục trong production với APM tools.
-    \item \textbf{Periodic}: Load tests (FF2.x) và security scans (FF6.x) chạy định kỳ (hàng tuần/sprint).
-    \item \textbf{Quality Gates}: Các fitness functions quan trọng (FF4.1, FF6.1, FF7.1) là blocking gates -- build fail nếu không đạt ngưỡng.
+    \item Automated: Tích hợp vào CI/CD pipeline, chạy tự động mỗi commit/PR.
+    \item Continuous: Một số fitness functions (FF3.x, FF9.x) chạy liên tục trong production với APM tools.
+    \item Periodic: Load tests (FF2.x) và security scans (FF6.x) chạy định kỳ (hàng tuần/sprint).
+    \item Quality Gates: Các fitness functions quan trọng (FF4.1, FF6.1, FF7.1) là blocking gates -- build fail nếu không đạt ngưỡng.
 \end{enumerate}
 
 \FloatBarrier

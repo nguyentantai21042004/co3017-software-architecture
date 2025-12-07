@@ -1,11 +1,11 @@
 \subsection{Góc nhìn Phân bổ}
 
-\indentpar \indentpar \textbf{Lưu ý quan trọng:} Góc nhìn này mô tả \textbf{Kiến trúc Đích (Target Architecture - Phase 3)} của hệ thống ITS khi triển khai trên môi trường Production quy mô lớn (On-Premise Kubernetes).
-\indentpar Đối với giai đoạn \textbf{MVP (Phase 1)} hiện tại, hệ thống được triển khai đơn giản hóa bằng \textbf{Docker Compose} trên một máy chủ vật lý duy nhất để phục vụ phát triển và kiểm thử nhanh (xem chi tiết tại Mục~6).
+\indentpar \indentpar Lưu ý quan trọng: Góc nhìn này mô tả Kiến trúc Đích (Target Architecture - Phase 3) của hệ thống ITS khi triển khai trên môi trường Production quy mô lớn (On-Premise Kubernetes).
+\indentpar Đối với giai đoạn MVP (Phase 1) hiện tại, hệ thống được triển khai đơn giản hóa bằng Docker Compose trên một máy chủ vật lý duy nhất để phục vụ phát triển và kiểm thử nhanh (xem chi tiết tại Mục~6).
 
 \indentpar \indentpar Trong kiến trúc đích On-Premise, hệ thống ITS được triển khai hoàn toàn trên hạ tầng nội bộ (private infrastructure), bao gồm:
 \begin{itemize}[leftmargin=0.7cm]
-    \item Các Server vật lý hoặc Virtual Machines trong trung tâm dữ liệu.
+    \item Các server vật lý hoặc Virtual Machines trong trung tâm dữ liệu.
     \item Một Kubernetes Cluster tự quản lý (Self-managed K8s) do đội IT vận hành.
     \item Các thành phần lưu trữ, mạng và giám sát được triển khai cục bộ.
 \end{itemize}
@@ -90,14 +90,14 @@
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
-\noindent \textbf{Phân vùng Mạng (Network Segmentation)}
+\noindent Phân vùng Mạng (Network Segmentation)
 
 \indentpar \indentpar Vì đây là môi trường On-Premise, việc phân vùng mạng (segmentation) là cực kỳ quan trọng:
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{DMZ Layer}: Load Balancer + API Gateway.
-    \item \textbf{Application Layer}: các pod Java/Go.
-    \item \textbf{Data Layer}: PostgreSQL, MongoDB, RabbitMQ, Redis.
-    \item \textbf{Monitoring Layer}: Prometheus, Grafana, Loki.
+    \item DMZ Layer: Load Balancer + API Gateway.
+    \item Application Layer: các pod Java/Go.
+    \item Data Layer: PostgreSQL, MongoDB, RabbitMQ, Redis.
+    \item Monitoring Layer: Prometheus, Grafana, Loki.
 \end{itemize}
 
 \begin{figure}[H]
@@ -107,7 +107,7 @@
     \label{fig:deployment-architecture-onprem}
 \end{figure}
 
-\noindent \textbf{Sơ đồ Triển khai Chi tiết (Enhanced Deployment Diagram)}
+\noindent Sơ đồ Triển khai Chi tiết (Enhanced Deployment Diagram)
 
 \indentpar \indentpar Sơ đồ dưới đây mô tả chi tiết hơn về kiến trúc triển khai, bao gồm các thành phần Kubernetes, network topology, và data flow giữa các layer.
 
@@ -118,7 +118,7 @@
     \label{fig:enhanced-deployment}
 \end{figure}
 
-\noindent \textbf{Chi tiết các Layer trong Kiến trúc:}
+\noindent Chi tiết các Layer trong Kiến trúc:
 
 \renewcommand{\arraystretch}{1.3}
 \begin{table}[H]
@@ -148,23 +148,23 @@
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
-\noindent \textbf{Network Topology và Security Zones:}
+\noindent Network Topology và Security Zones:
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{VLAN 10 -- DMZ}: Load Balancer, chỉ expose port 443 (HTTPS)
-    \item \textbf{VLAN 20 -- Application}: Kubernetes worker nodes, internal communication
-    \item \textbf{VLAN 30 -- Data}: Database clusters, message broker, cache
-    \item \textbf{VLAN 40 -- Management}: Monitoring stack, Kubernetes master nodes
+    \item VLAN 10 -- DMZ: Load Balancer, chỉ expose port 443 (HTTPS)
+    \item VLAN 20 -- Application: Kubernetes worker nodes, internal communication
+    \item VLAN 30 -- Data: Database clusters, message broker, cache
+    \item VLAN 40 -- Management: Monitoring stack, Kubernetes master nodes
 \end{itemize}
 
-\noindent \textbf{High Availability Configuration:}
+\noindent High Availability Configuration:
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Kubernetes Masters}: 3 nodes với etcd cluster (quorum-based)
-    \item \textbf{PostgreSQL}: Patroni với 1 Primary + 2 Replicas (streaming replication)
-    \item \textbf{RabbitMQ}: 3-node cluster với mirrored queues
-    \item \textbf{Redis}: Sentinel với 1 Master + 2 Replicas + 3 Sentinels
-    \item \textbf{Application Pods}: HPA (Horizontal Pod Autoscaler) với min/max replicas
+    \item Kubernetes Masters: 3 nodes với etcd cluster (quorum-based)
+    \item PostgreSQL: Patroni với 1 Primary + 2 Replicas (streaming replication)
+    \item RabbitMQ: 3-node cluster với mirrored queues
+    \item Redis: Sentinel với 1 Master + 2 Replicas + 3 Sentinels
+    \item Application Pods: HPA (Horizontal Pod Autoscaler) với min/max replicas
 \end{itemize}
 
 \FloatBarrier
@@ -205,7 +205,7 @@
 
 \indentpar \indentpar Dưới đây là toàn bộ thành phần hạ tầng bắt buộc khi triển khai ITS On-Premise.
 
-\noindent \textbf{1. Load Balancer (Lớp DMZ)}
+\noindent 1. Load Balancer (Lớp DMZ)
 
 \begin{itemize}[leftmargin=0.7cm]
     \item Có thể dùng:
@@ -223,39 +223,39 @@
           \end{itemize}
 \end{itemize}
 
-\noindent \textbf{2. Database \& Storage Zone}
+\noindent 2. Database \& Storage Zone
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{PostgreSQL HA Cluster:}
+    \item PostgreSQL HA Cluster:
           \begin{itemize}[nosep,leftmargin=0.9cm]
               \item Patroni + etcd hoặc
               \item pgPool-II + Streaming Replication
           \end{itemize}
-    \item \textbf{MongoDB Replica Set:}
+    \item MongoDB Replica Set:
           \begin{itemize}[nosep,leftmargin=0.9cm]
               \item Chạy 3 node trong các rack khác nhau.
           \end{itemize}
-    \item \textbf{Redis Sentinel Cluster:}
+    \item Redis Sentinel Cluster:
           \begin{itemize}[nosep,leftmargin=0.9cm]
               \item Dùng local SSD của server để đạt IOPS cao.
           \end{itemize}
-    \item \textbf{RabbitMQ Cluster:}
+    \item RabbitMQ Cluster:
           \begin{itemize}[nosep,leftmargin=0.9cm]
               \item Mirrored queues (Highly Available).
               \item Phù hợp với Adaptive Learning \& Scoring Event-driven flow.
           \end{itemize}
 \end{itemize}
 
-\noindent \textbf{3. Observability Stack (AC9 -- On-Premise)}
+\noindent 3. Observability Stack (AC9 -- On-Premise)
 
 \indentpar \indentpar Toàn bộ stack giám sát được cài trong namespace \texttt{its-monitoring}:
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Prometheus} -- metrics (scrape từ pods + node exporter)
-    \item \textbf{Loki} -- collector logs
-    \item \textbf{Grafana} -- dashboard hợp nhất
-    \item \textbf{Alertmanager} -- cảnh báo nội bộ (email/SMS/Zalo OA)
-    \item \textbf{OpenTelemetry Collector} -- gửi trace từ Java/Go đến Tempo/Jaeger
-    \item \textbf{Node Exporter} -- metrics phần cứng của mỗi server
+    \item Prometheus -- metrics (scrape từ pods + node exporter)
+    \item Loki -- collector logs
+    \item Grafana -- dashboard hợp nhất
+    \item Alertmanager -- cảnh báo nội bộ (email/SMS/Zalo OA)
+    \item OpenTelemetry Collector -- gửi trace từ Java/Go đến Tempo/Jaeger
+    \item Node Exporter -- metrics phần cứng của mỗi server
 \end{itemize}
 
 \subsubsection{So sánh Cloud vs On-Premise}

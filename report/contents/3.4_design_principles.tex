@@ -1,65 +1,65 @@
 \subsection{Nguyên tắc thiết kế}
 
-\indentpar \indentpar Sau khi xác lập kiến trúc tổng thể (Mục~3.2) và các quyết định kỹ thuật chi tiết (Mục~3.3), phần này trình bày các nguyên tắc thiết kế cốt lõi (design principles) để hiện thực hóa các đặc tính kiến trúc (ACs) đã ưu tiên---đặc biệt là \textbf{AC1: Modularity}, \textbf{AC4: Testability}, và \textbf{AC7: Maintainability}. Các nguyên tắc này định hình cấu trúc bên trong của mỗi service và cách chúng tương tác với nhau.
+\indentpar \indentpar Sau khi xác lập kiến trúc tổng thể (Mục~3.2) và các quyết định kỹ thuật chi tiết (Mục~3.3), phần này trình bày các nguyên tắc thiết kế cốt lõi (design principles) để hiện thực hóa các đặc tính kiến trúc (ACs) đã ưu tiên---đặc biệt là AC1: Modularity, AC4: Testability, và AC7: Maintainability. Các nguyên tắc này định hình cấu trúc bên trong của mỗi service và cách chúng tương tác với nhau.
 
 \subsubsection{Các nguyên tắc cốt lõi}
 
 \indentpar \indentpar Các nguyên tắc này là nền tảng triết lý cho mọi quyết định thiết kế.
 
-\indent\textbf{a. Domain-Driven Design (DDD)}
+\indent a. Domain-Driven Design (DDD)
 
 \indentpar DDD là nguyên tắc chủ đạo để phân tích nghiệp vụ và thu hẹp khoảng cách giữa logic nghiệp vụ cốt lõi và thiết kế kiến trúc. Chúng ta sử dụng DDD để xác định ranh giới (boundaries) cho các microservice. Các khái niệm DDD chính được áp dụng bao gồm:
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Bounded Contexts (Bối cảnh Bó buộc):} Hệ thống được phân rã thành các ``ranh giới nghiệp vụ'' (Bounded Context) rõ ràng. Mỗi Bounded Context sẽ (cuối cùng) trở thành một microservice hoặc một nhóm microservice liên quan, ví dụ: `User Management`, `Content`, và `Learner Model`.
-    \item \textbf{Aggregates (Tổng thể):} Là khái niệm trung tâm để đảm bảo tính nhất quán dữ liệu. Mỗi Aggregate xác định một ranh giới giao dịch (transaction boundary). Các Aggregate chính đã được xác định bao gồm `LearnerAggregate`, `LearnerModelAggregate`, và `ContentAggregate`.
-    \item \textbf{Entities \& Value Objects:} Phân biệt rõ các đối tượng có danh tính (Entities, ví dụ: `Learner`, `Course`) và các đối tượng thuộc tính bất biến (Value Objects, ví dụ: `MetadataTag`, `ProgressRecord`).
-    \item \textbf{Domain Services \& Domain Events:} Các nghiệp vụ phức tạp liên quan đến nhiều Aggregate được xử lý bởi `Domain Services` (ví dụ: `AdaptivePathGenerator`, `ScoringEngine`). Giao tiếp giữa các Aggregate/Context (ví dụ: khi chấm điểm xong) được thực hiện bất đồng bộ thông qua `Domain Events` (ví dụ: `SubmissionCompleted`).
+    \item Bounded Contexts (Bối cảnh Bó buộc): Hệ thống được phân rã thành các ``ranh giới nghiệp vụ'' (Bounded Context) rõ ràng. Mỗi Bounded Context sẽ (cuối cùng) trở thành một microservice hoặc một nhóm microservice liên quan, ví dụ: `User Management`, `Content`, và `Learner Model`.
+    \item Aggregates (Tổng thể): Là khái niệm trung tâm để đảm bảo tính nhất quán dữ liệu. Mỗi Aggregate xác định một ranh giới giao dịch (transaction boundary). Các Aggregate chính đã được xác định bao gồm `LearnerAggregate`, `LearnerModelAggregate`, và `ContentAggregate`.
+    \item Entities \& Value Objects: Phân biệt rõ các đối tượng có danh tính (Entities, ví dụ: `Learner`, `Course`) và các đối tượng thuộc tính bất biến (Value Objects, ví dụ: `MetadataTag`, `ProgressRecord`).
+    \item Domain Services \& Domain Events: Các nghiệp vụ phức tạp liên quan đến nhiều Aggregate được xử lý bởi `Domain Services` (ví dụ: `AdaptivePathGenerator`, `ScoringEngine`). Giao tiếp giữa các Aggregate/Context (ví dụ: khi chấm điểm xong) được thực hiện bất đồng bộ thông qua `Domain Events` (ví dụ: `SubmissionCompleted`).
 \end{itemize}
 
-\indent\textbf{b. SOLID Principles}
+\indent b. SOLID Principles
 
-\indentpar Việc tuân thủ 5 nguyên tắc SOLID là bắt buộc để đạt được \textbf{AC7: Maintainability} và \textbf{AC4: Testability}. Các nguyên tắc này được áp dụng chi tiết cho cả code Java và Golang:
+\indentpar Việc tuân thủ 5 nguyên tắc SOLID là bắt buộc để đạt được AC7: Maintainability và AC4: Testability. Các nguyên tắc này được áp dụng chi tiết cho cả code Java và Golang:
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{S - Single Responsibility Principle (SRP):} Mỗi class/module chỉ có một lý do để thay đổi. Ví dụ, một `UserService` không nên tự gửi email; nó nên ủy quyền cho một `EmailService` riêng biệt.
-    \item \textbf{O - Open/Closed Principle (OCP):} Mở rộng cho việc mở rộng nhưng đóng cho việc sửa đổi. Nguyên tắc này được thực thi bằng cách sử dụng các interface. Ví dụ: `GeneratePathUseCase` phụ thuộc vào interface `PathGenerator`, cho phép chúng ta dễ dàng thêm một `AIPathGenerator` mới mà không cần sửa đổi `BasicPathGenerator` hay chính Use Case đó.
-    \item \textbf{L - Liskov Substitution Principle (LSP):} Các đối tượng của lớp con có thể thay thế các đối tượng của lớp cha mà không làm thay đổi tính đúng đắn của chương trình.
-    \item \textbf{I - Interface Segregation Principle (ISP):} Client không nên bị buộc phải phụ thuộc vào các interface mà chúng không sử dụng. Thay vì một ``fat interface'' `LearnerService`, chúng ta chia nhỏ nó thành các interface tập trung như `ProfileReader`, `SkillMasteryReader`, và `SkillMasteryWriter`.
-    \item \textbf{D - Dependency Inversion Principle (DIP):} Các module cấp cao không nên phụ thuộc vào các module cấp thấp; cả hai nên phụ thuộc vào abstractions (interfaces). Đây là nguyên tắc nền tảng của Clean Architecture.
+    \item S - Single Responsibility Principle (SRP): Mỗi class/module chỉ có một lý do để thay đổi. Ví dụ, một `UserService` không nên tự gửi email; nó nên ủy quyền cho một `EmailService` riêng biệt.
+    \item O - Open/Closed Principle (OCP): Mở rộng cho việc mở rộng nhưng đóng cho việc sửa đổi. Nguyên tắc này được thực thi bằng cách sử dụng các interface. Ví dụ: `GeneratePathUseCase` phụ thuộc vào interface `PathGenerator`, cho phép chúng ta dễ dàng thêm một `AIPathGenerator` mới mà không cần sửa đổi `BasicPathGenerator` hay chính Use Case đó.
+    \item L - Liskov Substitution Principle (LSP): Các đối tượng của lớp con có thể thay thế các đối tượng của lớp cha mà không làm thay đổi tính đúng đắn của chương trình.
+    \item I - Interface Segregation Principle (ISP): Client không nên bị buộc phải phụ thuộc vào các interface mà chúng không sử dụng. Thay vì một ``fat interface'' `LearnerService`, chúng ta chia nhỏ nó thành các interface tập trung như `ProfileReader`, `SkillMasteryReader`, và `SkillMasteryWriter`.
+    \item D - Dependency Inversion Principle (DIP): Các module cấp cao không nên phụ thuộc vào các module cấp thấp; cả hai nên phụ thuộc vào abstractions (interfaces). Đây là nguyên tắc nền tảng của Clean Architecture.
 \end{itemize}
 
-\indent\textbf{c. Clean/Hexagonal Architecture}
+\indent c. Clean/Hexagonal Architecture
 
-\indentpar Đây là kiểu kiến trúc nội bộ (Internal Architecture Pattern) bắt buộc được chọn cho \textbf{TẤT CẢ} các microservice (cả Java và Golang).
+\indentpar Đây là kiểu kiến trúc nội bộ (Internal Architecture Pattern) bắt buộc được chọn cho tất cả các microservice (cả Java và Golang).
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Mục tiêu:} Là nguyên tắc kỹ thuật chính để đạt được \textbf{AC4: Testability}.
-    \item \textbf{Dependency Rule:} Nguyên tắc cốt lõi là \textbf{Quy tắc Phụ thuộc (Dependency Rule)}. Mọi phụ thuộc phải hướng vào trong. Các lớp ngoài (Frameworks, DBs) phụ thuộc vào các lớp trong (Use Cases, Entities). Logic nghiệp vụ cốt lõi không bao giờ được phép biết về chi tiết hạ tầng (ví dụ: logic `ScoringEngine` không biết nó đang dùng Postgres hay Mongo).
-    \item \textbf{Cấu trúc:} Các service được tổ chức thành các tầng đồng tâm: `Domain` (trong cùng), `Application` (Use Cases), `Adapters` (Controllers, Repositories), và `Infrastructure` (Frameworks, Drivers).
+    \item Mục tiêu: Là nguyên tắc kỹ thuật chính để đạt được AC4: Testability.
+    \item Dependency Rule: Nguyên tắc cốt lõi là Quy tắc Phụ thuộc (Dependency Rule). Mọi phụ thuộc phải hướng vào trong. Các lớp ngoài (Frameworks, DBs) phụ thuộc vào các lớp trong (Use Cases, Entities). Logic nghiệp vụ cốt lõi không bao giờ được phép biết về chi tiết hạ tầng (ví dụ: logic `ScoringEngine` không biết nó đang dùng Postgres hay Mongo).
+    \item Cấu trúc: Các service được tổ chức thành các tầng đồng tâm: `Domain` (trong cùng), `Application` (Use Cases), `Adapters` (Controllers, Repositories), và `Infrastructure` (Frameworks, Drivers).
 \end{itemize}
 
 \subsubsection{Các mẫu triển khai và tiêu chuẩn}
 
 \indentpar Để thực thi các nguyên tắc trên, các mẫu (patterns) và tiêu chuẩn kỹ thuật cụ thể đã được định nghĩa chi tiết trong Mục~3.3 (Architecture Decision Records). Phần này tóm tắt vai trò của từng mẫu trong việc hiện thực hóa các nguyên tắc cốt lõi:
 
-\indent\textbf{a. Repository Pattern (ADR-4)}
+\indent a. Repository Pattern (ADR-4)
 
 \indentpar Đây là mẫu kỹ thuật bắt buộc để triển khai nguyên tắc DIP và Clean Architecture, đảm bảo tầng domain và application không phụ thuộc vào chi tiết hạ tầng cụ thể (ví dụ: ORM, SQL). Chi tiết đầy đủ về quyết định này, bao gồm context, rationale, và trade-offs, được trình bày ở Mục~3.3, ADR-4.
 
-\indent\textbf{b. Testing Pyramid Strategy (ADR-5)}
+\indent b. Testing Pyramid Strategy (ADR-5)
 
 \indentpar Đây là tiêu chuẩn kiểm thử chính thức để đảm bảo chất lượng code và tính đúng đắn của thuật toán AI. Chiến lược này tuân theo Testing Pyramid: phần lớn là Unit Tests ($> 80\%$ coverage), kế đến là Integration Tests (dùng Testcontainers), và cuối cùng là E2E Tests cho các luồng nghiệp vụ quan trọng. Chi tiết đầy đủ xem Mục~3.3, ADR-5.
 
-\indent\textbf{c. Centralized Security Standard (ADR-6 \& ADR-7)}
+\indent c. Centralized Security Standard (ADR-6 \& ADR-7)
 
 \indentpar Tiêu chuẩn bảo mật tập trung cho toàn hệ thống, bao gồm xác thực (AuthN) tại Auth Service, phân quyền (AuthZ) tại API Gateway, và bảo vệ dữ liệu cá nhân (PII) thông qua phân tách và mã hóa. Các quyết định này được giải thích đầy đủ ở Mục~3.3, ADR-6 và ADR-7.
 
-\indent\textbf{d. Event-Driven Communication (ADR-8 \& ADR-9)}
+\indent d. Event-Driven Communication (ADR-8 \& ADR-9)
 
 \indentpar Sử dụng RabbitMQ cho giao tiếp bất đồng bộ giữa các service và áp dụng Saga Pattern với Transactional Outbox cho distributed transactions. Các quyết định này đảm bảo tính nhất quán eventual consistency và giảm coupling giữa các service. Chi tiết xem Mục~3.3, ADR-8 và ADR-9.
 
-\indent\textbf{e. Observability-First Design (ADR-10)}
+\indent e. Observability-First Design (ADR-10)
 
 \indentpar Áp dụng Distributed Tracing và Structured Logging (JSON) cho toàn bộ hệ thống. Mọi request phải có Trace ID được propagate qua HTTP headers và RabbitMQ message headers. Chi tiết xem Mục~3.3, ADR-10.
 
@@ -67,45 +67,45 @@
 
 \indentpar \indentpar Để đảm bảo các nguyên tắc thiết kế được áp dụng nhất quán, các tiêu chuẩn về cấu trúc code và thiết kế API được quy định rõ ràng.
 
-\indent\textbf{a. Code Organization Standard}
+\indent a. Code Organization Standard
 
 \indentpar Tất cả các microservice (cả Java và Go) phải tuân theo cấu trúc thư mục chuẩn theo Clean Architecture:
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{domain/}: chứa Entities, Value Objects, Domain Services, và Aggregates. Không được phụ thuộc vào bất kỳ framework hay library nào.
-    \item \textbf{application/}: chứa Use Cases và Repository Interfaces (Ports). Chỉ được phụ thuộc vào tầng domain.
-    \item \textbf{adapters/}: chứa Controllers (HTTP handlers), Repositories (DB implementations), Message Consumers/Publishers.
-    \item \textbf{infrastructure/}: chứa configuration, framework setup, và external dependencies.
+    \item domain/: chứa Entities, Value Objects, Domain Services, và Aggregates. Không được phụ thuộc vào bất kỳ framework hay library nào.
+    \item application/: chứa Use Cases và Repository Interfaces (Ports). Chỉ được phụ thuộc vào tầng domain.
+    \item adapters/: chứa Controllers (HTTP handlers), Repositories (DB implementations), Message Consumers/Publishers.
+    \item infrastructure/: chứa configuration, framework setup, và external dependencies.
 \end{itemize}
 
-\indent\textbf{b. API Design Principles}
+\indent b. API Design Principles
 
 \indentpar Các REST API phải tuân theo các nguyên tắc sau để đảm bảo tính nhất quán và dễ sử dụng:
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{RESTful conventions:} sử dụng đúng HTTP methods (GET, POST, PUT, DELETE), status codes chuẩn (200, 201, 400, 404, 500), và resource-oriented URLs.
-    \item \textbf{Versioning:} tất cả API phải được version (ví dụ: `/api/v1/users`), cho phép thay đổi mà không breaking existing clients.
-    \item \textbf{Error handling:} trả về error responses có cấu trúc nhất quán với format JSON: \texttt{\{"error": "...", "message": "...", "trace\_id": "..."\}}.
-    \item \textbf{Pagination:} các endpoint trả về danh sách phải hỗ trợ pagination (ví dụ: `?page=1\&size=20`) để tránh tải quá nhiều dữ liệu.
-    \item \textbf{Idempotency:} các operation quan trọng (ví dụ: payment, submission) phải idempotent để an toàn khi retry.
+    \item RESTful conventions: sử dụng đúng HTTP methods (GET, POST, PUT, DELETE), status codes chuẩn (200, 201, 400, 404, 500), và resource-oriented URLs.
+    \item Versioning: tất cả API phải được version (ví dụ: `/api/v1/users`), cho phép thay đổi mà không breaking existing clients.
+    \item Error handling: trả về error responses có cấu trúc nhất quán với format JSON: \texttt{\{"error": "...", "message": "...", "trace\_id": "..."\}}.
+    \item Pagination: các endpoint trả về danh sách phải hỗ trợ pagination (ví dụ: `?page=1\&size=20`) để tránh tải quá nhiều dữ liệu.
+    \item Idempotency: các operation quan trọng (ví dụ: payment, submission) phải idempotent để an toàn khi retry.
 \end{itemize}
 
-\indent\textbf{c. Naming Conventions}
+\indent c. Naming Conventions
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Java:} PascalCase cho class, camelCase cho method/variable, UPPER\_SNAKE\_CASE cho constants.
-    \item \textbf{Go:} PascalCase cho exported symbols, camelCase cho unexported, package names viết thường không dùng underscore.
-    \item \textbf{Database:} snake\_case cho table và column names.
-    \item \textbf{API endpoints:} kebab-case cho URLs (ví dụ: `/learner-models`).
+    \item Java: PascalCase cho class, camelCase cho method/variable, UPPER\_SNAKE\_CASE cho constants.
+    \item Go: PascalCase cho exported symbols, camelCase cho unexported, package names viết thường không dùng underscore.
+    \item Database: snake\_case cho table và column names.
+    \item API endpoints: kebab-case cho URLs (ví dụ: `/learner-models`).
 \end{itemize}
 
 \subsubsection{Thực thi \& Xác minh}
 
 \indentpar \indentpar Các nguyên tắc thiết kế chỉ có giá trị nếu chúng được thực thi (enforced) và xác minh (verified) một cách tự động. Dưới đây là các cơ chế đảm bảo tuân thủ.
 
-\indent\textbf{a. Kiểm thử Kiến trúc (ArchUnit)}
+\indent a. Kiểm thử Kiến trúc (ArchUnit)
 
-\indentpar Sử dụng \textbf{ArchUnit} (cho Java) và các công cụ tương tự để viết các unit test kiểm tra kiến trúc:
+\indentpar Sử dụng ArchUnit (cho Java) và các công cụ tương tự để viết các unit test kiểm tra kiến trúc:
 
 \begin{itemize}[leftmargin=0.7cm]
     \item Kiểm tra Dependency Rule: tầng domain không được phụ thuộc vào tầng adapters/infrastructure.
@@ -124,17 +124,17 @@ void domainLayer_shouldNotDependOnInfrastructure() {
 }
 \end{verbatim}
 
-\indent\textbf{b. Phân tích tĩnh \& Linting}
+\indent b. Phân tích tĩnh \& Linting
 
 \indentpar Các công cụ static analysis được tích hợp vào CI/CD pipeline:
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Java:} SonarQube với Quality Gate (code coverage $> 80\%$, no critical bugs/vulnerabilities), Checkstyle cho code style.
-    \item \textbf{Go:} golangci-lint (kết hợp nhiều linters: golint, gofmt, govet, staticcheck).
-    \item \textbf{Dependency Check:} OWASP Dependency Check để phát hiện các dependency có vulnerability.
+    \item Java: SonarQube với Quality Gate (code coverage $> 80\%$, no critical bugs/vulnerabilities), Checkstyle cho code style.
+    \item Go: golangci-lint (kết hợp nhiều linters: golint, gofmt, govet, staticcheck).
+    \item Dependency Check: OWASP Dependency Check để phát hiện các dependency có vulnerability.
 \end{itemize}
 
-\indent\textbf{c. Hướng dẫn Review Code}
+\indent c. Hướng dẫn Review Code
 
 \indentpar Mọi Pull Request phải được review bởi ít nhất một senior developer và phải tuân thủ các tiêu chí sau:
 
@@ -149,29 +149,29 @@ void domainLayer_shouldNotDependOnInfrastructure() {
 
 \indentpar \indentpar Để đánh giá liên tục chất lượng kiến trúc, các metrics sau được theo dõi định kỳ:
 
-\indent\textbf{a. Code Quality Metrics}
+\indent a. Code Quality Metrics
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Cyclomatic Complexity:} độ phức tạp của method, nên $< 10$.
-    \item \textbf{Lack of Cohesion Methods (LCOM):} đo mức độ gắn kết của class, nên thấp.
-    \item \textbf{Afferent/Efferent Coupling:} số lượng dependencies vào/ra của một module.
-    \item \textbf{Instability Index (I):} $I = C_e / (C_e + C_a)$, domain layer nên có $I \approx 0$ (stable).
+    \item Cyclomatic Complexity: độ phức tạp của method, nên $< 10$.
+    \item Lack of Cohesion Methods (LCOM): đo mức độ gắn kết của class, nên thấp.
+    \item Afferent/Efferent Coupling: số lượng dependencies vào/ra của một module.
+    \item Instability Index (I): $I = C_e / (C_e + C_a)$, domain layer nên có $I \approx 0$ (stable).
 \end{itemize}
 
-\indent\textbf{b. Test Quality Metrics}
+\indent b. Test Quality Metrics
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Code Coverage:} mục tiêu $> 80\%$ cho domain và application layers.
-    \item \textbf{Mutation Testing Score:} đánh giá chất lượng test bằng cách mutate code và xem test có fail không. Mục tiêu $> 70\%$.
-    \item \textbf{Test Execution Time:} unit tests phải chạy nhanh ($< 5$ phút), integration tests $< 15$ phút.
+    \item Code Coverage: mục tiêu $> 80\%$ cho domain và application layers.
+    \item Mutation Testing Score: đánh giá chất lượng test bằng cách mutate code và xem test có fail không. Mục tiêu $> 70\%$.
+    \item Test Execution Time: unit tests phải chạy nhanh ($< 5$ phút), integration tests $< 15$ phút.
 \end{itemize}
 
-\indent\textbf{c. Runtime Quality Metrics}
+\indent c. Runtime Quality Metrics
 
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Service Response Time:} P95 latency $< 500$ms cho synchronous APIs.
-    \item \textbf{Error Rate:} $< 1\%$ cho production traffic.
-    \item \textbf{Trace Coverage:} $> 95\%$ requests có Trace ID (theo ADR-10).
+    \item Service Response Time: P95 latency $< 500$ms cho synchronous APIs.
+    \item Error Rate: $< 1\%$ cho production traffic.
+    \item Trace Coverage: $> 95\%$ requests có Trace ID (theo ADR-10).
 \end{itemize}
 
 \subsubsection{Kết luận}
@@ -187,4 +187,4 @@ void domainLayer_shouldNotDependOnInfrastructure() {
 \end{itemize}
 
 \vspace{0.5em}
-\noindent Tóm lại, chuỗi \textbf{Mục~3.1 (ACs Prioritization) \textrightarrow{} Mục~3.2 (Architecture Style Selection) \textrightarrow{} Mục~3.3 (ADRs) \textrightarrow{} Mục~3.4 (Design Principles)} tạo thành một lộ trình thiết kế kiến trúc hoàn chỉnh, có thể truy vết từ yêu cầu phi chức năng (Mục~2.4) xuống các quyết định kỹ thuật chi tiết nhất, với cơ chế enforcement và verification rõ ràng để đảm bảo chất lượng kiến trúc được duy trì trong suốt vòng đời phát triển.
+\noindent Tóm lại, chuỗi Mục~3.1 (ACs Prioritization) \textrightarrow{} Mục~3.2 (Architecture Style Selection) \textrightarrow{} Mục~3.3 (ADRs) \textrightarrow{} Mục~3.4 (Design Principles) tạo thành một lộ trình thiết kế kiến trúc hoàn chỉnh, có thể truy vết từ yêu cầu phi chức năng (Mục~2.4) xuống các quyết định kỹ thuật chi tiết nhất, với cơ chế enforcement và verification rõ ràng để đảm bảo chất lượng kiến trúc được duy trì trong suốt vòng đời phát triển.

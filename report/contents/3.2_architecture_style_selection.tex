@@ -7,16 +7,16 @@
 \indentpar \indentpar Để đảm bảo quá trình lựa chọn có căn cứ, các kiến trúc được đánh giá theo bộ tiêu chí chuẩn hóa, dựa trên mối liên hệ giữa Architecture Characteristics (ACs) và bối cảnh kỹ thuật của dự án. Những tiêu chí này đóng vai trò làm ``thước đo'' khách quan để so sánh các phong cách kiến trúc khác nhau.
 
 \begin{enumerate}[leftmargin=0.7cm]
-    \item \textbf{Mức độ đáp ứng các ACs chính}: đánh giá khả năng hiện thực hóa bốn AC quan trọng nhất:
+    \item Mức độ đáp ứng các ACs chính: đánh giá khả năng hiện thực hóa bốn AC quan trọng nhất:
           \begin{itemize}[nosep]
               \item AC1: Modularity -- hỗ trợ hoán đổi mô hình AI (Live AI Model Swapping -- FR9, FR12).
               \item AC2: Scalability -- mở rộng tới hơn $5{,}000$ người dùng đồng thời.
               \item AC3: Performance -- duy trì khả năng phản hồi thời gian thực (FR6).
               \item AC4: Testability -- đảm bảo tính chính xác của các thuật toán AI.
           \end{itemize}
-    \item \textbf{Độ phức tạp kỹ thuật}: chi phí vận hành, khả năng quan sát (observability) và độ phức tạp phát triển -- yếu tố trade-off trực tiếp với Scalability và Modularity.
-    \item \textbf{Năng lực đội ngũ}: khả năng DevOps, kinh nghiệm với Kubernetes, CI/CD, monitoring. Kiến trúc mạnh nhưng vượt quá năng lực đội ngũ sẽ tiềm ẩn rủi ro.
-    \item \textbf{Tác động chi phí}: tổng chi phí sở hữu (TCO) gồm chi phí hạ tầng ban đầu và chi phí mở rộng dài hạn.
+    \item Độ phức tạp kỹ thuật: chi phí vận hành, khả năng quan sát (observability) và độ phức tạp phát triển -- yếu tố trade-off trực tiếp với Scalability và Modularity.
+    \item Năng lực đội ngũ: khả năng DevOps, kinh nghiệm với Kubernetes, CI/CD, monitoring. Kiến trúc mạnh nhưng vượt quá năng lực đội ngũ sẽ tiềm ẩn rủi ro.
+    \item Tác động chi phí: tổng chi phí sở hữu (TCO) gồm chi phí hạ tầng ban đầu và chi phí mở rộng dài hạn.
 \end{enumerate}
 
 Mục tiêu không phải là tìm kiến trúc ``hoàn hảo'', mà là kiến trúc ``ít tệ nhất'' -- đạt được cân bằng giữa hiệu năng, khả năng mở rộng và chi phí.
@@ -35,13 +35,13 @@ Mục tiêu không phải là tìm kiến trúc ``hoàn hảo'', mà là kiến 
         \hline
         Microkernel            & 4 sao        & 2 sao        & 2 sao        & 2 sao               & 1\$           & 2.5 / 5.0            \\
         \hline
-        \textbf{Microservices} & 5 sao        & 5 sao        & 4 sao        & 4 sao               & 5\$           & \textbf{4.5 / 5.0}   \\
+        Microservices          & 5 sao        & 5 sao        & 4 sao        & 4 sao               & 5\$           & 4.5 / 5.0            \\
         \hline
         Service-based          & 4 sao        & 4 sao        & 2 sao        & 3 sao               & 2\$           & 3.25 / 5.0           \\
         \hline
         Service-oriented       & 1 sao        & 3 sao        & 2 sao        & 5 sao               & 5\$           & 2.75 / 5.0           \\
         \hline
-        \textbf{Event-driven}  & 3 sao        & 5 sao        & 5 sao        & 4 sao               & 2\$           & \textbf{4.25 / 5.0}  \\
+        Event-driven           & 3 sao        & 5 sao        & 5 sao        & 4 sao               & 2\$           & 4.25 / 5.0           \\
         \hline
         Space-based            & 4 sao        & 5 sao        & 4 sao        & 5 sao               & 5\$           & 4.5 / 5.0            \\
         \hline
@@ -60,11 +60,11 @@ Phân tích kết quả và định hướng lựa chọn:
     \item Space-based: điểm cao nhưng quá phức tạp và dư thừa cho bối cảnh ITS.
 \end{itemize}
 
-\textbf{Sau phân tích, Microservices và Event-driven là hai phong cách vừa đạt hiệu năng cao vừa hỗ trợ xử lý real-time -- nền tảng cho kiến trúc lai (hybrid) của ITS.}
+Sau phân tích, Microservices và Event-driven là hai phong cách vừa đạt hiệu năng cao vừa hỗ trợ xử lý real-time -- nền tảng cho kiến trúc lai (hybrid) của ITS.
 
 \subsubsection{Quyết định kiến trúc cuối cùng}
 
-\indentpar \indentpar Dựa trên toàn bộ quá trình đánh giá, kiến trúc cuối cùng cho ITS là \textbf{Hybrid Microservices + Event-Driven}. Kiến trúc này cân bằng tính mô-đun, khả năng mở rộng, hiệu năng thời gian thực và khả thi với đội ngũ hiện tại.
+\indentpar \indentpar Dựa trên toàn bộ quá trình đánh giá, kiến trúc cuối cùng cho ITS là Hybrid Microservices + Event-Driven. Kiến trúc này cân bằng tính mô-đun, khả năng mở rộng, hiệu năng thời gian thực và khả thi với đội ngũ hiện tại.
 
 \begin{itemize}[leftmargin=0.7cm]
     \item Microservices Architecture: nền tảng chính, phân chia theo miền nghiệp vụ (Domain-Driven Design).
@@ -92,10 +92,10 @@ Phân tích kết quả và định hướng lựa chọn:
 \indentpar \indentpar ITS không chuyển sang Microservices ngay lập tức mà từng bước để giảm rủi ro:
 
 \begin{enumerate}[leftmargin=0.7cm]
-    \item \textbf{Phase 1 -- MVP (Hiện tại):} Xây dựng hệ thống với các service cốt lõi (Content, Scoring, Learner, Adaptive) chạy trên nền tảng Docker Compose. Sử dụng giao tiếp REST để đơn giản hóa việc tích hợp và kiểm thử nhanh logic nghiệp vụ.
-    \item \textbf{Phase 2 -- Modular Monolith \& Optimization:} Tối ưu hóa code nội bộ theo Clean Architecture, chuẩn bị cho việc mở rộng.
-    \item \textbf{Phase 2 -- Extract Critical Services (Strangler Fig Pattern):} khi nhu cầu mở rộng xuất hiện (ví dụ ScoringService quá tải), tách module thành microservice riêng và định tuyến qua API Gateway. Strangler Fig Pattern là mô hình di chuyển dần từ hệ thống cũ sang mới, trong đó các chức năng được tách ra từng phần một, đồng thời hệ thống cũ vẫn hoạt động song song cho đến khi hoàn toàn thay thế.
-    \item \textbf{Phase 3 -- Full Microservices Ecosystem:} tiếp tục tách các module còn lại khi hệ thống trưởng thành, hướng tới hệ sinh thái microservices tối ưu AC1, AC2, AC5.
+    \item Phase 1 -- MVP (Hiện tại): Xây dựng hệ thống với các service cốt lõi (Content, Scoring, Learner, Adaptive) chạy trên nền tảng Docker Compose. Sử dụng giao tiếp REST để đơn giản hóa việc tích hợp và kiểm thử nhanh logic nghiệp vụ.
+    \item Phase 2 -- Modular Monolith \& Optimization: Tối ưu hóa code nội bộ theo Clean Architecture, chuẩn bị cho việc mở rộng.
+    \item Phase 2 -- Extract Critical Services (Strangler Fig Pattern): khi nhu cầu mở rộng xuất hiện (ví dụ ScoringService quá tải), tách module thành microservice riêng và định tuyến qua API Gateway. Strangler Fig Pattern là mô hình di chuyển dần từ hệ thống cũ sang mới, trong đó các chức năng được tách ra từng phần một, đồng thời hệ thống cũ vẫn hoạt động song song cho đến khi hoàn toàn thay thế.
+    \item Phase 3 -- Full Microservices Ecosystem: tiếp tục tách các module còn lại khi hệ thống trưởng thành, hướng tới hệ sinh thái microservices tối ưu AC1, AC2, AC5.
 \end{enumerate}
 
 \subsubsection{Phân tích Chi phí -- Lợi ích (TCO)}
@@ -160,24 +160,24 @@ Phân tích kết quả và định hướng lựa chọn:
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
-\noindent\textbf{Tổng hợp TCO 3 năm:}
+\noindent Tổng hợp TCO 3 năm:
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Monolith}: \$50,000 + (\$10,800 + \$33,000) $\times$ 3 + \$65,000 = \textbf{\$246,400}
-    \item \textbf{Microservices}: \$93,000 + (\$25,200 + \$33,000) $\times$ 3 + \$13,000 = \textbf{\$280,600}
+    \item Monolith: \$50,000 + (\$10,800 + \$33,000) $\times$ 3 + \$65,000 = \$246,400
+    \item Microservices: \$93,000 + (\$25,200 + \$33,000) $\times$ 3 + \$13,000 = \$280,600
 \end{itemize}
 
-\noindent\textbf{Phân tích Lợi ích -- Chi phí:}
+\noindent Phân tích Lợi ích -- Chi phí:
 \begin{enumerate}[leftmargin=0.7cm]
-    \item \textbf{Chi phí cao hơn $14\%$}: Microservices tốn thêm $\sim$\$34,200 trong 3 năm so với Monolith.
-    \item \textbf{Lợi ích vô hình}: Microservices mang lại giá trị khó định lượng:
+    \item Chi phí cao hơn $14\%$: Microservices tốn thêm $\sim$\$34,200 trong 3 năm so với Monolith.
+    \item Lợi ích vô hình: Microservices mang lại giá trị khó định lượng:
           \begin{itemize}[nosep]
-              \item \textbf{Time-to-market}: Parallel development giảm $30\%$ thời gian release features mới.
-              \item \textbf{Fault isolation}: Lỗi một service không ảnh hưởng toàn hệ thống.
-              \item \textbf{Technology flexibility}: Có thể dùng ngôn ngữ/framework tối ưu cho từng service.
-              \item \textbf{Team autonomy}: Các team có thể làm việc độc lập, tăng productivity.
+              \item Time-to-market: Parallel development giảm $30\%$ thời gian release features mới.
+              \item Fault isolation: Lỗi một service không ảnh hưởng toàn hệ thống.
+              \item Technology flexibility: Có thể dùng ngôn ngữ/framework tối ưu cho từng service.
+              \item Team autonomy: Các team có thể làm việc độc lập, tăng productivity.
           \end{itemize}
-    \item \textbf{Break-even point}: Khi hệ thống cần scale lên $>10,000$ users, Microservices trở nên rẻ hơn do chi phí scaling thấp hơn $80\%$.
-    \item \textbf{Kết luận}: Chi phí tăng thêm $14\%$ là chấp nhận được để đạt được Modularity (AC1), Scalability (AC2), và khả năng Live AI Model Swapping (FR12) -- các yêu cầu cốt lõi của ITS.
+    \item Break-even point: Khi hệ thống cần scale lên $>10,000$ users, Microservices trở nên rẻ hơn do chi phí scaling thấp hơn $80\%$.
+    \item Kết luận: Chi phí tăng thêm $14\%$ là chấp nhận được để đạt được Modularity (AC1), Scalability (AC2), và khả năng Live AI Model Swapping (FR12) -- các yêu cầu cốt lõi của ITS.
 \end{enumerate}
 
 \FloatBarrier
@@ -205,37 +205,37 @@ Phân tích kết quả và định hướng lựa chọn:
     \endfoot
     \hline
     \endlastfoot
-    R1          & \textbf{Độ phức tạp vận hành cao}: Microservices yêu cầu kỹ năng DevOps, Kubernetes, monitoring vượt quá năng lực đội ngũ hiện tại.       & Cao               & Cao               & Triển khai theo giai đoạn (MVP $\rightarrow$ Full MS). Đào tạo đội ngũ. Sử dụng Docker Compose cho MVP trước khi chuyển sang K8s. & Đang giảm thiểu     \\
+    R1          & Độ phức tạp vận hành cao: Microservices yêu cầu kỹ năng DevOps, Kubernetes, monitoring vượt quá năng lực đội ngũ hiện tại.       & Cao               & Cao               & Triển khai theo giai đoạn (MVP $\rightarrow$ Full MS). Đào tạo đội ngũ. Sử dụng Docker Compose cho MVP trước khi chuyển sang K8s. & Đang giảm thiểu     \\
     \hline
-    R2          & \textbf{Không nhất quán dữ liệu phân tán}: Eventual consistency giữa các service có thể gây ra trạng thái không đồng bộ tạm thời.         & Trung bình        & Cao               & Áp dụng Saga Pattern (ADR-9). Thiết kế idempotent consumers. Sử dụng Outbox Pattern cho event publishing.                         & Đang giảm thiểu     \\
+    R2          & Không nhất quán dữ liệu phân tán: Eventual consistency giữa các service có thể gây ra trạng thái không đồng bộ tạm thời.         & Trung bình        & Cao               & Áp dụng Saga Pattern (ADR-9). Thiết kế idempotent consumers. Sử dụng Outbox Pattern cho event publishing.                         & Đang giảm thiểu     \\
     \hline
-    R3          & \textbf{Single Point of Failure}: Auth Service và API Gateway là điểm lỗi đơn, sự cố gây downtime toàn hệ thống.                          & Trung bình        & Cao               & Triển khai HA với nhiều replica trên Kubernetes. Health checks và auto-restart. Circuit breaker pattern.                          & Kế hoạch            \\
+    R3          & Single Point of Failure: Auth Service và API Gateway là điểm lỗi đơn, sự cố gây downtime toàn hệ thống.                          & Trung bình        & Cao               & Triển khai HA với nhiều replica trên Kubernetes. Health checks và auto-restart. Circuit breaker pattern.                          & Kế hoạch            \\
     \hline
-    R4          & \textbf{Chi phí hạ tầng cao}: Microservices yêu cầu nhiều tài nguyên hơn monolith (nhiều container, DB instances, message broker).        & Cao               & Trung bình        & Bắt đầu với MVP tối thiểu. Sử dụng shared database cho giai đoạn đầu. Tối ưu resource limits. Auto-scaling theo nhu cầu.          & Chấp nhận           \\
+    R4          & Chi phí hạ tầng cao: Microservices yêu cầu nhiều tài nguyên hơn monolith (nhiều container, DB instances, message broker).        & Cao               & Trung bình        & Bắt đầu với MVP tối thiểu. Sử dụng shared database cho giai đoạn đầu. Tối ưu resource limits. Auto-scaling theo nhu cầu.          & Chấp nhận           \\
     \hline
-    R5          & \textbf{Polyglot complexity}: Vận hành hai hệ sinh thái (Java + Go) tăng độ phức tạp CI/CD, debugging và onboarding.                      & Trung bình        & Trung bình        & Chuẩn hóa cấu trúc dự án. Chia sẻ template CI/CD. Thống nhất chuẩn logging/monitoring. Đào tạo chéo đội ngũ.                      & Đang giảm thiểu     \\
+    R5          & Polyglot complexity: Vận hành hai hệ sinh thái (Java + Go) tăng độ phức tạp CI/CD, debugging và onboarding.                      & Trung bình        & Trung bình        & Chuẩn hóa cấu trúc dự án. Chia sẻ template CI/CD. Thống nhất chuẩn logging/monitoring. Đào tạo chéo đội ngũ.                      & Đang giảm thiểu     \\
     \hline
-    R6          & \textbf{Network latency}: Giao tiếp giữa các service qua mạng tăng độ trễ so với monolith, ảnh hưởng AC3 (Performance).                   & Trung bình        & Trung bình        & Sử dụng async messaging (RabbitMQ) cho non-critical paths. Caching với Redis. Service mesh cho internal traffic.                  & Đang giảm thiểu     \\
+    R6          & Network latency: Giao tiếp giữa các service qua mạng tăng độ trễ so với monolith, ảnh hưởng AC3 (Performance).                   & Trung bình        & Trung bình        & Sử dụng async messaging (RabbitMQ) cho non-critical paths. Caching với Redis. Service mesh cho internal traffic.                  & Đang giảm thiểu     \\
     \hline
-    R7          & \textbf{Message broker failure}: RabbitMQ sự cố gây mất event, ảnh hưởng luồng Scoring $\rightarrow$ LearnerModel $\rightarrow$ Adaptive. & Thấp              & Cao               & Triển khai RabbitMQ cluster với mirrored queues. Persistent messages. Dead letter queues cho retry. Fallback sync API.            & Kế hoạch            \\
+    R7          & Message broker failure: RabbitMQ sự cố gây mất event, ảnh hưởng luồng Scoring $\rightarrow$ LearnerModel $\rightarrow$ Adaptive. & Thấp              & Cao               & Triển khai RabbitMQ cluster với mirrored queues. Persistent messages. Dead letter queues cho retry. Fallback sync API.            & Kế hoạch            \\
     \hline
-    R8          & \textbf{Security breach}: Tấn công nội bộ bypass Gateway, giả mạo header X-User-ID/X-User-Roles.                                          & Thấp              & Cao               & Sử dụng VPC riêng và Network Policies. Chỉ Gateway gọi được service nội bộ. JWT với TTL ngắn. Audit logging.                      & Kế hoạch            \\
+    R8          & Security breach: Tấn công nội bộ bypass Gateway, giả mạo header X-User-ID/X-User-Roles.                                          & Thấp              & Cao               & Sử dụng VPC riêng và Network Policies. Chỉ Gateway gọi được service nội bộ. JWT với TTL ngắn. Audit logging.                      & Kế hoạch            \\
     \hline
-    R9          & \textbf{AI Model deployment failure}: Triển khai phiên bản AI mới gây lỗi, ảnh hưởng trải nghiệm học sinh.                                & Trung bình        & Cao               & Blue/Green deployment. Canary releases với $10\%$ traffic. Rollback tự động trong $5$ phút. A/B testing trước production.         & Đang giảm thiểu     \\
+    R9          & AI Model deployment failure: Triển khai phiên bản AI mới gây lỗi, ảnh hưởng trải nghiệm học sinh.                                & Trung bình        & Cao               & Blue/Green deployment. Canary releases với $10\%$ traffic. Rollback tự động trong $5$ phút. A/B testing trước production.         & Đang giảm thiểu     \\
     \hline
-    R10         & \textbf{Database performance degradation}: PostgreSQL chậm khi tải nặng hoặc truy vấn chưa tối ưu.                                        & Trung bình        & Trung bình        & Read replicas. Connection pooling (PgBouncer). Index optimization. Slow query monitoring. Vertical scaling khi cần.               & Đang giảm thiểu     \\
+    R10         & Database performance degradation: PostgreSQL chậm khi tải nặng hoặc truy vấn chưa tối ưu.                                        & Trung bình        & Trung bình        & Read replicas. Connection pooling (PgBouncer). Index optimization. Slow query monitoring. Vertical scaling khi cần.               & Đang giảm thiểu     \\
     \hline
 \end{longtable}
 \renewcommand{\arraystretch}{1.0}
 
-\noindent\textbf{Ghi chú về mức độ đánh giá:}
+\noindent Ghi chú về mức độ đánh giá:
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Xác suất}: Thấp ($< 20\%$), Trung bình ($20\%$--$50\%$), Cao ($> 50\%$)
-    \item \textbf{Tác động}: Thấp (ảnh hưởng nhỏ, dễ khắc phục), Trung bình (ảnh hưởng một phần hệ thống), Cao (ảnh hưởng nghiêm trọng, downtime hoặc mất dữ liệu)
-    \item \textbf{Trạng thái}: Đang giảm thiểu (đã có biện pháp), Kế hoạch (sẽ triển khai), Chấp nhận (rủi ro được chấp nhận)
+    \item Xác suất: Thấp ($< 20\%$), Trung bình ($20\%$--$50\%$), Cao ($> 50\%$)
+    \item Tác động: Thấp (ảnh hưởng nhỏ, dễ khắc phục), Trung bình (ảnh hưởng một phần hệ thống), Cao (ảnh hưởng nghiêm trọng, downtime hoặc mất dữ liệu)
+    \item Trạng thái: Đang giảm thiểu (đã có biện pháp), Kế hoạch (sẽ triển khai), Chấp nhận (rủi ro được chấp nhận)
 \end{itemize}
 
 \FloatBarrier
 
 \vspace{0.5em}
-\noindent\textbf{Kết luận:} Quyết định kiến trúc lai này đóng vai trò là nền tảng cho toàn bộ các quyết định kỹ thuật chi tiết được trình bày trong Mục~3.3 (Architecture Decision Records) và Mục~3.4 (Design Principles).
+\noindent Kết luận: Quyết định kiến trúc lai này đóng vai trò là nền tảng cho toàn bộ các quyết định kỹ thuật chi tiết được trình bày trong Mục~3.3 (Architecture Decision Records) và Mục~3.4 (Design Principles).

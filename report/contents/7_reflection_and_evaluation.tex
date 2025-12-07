@@ -2,9 +2,9 @@
 
 \indentpar \indentpar Chương này cung cấp cái nhìn tổng quan và đánh giá khách quan về kiến trúc hệ thống Intelligent Tutoring System (ITS) sau giai đoạn triển khai MVP. Dựa trên dữ liệu thực tế thu thập được từ quá trình verification (Phase 3), nhóm phân tích mức độ đạt được của các mục tiêu kiến trúc, đánh giá các chỉ số định lượng, và rút ra các bài học kinh nghiệm quan trọng.
 
-\subsection{Các Chỉ Số Định Lượng (Quantitative Metrics)}
+\subsection{Các Chỉ Số Định Lượng}
 
-\subsubsection{Mức Độ Hoàn Thiện Triển Khai (Implementation Coverage)}
+\subsubsection{Mức Độ Hoàn Thiện Triển Khai}
 
 \indentpar \indentpar Dựa trên kết quả verification so với Target Architecture được mô tả trong báo cáo, mức độ hoàn thiện của MVP hiện tại như sau:
 
@@ -25,74 +25,99 @@
     \label{tab:implementation-coverage}
 \end{table}
 
-\noindent\textbf{Nhận xét:} Mặc dù tỷ lệ bao phủ về số lượng bảng và sơ đồ chỉ đạt 21-40\%, nhưng MVP đã hoàn thiện \textbf{100\% luồng nghiệp vụ cốt lõi} là Adaptive Learning (Học tập thích ứng). Điều này chứng minh chiến lược phát triển tập trung vào giá trị cốt lõi (Core Value) là đúng đắn.
+\noindent Nhận xét: Mặc dù tỷ lệ bao phủ về số lượng bảng và sơ đồ chỉ đạt 21-40\%, nhưng MVP đã hoàn thiện \textbf{100\% luồng nghiệp vụ cốt lõi} là Adaptive Learning (Học tập thích ứng). Điều này chứng minh chiến lược phát triển tập trung vào giá trị cốt lõi (Core Value) là đúng đắn.
 
-\subsubsection{Hiệu Năng Hệ Thống (Performance)}
+\subsubsection{Hiệu Năng Hệ Thống}
 
 \begin{itemize}
-    \item \textbf{Thời gian phản hồi (Response Time):} Luồng Adaptive Content Delivery đạt thời gian phản hồi trung bình \textbf{< 200ms} trong điều kiện thử nghiệm cục bộ (đạt mục tiêu < 500ms của AC3).
-    \item \textbf{Xử lý bất đồng bộ:} RabbitMQ xử lý sự kiện nộp bài (SubmissionEvent) với độ trễ không đáng kể, đảm bảo trải nghiệm người dùng mượt mà ngay cả khi hệ thống chấm điểm đang xử lý tải cao.
+    \item Thời gian phản hồi (Response Time): Luồng Adaptive Content Delivery đạt thời gian phản hồi trung bình < 200ms trong điều kiện thử nghiệm cục bộ (đạt mục tiêu < 500ms của AC3).
+    \item Xử lý bất đồng bộ: RabbitMQ xử lý sự kiện nộp bài (SubmissionEvent) với độ trễ không đáng kể, đảm bảo trải nghiệm người dùng mượt mà ngay cả khi hệ thống chấm điểm đang xử lý tải cao.
 \end{itemize}
 
-\subsubsection{Chất Lượng Mã Nguồn (Code Quality)}
+\subsubsection{Chất Lượng Mã Nguồn}
 
 \indentpar \indentpar Việc áp dụng Clean Architecture và SOLID đã mang lại các chỉ số chất lượng mã nguồn tích cực:
 
 \begin{itemize}
-    \item \textbf{Cyclomatic Complexity:} Trung bình 7.2 (Mục tiêu < 10). Các logic phức tạp được tách nhỏ vào các Domain Services và Use Cases.
-    \item \textbf{Coupling:} Mức độ phụ thuộc giữa các gói (package coupling) thấp (3.8), nhờ việc tuân thủ nghiêm ngặt Dependency Inversion Principle (DIP).
-    \item \textbf{Cohesion:} Đạt mức cao (0.85) do mỗi service và class chỉ tập trung vào một trách nhiệm duy nhất (SRP).
+    \item Cyclomatic Complexity: Trung bình 7.2 (Mục tiêu < 10). Các logic phức tạp được tách nhỏ vào các Domain Services và Use Cases.
+    \item Coupling: Mức độ phụ thuộc giữa các gói (package coupling) thấp (3.8), nhờ việc tuân thủ nghiêm ngặt Dependency Inversion Principle (DIP).
+    \item Cohesion: Đạt mức cao (0.85) do mỗi service và class chỉ tập trung vào một trách nhiệm duy nhất (SRP).
 \end{itemize}
 
-\subsection{Đánh Giá ATAM (Architecture Trade-off Analysis Method)}
+\subsection{Giao Diện Sản Phẩm Thực Tế}
+
+\indentpar \indentpar Các hình ảnh dưới đây thể hiện giao diện người dùng thực tế của hệ thống MVP đã được triển khai, minh chứng cho việc hoàn thiện luồng nghiệp vụ cốt lõi.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/homepage.png}
+    \caption{Trang chủ hệ thống - Giao diện chính của người dùng}
+    \label{fig:homepage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/learnpage.png}
+    \caption{Trang học tập - Giao diện hiển thị nội dung học tập thích ứng}
+    \label{fig:learnpage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/dashboard.png}
+    \caption{Dashboard - Bảng điều khiển theo dõi tiến độ học tập}
+    \label{fig:dashboard}
+\end{figure}
+
+\subsection{Đánh Giá ATAM}
 
 \indentpar \indentpar Nhóm sử dụng phương pháp ATAM để đánh giá kiến trúc dựa trên các kịch bản (scenarios) quan trọng.
 
-\subsubsection{Kịch Bản 1: Mở rộng quy mô người dùng (Scalability)}
+\subsubsection{Kịch Bản 1: Mở rộng quy mô người dùng}
 \begin{itemize}
-    \item \textbf{Kịch bản:} Số lượng người dùng đồng thời tăng đột ngột từ 500 lên 5,000 trong giờ kiểm tra.
-    \item \textbf{Đánh giá:} Kiến trúc Microservices cho phép scale độc lập Scoring Service và Content Service. RabbitMQ đóng vai trò bộ đệm (buffer) giúp hệ thống không bị quá tải (backpressure).
-    \item \textbf{Kết quả:} Đạt. Kiến trúc hỗ trợ horizontal scaling tốt.
+    \item Kịch bản: Số lượng người dùng đồng thời tăng đột ngột từ 500 lên 5,000 trong giờ kiểm tra.
+    \item Đánh giá: Kiến trúc Microservices cho phép scale độc lập Scoring Service và Content Service. RabbitMQ đóng vai trò bộ đệm (buffer) giúp hệ thống không bị quá tải (backpressure).
+    \item Kết quả: Đạt. Kiến trúc hỗ trợ horizontal scaling tốt.
 \end{itemize}
 
-\subsubsection{Kịch Bản 2: Thay đổi thuật toán thích ứng (Modifiability)}
+\subsubsection{Kịch Bản 2: Thay đổi thuật toán thích ứng}
 \begin{itemize}
-    \item \textbf{Kịch bản:} Cần cập nhật thuật toán gợi ý nội dung mới mà không ảnh hưởng đến các service khác.
-    \item \textbf{Đánh giá:} Adaptive Engine là một service độc lập. Logic thuật toán được đóng gói trong Domain Layer. Việc thay đổi chỉ ảnh hưởng nội bộ service này.
-    \item \textbf{Kết quả:} Đạt. Clean Architecture giúp cô lập sự thay đổi.
+    \item Kịch bản: Cần cập nhật thuật toán gợi ý nội dung mới mà không ảnh hưởng đến các service khác.
+    \item Đánh giá: Adaptive Engine là một service độc lập. Logic thuật toán được đóng gói trong Domain Layer. Việc thay đổi chỉ ảnh hưởng nội bộ service này.
+    \item Kết quả: Đạt. Clean Architecture giúp cô lập sự thay đổi.
 \end{itemize}
 
-\subsubsection{Các Điểm Nhạy Cảm và Đánh Đổi (Sensitivity \& Trade-offs)}
+\subsubsection{Các Điểm Nhạy Cảm và Đánh Đổi}
 
 \begin{itemize}
-    \item \textbf{Trade-off 1 (Complexity vs. Modularity):} Việc chia nhỏ hệ thống thành 4 microservices làm tăng độ phức tạp trong việc triển khai và vận hành (DevOps), nhưng đổi lại khả năng bảo trì và phát triển độc lập cao hơn.
-    \item \textbf{Trade-off 2 (Consistency vs. Availability):} Sử dụng Event-Driven Architecture (RabbitMQ) chấp nhận tính nhất quán cuối cùng (Eventual Consistency) để đạt được độ sẵn sàng (Availability) và hiệu năng cao hơn.
+    \item Trade-off 1 (Complexity vs. Modularity): Việc chia nhỏ hệ thống thành 4 microservices làm tăng độ phức tạp trong việc triển khai và vận hành (DevOps), nhưng đổi lại khả năng bảo trì và phát triển độc lập cao hơn.
+    \item Trade-off 2 (Consistency vs. Availability): Sử dụng Event-Driven Architecture (RabbitMQ) chấp nhận tính nhất quán cuối cùng (Eventual Consistency) để đạt được độ sẵn sàng (Availability) và hiệu năng cao hơn.
 \end{itemize}
 
-\subsection{Phân Tích Nợ Kỹ Thuật (Technical Debt Analysis)}
+\subsection{Phân Tích Nợ Kỹ Thuật}
 
 \indentpar \indentpar Mặc dù kiến trúc tổng thể tốt, dự án vẫn tồn tại một số nợ kỹ thuật cần giải quyết trong các giai đoạn tiếp theo:
 
 \begin{enumerate}
-    \item \textbf{Thiếu hụt các Service vệ tinh:} User Management Service và Auth Service chưa được triển khai. Hiện tại MVP đang sử dụng cơ chế xác thực giả lập (mock authentication), gây rủi ro bảo mật nếu đưa vào production.
-    \item \textbf{Coverage Kiểm thử:} Mặc dù kiến trúc hỗ trợ test tốt, nhưng độ bao phủ test thực tế (code coverage) chưa được đo lường chính xác và tự động hóa trong CI pipeline.
-    \item \textbf{Observability:} Hệ thống thiếu các công cụ giám sát tập trung (Distributed Tracing, Centralized Logging) như kế hoạch (ADR-10), gây khó khăn khi debug lỗi phân tán.
-    \item \textbf{Saga Pattern:} Các giao dịch phân tán hiện tại mới chỉ dừng lại ở mức gửi sự kiện đơn giản, chưa triển khai đầy đủ Saga Pattern với Transactional Outbox để đảm bảo tính nhất quán dữ liệu mạnh mẽ (ADR-9).
+    \item Thiếu hụt các Service vệ tinh: User Management Service và Auth Service chưa được triển khai. Hiện tại MVP đang sử dụng cơ chế xác thực giả lập (mock authentication), gây rủi ro bảo mật nếu đưa vào production.
+    \item Coverage Kiểm thử: Mặc dù kiến trúc hỗ trợ test tốt, nhưng độ bao phủ test thực tế (code coverage) chưa được đo lường chính xác và tự động hóa trong CI pipeline.
+    \item Observability: Hệ thống thiếu các công cụ giám sát tập trung (Distributed Tracing, Centralized Logging) như kế hoạch (ADR-10), gây khó khăn khi debug lỗi phân tán.
+    \item Saga Pattern: Các giao dịch phân tán hiện tại mới chỉ dừng lại ở mức gửi sự kiện đơn giản, chưa triển khai đầy đủ Saga Pattern với Transactional Outbox để đảm bảo tính nhất quán dữ liệu mạnh mẽ (ADR-9).
 \end{enumerate}
 
-\subsection{Bài Học Kinh Nghiệm (Lessons Learned)}
+\subsection{Bài Học Kinh nghiệm}
 
 \subsubsection{Những Điều Làm Tốt}
 \begin{itemize}
-    \item \textbf{Chiến lược Polyglot:} Việc kết hợp Java (cho nghiệp vụ phức tạp) và Go (cho hiệu năng cao) đã phát huy tác dụng rõ rệt. Đội ngũ tận dụng được thế mạnh của cả hai hệ sinh thái.
-    \item \textbf{Clean Architecture:} Là quyết định đúng đắn nhất. Nó giúp việc viết unit test trở nên dễ dàng và code rất rõ ràng, dễ đọc.
-    \item \textbf{Database-per-Service:} Giúp tránh được "địa ngục tích hợp" (integration hell) ở tầng dữ liệu, cho phép mỗi team tự chủ thay đổi schema.
+    \item Chiến lược Polyglot: Việc kết hợp Java (cho nghiệp vụ phức tạp) và Go (cho hiệu năng cao) đã phát huy tác dụng rõ rệt. Đội ngũ tận dụng được thế mạnh của cả hai hệ sinh thái.
+    \item Clean Architecture: Là quyết định đúng đắn nhất. Nó giúp việc viết unit test trở nên dễ dàng và code rất rõ ràng, dễ đọc.
+    \item Database-per-Service: Giúp tránh được "địa ngục tích hợp" (integration hell) ở tầng dữ liệu, cho phép mỗi team tự chủ thay đổi schema.
 \end{itemize}
 
 \subsubsection{Những Điều Cần Cải Thiện}
 \begin{itemize}
-    \item \textbf{Đánh giá thấp độ phức tạp của Infrastructure:} Việc thiết lập môi trường phát triển (Docker Compose, RabbitMQ, Init Scripts) tốn nhiều thời gian hơn dự kiến. Cần đầu tư vào Infrastructure-as-Code sớm hơn.
-    \item \textbf{Thiếu Integration Test sớm:} Việc tích hợp các service ở giai đoạn cuối gặp một số lỗi giao tiếp (contract mismatch). Nên áp dụng Contract Testing (ví dụ: Pact) sớm hơn.
+    \item Đánh giá thấp độ phức tạp của Infrastructure: Việc thiết lập môi trường phát triển (Docker Compose, RabbitMQ, Init Scripts) tốn nhiều thời gian hơn dự kiến. Cần đầu tư vào Infrastructure-as-Code sớm hơn.
+    \item Thiếu Integration Test sớm: Việc tích hợp các service ở giai đoạn cuối gặp một số lỗi giao tiếp (contract mismatch). Nên áp dụng Contract Testing (ví dụ: Pact) sớm hơn.
 \end{itemize}
 
 \subsection{Kết Luận Chương}

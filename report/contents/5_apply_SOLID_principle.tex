@@ -1,26 +1,26 @@
 \section{Áp dụng các Nguyên tắc SOLID}
 
-\indentpar \indentpar Chương này mô tả chi tiết cách 5 nguyên tắc SOLID được áp dụng trong toàn bộ hệ thống ITS. Việc tuân thủ này là nền tảng kỹ thuật bắt buộc để đạt được các Đặc tính Kiến trúc (ACs) đã ưu tiên, đặc biệt là \textbf{AC1: Modularity}, \textbf{AC4: Testability}, và \textbf{AC7: Maintainability}.
+\indentpar \indentpar Chương này mô tả chi tiết cách 5 nguyên tắc SOLID được áp dụng trong toàn bộ hệ thống ITS. Việc tuân thủ này là nền tảng kỹ thuật bắt buộc để đạt được các Đặc tính Kiến trúc (ACs) đã ưu tiên, đặc biệt là AC1: Modularity, AC4: Testability, và AC7: Maintainability.
 
 \subsection{Nguyên tắc Trách nhiệm Đơn lẻ (Single Responsibility Principle - SRP)}
 
 \subsubsection{Tổng quan Nguyên tắc}
 
-\noindent\textbf{Định nghĩa}: ``Một lớp (class) chỉ nên có một, và chỉ một, lý do để thay đổi.''
+\noindent Định nghĩa: ``Một lớp (class) chỉ nên có một, và chỉ một, lý do để thay đổi.''
 
-\noindent\textbf{Áp dụng trong ITS}: Nguyên tắc này được áp dụng ở nhiều cấp độ:
+\noindent Áp dụng trong ITS: Nguyên tắc này được áp dụng ở nhiều cấp độ:
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Cấp độ Dịch vụ (Service)}: Mỗi microservice sở hữu một miền nghiệp vụ (Bounded Context) duy nhất. Ví dụ, \texttt{UserManagementService} chỉ có lý do thay đổi khi nghiệp vụ quản lý người dùng thay đổi; nó không thay đổi khi thuật toán chấm điểm (Scoring) thay đổi
-    \item \textbf{Cấp độ Lớp (Class)}: Mỗi lớp chỉ có một trách nhiệm. Ví dụ, \texttt{ScoringUseCase} chịu trách nhiệm điều phối nghiệp vụ chấm điểm, trong khi \texttt{ScoringRepository} chịu trách nhiệm lưu trữ kết quả
-    \item \textbf{Cấp độ Phương thức (Method)}: Mỗi phương thức thực hiện tốt một việc duy nhất
+    \item Cấp độ Dịch vụ (Service): Mỗi microservice sở hữu một miền nghiệp vụ (Bounded Context) duy nhất. Ví dụ, \texttt{UserManagementService} chỉ có lý do thay đổi khi nghiệp vụ quản lý người dùng thay đổi; nó không thay đổi khi thuật toán chấm điểm (Scoring) thay đổi
+    \item Cấp độ Lớp (Class): Mỗi lớp chỉ có một trách nhiệm. Ví dụ, \texttt{ScoringUseCase} chịu trách nhiệm điều phối nghiệp vụ chấm điểm, trong khi \texttt{ScoringRepository} chịu trách nhiệm lưu trữ kết quả
+    \item Cấp độ Phương thức (Method): Mỗi phương thức thực hiện tốt một việc duy nhất
 \end{itemize}
 
 \subsubsection{Ví dụ Triển khai}
 
 \indentpar \indentpar Như được minh họa trong tài liệu SOLID principles, chúng ta đã tách biệt rõ ràng các trách nhiệm.
 
-\noindent\textbf{Ví dụ 1: Tách biệt Service (Vi phạm và Sửa lỗi)}
+\noindent Ví dụ 1: Tách biệt Service (Vi phạm và Sửa lỗi)
 
 \noindent\textit{Trước SRP (Xấu)}: Một \texttt{LearnerModelService} ``thần thánh'' (god service) làm tất cả mọi thứ.
 
@@ -66,7 +66,7 @@ public class LearningAnalyticsService {
 }
 \end{lstlisting}
 
-\noindent\textbf{Ví dụ 2: Tách biệt Tầng trong Service (Clean Architecture)}
+\noindent Ví dụ 2: Tách biệt Tầng trong Service (Clean Architecture)
 
 \noindent\textit{Trước SRP (Xấu)}: Controller (tầng Web) xử lý luôn cả logic nghiệp vụ và truy cập CSDL.
 
@@ -142,21 +142,21 @@ func (r *PostgresScoreRepository) Save(...) error {
 
 \subsubsection{Chiến lược Triển khai}
 
-\noindent\textbf{Định nghĩa}: ``Các thực thể phần mềm (lớp, module, hàm) nên được mở để mở rộng, nhưng đóng để sửa đổi.''
+\noindent Định nghĩa: ``Các thực thể phần mềm (lớp, module, hàm) nên được mở để mở rộng, nhưng đóng để sửa đổi.''
 
-\noindent\textbf{Chiến lược}: Chúng ta đạt được OCP bằng cách phụ thuộc vào abstractions (interfaces). Các ``policy'' (chính sách) cấp cao được đóng, nhưng chúng ta có thể thêm các ``plugin'' (triển khai) mới để mở rộng hành vi.
+\noindent Chiến lược: Chúng ta đạt được OCP bằng cách phụ thuộc vào abstractions (interfaces). Các ``policy'' (chính sách) cấp cao được đóng, nhưng chúng ta có thể thêm các ``plugin'' (triển khai) mới để mở rộng hành vi.
 
-\noindent\textbf{Mẫu Thiết kế sử dụng}:
+\noindent Mẫu Thiết kế sử dụng:
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Strategy Pattern}: Dùng cho các thuật toán có thể thay thế (ví dụ: thuật toán chấm điểm, thuật toán gợi ý)
-    \item \textbf{Dependency Injection}: Dùng để ``tiêm'' các chiến lược (strategy) khác nhau vào lúc runtime
+    \item Strategy Pattern: Dùng cho các thuật toán có thể thay thế (ví dụ: thuật toán chấm điểm, thuật toán gợi ý)
+    \item Dependency Injection: Dùng để ``tiêm'' các chiến lược (strategy) khác nhau vào lúc runtime
 \end{itemize}
 
 \subsubsection{Ví dụ Code}
 
 \indentpar \indentpar Đây là ví dụ quan trọng nhất để đáp ứng FR12: Live AI Model Swapping và được minh họa chi tiết trong tài liệu SOLID principles.
 
-\noindent\textbf{Ví dụ: Chiến lược Gợi ý Mở rộng (Strategy Pattern)}
+\noindent Ví dụ: Chiến lược Gợi ý Mở rộng (Strategy Pattern)
 
 \noindent\textit{Trước OCP (Xấu)}: Dùng if/else hoặc switch/case. Để thêm một loại gợi ý mới, bạn bắt buộc phải sửa đổi hàm \texttt{GenerateHint}.
 
@@ -211,11 +211,11 @@ func (uc *GenerateHintUseCase) Execute(ctx Context) string {
 
 \subsubsection{Thiết kế Kế thừa}
 
-\noindent\textbf{Định nghĩa}: ``Các đối tượng của lớp con phải có thể thay thế được cho các đối tượng của lớp cha mà không làm thay đổi tính đúng đắn của chương trình.''
+\noindent Định nghĩa: ``Các đối tượng của lớp con phải có thể thay thế được cho các đối tượng của lớp cha mà không làm thay đổi tính đúng đắn của chương trình.''
 
-\noindent\textbf{Áp dụng trong ITS}: Chúng ta đảm bảo LSP bằng cách tuân thủ ``hợp đồng'' (contract) của interface hoặc lớp cha. Các lớp con có thể mở rộng hành vi, nhưng không được vi phạm các giả định của lớp cha.
+\noindent Áp dụng trong ITS: Chúng ta đảm bảo LSP bằng cách tuân thủ ``hợp đồng'' (contract) của interface hoặc lớp cha. Các lớp con có thể mở rộng hành vi, nhưng không được vi phạm các giả định của lớp cha.
 
-\noindent\textbf{Ví dụ trong ITS}:
+\noindent Ví dụ trong ITS:
 \begin{itemize}[leftmargin=1.5em]
     \item Các loại Bài tập (Quiz, Exam, Project) kế thừa từ Assessment
     \item Các loại Nội dung (Video, Text, Interactive) kế thừa từ ContentUnit
@@ -310,14 +310,14 @@ public class GradingService {
 
 \subsubsection{Thiết kế Giao diện}
 
-\noindent\textbf{Định nghĩa}: ``Client không nên bị buộc phải phụ thuộc vào các phương thức (trong interface) mà chúng không sử dụng.''
+\noindent Định nghĩa: ``Client không nên bị buộc phải phụ thuộc vào các phương thức (trong interface) mà chúng không sử dụng.''
 
-\noindent\textbf{Áp dụng trong ITS}: Chúng ta tránh các ``fat interface'' (interface béo phì). Thay vào đó, chúng ta tạo ra các interface nhỏ, tập trung (role-based interfaces).
+\noindent Áp dụng trong ITS: Chúng ta tránh các ``fat interface'' (interface béo phì). Thay vào đó, chúng ta tạo ra các interface nhỏ, tập trung (role-based interfaces).
 
-\noindent\textbf{Áp dụng trong}:
+\noindent Áp dụng trong:
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Repository}: Tách biệt Read (Đọc) và Write (Ghi). Đây là nền tảng của mô hình CQRS
-    \item \textbf{Service}: Tách biệt các nghiệp vụ khác nhau
+    \item Repository: Tách biệt Read (Đọc) và Write (Ghi). Đây là nền tảng của mô hình CQRS
+    \item Service: Tách biệt các nghiệp vụ khác nhau
 \end{itemize}
 
 \subsubsection{Ví dụ}
@@ -387,9 +387,9 @@ type AdaptiveEngine struct {
 
 \subsubsection{Tác động Kiến trúc}
 
-\noindent\textbf{Định nghĩa}: ``Các module cấp cao (policy) không nên phụ thuộc vào các module cấp thấp (detail). Cả hai nên phụ thuộc vào abstractions (interfaces).''
+\noindent Định nghĩa: ``Các module cấp cao (policy) không nên phụ thuộc vào các module cấp thấp (detail). Cả hai nên phụ thuộc vào abstractions (interfaces).''
 
-\noindent\textbf{Tác động}: Đây là nguyên tắc quan trọng nhất đối với kiến trúc của chúng ta.
+\noindent Tác động: Đây là nguyên tắc quan trọng nhất đối với kiến trúc của chúng ta.
 \begin{itemize}[leftmargin=1.5em]
     \item Nó là nền tảng của Clean Architecture (ADR-3)
     \item Nó đảm bảo Testability (AC4) bằng cách cho phép mock dependencies
@@ -400,7 +400,7 @@ type AdaptiveEngine struct {
 
 \indentpar \indentpar Ví dụ này cho thấy cách Tầng Application (cấp cao) phụ thuộc vào Interface, và Tầng Infrastructure (cấp thấp) cũng phụ thuộc vào Interface đó.
 
-\noindent\textbf{Tầng Application (Cấp cao)}: Định nghĩa Use Case và Interface nó cần.
+\noindent Tầng Application (Cấp cao): Định nghĩa Use Case và Interface nó cần.
 
 \begin{lstlisting}[language=Java, caption={Tầng Application - Phụ thuộc vào Abstraction}]
 // Application Layer - Depends on Abstraction
@@ -435,7 +435,7 @@ public class UpdateSkillMasteryUseCase {
 }
 \end{lstlisting}
 
-\noindent\textbf{Tầng Infrastructure (Cấp thấp)}: Cung cấp triển khai (implementation) cho Interface.
+\noindent Tầng Infrastructure (Cấp thấp): Cung cấp triển khai (implementation) cho Interface.
 
 \begin{lstlisting}[language=Java, caption={Tầng Infrastructure - Cung cấp Concretion}]
 // Infrastructure Layer - Provides Concretion
@@ -524,12 +524,12 @@ public void testUpdateSkillMastery() {
 \indentpar \indentpar Checklist này được sử dụng trong mọi Pull Request:
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{SRP}: Lớp này có nhiều hơn một lý do để thay đổi không? (Ví dụ: Thay đổi nghiệp vụ VÀ thay đổi CSDL?)
-    \item \textbf{OCP}: Nếu thêm một tính năng tương tự (ví dụ: loại gợi ý mới), chúng ta phải sửa code ở đây hay thêm code mới? (Phải là ``thêm'')
-    \item \textbf{LSP}: Lớp con này có vi phạm bất kỳ hợp đồng nào của lớp cha không? (Ví dụ: Ném \texttt{UnsupportedOperationException}?)
-    \item \textbf{ISP}: Interface này có ``béo'' không? Client sử dụng nó có cần tất cả các phương thức không?
-    \item \textbf{DIP}: Module cấp cao này có import bất kỳ thứ gì từ tầng Infrastructure (ví dụ: \texttt{Postgres...}) không? (Không được phép)
-    \item \textbf{Tests}: Unit test có sử dụng Mocks/Stubs không? (Xác minh DIP)
+    \item SRP: Lớp này có nhiều hơn một lý do để thay đổi không? (Ví dụ: Thay đổi nghiệp vụ VÀ thay đổi CSDL?)
+    \item OCP: Nếu thêm một tính năng tương tự (ví dụ: loại gợi ý mới), chúng ta phải sửa code ở đây hay thêm code mới? (Phải là ``thêm'')
+    \item LSP: Lớp con này có vi phạm bất kỳ hợp đồng nào của lớp cha không? (Ví dụ: Ném \texttt{UnsupportedOperationException}?)
+    \item ISP: Interface này có ``béo'' không? Client sử dụng nó có cần tất cả các phương thức không?
+    \item DIP: Module cấp cao này có import bất kỳ thứ gì từ tầng Infrastructure (ví dụ: \texttt{Postgres...}) không? (Không được phép)
+    \item Tests: Unit test có sử dụng Mocks/Stubs không? (Xác minh DIP)
 \end{itemize}
 
 \section{Phản ánh và Đánh giá}
@@ -550,15 +550,15 @@ public void testUpdateSkillMastery() {
         \hline
         \textbf{Thuộc tính (AC)}\rule{0pt}{1.6em} & \textbf{Kịch bản}                                                                                       & \textbf{Phản ứng Kiến trúc}                                                                                                                                                    & \textbf{Chỉ số Đo lường}                                       & \textbf{Kết quả} \\
         \hline
-        Performance (AC3)                         & 5.000 người dùng đồng thời nộp bài (UC-10) và yêu cầu phản hồi tức thì                                  & 1. Polyglot (ADR-1): Dùng Golang cho ScoringService\newline 2. EDA: Tách rời việc cập nhật LearnerModel\newline 3. Caching (Redis) cho PII                                     & p95 latency $< 500$ms cho phản hồi tức thì                     & \checkmark       \\
+        Performance (AC3)                         & 5.000 người dùng đồng thời nộp bài (UC-10) và yêu cầu phản hồi tức thì                                  & 1. Polyglot (ADR-1): Dùng Golang cho ScoringService\newline 2. EDA: Tách rời việc cập nhật LearnerModel\newline 3. Caching (Redis) cho PII                                     & p95 latency $< 500$ms cho phản hồi tức thì                     & passed       \\
         \hline
-        Scalability (AC2)                         & Lượng người dùng tăng gấp 10 lần trong mùa cao điểm                                                     & 1. Kubernetes: Triển khai trên K8s\newline 2. HPA: Horizontal Pod Autoscaler\newline 3. Stateless: Services là stateless (JWT/ADR-6)                                           & Service tự động scale-out (từ 3 lên 15 pod)                    & \checkmark       \\
+        Scalability (AC2)                         & Lượng người dùng tăng gấp 10 lần trong mùa cao điểm                                                     & 1. Kubernetes: Triển khai trên K8s\newline 2. HPA: Horizontal Pod Autoscaler\newline 3. Stateless: Services là stateless (JWT/ADR-6)                                           & Service tự động scale-out (từ 3 lên 15 pod)                    & passed       \\
         \hline
-        Modularity (AC1) / Deployability (AC5)    & Team AI muốn triển khai thuật toán gợi ý mới (V2) mà không làm gián đoạn người dùng đang học (V1)       & 1. OCP: AdaptiveEngine phụ thuộc vào interface\newline 2. Microservices: AdaptiveEngine là service độc lập\newline 3. Blue/Green deployment trên K8s                           & Zero downtime. Chuyển đổi 100\% traffic sang V2 trong < 5 phút & \checkmark       \\
+        Modularity (AC1) / Deployability (AC5)    & Team AI muốn triển khai thuật toán gợi ý mới (V2) mà không làm gián đoạn người dùng đang học (V1)       & 1. OCP: AdaptiveEngine phụ thuộc vào interface\newline 2. Microservices: AdaptiveEngine là service độc lập\newline 3. Blue/Green deployment trên K8s                           & Zero downtime. Chuyển đổi 100\% traffic sang V2 trong < 5 phút & passed       \\
         \hline
-        Testability (AC4)                         & Logic nghiệp vụ của AdaptiveEngine phải được xác minh là chính xác 100\% mà không cần chạy toàn bộ CSDL & 1. Clean Arch: Logic nghiệp vụ cô lập trong tầng Application/Domain\newline 2. DIP: Use Case phụ thuộc vào interfaces\newline 3. Testing Pyramid: Unit Tests mock repositories & Code Coverage cho module logic nghiệp vụ $> 85\%$              & \checkmark       \\
+        Testability (AC4)                         & Logic nghiệp vụ của AdaptiveEngine phải được xác minh là chính xác 100\% mà không cần chạy toàn bộ CSDL & 1. Clean Arch: Logic nghiệp vụ cô lập trong tầng Application/Domain\newline 2. DIP: Use Case phụ thuộc vào interfaces\newline 3. Testing Pyramid: Unit Tests mock repositories & Code Coverage cho module logic nghiệp vụ $> 85\%$              & passed       \\
         \hline
-        Security (AC6) / Compliance               & Một service (ví dụ: ScoringService) bị xâm nhập bởi kẻ tấn công                                         & 1. Tách PII: Chỉ UserManagementService lưu PII\newline 2. Mã hóa: PII được mã hóa (at-rest) bằng pgcrypto\newline 3. AuthZ (ADR-6): API Gateway chặn cuộc gọi trái phép        & Kẻ tấn công không thể truy cập PII từ service bị xâm nhập      & \checkmark       \\
+        Security (AC6) / Compliance               & Một service (ví dụ: ScoringService) bị xâm nhập bởi kẻ tấn công                                         & 1. Tách PII: Chỉ UserManagementService lưu PII\newline 2. Mã hóa: PII được mã hóa (at-rest) bằng pgcrypto\newline 3. AuthZ (ADR-6): API Gateway chặn cuộc gọi trái phép        & Kẻ tấn công không thể truy cập PII từ service bị xâm nhập      & passed       \\
         \hline
     \end{tabularx}
     \caption{Kịch bản đánh giá các thuộc tính chất lượng}
@@ -570,31 +570,31 @@ public void testUpdateSkillMastery() {
 
 \indentpar \indentpar Phân tích này xác nhận lại các đánh đổi đã được chấp nhận.
 
-\noindent\textbf{Sensitivity Points (Điểm nhạy cảm)}:
+\noindent Sensitivity Points (Điểm nhạy cảm):
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Hiệu năng CSDL (Postgres)}: Hiệu năng của PostgreSQL ảnh hưởng trực tiếp đến các service Java. Tối ưu hóa query và indexing là rất quan trọng
-    \item \textbf{Độ trễ Mạng (Microservices)}: Kiến trúc microservice làm tăng các cuộc gọi mạng. Luồng ``Tạo Báo cáo Giảng viên'' (yêu cầu tổng hợp dữ liệu từ 3 service) là một điểm nhạy cảm về độ trễ
-    \item \textbf{Tỷ lệ Cache Hit}: Tỷ lệ cache-hit-ratio của Redis (cho PII) ảnh hưởng trực tiếp đến độ trễ của AdaptiveEngine
+    \item Hiệu năng CSDL (Postgres): Hiệu năng của PostgreSQL ảnh hưởng trực tiếp đến các service Java. Tối ưu hóa query và indexing là rất quan trọng
+    \item Độ trễ Mạng (Microservices): Kiến trúc microservice làm tăng các cuộc gọi mạng. Luồng ``Tạo Báo cáo Giảng viên'' (yêu cầu tổng hợp dữ liệu từ 3 service) là một điểm nhạy cảm về độ trễ
+    \item Tỷ lệ Cache Hit: Tỷ lệ cache-hit-ratio của Redis (cho PII) ảnh hưởng trực tiếp đến độ trễ của AdaptiveEngine
 \end{itemize}
 
-\noindent\textbf{Trade-off Points (Điểm Đánh đổi)}:
+\noindent Trade-off Points (Điểm Đánh đổi):
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Microservices Complexity vs. Modularity}: Chúng ta chấp nhận độ phức tạp vận hành cao của Microservices để đạt được Modularity (cho FR12) và Scalability (AC2)
-    \item \textbf{Eventual Consistency vs. Performance}: Chúng ta chọn mô hình Event-Driven cho việc chấm điểm. Điều này tăng hiệu năng (AC3) (phản hồi tức thì $< 500$ms) nhưng đánh đổi bằng tính nhất quán tức thời (Learner Model được cập nhật sau vài giây)
-    \item \textbf{Polyglot Programming vs. Team Expertise}: Chúng ta chọn Polyglot (ADR-1) để tối ưu hiệu năng (Go) và bảo trì (Java). Chúng ta chấp nhận rủi ro về chi phí đào tạo và sự phức tạp của CI/CD pipeline
+    \item Microservices Complexity vs. Modularity: Chúng ta chấp nhận độ phức tạp vận hành cao của Microservices để đạt được Modularity (cho FR12) và Scalability (AC2)
+    \item Eventual Consistency vs. Performance: Chúng ta chọn mô hình Event-Driven cho việc chấm điểm. Điều này tăng hiệu năng (AC3) (phản hồi tức thì $< 500$ms) nhưng đánh đổi bằng tính nhất quán tức thời (Learner Model được cập nhật sau vài giây)
+    \item Polyglot Programming vs. Team Expertise: Chúng ta chọn Polyglot (ADR-1) để tối ưu hiệu năng (Go) và bảo trì (Java). Chúng ta chấp nhận rủi ro về chi phí đào tạo và sự phức tạp của CI/CD pipeline
 \end{itemize}
 
-\noindent\textbf{Risks (Rủi ro)}:
+\noindent Risks (Rủi ro):
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Operational Complexity}: Vận hành một stack polyglot (Java + Go) trên Kubernetes với RabbitMQ và nhiều CSDL (Postgres + Mongo) đòi hỏi đội ngũ DevOps rất trưởng thành
-    \item \textbf{Distributed Transaction Management}: Việc thiếu kinh nghiệm triển khai Saga pattern (để đảm bảo nhất quán dữ liệu) là rủi ro lớn nhất
-    \item \textbf{Team Learning Curve}: Đội ngũ Java cần học Go, và toàn bộ đội ngũ cần hiểu rõ Clean Architecture/DIP
+    \item Operational Complexity: Vận hành một stack polyglot (Java + Go) trên Kubernetes với RabbitMQ và nhiều CSDL (Postgres + Mongo) đòi hỏi đội ngũ DevOps rất trưởng thành
+    \item Distributed Transaction Management: Việc thiếu kinh nghiệm triển khai Saga pattern (để đảm bảo nhất quán dữ liệu) là rủi ro lớn nhất
+    \item Team Learning Curve: Đội ngũ Java cần học Go, và toàn bộ đội ngũ cần hiểu rõ Clean Architecture/DIP
 \end{itemize}
 
-\noindent\textbf{Non-Risks (Không phải Rủi ro)}:
+\noindent Non-Risks (Không phải Rủi ro):
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Technology Maturity}: Tất cả các công nghệ được chọn (Java/Spring, Go, K8s, Postgres, RabbitMQ) đều đã được chứng minh, trưởng thành và có cộng đồng lớn
-    \item \textbf{Vendor Lock-in}: Bằng cách sử dụng K8s, Postgres, RabbitMQ (tất cả đều là mã nguồn mở), chúng ta tránh được việc bị khóa chặt vào một nhà cung cấp đám mây
+    \item Technology Maturity: Tất cả các công nghệ được chọn (Java/Spring, Go, K8s, Postgres, RabbitMQ) đều đã được chứng minh, trưởng thành và có cộng đồng lớn
+    \item Vendor Lock-in: Bằng cách sử dụng K8s, Postgres, RabbitMQ (tất cả đều là mã nguồn mở), chúng ta tránh được việc bị khóa chặt vào một nhà cung cấp đám mây
 \end{itemize}
 
 \subsection{Phân tích Tác động của SOLID}
@@ -603,7 +603,7 @@ public void testUpdateSkillMastery() {
 
 \indentpar \indentpar Việc áp dụng SOLID đã tạo ra những cải tiến đáng kể, đặc biệt khi so sánh với các dự án ``monolith'' truyền thống.
 
-\noindent\textbf{Cải tiến Định lượng (Ước tính)}:
+\noindent Cải tiến Định lượng (Ước tính):
 
 \renewcommand{\arraystretch}{1.6}
 \begin{table}[H]
@@ -627,28 +627,28 @@ public void testUpdateSkillMastery() {
 \end{table}
 \renewcommand{\arraystretch}{1.0}
 
-\noindent\textbf{Cải tiến Định tính}:
+\noindent Cải tiến Định tính:
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Dễ dàng Onboarding}: Nhờ SRP, developer mới có thể hiểu một service (ví dụ: ScoringService) mà không cần biết về UserManagementService
-    \item \textbf{Phát triển Tính năng Nhanh hơn}: Nhờ OCP, việc thêm một loại gợi ý mới là một tác vụ thêm (add), không phải sửa (modify), giảm rủi ro
-    \item \textbf{Tự tin Tái cấu trúc (Refactoring)}: Nhờ DIP và Testability (AC4), developer có thể tự tin tái cấu trúc code nghiệp vụ vì đã có bộ Unit Test bảo vệ
+    \item Dễ dàng Onboarding: Nhờ SRP, developer mới có thể hiểu một service (ví dụ: ScoringService) mà không cần biết về UserManagementService
+    \item Phát triển Tính năng Nhanh hơn: Nhờ OCP, việc thêm một loại gợi ý mới là một tác vụ thêm (add), không phải sửa (modify), giảm rủi ro
+    \item Tự tin Tái cấu trúc (Refactoring): Nhờ DIP và Testability (AC4), developer có thể tự tin tái cấu trúc code nghiệp vụ vì đã có bộ Unit Test bảo vệ
 \end{itemize}
 
 \subsubsection{Những Thách thức Gặp phải}
 
-\noindent\textbf{Sự phức tạp ban đầu (Initial Complexity)}:
+\noindent Sự phức tạp ban đầu (Initial Complexity):
 \begin{itemize}[leftmargin=1.5em]
     \item \textit{Thách thức}: Áp dụng Clean Architecture/DIP cho các tính năng CRUD đơn giản (ví dụ: quản lý Tags) dẫn đến ``over-engineering'' (quá nhiều lớp/interface cho một nghiệp vụ đơn giản)
     \item \textit{Giải pháp}: Bắt đầu đơn giản. Áp dụng DIP nghiêm ngặt cho các logic nghiệp vụ lõi (AI, Scoring), nhưng có thể linh hoạt hơn với các service CRUD phụ trợ
 \end{itemize}
 
-\noindent\textbf{Tiếp nhận của Đội ngũ (Team Adoption)}:
+\noindent Tiếp nhận của Đội ngũ (Team Adoption):
 \begin{itemize}[leftmargin=1.5em]
     \item \textit{Thách thức}: Các developer (đặc biệt là junior) có cách hiểu khác nhau về SOLID, dẫn đến tranh cãi trong code review (ví dụ: ``Thế này đã đủ SRP chưa?'')
     \item \textit{Giải pháp}: Thúc đẩy Đánh giá code (Code Reviews) và Lập trình cặp (Pair Programming). Xây dựng một checklist làm tiêu chuẩn chung
 \end{itemize}
 
-\noindent\textbf{Chi phí Hiệu năng (Performance Overhead)}:
+\noindent Chi phí Hiệu năng (Performance Overhead):
 \begin{itemize}[leftmargin=1.5em]
     \item \textit{Thách thức}: Các tầng abstraction (ví dụ: gọi qua interface, mapping DTOs) có tạo ra chi phí (latency) nhỏ, mặc dù không đáng kể so với chi phí mạng
     \item \textit{Giải pháp}: Chỉ tối ưu khi đã đo lường (measure). Sử dụng caching chiến lược (Redis) tại các điểm nóng để bù đắp chi phí
@@ -658,20 +658,20 @@ public void testUpdateSkillMastery() {
 
 \subsubsection{Những điều Hoạt động Tốt}
 
-\noindent\textbf{Clean Architecture trong Microservices}:
+\noindent Clean Architecture trong Microservices:
 \begin{itemize}[leftmargin=1.5em]
     \item Sự kết hợp giữa SRP (cấp service) và DIP (trong service) là một thành công lớn
     \item Ranh giới rõ ràng (ví dụ: domain, application, infrastructure) đã tăng tốc độ phát triển song song
     \item Việc kiểm thử (Testing) trở nên dễ dàng nhờ DIP
 \end{itemize}
 
-\noindent\textbf{Event-Driven cho các Thành phần AI}:
+\noindent Event-Driven cho các Thành phần AI:
 \begin{itemize}[leftmargin=1.5em]
     \item Quyết định tách rời (decouple) ScoringService và LearnerModelService qua RabbitMQ là rất đúng đắn
     \item Nó giúp đạt được AC3: Performance ($< 500$ms) bằng cách cho phép xử lý bất đồng bộ các mô hình ML/AI (cập nhật LearnerModel)
 \end{itemize}
 
-\noindent\textbf{Polyglot Programming (ADR-1)}:
+\noindent Polyglot Programming (ADR-1):
 \begin{itemize}[leftmargin=1.5em]
     \item Chiến lược ``dùng đúng công cụ'' đã được chứng minh:
     \item Java (Spring Boot) rất mạnh cho các nghiệp vụ CRUD phức tạp, bảo mật (Auth, User, Content) nhờ hệ sinh thái trưởng thành
@@ -680,20 +680,20 @@ public void testUpdateSkillMastery() {
 
 \subsubsection{Những điều có thể Cải thiện}
 
-\noindent\textbf{Tài liệu Hóa (Documentation)}:
+\noindent Tài liệu Hóa (Documentation):
 \begin{itemize}[leftmargin=1.5em]
     \item API documentation (OpenAPI/Swagger) không được cập nhật kịp thời, gây khó khăn cho team frontend
     \item \textit{Giải pháp}: Tự động hóa việc tạo spec OpenAPI từ code. Áp dụng ADR (Architecture Decision Records) ngay từ đầu (thay vì viết lại sau) để ghi lại lý do (rationale) đằng sau các quyết định
 \end{itemize}
 
-\noindent\textbf{Chiến lược Giám sát (Monitoring Strategy)}:
+\noindent Chiến lược Giám sát (Monitoring Strategy):
 \begin{itemize}[leftmargin=1.5em]
     \item Distributed Tracing (Theo vết Phân tán) được thêm vào quá muộn
     \item Việc debug một request (ví dụ: SubmissionCompleted) đi từ Go \(\rightarrow\) RabbitMQ \(\rightarrow\) Go (service khác) ban đầu rất khó khăn
     \item \textit{Giải pháp}: Phải áp dụng Observability (AC9) ngay từ Ngày 1. Bắt buộc mọi request phải có Correlation ID (Trace ID) đi qua tất cả các service
 \end{itemize}
 
-\noindent\textbf{Chiến lược Kiểm thử (Testing Strategy)}:
+\noindent Chiến lược Kiểm thử (Testing Strategy):
 \begin{itemize}[leftmargin=1.5em]
     \item Chúng ta đã làm tốt Unit Test (nhờ DIP) và E2E Test
     \item Tuy nhiên, chúng ta thiếu Contract Testing (Kiểm thử Hợp đồng) giữa các service. Điều này dẫn đến lỗi khi một service (ví dụ: UserManagementService) thay đổi API mà ContentService không biết
@@ -705,24 +705,24 @@ public void testUpdateSkillMastery() {
 \subsubsection{Ngắn hạn (3-6 tháng)}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Triển khai Circuit Breakers}: Hiện tại chúng ta dựa vào K8s/Istio. Cần triển khai thêm ở cấp độ ứng dụng (ví dụ: Resilience4j cho Java, Hystrix-go cho Go) để tăng khả năng chịu lỗi
-    \item \textbf{Thêm Contract Testing}: Triển khai Pact để xác minh API giữa các service
-    \item \textbf{Tối ưu hóa CSDL}: Truy vết và sửa các truy vấn N+1 trong các service Java
-    \item \textbf{Triển khai Feature Toggles (Cờ Tính năng)}: Cho phép bật/tắt tính năng mới (ví dụ: thuật toán AI V3) cho một nhóm người dùng mà không cần deploy lại
-    \item \textbf{Tăng cường Giám sát}: Thêm các business metrics (số liệu nghiệp vụ) tùy chỉnh vào Prometheus (ví dụ: số lượng bài nộp/phút, độ trễ p99 của thuật toán AI)
+    \item Triển khai Circuit Breakers: Hiện tại chúng ta dựa vào K8s/Istio. Cần triển khai thêm ở cấp độ ứng dụng (ví dụ: Resilience4j cho Java, Hystrix-go cho Go) để tăng khả năng chịu lỗi
+    \item Thêm Contract Testing: Triển khai Pact để xác minh API giữa các service
+    \item Tối ưu hóa CSDL: Truy vết và sửa các truy vấn N+1 trong các service Java
+    \item Triển khai Feature Toggles (Cờ Tính năng): Cho phép bật/tắt tính năng mới (ví dụ: thuật toán AI V3) cho một nhóm người dùng mà không cần deploy lại
+    \item Tăng cường Giám sát: Thêm các business metrics (số liệu nghiệp vụ) tùy chỉnh vào Prometheus (ví dụ: số lượng bài nộp/phút, độ trễ p99 của thuật toán AI)
 \end{itemize}
 
 \subsubsection{Dài hạn (6-12 tháng)}
 
 \begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Phát triển lên Serverless}: Một số tác vụ (như ScoringService) có tải không liên tục (sporadic loads). Chuyển các hàm này sang AWS Lambda / Google Cloud Functions để giảm chi phí vận hành (idle cost) và tự động scale-to-zero
-    \item \textbf{Quản lý Mô hình AI (MLOps)}:
+    \item Phát triển lên Serverless: Một số tác vụ (như ScoringService) có tải không liên tục (sporadic loads). Chuyển các hàm này sang AWS Lambda / Google Cloud Functions để giảm chi phí vận hành (idle cost) và tự động scale-to-zero
+    \item Quản lý Mô hình AI (MLOps):
           \begin{itemize}
               \item Xây dựng một pipeline MLOps hoàn chỉnh để tự động hóa việc training và deploy các mô hình AI mới
               \item Hỗ trợ A/B testing chính thức cho các mô hình AI (hiện tại FR12 là Blue/Green)
               \item Quản lý phiên bản (versioning) và rollback mô hình
           \end{itemize}
-    \item \textbf{Hỗ trợ Đa Người thuê (Multi-tenancy)}:
+    \item Hỗ trợ Đa Người thuê (Multi-tenancy):
           \begin{itemize}
               \item Tái kiến trúc để hỗ trợ nhiều trường học (tenants) trên cùng một hạ tầng
               \item Có thể yêu cầu tách biệt CSDL (database-per-tenant) hoặc schema-per-tenant
