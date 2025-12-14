@@ -16,3 +16,4 @@ report/*.fls
 src/**/*.log
 *.log
 .vscode/
+*.mov
